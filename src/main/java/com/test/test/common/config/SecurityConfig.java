@@ -93,6 +93,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/manager/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/manager/available").permitAll()
 
+                // 쓸 수 있는 소셜 제공자 — 로그인 화면이 없는 버튼을 안 그리려고 묻는다
+                .requestMatchers(HttpMethod.GET, "/api/auth/providers").permitAll()
+
                 // 운영 기능 — 관리자만
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
