@@ -309,3 +309,17 @@
   background: var(--grad); color: #fff;
   font-size: 13px; font-weight: 700;
 }
+
+/* ── 번호 페이징 ── */
+.pagination { display: flex; align-items: center; gap: 4px; }
+.page-btn {
+  min-width: 34px; height: 34px; padding: 0 8px;
+  border: none; border-radius: var(--radius-sm);
+  background: var(--surface); box-shadow: var(--sh);
+  color: var(--muted); font-size: 13.5px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.page-btn:hover:not(:disabled) { color: var(--text); }
+.page-btn:disabled { opacity: .4; cursor: default; }
+.page-btn.active { background: var(--grad); color: #fff; box-shadow: var(--sh-acc); }
+.page-gap { color: var(--muted2); padding: 0 2px; }

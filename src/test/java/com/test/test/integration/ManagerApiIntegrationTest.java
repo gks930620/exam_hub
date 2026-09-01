@@ -218,6 +218,30 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
         }
     }
 
+    /**
+     * 매니저 화면의 기준은 <b>일정이 있냐 없냐</b> 딱 둘이다(사용자 결정 2026-09-01 —
+     * "접수중이냐 아니냐는 헷갈리니까 하지 말자"). '있음' 은 세부 상태 셋의 합이라
+     * 상태를 쉼표로 묶어 한 번에 거를 수 있어야 한다.
+     */
+    @Test
+    @DisplayName("상태 여러 개를 쉼표로 묶어 거른다 — '일정 있음' 탭")
+    void overview_filters_by_multiple_statuses() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("status", "PAST,OPEN,UPCOMING")
+                        .param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode items = objectMapper.readTree(
+                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+        assertTrue(items.size() > 0, "일정 있는 시험이 하나도 없다 — 시드가 바뀌었나?");
+        for (JsonNode it : items) {
+            assertNotEquals("NONE", it.path("status").asText(), "일정 없는 시험이 '있음' 탭에 섞였다");
+            assertTrue(it.path("scheduleCount").asInt() > 0);
+        }
+    }
+
     @Test
     @DisplayName("시험명으로 좁힌다")
     void overview_filters_by_name() throws Exception {

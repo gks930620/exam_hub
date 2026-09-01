@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +43,9 @@ public class AdminOverviewController {
     /**
      * 시험별 일정 현황.
      *
-     * @param status   비우면 전체. {@code NONE|PAST|OPEN|UPCOMING}
+     * @param status   비우면 전체. {@code NONE|PAST|OPEN|UPCOMING} — 쉼표로 여러 개.
+     *                  화면 기준은 "일정이 있냐 없냐" 둘뿐이라(사용자 결정) '있음' 은
+     *                  {@code PAST,OPEN,UPCOMING} 처럼 묶어서 온다.
      * @param query    시험명 부분일치
      * @param category 분류
      */
@@ -74,11 +77,14 @@ public class AdminOverviewController {
 
         String q = query == null ? "" : query.trim().toLowerCase();
         String cat = category == null ? "" : category.trim();
+        Set<String> wanted = status == null || status.isBlank()
+                ? Set.of()
+                : Set.of(status.split(","));
 
         List<Row> rows = allRows.stream()
                 .filter(r -> q.isEmpty() || r.certificateName().toLowerCase().contains(q))
                 .filter(r -> cat.isEmpty() || cat.equals(r.category()))
-                .filter(r -> status == null || status.isBlank() || r.status().equals(status))
+                .filter(r -> wanted.isEmpty() || wanted.contains(r.status()))
                 // 급한 것 위로. 같은 상태면 이름순이라 매번 같은 순서로 보인다.
                 .sorted(Comparator.comparingInt((Row r) -> Status.valueOf(r.status()).urgency)
                         .thenComparing(Row::certificateName))
