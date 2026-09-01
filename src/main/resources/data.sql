@@ -1,8 +1,8 @@
 -- ─────────────────────────────────────────────────────────────
 -- 로컬 개발용 시드 (SQL).
 --
--- ⚠️ 로컬에서만 돈다. spring.sql.init.mode=embedded 라 H2(인메모리)일 때만 실행되고,
---    운영 MySQL 에서는 실행되지 않는다. 운영 매니저는 직접 INSERT 한다
+-- ⚠️ 로컬(local 프로파일)에서만 돈다. 운영(prod)은 application.yml 에서 mode: never 로 못 박았다.
+--    운영 매니저는 직접 INSERT 한다
 --    (절차: 진행사항/02_내가_할일.md 4순위).
 --
 -- 시험 데이터는 여기 없다 — 자바 로더(CertificateMasterInitializer 등)가 담당한다.
@@ -22,6 +22,9 @@ INSERT INTO member
    notify_reg, notify_exam, notify_change, created_at, updated_at)
 SELECT
   'LOCAL', 'manager', '{bcrypt}$2a$10$gDoYeGZCnaegt96mMFKR6.qPEv8PF6hIQwcJHkBd4IMktc4ud0DGu',
-  '매니저', 'ADMIN', 'ACTIVE', true, true, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+  '로컬매니저', 'ADMIN', 'ACTIVE', true, true, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+-- 닉네임이 '로컬매니저' 인 이유: 여기에도 유니크 제약이 있는데, MANAGER_USERNAME 으로 만든
+-- 계정이 '매니저' 를 먼저 쓰고 있으면 겹쳐서 기동이 통째로 깨진다(실제로 겪었다).
+-- 이름을 갈라 두면 두 계정이 나란히 있을 수 있다.
 WHERE NOT EXISTS (
   SELECT 1 FROM member WHERE provider = 'LOCAL' AND provider_id = 'manager');

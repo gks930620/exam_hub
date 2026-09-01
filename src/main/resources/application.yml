@@ -210,3 +210,31 @@ spring.sql:
   init:
     mode: ${SPRING_SQL_INIT_MODE:embedded}
     encoding: UTF-8
+
+# ─────────────────────────────────────────────────────────────
+# data.sql 을 언제 돌릴지 — 프로파일로 못 박는다.
+#
+# 예전엔 mode: embedded 하나로 갈랐다. 로컬이 인메모리 H2 일 때는 그게 맞았는데,
+# 로컬 DB 를 **파일 H2** 로 바꾸자 조용히 안 돌기 시작했다. 스프링은 H2 라도
+# ':h2:mem' 이 아니면 embedded 로 보지 않기 때문이다 — 그래서 매니저 계정이 안 생겼다.
+#
+# 로컬은 always(파일이든 메모리든 돈다), 운영은 never 를 명시한다.
+# 운영에 never 를 못 박는 건 안전장치다 — data.sql 의 매니저 비밀번호는 저장소에 그대로
+# 들어 있어서, 실수로 운영 MySQL 에 돌면 알려진 비밀번호의 관리자 계정이 생긴다.
+# ─────────────────────────────────────────────────────────────
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  sql:
+    init:
+      mode: ${SPRING_SQL_INIT_MODE:always}
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  sql:
+    init:
+      mode: never
