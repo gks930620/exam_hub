@@ -1,6 +1,7 @@
 package com.test.test.integration;
 
 import com.test.test.common.config.RailwayDeploymentValidator;
+import com.test.test.exam.auth.IncompleteSocialLoginRemover;
 import com.test.test.exam.auth.JwtProvider;
 import com.test.test.exam.config.ExamDataInitializer;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +46,8 @@ class DeployPortabilityTest {
         // OAuth2 클라이언트 자동설정은 서블릿 웹 컨텍스트에서만 걸린다 → 웹 러너를 쓴다.
         private final WebApplicationContextRunner runner = new WebApplicationContextRunner()
                 .withConfiguration(AutoConfigurations.of(SecurityAutoConfiguration.class, OAuth2ClientAutoConfiguration.class))
+                // 실제 앱에서는 @Component 다 — 덜 채워진 등록을 걷어낸다
+                .withBean(IncompleteSocialLoginRemover.class)
                 .withPropertyValues(
                         // application.yml 의 provider 블록 — 배포 이미지에 항상 들어 있는 부분
                         "spring.security.oauth2.client.provider.kakao.authorization-uri=https://kauth.kakao.com/oauth/authorize",
@@ -59,6 +62,75 @@ class DeployPortabilityTest {
                 assertThat(context).hasNotFailed();
                 assertThat(context).doesNotHaveBean(ClientRegistrationRepository.class);
             });
+        }
+
+        /**
+         * <b>둘 중 하나만 키가 있는 상태</b>가 이 서비스의 현실이다 — 카카오는 붙었고 구글은
+         * Client Secret 대기 중이다. 그때 <b>있는 쪽은 뜨고 없는 쪽은 조용히 빠져야</b> 한다.
+         *
+         * <p>여기가 깨지면 배포에서 키 하나를 빠뜨렸을 때 <b>앱 전체가 기동에 실패</b>한다 —
+         * 로그인만 안 되는 게 아니라 시험 조회까지 통째로 죽는다(코드컨벤션 §5).
+         */
+        @Test
+        @DisplayName("한쪽 키만 있으면 그쪽만 등록되고 앱은 뜬다")
+        void half_configured_still_starts() {
+            runner.withPropertyValues(
+                            "spring.security.oauth2.client.registration.kakao.client-id=key",
+                            "spring.security.oauth2.client.registration.kakao.client-secret=secret",
+                            "spring.security.oauth2.client.registration.kakao.client-authentication-method=client_secret_post",
+                            "spring.security.oauth2.client.registration.kakao.authorization-grant-type=authorization_code",
+                            "spring.security.oauth2.client.registration.kakao.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}",
+                            "spring.security.oauth2.client.registration.kakao.scope=profile_nickname",
+                            // 구글: Client ID 는 발급받았지만 Secret 은 아직 없다
+                            "spring.security.oauth2.client.registration.google.client-id=google-id",
+                            "spring.security.oauth2.client.registration.google.client-secret=")
+                    .run(context -> {
+                        assertThat(context).hasNotFailed();
+                        ClientRegistrationRepository repo =
+                                context.getBean(ClientRegistrationRepository.class);
+                        assertNotNull(repo.findByRegistrationId("kakao"), "카카오가 빠졌다");
+                        assertThat((Iterable<?>) repo)
+                                .as("Secret 없는 구글이 등록되면 로그인 화면이 눌러도 깨지는 버튼을 그린다")
+                                .hasSize(1);
+                    });
+        }
+
+        /** 거르는 쪽이 과하면 시크릿을 넣어도 구글이 안 붙는다 — 채우면 반드시 살아나야 한다. */
+        @Test
+        @DisplayName("구글 시크릿을 채우면 구글도 등록된다")
+        void google_appears_once_secret_is_filled() {
+            runner.withPropertyValues(
+                            "spring.security.oauth2.client.registration.google.client-id=google-id",
+                            "spring.security.oauth2.client.registration.google.client-secret=google-secret")
+                    .run(context -> {
+                        assertThat(context).hasNotFailed();
+                        ClientRegistrationRepository repo =
+                                context.getBean(ClientRegistrationRepository.class);
+                        assertNotNull(repo.findByRegistrationId("google"),
+                                "시크릿을 채웠는데도 구글이 안 붙었다");
+                    });
+        }
+
+        /**
+         * 카카오 시크릿은 <b>비어 있는 게 정상</b>이다 — 개발자센터에서 'Client Secret 사용'을
+         * 안 켜면 안 쓴다. 구글 기준으로 일괄 필터를 걸면 멀쩡한 카카오가 사라진다.
+         */
+        @Test
+        @DisplayName("카카오는 시크릿이 비어도 남는다")
+        void kakao_survives_without_secret() {
+            runner.withPropertyValues(
+                            "spring.security.oauth2.client.registration.kakao.client-id=key",
+                            "spring.security.oauth2.client.registration.kakao.client-secret=",
+                            "spring.security.oauth2.client.registration.kakao.client-authentication-method=client_secret_post",
+                            "spring.security.oauth2.client.registration.kakao.authorization-grant-type=authorization_code",
+                            "spring.security.oauth2.client.registration.kakao.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}",
+                            "spring.security.oauth2.client.registration.kakao.scope=profile_nickname")
+                    .run(context -> {
+                        assertThat(context).hasNotFailed();
+                        assertNotNull(context.getBean(ClientRegistrationRepository.class)
+                                        .findByRegistrationId("kakao"),
+                                "시크릿을 안 쓰는 카카오가 사라졌다");
+                    });
         }
 
         /**
