@@ -44,7 +44,13 @@ Spring Boot 백엔드(REST API) + **React CSR 웹 프런트** 프로젝트입니
 이 프로젝트만의 특이사항:
 
 - **인증**: 소셜 로그인(카카오·구글 OAuth2) → `Member` + JWT(`Authorization: Bearer`). 매니저(운영자)만 `/manager/login` 폼 로그인. 구 `X-Device-Id` 기기식별은 **폐기·전환 완료**. 설계는 `08_계정과_커뮤니티.md`.
-- **DB**: 로컬 = 인메모리 H2(MODE=MySQL, ddl-auto=create) / 운영 = Railway MySQL (env 미설정 시 fail-fast).
+- **DB**: 로컬 = **파일 H2**(`.localdb/`, MODE=MySQL, ddl-auto=update) / 운영 = Railway MySQL (env 미설정 시 fail-fast).
+  - ⚠️ 컨벤션 §5-2 의 "로컬은 매 기동 초기화" 에 대한 **명시적 예외**(2026-09-01 사용자 결정).
+    시험일정 2,452건을 매 기동 다시 넣느라 5~9분씩 걸렸다. 파일로 두니 **재기동 27초**.
+    아직 사용자 데이터가 쌓이지 않는 단계라 잃을 게 없어서 지금 바꿨다.
+  - **초기화하려면 `.localdb/` 폴더를 지우고 다시 켠다**(= 예전 create 와 같은 상태, 첫 기동 9분).
+    스키마를 크게 바꿔 `update` 가 못 따라갈 때도 이렇게 한다.
+  - URL 에 `AUTO_SERVER=TRUE` 가 붙어 있다 — 없으면 devtools 재기동 때 파일 잠금이 겹쳐 기동이 깨진다.
 - **외부 연동 상태**: `QnetApiScheduleSource`(큐넷 실 API)는 **구현됨**(RestClient, 컴파일 검증 — 실 네트워크 미검증). 발송은 `LogNotificationSender`(로그 스텁) — 웹 전용이라 실발송은 **웹 푸시/이메일**로 전환 예정(모바일 FCM 아님). 로컬은 `qnet.api.enabled=false`로 Mock+시드 수집 + 로그 발송으로 전 구간 동작.
 - **각종 시험 통합**: 비큐넷 시험은 `resources/seed/non_qnet_exams.json` + `SeedFileScheduleSource`로 로컬 DB 적재(16종). `Certificate.category`로 분류.
 - **시드**: 시험 데이터는 자바 로더가 적재한다. `CertificateMasterInitializer`(마스터 480종 — **운영에서도 돈다**),

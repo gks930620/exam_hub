@@ -14,9 +14,14 @@
 -- 비밀번호는 BCrypt 해시로 넣는다. 평문을 넣으면 로그인이 안 된다(로그인이 해시와 비교한다).
 -- 다른 값으로 바꾸려면:  ./gradlew managerHash -Ppassword=새비밀번호
 -- provider='LOCAL' 이라 소셜 계정과 섞이지 않고, role='ADMIN' 이라야 /admin 이 열린다.
+-- ⚠️ 이 파일은 <b>기동할 때마다</b> 돈다. 로컬 DB 가 파일이 된 뒤로는 계정이 이미 있는 채로
+--    다시 실행되므로, 그냥 INSERT 하면 두 번째 기동부터 중복 키로 기동이 깨진다.
+--    그래서 없을 때만 넣는다.
 INSERT INTO member
   (provider, provider_id, password_hash, nickname, role, status,
    notify_reg, notify_exam, notify_change, created_at, updated_at)
-VALUES
-  ('LOCAL', 'manager', '{bcrypt}$2a$10$gDoYeGZCnaegt96mMFKR6.qPEv8PF6hIQwcJHkBd4IMktc4ud0DGu',
-   '매니저', 'ADMIN', 'ACTIVE', true, true, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+SELECT
+  'LOCAL', 'manager', '{bcrypt}$2a$10$gDoYeGZCnaegt96mMFKR6.qPEv8PF6hIQwcJHkBd4IMktc4ud0DGu',
+  '매니저', 'ADMIN', 'ACTIVE', true, true, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+WHERE NOT EXISTS (
+  SELECT 1 FROM member WHERE provider = 'LOCAL' AND provider_id = 'manager');

@@ -48,20 +48,26 @@ spring:
   # 로컬은 인메모리 H2(MySQL 호환) 사용 → 로컬에 MySQL 없어도 실행됨. 배포는 prod 프로파일에서 MySQL.
   # 모든 값은 환경변수 주입 가능(기본값은 로컬 개발용). 운영에서 이 기본값(H2)으로 뜨면 RailwayDeploymentValidator 가 fail-fast.
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:exam;MODE=MySQL;DB_CLOSE_DELAY=-1}
+    # 로컬은 파일 H2 다(인메모리 아님). 시험일정 2,400여 건을 매 기동 다시 넣으면 1~2분씩 걸려서,
+    # 한 번 넣은 걸 그대로 쓴다. 비우려면 .localdb 폴더를 지우고 다시 켜면 된다.
+    # AUTO_SERVER=TRUE 는 필수다 — devtools 가 앱을 다시 띄울 때 옛 커넥션이 파일 잠금을 아직
+    # 쥐고 있어서, 없으면 "Database may be already in use" 로 기동이 깨진다(실제로 겪었다).
+    # 덤으로 서버가 떠 있는 채로 인텔리제이 DB 도구나 h2-console 로 붙어볼 수 있다.
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:file:./.localdb/exam;MODE=MySQL;AUTO_SERVER=TRUE}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
     username: ${SPRING_DATASOURCE_USERNAME:sa}
     password: ${SPRING_DATASOURCE_PASSWORD:}
 
   h2:
     console:
-      enabled: true   # http://localhost:8080/h2-console (JDBC URL: jdbc:h2:mem:exam) — 운영은 prod 프로파일에서 off
+      enabled: true   # http://localhost:8081/h2-console (JDBC URL: jdbc:h2:file:./.localdb/exam) — 운영은 prod 프로파일에서 off
 
   jpa:
     hibernate:
-      # 로컬 기본은 create(매 기동 스키마 재생성 + 데모 시드 재적재 = 재현성). 운영은 update.
+      # 로컬도 update 다 — 파일 DB 라 스키마를 날리면 넣어 둔 일정까지 같이 사라진다.
+      # 엔티티를 크게 바꿔 update 로 못 따라가면 .localdb 를 지우고 다시 켠다(= 예전 create 와 같은 상태).
       # 데모 데이터는 SQL 시드가 아니라 ExamDataInitializer(@Profile("!prod"), 자바)가 적재한다.
-      ddl-auto: ${SPRING_JPA_DDL_AUTO:create}
+      ddl-auto: ${SPRING_JPA_DDL_AUTO:update}
     properties:
       hibernate:
         show_sql: true
