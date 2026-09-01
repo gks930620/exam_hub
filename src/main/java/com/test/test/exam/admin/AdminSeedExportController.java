@@ -25,12 +25,12 @@ import java.util.Map;
  *
  * <p><b>왜 필요한가</b>: 로컬 DB 는 인메모리라 서버를 끄면 수집한 1,500여 건이 사라진다.
  * 그렇다고 켤 때마다 실 API 를 부르면 613콜이라 하루 한도(1,000)를 금방 넘긴다.
- * 그래서 한 번 받은 걸 파일로 떠서 {@code seed/qnet_schedules.json} 에 두고
- * ({@link com.test.test.exam.collect.QnetSeedScheduleSource} 가 읽는다), 다음부터는 공짜로 얹는다.
+ * 그래서 한 번 받은 걸 파일로 떠서 {@code seed/schedules_snapshot.json} 에 두고
+ * ({@link com.test.test.exam.collect.SnapshotScheduleSource} 가 읽는다), 다음부터는 공짜로 얹는다.
  *
  * <pre>
- * curl -H "Authorization: Bearer &lt;매니저토큰&gt;" http://localhost:8081/api/admin/export/qnet-schedules \
- *   -o src/main/resources/seed/qnet_schedules.json
+ * curl -H "Authorization: Bearer &lt;매니저토큰&gt;" http://localhost:8081/api/admin/export/schedules \
+ *   -o src/main/resources/seed/schedules_snapshot.json
  * </pre>
  *
  * <p>종목코드가 있는 시험만 담는다 — 시드를 다시 읽을 때 <b>코드로 시험을 찾기</b> 때문이다.
@@ -44,12 +44,13 @@ public class AdminSeedExportController {
     private final CertificateRepository certificateRepository;
     private final ExamScheduleRepository examScheduleRepository;
 
-    @GetMapping(value = "/qnet-schedules", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/schedules", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<SeedFile> exportQnetSchedules() {
-        // 큐넷 종목코드는 숫자 4자리(jmCd)다. 다른 소스의 코드(TOEIC·KCA-SEC 등)와 이걸로 가른다.
+    public ResponseEntity<SeedFile> exportSchedules() {
+        // 종목코드가 있는 시험 전부 — 큐넷(4자리)만 뜨던 시절엔 스크래퍼 담당 시험(KCA·상의 등)이
+        // 재시작마다 사라졌다. 스크래퍼는 기동 때 안 돌기 때문에(네트워크) 스냅샷이 같이 품어야 한다.
         List<Certificate> qnetCerts = certificateRepository.findAll().stream()
-                .filter(c -> c.getSourceCode() != null && c.getSourceCode().matches("[0-9]{4}"))
+                .filter(c -> c.getSourceCode() != null && !c.getSourceCode().isBlank())
                 .sorted(Comparator.comparing(Certificate::getName))
                 .toList();
 
@@ -83,7 +84,7 @@ public class AdminSeedExportController {
                 "로컬 DB 는 인메모리라 서버를 끄면 사라지고, 매번 받으면 613콜이라 하루 한도(1,000)를 넘긴다.",
                 "@Profile(\"!prod\") — 운영은 05:00 실 API 가 받아오므로 이 스냅샷을 쓰지 않는다.",
                 "스냅샷이라 시행처가 일정을 바꾸면 낡는다. 실 수집이 돌면 같은 (연도,회차,구분) 키를 덮어쓴다.",
-                "GET /api/admin/export/qnet-schedules 로 다시 뜬다(AdminSeedExportController).",
+                "GET /api/admin/export/schedules 로 다시 뜬다(AdminSeedExportController).",
                 TimeUtil.today().toString(), exams.size(), total, exams));
     }
 
@@ -97,7 +98,8 @@ public class AdminSeedExportController {
 
     public record SeedSchedule(int year, int round, String examType,
                                String regStartAt, String regEndAt,
-                               String examStartDate, String examEndDate, String resultDate) {
+                               String examStartDate, String examEndDate, String resultDate,
+                               String provenance, String sourceUrl) {
         static SeedSchedule of(ExamSchedule s) {
             return new SeedSchedule(
                     s.getYear(), s.getRound(), s.getExamType().name(),
@@ -105,7 +107,9 @@ public class AdminSeedExportController {
                     s.getRegEndAt() == null ? null : s.getRegEndAt().toString(),
                     s.getExamStartDate() == null ? null : s.getExamStartDate().toString(),
                     s.getExamEndDate() == null ? null : s.getExamEndDate().toString(),
-                    s.getResultDate() == null ? null : s.getResultDate().toString());
+                    s.getResultDate() == null ? null : s.getResultDate().toString(),
+                    s.getProvenance() == null ? null : s.getProvenance().name(),
+                    s.getSourceUrl());
         }
     }
 }

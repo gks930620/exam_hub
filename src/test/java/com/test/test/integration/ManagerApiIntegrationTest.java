@@ -160,6 +160,42 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     }
 
 
+    // ===== 종목 지정 재수집 =====
+    //
+    // 전량 수집(613콜) 중 일시 오류로 몇 종목이 비는 일이 실제로 있었다(산업안전기사가 빠짐).
+    // 다음 05:00 을 기다리는 대신, 매니저가 빈 종목만 골라 다시 받아온다.
+
+    @Test
+    @DisplayName("종목을 지정해 다시 수집한다")
+    void collect_by_codes() throws Exception {
+        mockMvc.perform(post("/api/admin/collect")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"sourceCodes\": [\"1320\", \"7910\"]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.requested").value(2));
+    }
+
+    @Test
+    @DisplayName("종목 없이 부르면 400 — 실수로 전량이 도는 것을 막는다")
+    void collect_without_codes_returns_400() throws Exception {
+        mockMvc.perform(post("/api/admin/collect")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"sourceCodes\": []}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("일반 회원은 재수집을 못 부른다 → 403")
+    void collect_denies_normal_member() throws Exception {
+        mockMvc.perform(post("/api/admin/collect")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newMember()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"sourceCodes\": [\"1320\"]}"))
+                .andExpect(status().isForbidden());
+    }
+
     // ===== 시험 일정 현황 (여러 시험을 한 화면에서) =====
     //
     // 수기 입력 화면만 있으면 매니저는 "무엇이 비어 있는지" 알 수 없다. 480종을 하나씩
@@ -364,13 +400,15 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
      * 한 번 받은 걸 파일로 두고 다음부터 공짜로 얹기 위한 것이다.
      */
     @Test
-    @DisplayName("큐넷 일정을 시드 형식으로 내보낸다")
-    void exports_qnet_schedules_as_seed() throws Exception {
-        mockMvc.perform(get("/api/admin/export/qnet-schedules")
+    @DisplayName("일정을 시드 형식으로 내보낸다 — 어느 소스 것이든")
+    void exports_schedules_as_seed() throws Exception {
+        mockMvc.perform(get("/api/admin/export/schedules")
                         .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.collectedAt").isNotEmpty())
                 .andExpect(jsonPath("$.exams").isArray())
+                // 출처를 함께 뜬다 — 스크래핑을 API 로 되살리면 '시행처 확인 필요' 배지가 사라진다
+                .andExpect(jsonPath("$.exams[0].schedules[0].provenance").isNotEmpty())
                 .andExpect(jsonPath("$._howToRegenerate").isNotEmpty());
     }
 
@@ -378,7 +416,7 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     @Test
     @DisplayName("일반 회원은 내보내기를 못 한다 → 403")
     void export_denies_normal_member() throws Exception {
-        mockMvc.perform(get("/api/admin/export/qnet-schedules")
+        mockMvc.perform(get("/api/admin/export/schedules")
                         .header(HttpHeaders.AUTHORIZATION, bearer(newMember())))
                 .andExpect(status().isForbidden());
     }

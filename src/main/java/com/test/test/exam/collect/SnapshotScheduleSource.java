@@ -35,11 +35,11 @@ import java.util.List;
 @Slf4j
 @Component
 @Profile("!prod")
-@ConditionalOnProperty(name = "seed.qnet-schedules.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "seed.snapshot.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
-public class QnetSeedScheduleSource implements ScheduleSource {
+public class SnapshotScheduleSource implements ScheduleSource {
 
-    private static final String RESOURCE = "seed/qnet_schedules.json";
+    private static final String RESOURCE = "seed/schedules_snapshot.json";
 
     private final ObjectMapper objectMapper;
 
@@ -50,7 +50,7 @@ public class QnetSeedScheduleSource implements ScheduleSource {
 
     @Override
     public String sourceId() {
-        return "SEED_QNET";
+        return "SEED_SNAPSHOT";
     }
 
     @Override
@@ -72,15 +72,27 @@ public class QnetSeedScheduleSource implements ScheduleSource {
                         s.year(), s.round(), parseType(s.examType()),
                         dateTime(s.regStartAt()), dateTime(s.regEndAt()),
                         date(s.examStartDate()), date(s.examEndDate()), date(s.resultDate()),
-                        "https://www.q-net.or.kr/",
-                        // 실 API 에서 받은 값을 저장해 둔 것이라 출처는 API 다.
-                        // 다만 스냅샷이라 시행처가 바꾸면 낡는다 — 실 수집이 돌면 덮어쓴다.
-                        ScheduleProvenance.API));
+                        s.sourceUrl() == null ? "https://www.q-net.or.kr/" : s.sourceUrl(),
+                        // 수집 당시의 출처를 그대로 되살린다 — 스크래핑해 온 것을 API 로 표시하면
+                        // "시행처 확인 필요" 배지가 사라져 사용자가 추정치를 확정으로 읽는다.
+                        provenance(s.provenance())));
             }
         }
         log.info("[{}] 큐넷 일정 스냅샷 {}종 → {}건 (수집일 {})",
                 sourceId(), file.exams().size(), out.size(), file.collectedAt());
         return out;
+    }
+
+    /** 예전 스냅샷(큐넷만 담던 시절)에는 출처 칸이 없다 — 그건 전부 실 API 값이었다. */
+    private ScheduleProvenance provenance(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return ScheduleProvenance.API;
+        }
+        try {
+            return ScheduleProvenance.valueOf(raw);
+        } catch (IllegalArgumentException e) {
+            return ScheduleProvenance.API;
+        }
     }
 
     private ExamType parseType(String raw) {
@@ -136,6 +148,7 @@ public class QnetSeedScheduleSource implements ScheduleSource {
     @JsonIgnoreProperties(ignoreUnknown = true)
     record SeedSchedule(int year, int round, String examType,
                         String regStartAt, String regEndAt,
-                        String examStartDate, String examEndDate, String resultDate) {
+                        String examStartDate, String examEndDate, String resultDate,
+                        String provenance, String sourceUrl) {
     }
 }

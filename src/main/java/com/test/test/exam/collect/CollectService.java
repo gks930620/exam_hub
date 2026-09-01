@@ -73,6 +73,21 @@ public class CollectService {
         }
     }
 
+    /**
+     * 지정한 종목만 다시 수집 — 매니저의 "다시 받아오기"(AdminCollectController).
+     * 전량 수집 중 일시 오류로 빈 종목을 그 수만큼의 호출로 채운다.
+     */
+    public void collectByCodes(List<String> sourceCodes) {
+        for (ScheduleSource source : sources) {
+            try {
+                runSource(source, source.fetchByCertificateCodes(sourceCodes));
+            } catch (Exception e) {
+                log.error("[Collect] source={} 재수집 실패 — 다른 소스는 계속합니다: {}",
+                        source.sourceId(), e.toString());
+            }
+        }
+    }
+
     /** 접수 임박 종목 재확인 (17:00 배치). 7일 이내 접수 시작 종목만. */
     public void collectImminent() {
         LocalDateTime now = TimeUtil.now();

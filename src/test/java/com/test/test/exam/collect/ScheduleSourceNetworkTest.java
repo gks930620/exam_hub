@@ -43,9 +43,9 @@ class ScheduleSourceNetworkTest {
     }
 
     @Test
-    @DisplayName("큐넷 일정 스냅샷은 파일만 읽는다")
-    void qnet_snapshot_is_offline() {
-        assertFalse(new QnetSeedScheduleSource(new ObjectMapper()).usesNetwork());
+    @DisplayName("일정 스냅샷은 파일만 읽는다")
+    void snapshot_is_offline() {
+        assertFalse(new SnapshotScheduleSource(new ObjectMapper()).usesNetwork());
     }
 
     @Test
