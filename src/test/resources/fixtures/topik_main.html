@@ -1,0 +1,3417 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="ko">
+<head>
+<meta name="description" content="TOPIK 한국어 능력시험">
+<title>
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	메인화면 : TOPIK 한국어능력시험 
+	 
+	
+	 
+	 
+	 
+	 
+	 
+	
+ 
+</title>
+
+<meta charset="utf-8">
+<meta name="description" content="TOPIK 한국어능력시험">
+<meta name="viewport" id="meta_viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<script type="text/javascript" src="/asset/vendor/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+var jb = jQuery.noConflict();
+//]]>
+</script>
+
+
+<script type="text/javascript" src="/asset/vendor/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+jQuery.noConflict();
+//]]>
+</script>
+
+<script type="text/javascript" src="/asset/vendor/jquery/jquery.form.js"></script>
+
+<script type="text/javascript" src="/asset/vendor/jquery/jquery-ui-1.13.3.min.js"></script>
+<script type="text/javascript" src="/asset/vendor/materialize/js/materialize.js"></script>
+<script type="text/javascript" src="/asset/vendor/jquery/jquery.validate.js"></script>
+<script type="text/javascript" src="/asset/vendor/swiper/js/swiper.min.js"></script>
+<script type="text/javascript" src="/asset/vendor/a5/js/spark-md5.min.js"></script>
+<script type="text/javascript" src="/asset/vendor/a5/js/jszip.js"></script>
+<script type="text/javascript" src="/asset/vendor/a5/js/a5previewlib.js"></script>
+<script type="text/javascript" src="/asset/vendor/a5/js/a5previewbulk.rel.js"></script>
+<script type="text/javascript" src="/asset/vendor/a5/js/a5preview.rel.js"></script>
+<script type="text/javascript" src="/asset/vendor/a5/js/a5Topik.js"></script>
+
+<link href="/asset/vendor/swiper/css/swiper.css" rel="stylesheet">
+
+
+<script type="text/javascript" src="/asset/js/tab.js"></script>
+<script type="text/javascript" src="/asset/js/common.js"></script>
+<script type="text/javascript" src="/asset/js/ui_common.js"></script>
+
+	<script type="text/javascript" src="/asset/js/messges_ko.js"></script>
+
+
+<script type="text/javascript" src="/asset/js/ajaxcom.js"></script>
+<script type="text/javascript" src="/asset/js/validator.js"></script>
+<script type="text/javascript" id="script_mobile" src=""></script>
+<!-- 메뉴 적용  -->
+<script type="text/javascript" src="/asset/js/menu.js"></script>
+
+<!-- xtractor -->
+
+
+<!-- favicon -->
+<link rel="icon" type="image/png" href="/asset/icon/favicon/icon.png">
+<link rel="apple-touch-icon" href="/asset/icon/favicon/icon.png">
+<link rel="shortcut icon" href="/asset/icon/favicon/favicon.ico">
+<link rel="manifest" href="/asset/icon/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/asset/icon/favicon/icon.png">
+<meta name="theme-color" content="#fafafa">
+
+<!-- CSS reset -->
+
+<!-- 공통 CSS -->
+<link href="/asset/css/common.css?ver=1.0" rel="stylesheet">
+<link href="/asset/css/layout.css?ver=1.0" rel="stylesheet">
+<link href="/asset/css/sub.css?ver=1.0" rel="stylesheet">
+<link href="/asset/css/lang_ko.css" rel="stylesheet">
+
+<link href="" id="styleid" rel="stylesheet">
+<!-- font -->
+<!-- 타이틀 폰트 -->
+<!-- 나눔스퀘어체 -->
+<link href="/asset/font/ko/NanumSquare/nanumsquare.css" rel="stylesheet">
+<!-- 본문 폰트 -->
+<!-- NotoSans kr -->
+<link href="/asset/font/ko/NotoSans/NotoSans.css" rel="stylesheet">
+<!-- icon xeicon https://xpressengine.github.io/XEIcon/ -->
+<link href="/asset/icon/XEIcon/xeicon.min.css" rel="stylesheet">
+
+
+
+<script>
+//PC용 뒤로가기 이벤트
+var backControl = function(callbackFunction) { 												//window 내 mouse 위치 여부를 체크하기 위한 변수 
+	window.innerDoc = false; 																			//mouseover Event Listener 
+	window.addEventListener('mouseover', function(event) { 
+		window.innerDoc = true; 
+	}); // mouseout Event Listener 
+	window.addEventListener('mouseout', function(event) { 
+		window.innerDoc = false; 
+	}); 																										// 바로 이전 페이지로 이동하는 것을 막기위해 history State 추가 
+	history.pushState({page:"first"}, document.title, location.pathname + '#first'); 	//popstate Event Listener 
+	window.addEventListener('popstate', function(event) { 									// history State 추가하여 페이지 이동 막음 (뒤로가기 막기) 
+		history.pushState({page:"historyChanged"
+	}, 
+	document.title, location.pathname + '#changed'); 
+	// window 영역 밖에서 history가 변경 됐을경우 callbackFunction 실행 ( 뒤로가기 버튼 등 )
+	// 이전 POST 페이지에 정상적으로 데이터 재전송하여 SUBMIT 등 수행 
+	if (!window.innerDoc) { 
+		callbackFunction();
+	} 
+}); 
+}
+
+//모바일용 뒤로 가기 이벤트
+//window.onpageshow = function(event) {
+
+//    if ( event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+		// Back Forward Cache로 브라우저가 로딩될 경우 혹은 브라우저 뒤로가기 했을 경우
+//	}
+
+//}
+
+/*
+function isMobile() {
+	var result = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+	if(navigator.maxTouchPoints > 4) {
+		result = true;
+	}
+	//alert (result) ;
+    return result;
+}
+*/
+
+
+/*
+function isMobile() {
+	let defaultInnerHeight = window.innerHeight;
+	return navigator.maxTouchPoints && window.innerHeight !== defaultInnerHeight;
+}
+*/
+
+var isMobile = function(e) { 
+	try { 
+		document.createEvent("TouchEvent"); 
+		return true; 
+	} catch (e) { 
+			return false; 
+	} 
+};
+
+
+
+function isiPad(){// touchPoints = 5 면 아이패드
+	var result = /Macintosh/i.test(navigator.userAgent);
+
+    return result;
+}
+
+
+
+
+if (isMobile()) {
+   // 모바일이면 실행될 코드 들어가는 곳
+	console.log("mobile 접속"); 
+	jQuery("#styleid").attr("href","/asset/css/mobile.css");
+	jQuery("html").addClass("mobile");
+	jQuery.getScript("/asset/js/ui_mobile.js");
+
+	if(isiPad()) {
+		jQuery("#meta_viewport").attr("content","width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no")
+	} else {
+		jQuery("#meta_viewport").attr("content","width=device-width,initial-scale=0.7,minimum-scale=0.7,maximum-scale=0.7,user-scalable=no")
+	}
+	
+	//모바일 막을때
+	//////////////////////////////////////////////////////////////////////	
+	//location.href="/intro_mobile.html";
+	///////////////////////////////////////////////////////////////////////
+} else {
+	
+	//console.log("pc 접속") ;
+	jQuery("#styleid").attr("href","/asset/css/pc.css");
+	jQuery("html").addClass("pc");
+	jQuery("#meta_viewport").attr("content","width=1200px");
+	jQuery.getScript("/asset/js/ui_pc.js");
+	
+}
+
+</script>
+
+<!--  
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HKESKMTCDR"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-HKESKMTCDR');
+</script>
+-->
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	//jQuery("#container").width(jQuery(window).width()); 
+});
+</script>
+</head>
+<body class="ko">
+	<!-- skip-navigation -->	
+	<div class="skip">
+        <dl>
+            <dt class="hide">바로가기 메뉴</dt>
+            <dd>
+                <a href="#container">본문 바로가기</a>
+            </dd>
+        </dl>
+    </div>
+	<!-- //skip-navigation -->
+	<!--[if IE]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  	<![endif]-->
+	<div class="loading_box">
+		<div class="lds-roller">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+		<div class="loading_text"></div>
+	</div>
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+	a.romote_btn_header {
+	margin-left:15px;
+    display: inline-block;
+    box-sizing: border-box;
+    box-shadow: 0 0 2px rgb(0 0 0 / 10%);
+    padding: 0 12px 0 33px; 
+    margin-bottom: 0;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 0px solid transparent;
+    border-radius: 100px;
+    font-family: "nsk_r";
+    font-size: 13px;
+    color: #fff;
+    background-color: #1d92af;
+    border: 1px solid #1d92af;
+    min-width: 90px;
+    height: 22px;
+    line-height: 18px;
+    position: relative;
+    top:-1px;
+    background-image: url(/asset/image/btn_remote.png);
+    background-repeat: no-repeat;
+    background-position: 8px 1px;
+	}
+	a.romote_btn_heade:link,a.romote_btn_heade:visited {color:#fff}
+	a.romote_btn_heade:hover,a.romote_btn_heade:active {color: #DED200 !important;}			 			
+</style>
+
+<script>
+	jQuery(document).ready(function() {
+		var cookie = fnGetCookie("header_banner");
+		if (cookie == 'done') {
+			jQuery(".header_banner").hide();
+		}
+		fnTWMAIN0014('1');//상단 팝업
+		
+		var $this;
+		jQuery("#btnTotSearchOpen").click(function(){
+			$this = jQuery(this);
+			jQuery(".search_modal").attr("tabindex", 0).show().focus();
+			modalOpen('.search_modal');
+			modalClose('.noti_modal');
+		});
+		
+		jQuery("#btnTotSearchClose").click(function(){
+			jQuery('.search_modal').hide();
+			$this.focus();
+		});
+		
+	});
+
+	function fnTodayBannerClose() {
+		fnSetCookie("header_banner", "done", 1);
+		jQuery(".header_banner").css("display", "none");
+	}
+	
+	function fnTWMAIN0014(popupTy) {
+		jQuery.ajax({
+		    url: "/TWMAIN/TWMAIN0013.do",
+		    data: {
+		    	  "popupTy" : popupTy
+		    },
+		    dataType: "json",
+		    type: "POST",
+		    async: true,
+		    success: function (responseJson) {
+		   	    var slideDivTop = '';
+		    	var dataListTop = responseJson.DATA_LIST;
+		    	var total_countTop = responseJson.TOTAL_COUNT;
+		    	var target  = "";
+		    	var urlTop = "";
+		    	if(total_countTop ==0){
+		    	}else{
+		    		for(var i=0; i < total_countTop; i++) {
+		    			 var popupIdTop = dataListTop[i].popupId;
+			    		 var popupSjNmTop = dataListTop[i].popupSjNm;
+			    		 var hmpgCntntsCnTop = dataListTop[i].hmpgCntntsCn;
+			    		 var fileStreCoursTop = dataListTop[i].fileStreCours;
+			    		 var streFileNmTop = dataListTop[i].streFileNm;
+			    		 var orignlFileNmTop = dataListTop[i].orignlFileNm;			
+			    		 var hmpgLinkUrlTop= dataListTop[i].hmpgLinkUrl;						//링크
+			    		 var hmpgPageCnncTop= dataListTop[i].hmpgPageCnnc;				//새창 이동/SELF  이동
+			    		 var stopvewSetupAtTop= dataListTop[i].stopvewSetupAt;			//오늘하루 안보기
+			    		 
+			    		 if(fileStreCoursTop != "") {
+			    			 urlTop = 'background-image:url(\'/topik/cm/comm/getImgView.do?fileNamePhy='+streFileNmTop+'&filePath=/popup/\')';
+			    		 } else {
+			    			 urlTop = '';
+			    		 }
+			    		 
+			    		 
+			    		 slideDivTop += ' 							<div class="swiper-slide"> ';
+			    		 slideDivTop += ' 								<div class="hdader_bg" style='+urlTop+'>';
+			    		 slideDivTop += ' 									<div class="inner">  ';
+						 slideDivTop += ' 										<div class="banner_contents">  ';
+						 
+						 if(hmpgPageCnncTop == '1') {
+							 target = "_self";
+						 } else {
+							 target = "_blank";
+						 }
+						 if((hmpgPageCnncTop == '1' ||  hmpgPageCnncTop == '2') && hmpgLinkUrlTop == '') {
+							 slideDivTop += ' 											'+hmpgCntntsCnTop;							 
+						 } else {
+							 slideDivTop += ' 											<a href="'+hmpgLinkUrlTop+'" target="'+target+'">'+hmpgCntntsCnTop+'</a>';	 
+						 }
+						 slideDivTop += ' 										</div>  ';
+						 if(stopvewSetupAtTop == '1') {
+							 slideDivTop += ' 										<a class="today" href="javascript:fnTodayBannerClose()">오늘 하루 그만보기</a> ';
+							 slideDivTop += ' 										<a href="javascript:banner_close()" class="close"><span class="sr_only">닫기</span></a>';	 
+						 }
+						 
+						 slideDivTop += ' 									</div> ';
+						 slideDivTop += ' 								</div>  ';
+						 slideDivTop += ' 							</div>  ';
+		    		};
+		    		// console.log(slideDivTop);
+		    		jQuery('#swiper-wrapper_Topdiv').html(slideDivTop);
+					if (isMobile()) {
+					    // 모바일
+					} else {
+						var headerSwiper = null;
+						jQuery(document).ready(
+								function(jQuery) {
+								coverSwiper = new Swiper('.header_swipe', {
+								speed : 400,
+								spaceBetween : 0,
+								navigation : {
+									nextEl : '.swiper-button-next',
+									prevEl : '.swiper-button-prev',
+								},
+								//autoplay : {
+									//delay : 5000,
+								//},
+							    keyboard: {
+								       enabled: true,
+								}
+							});
+						});
+					}
+		    	}
+		    }
+		});
+	}
+	
+	//반복클릭 방지함수
+	function clickSleep(){
+		jQuery("#btnDisabled").css("pointerEvents", "none");
+		
+		setTimeout(function(){
+			jQuery("#btnDisabled").css("pointerEvents", "auto");
+		},3000);
+		
+		jQuery.ajax({
+		    url: "/TWMAIN/TWMAIN0014.do",
+		    dataType: "json",
+		    type: "POST",
+		    async: true,
+		    success: function (responseJson) {
+		    	 if( responseJson.DATA_LIST.length > 0 ) {
+		    		location.href="https://register.topik.go.kr/login.do";
+		    	} else {
+		    		alert('시험 접수기간이 아닙니다. 접수 일정을 확인해 주세요.');
+		    		//location.href="/TWGUID/TWGUID0020.do?searchGubun=ALL";
+		    	}
+		    }
+		});
+	}
+ 
+	//세션 초 함수
+    var iSecond; // 초 단위로 환산
+    var timerChecker = null;
+
+
+
+    function fnClearTime(){
+        iSecond = 3600;
+    }
+
+    Lpad = function(str, len){
+        str = str + "";
+        while(str.length < len){
+            str = "0" + str;
+        }
+        return str;
+    }
+
+    fnInitTimer = function(){
+        var timer = document.getElementById("timer");
+        rHour = parseInt(iSecond/3600);
+        rHour = rHour % 60;
+        rMinute = parseInt(iSecond/60);
+        rMinute = rMinute % 60;
+        rSecond = iSecond % 60;
+        if(iSecond > 0){
+            timer.innerHTML = /* "&nbsp;" + Lpad(rHour, 2) + "시간" +  */Lpad(rMinute, 2) + ":" + Lpad(rSecond,2) + "";
+            iSecond--;
+            timerCheker = setTimeout("fnInitTimer()", 1000); // 1 초 간격으로 체크
+        }else{
+        	alert("세션타임아웃으로 로그아웃 됩니다.");
+            location.href= "/TWMBER/TWMBER0011.do";
+        }
+    }
+
+    function fnRefreshTimer(){
+    	jQuery.ajax({
+		    url: "/TWMAIN/dummy.do",
+		    dataType: "json",
+		    type: "POST",
+		    success: function (responseJson) {
+		    	  fnClearTime();
+		    }
+		});
+    }
+
+	jQuery(document).ready( function() {
+						jQuery("#total_search_btn").click(function() {
+											fnTotalSearch();
+										});
+
+						jQuery("#totalSearchText")
+								.keydown(
+										function(e) {
+											if (e.keyCode == 13) {
+												fnTotalSearch();
+											}
+										});
+						jQuery("#total_search_form")
+								.validate(
+										{
+											ignore : "",
+											rules : {
+												"totalSearchText" : {
+													required : true,
+													minlength : 2
+												}
+											},
+											messages : {
+												"totalSearchText" : {
+													required : cfGetMsg(
+															VMSG_ERR_REQUIRED_ITEM,
+															new Array(
+																	REQUIRED_TOTAL_SEARCH)),
+													minlength : cfGetMsg(
+															VMSG_ERR_MIN_LENGTH,
+															new Array(
+																	REQUIRED_TOTAL_SEARCH +" 2"))
+												}
+											}
+										});
+					});
+
+	function fnTotalSearch() {
+		var totalSearchText = jQuery(
+				"#totalSearchText").val();
+		totalSearchText = encodeURI(totalSearchText);
+		jQuery("#total_search_form").attr(
+				"action",
+				"/TWMAIN/TWMAIN0030.do?searchText="
+						+ totalSearchText);
+		jQuery("#total_search_form").submit();
+	}
+	
+	
+	//메뉴가 로딩이 안되는 사례가 있다고 하여 새로고침(임성규실무관)
+	//마이페이지-회원정보수정 jsp에서 사용중인 window.onload랑 겹쳐서 addEventLister사용
+	window.addEventListener('load', function() {
+		
+		//세션 체크 window.onload 하나로 합침
+		
+    });
+	
+</script>
+
+<div class="header_banner">
+	<div class="swiper-container header_swipe">
+		<div class="swiper-wrapper" id="swiper-wrapper_Topdiv"></div>
+		<!-- If we need navigation buttons -->
+		
+		<a href="#none" class="swiper-button-prev" title="이전" tabindex="0"><span class="sr_only">이전</span></a>
+		<a href="#none" class="swiper-button-next" title="다음" tabindex="0"><span class="sr_only">다음</span></a>
+		
+	</div>
+</div>
+
+<div class="header">
+	<div class="inner">
+		<!-- 토픽 로고 -->
+		<h1 class="header_logo" onClick="">
+			<a href="javascript:goMenu('TWMAIN0010')" class="logo" title="TOPIK 한국어 능력 시험"><span class="sr_only">TOPIK 한국어 능력 시험</span></a>
+		</h1>
+		<!-- 왼쪽 버튼 -->
+		<div class="btns_box">
+		
+	        
+	        
+			
+					
+			
+			
+				
+				
+				
+				
+			
+			<!-- 시험접수 -->
+			
+				
+				
+					<!-- 단체가 아닌경우 -->
+					<a href="javascript:void(0);" onclick="clickSleep();return false" id="btnDisabled" class="btns btns_m btns_ok" title="시험접수">시험접수</a>
+				
+			
+			<!-- 성적확인 -->
+			
+				
+				
+					<!-- 로그인 안되어있으면 비회원 성적확인 -->
+					<a href="/TWMYPG/TWMYPG0060-001.do" class="btns btns_m btns_ok" title="성적확인">성적확인</a>
+				
+			
+			
+		</div>
+		<!-- 상단 버튼 -->
+		<div class="sub_header">
+			<!-- 모바일용 -->
+			<div class="mobile_view notice_box">
+							
+			<div class="mobile_view mobile_footer">
+				<!-- 모바일 전용 풋터 -->
+				<a href="/"><span>홈</span></a>
+				<a href="/TWGUID/TWGUID0020.do?searchGubun=ALL"><span>시험접수</span></a>
+				
+					
+					
+						<a href="/TWMYPG/TWMYPG0060-001.do"  title="성적확인"><span>성적확인</span></a>
+					
+				
+				<a href="/TWGUID/TWGUID0110.do"><span>성적증명서 진위확인</span></a>
+				
+				
+					<a href="/TWMBER/TWMBER0010.do" class="login" title="로그인"><span>로그인</span></a>
+				
+				</div>
+				<div class="menu_view" onClick="menu_view()">
+					<span class="hide">전체메뉴</span>
+				</div>
+			</div>
+<script>
+
+var G_lang="ko";
+jQuery(document).ready(function(){	
+	if(G_lang == '') G_lang ="ko";
+	
+	jQuery('#lang_'+G_lang).prop("class","active");
+	
+	if(G_lang == "ko") 	jQuery('#selectLocaleNm').text("한국어");
+	if(G_lang == "en") 	jQuery('#selectLocaleNm').text("English");
+	if(G_lang == "zh_CN") 	jQuery('#selectLocaleNm').text("中文");
+});
+
+
+function fnSetLlcale(lang) {
+    location.href="/topik/cm/comm/changeLocale.do?locale="+lang;
+};
+
+
+
+
+</script>
+
+
+			<!-- PC용 -->
+			<div class="mobile_gnb">
+				<div class="mobile_menu">
+					<div class="header_tools">
+					
+					
+						<!-- 로그인 안되어있을때 로그인, 회원가입 -->
+						<ul class="header_user logout">
+							<li><a class="btns_link btn_login" href="#none"
+								onClick="goMenu('TWMBER0010')" title="로그인"> 로그인 </a></li>
+							<li><a class="btns_line btn_join"
+								onClick="goMenu('TWMBER0070')" href="#none" title="회원가입"> 회원가입 </a></li>
+						</ul>
+						<div class="mobile_view user_name">
+							TOPIK에<br> 로그인 하세요!
+						</div>
+					
+
+					
+						<!-- 언어변경 -->
+						<a href="#none" class="chg_lang dropdown-trigger" data-target="chg_lang">
+							<span id="selectLocaleNm"></span>
+							<svg class="caret" height="24" focusable="false" viewBox="0 0 24 24" width="24"
+								xmlns="http://www.w3.org/2000/svg">
+								<path d="M7 10l5 5 5-5z"></path>
+								<path d="M0 0h24v24H0z" fill="none"></path>
+							</svg>
+						</a>
+						<!-- 언어변경 드롭다운 -->
+						<ul id='chg_lang' class="dropdown-content">
+							<li id="lang_ko" class=""><a class=""	 href="javascript:fnSetLlcale('ko');" title="한국어">한국어</a></li>
+							<li id="lang_en" class=""><a class="" 	href="javascript:fnSetLlcale('en');" title="English">English</a></li>
+							<li id="lang_zh_CN" class=""><a class=""	 href="javascript:fnSetLlcale('zh');" title="中文">中文</a></li>
+						</ul>
+						<!-- 모바일 메뉴닫기 -->
+						<div class="mobile_view menu_close" onClick="menu_close()"></div>
+						
+						<!-- 통합검색 -->
+						<a class="total_search" id="btnTotSearchOpen" href="#none" title="통합검색">
+							통합검색
+						</a> 
+						<!-- 전체메뉴 -->
+						<a class="sitemap" title="전체메뉴" href="javascript:goMenu('TWETCS0050')">
+							전체메뉴
+						</a>
+						<!-- 원격지원 -->
+						<a href="http://as82.kr/topik/" target="_blank" class="romote_btn_header" title="원격지원 새창">
+					    	원격지원
+					    </a>
+					    <!-- 통합검색 검색창 -->
+						<div class="local_modal_box search_modal">
+							
+							<div class="modal">
+								<div class="modal_body form_inline">
+									<div class="input-field">
+										<form id="total_search_form" name="total_search_form" action="/TWMAIN/TWMAIN0010.do" method="post">
+											<input type="text" id="tempInput" name="tempInput"
+												style="display: none" />
+											<input type="text" id="totalSearchText"
+												name="totalSearchText" class="line_input"
+												placeholder="검색어를 입력하세요                                           " title="검색어" />
+										</form>
+									</div>
+									<a href="#none" id="total_search_btn" class="btns btns_m btns_ok"  title="검색">검색</a>
+									<a href="#none" id ="btnTotSearchClose" class="btns btns_m"   title="닫기">닫기</a>										
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- 오른쪽 버튼 -->
+	<div class="gnb_box">
+		<div class="inner">
+			<div class="gnb"></div>
+		</div>
+		<div class="sub_menu">
+			<div class="inner"></div>
+		</div>
+	</div>
+
+</div>
+
+	<div id="container">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 본문 시작 ------------------------------------------>
+
+
+<script type="text/javascript">
+
+	var coverSwiper = null;
+	jQuery(document).ready(function(){
+		
+		/* 영어, 중국어 일때 응시규정 화면이 없으므로 시험개요로 연결_240721 */
+		var lang = jQuery("#selectLocaleNm").text();
+		if(lang != "한국어"){
+			jQuery("#container > article > div > section:nth-child(4) > div > button:nth-child(1)").attr("onclick", "location.href='/TWGUID/TWGUID0010.do'");
+		}
+		
+		/* 접수 기간 여부 확인 */
+		fnIsReceipt();
+		
+		/* 레이어 팝업공지 닫기 확인 */
+		jQuery('.main_modal').hide();
+		var cookie = fnGetCookie("mainpopup");
+		if(cookie != 'done'){
+			/* 레이어 팝업공지 조회 */
+			fnTWMAIN0013('2');
+		}
+		 
+		/* 모바일 레이어 팝업공지 닫기 확인 */
+		var mobileCookie = fnGetCookie("mobileMainpopup");
+		if (mobileCookie == 'done') {
+			modalClose('.main_mobile_modal');
+		}
+		 
+		/* 좌상단 베너 조회 */
+		fnTWMAIN0015('3');
+		
+		/* 우상단 토픽 일정 조회 */
+		fnTWMAIN0011();
+		
+		/* 하단 공지사항 조회 */
+		fnTWMAIN0012();
+		
+		/* 최상단 날짜생성, 현재 년도 */
+		var today = new Date();
+		var year = today.getFullYear();
+		/* 모바일에서 하단 메뉴 닫기 및 일정 세팅 */
+		if (isMobile()) {
+			jQuery(".typePc").hide();
+			jQuery(".schedule.typePc").hide();
+			jQuery(".mt30.typePc").hide();
+			jQuery(".mt10.typePc").hide();
+			jQuery(".quick_menu").hide();
+			jQuery("#id_twguid0020_mobile_title").text(year + "년도 한국어능력시험 일정 보기"); /* 일정표 상단 xxxx년도 한국어능력시험 일정 보기 세팅 */
+		 }else{
+			jQuery("section[name=mobile_sec]").hide();
+			jQuery("#id_twguid0020_title").text(year + "년도 한국어능력시험 일정 보기"); /* 일정표 상단 xxxx년도 한국어능력시험 일정 보기 세팅 */
+		 }
+	});
+	
+	/* 레이어 팝업공지 조회 */
+	function fnTWMAIN0013(popupTy) {
+		var  data  = "popupTy=" + popupTy;
+		fnAjaxTransmit("/TWMAIN/TWMAIN0013.do?gubun=13", data);
+	}
+	/* 레이어 팝업공지 닫기 */
+	function fnPopupClose() {
+		fnSetCookie("mainpopup","done",1);
+		modalClose('.main_modal');
+	}
+	/* 모바일 레이어 팝업공지 닫기 */
+	function fnMobilePopupClose() {
+		fnSetCookie("mobileMainpopup","done",1);
+		modalClose('.main_mobile_modal');
+	}
+	/* 좌상단 베너 조회 */
+	function fnTWMAIN0015(popupTy) {
+		var  data  = "popupTy=" + popupTy;
+		fnAjaxTransmit("/TWMAIN/TWMAIN0013.do?gubun=15", data);
+	}
+	/* 하단 공지사항 조회 */
+	function fnTWMAIN0012(popupTy) {
+		fnAjaxTransmit("/TWMAIN/TWMAIN0012.do", "");
+	}
+	/* 하단 공지사항 클릭시 이동 */
+	function fnContent(bbsId,nttId){
+		var callUrl = "/TWINFO/TWINFO0011.do?bbsId="+bbsId+"&nttId="+nttId;
+		location.href = callUrl;
+	}
+	/* 버튼 색 변경용 */
+	function fnIsReceipt(isClick) {
+		jQuery.ajax({
+		    url: "/TWMAIN/TWMAIN0014.do",
+		    dataType: "json",
+		    type: "POST",
+		    async: true,
+		    success: function (responseJson) {
+		    	/* 클릭한 경우 / 화면로드 분기 */
+		    	if(isClick){
+		    		if( responseJson.DATA_LIST.length > 0 ) {
+			    		location.href="https://register.topik.go.kr/login.do";
+			    	} else {
+			    		alert('시험 접수기간이 아닙니다. 접수 일정을 확인해 주세요.');
+			    	}
+		    	}
+		    }
+		});
+	}
+	/* 클릭이벤트용 */
+	
+	/* 토픽 일정 조회 */
+	function fnTWMAIN0011() {
+		var slideDiv = '';
+		
+			
+			
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+						 	rceptChkNm = '<dt>접수중</dt>';<!--접수중-->
+						 	rceptChkClass = 'on';	 	
+					 	
+					 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+							rceptUrl = "javascript:authUrl('P','T0109')";	 	
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(0 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						slideDiv += '		<span class="on" style="margin-bottom: 10px;">' + rceptChkNm + '</span>';
+						
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>한국어능력시험 제109회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 11. 15.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 9. 1. ~ 9. 7.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 12. 22. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(0 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+							rceptChkNm = '접수전';
+						 	rceptChkNm = '<dt>접수전</dt>';<!--접수전-->
+							rceptChkClass = '';		 	
+						
+						
+					 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(1 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+						
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 IBT 제16회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 11. 28.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 9. 15. ~ 9. 21.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 12. 18. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(1 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+							rceptUrl = "javascript:authUrl('S','A0010')"; 	
+					 	
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(2 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 말하기 평가 제10회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 3. 21.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 1. 13. ~ 1. 19.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 4. 13. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(2 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+							rceptUrl = "javascript:authUrl('P','T0104')";	 	
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(3 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>한국어능력시험 제104회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 1. 11.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2025. 12. 9. ~ 12. 15.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 2. 12. (15:45)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(3 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+							rceptUrl = "javascript:authUrl('P','T0105')";	 	
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(4 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>한국어능력시험 제105회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 4. 12.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 1. 27. ~ 2. 2.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 5. 29. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(4 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+							rceptUrl = "javascript:authUrl('P','T0106')";	 	
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(5 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>한국어능력시험 제106회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 5. 17.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 3. 10. ~ 3. 16.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 6. 25. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(5 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+							rceptUrl = "javascript:authUrl('P','T0107')";	 	
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(6 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>한국어능력시험 제107회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 7. 5.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 5. 12. ~ 5. 18.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 8. 13. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(6 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+							rceptUrl = "javascript:authUrl('P','T0108')";	 	
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(7 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>한국어능력시험 제108회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 10. 18.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 8. 4. ~ 8. 12.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 12. 10. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(7 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(8 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 IBT 제11회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 2. 28.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2025. 12. 16. ~ 12. 22.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 3. 20. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(8 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+							rceptUrl = "javascript:authUrl('S','A0011')"; 	
+					 	
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(9 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 말하기 평가 제11회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 6. 13.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 4. 7. ~ 4. 13.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 7. 6. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(9 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(10 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 IBT 제12회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 3. 21.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 1. 13. ~ 1. 19.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 4. 10. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(10 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+							rceptUrl = "javascript:authUrl('S','A0012')"; 	
+					 	
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(11 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 말하기 평가 제12회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 10. 24.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 8. 18. ~ 8. 24.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 11. 16. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(11 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(12 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 IBT 제13회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 6. 13.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 4. 7. ~ 4. 13.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 7. 3. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(12 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(13 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 IBT 제14회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 9. 12.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 7. 7. ~ 7. 13.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 10. 2. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(13 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(14 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 IBT 제15회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 10. 24.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 8. 18. ~ 8. 24.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 11. 13. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(14 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+				
+					/* 접수 상태 확인 */
+					var rceptChkNm = '';
+					var rceptChkClass = '';
+					
+						
+						
+					 	
+						 	rceptChkNm = '<dt>접수마감</dt>';<!--접수마감-->
+							rceptChkClass = '';	 	
+				 	 	
+					
+					
+					/* 시험 타입 확인 */
+					var rceptUrl = '';
+					
+						
+						
+							rceptUrl = "javascript:authUrl('S','S0005')"; 	
+					 	
+						
+					 	
+				 	
+				 	
+				 	/* 국내시험일  20xx. xx. xx. */
+					
+						
+					
+					
+						
+												
+						
+					
+					/* 20xx. xx. xx. */
+					
+					/* xx. xx. */
+					
+					
+					/* 접수 시작일 20xx. xx. xx. */
+				 	
+				 	
+					
+					
+						 
+					
+					
+					
+					/* 접수 종료일 20xx. xx. xx. */
+					
+						
+					
+					
+						
+					
+					
+					
+					/* 성적발표일 xxxx. xx. xx */
+					
+						
+					
+					
+						
+						
+					
+					
+					
+
+				 	/* 화면 테그 시작 */
+				 	if (isMobile()) {
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 35px;">'; 
+				 		/* 모바일인 경우 2열씩 보여주기위해 추가 */
+/* 			 			if(15 % 2 == 0){
+			 				slideDiv += '<div class="swiper-slide">';
+			 			}
+			 				slideDiv += '	<div class="info_box" style="float:left;padding:0px 25px 0px 20px;">'; */
+				 	}else{
+					 	slideDiv += '<div class="swiper-slide">';
+					 	 slideDiv += '	<div class="info_box" style="float:left;margin:0px 0px 0px 15px;">'; 
+				 	}
+					
+					/* slideDiv += '		<div class="sch_box">'; */
+					
+				 	/* 접수 상태 세팅 */
+					
+						
+						
+						
+						slideDiv += '		<span class="'+rceptChkClass+'" style="margin-bottom: 10px;">'+rceptChkNm+'</span>  ';
+						
+					
+
+					slideDiv += '			<br/>';
+					/* 시험타입 텍스트 세팅 */
+					slideDiv += '		<strong>토픽 말하기 평가(시범시행) 제5회</strong>';
+					
+					/* 시험 상세 내용 세팅 */
+					slideDiv += '		<dl>';
+					slideDiv += '			<dt>국내시험일</dt>'; /* 국내시험일 */
+					slideDiv += '			<dd>2026. 7. 25.</dd>';
+					
+					slideDiv += '			<dt><b>국내</b>접수기간</dt>';
+					slideDiv += '			<dd>2026. 7. 1. ~ 7. 3.</dd>';
+					
+					slideDiv += '			<dt><b>국외</b>접수기간</dt>';
+					slideDiv += '			<dd><a href="/TWGUID/TWGUID0020.do" > 국가/지역별 접수일정 </a></dd>';
+					slideDiv += '			<dt>성적발표</dt>';
+					slideDiv += '			<dd>2026. 8. 25. (15:00)</dd>';
+					slideDiv += '		</dl>';
+					
+					slideDiv += '		</div>';
+			
+					 slideDiv += '	</div>'; 
+					if (isMobile()) {
+			 			if(15 % 2 != 0){
+			 				slideDiv += '</div>';		
+			 			}
+				 	}else{
+						slideDiv += '</div>';
+				 	}
+					
+					/* 화면 테그 종료 */
+				
+			
+		
+		
+		if (isMobile()) {
+			jQuery('#swiper-wrapper_mobile_div').html(slideDiv);
+		}else{
+			// pc
+			jQuery('#swiper-wrapper_div').html(slideDiv);	
+			var schSwiper = new Swiper('.sch_swipe.typePc', {
+				speed : 400,
+				spaceBetween : 0,
+				navigation : {
+					nextEl : '.swiper-button-next._sch',
+					prevEl : '.swiper-button-prev._sch',
+				},
+				slidesPerView : 3,
+			    keyboard: {
+			       enabled: true,
+			    }
+			});
+		}
+	}
+	
+	/* fnAjaxTransmit 콜백 */
+	function fn_callBack(calback_id, result, textStatus) {
+		if(calback_id=='TWMAIN0012') {
+			/* 하단 공지사항 조회 */
+			var noticeDiv = '';
+			var dataList = result.DATA_LIST;
+			var total_count = result.TOTAL_COUNT;
+			
+			/* 하단 공지사항 클릭시 이동 */
+			for(var i=0; i < total_count; i++) {
+				var nttSj = dataList[i].nttSj;
+				var bbsId = dataList[i].bbsId;
+				var nttId = dataList[i].nttId;
+				noticeDiv += '<li><a href="javascript:fnContent(\''+bbsId+'\',\''+nttId+'\')">'+nttSj+'</a></li>';
+			}
+			jQuery('.notice_list').html(noticeDiv);
+			
+		}else if(calback_id=='TWMAIN0013?gubun=15') {
+			/* 좌상단 베너 조회 */
+			//var slideDivBanner = '<div class="swiper-slide"><img src="/asset/image/rePub/mainswiper.jpg" alt="" /></div>'; /* 임시추가 기존 = '' */
+			var slideDivBanner = '';
+    		var dataListBanner = result.DATA_LIST;
+    		var total_countBanner = result.TOTAL_COUNT;
+    		var targetBanner  = "";
+    		var textSort = "";
+    		var urlBanner = "";
+    		if(total_countBanner == 0){
+    		} else {
+				for(var i=0; i < total_countBanner; i++) {
+					var popupIdBanner        = dataListBanner[i].popupId;                  //팝업베너ID
+	    			var popupSjNmBanner      = dataListBanner[i].popupSjNm;                //팝업베너이름
+	    			var hmpgCntntsCnBanner   = dataListBanner[i].hmpgCntntsCn;             //베너 내용
+	    			var fileStreCoursBanner  = dataListBanner[i].fileStreCours;            //파일경로(미사용?)
+	    			var streFileNmBanner     = dataListBanner[i].streFileNm;               //파일명
+	    			var orignlFileNmBanner   = dataListBanner[i].orignlFileNm;             //원본파일명
+	    			var hmpgLinkUrlBanner    = dataListBanner[i].hmpgLinkUrl;              //연결 링크
+	    			var hmpgPageCnncBanner   = dataListBanner[i].hmpgPageCnnc;             //새창 이동/SELF  이동
+	    			var stopvewSetupAtBanner = dataListBanner[i].stopvewSetupAt;           //오늘 하루 안보기 (이런 방식으로 못쓸텐데)
+	    			var hmpgTextSortBanner   = dataListBanner[i].hmpgTextSort;             //텍스트 정렬
+	    			 
+	    			/* 새창 연결방식 */
+	    			if(hmpgPageCnncBanner == '1') {
+	    				targetBanner = "_self";
+	    			} else {
+	    				targetBanner = "_blank";
+	    		    }
+	    			 
+	    			/* 텍스트 정렬 */
+	    			if(hmpgTextSortBanner == 'C') {
+	    				textSort = "cover_center";
+	    			} else if(hmpgTextSortBanner == 'R') {
+	    				textSort = "cover_right";
+	    	        } else {
+	    				textSort = "cover_left";
+	    		    }
+	    			 
+	    			/* 파일명 */
+	    			if(streFileNmBanner != "") {
+	    				urlBanner = 'background-image:url(\'/topik/cm/comm/getImgView.do?fileNamePhy='+streFileNmBanner+'&filePath=/popup/\'); background-position: center center;';
+	    			} else {
+	    				urlBanner = '';
+	    			}
+	    			  		 
+	    			slideDivBanner += ' 							<div class="swiper-slide" style="'+urlBanner+'"> ';
+	    			slideDivBanner += ' 								<div class="cover ">  ';
+	    			slideDivBanner += ' 									<div class="inner">  ';
+	    			slideDivBanner += ' 										<div class="cover_contents  '+textSort+'">  ';
+	    			slideDivBanner += ' 											<div class="main_title"> ';
+	    			
+	    			/* 새창 연결방식이 1,2이면서 연결 링크가 없을경우 베너 내용 그대로 입력(베너 내용은 HTML로 되어있음) */
+	    			/* 연결 링크가 있을 경우 링크를 연결해주고 베너 내용 입력 */
+	    			if((hmpgPageCnncBanner == '1' ||  hmpgPageCnncBanner == '2') && hmpgLinkUrlBanner == '') {
+	    				slideDivBanner += ' '+hmpgCntntsCnBanner;							 
+	    			} else {
+	    				slideDivBanner += '                                         	<a href="'+hmpgLinkUrlBanner+'" target="'+targetBanner+'">'+hmpgCntntsCnBanner+'</a>';	 
+	    			}
+	    			 
+	    			slideDivBanner += ' 											</div>  ';
+	    			slideDivBanner += ' 										</div>  ';
+	    			slideDivBanner += ' 									</div>  ';
+	    			slideDivBanner += ' 								</div>  ';
+	    			slideDivBanner += ' 							</div>  ';
+	    						
+	    		};
+	    		jQuery('#swiper-wrapper_Bannerdiv').html(slideDivBanner);
+	    			
+	    		jQuery(document).ready(
+	    		
+	    		function(jQuery) {
+	    			coverSwiper = new Swiper('.mainSwiper', {
+	   				 	slidesPerView: 1,
+		   				autoplay: {
+		   					delay: 5000,
+		   					disableOnInteraction: false,
+		   				},
+		   				pagination: {
+		   					el: ".swiper-pagination",
+		   					clickable: true,
+		   				},
+		   				navigation: {
+		   					nextEl : '.swiper-button-next.ltBanner',
+	    					prevEl : '.swiper-button-prev.ltBanner',
+		   				},
+		   		        a11y: {
+		   		            enabled: true,
+		   		            prevSlideMessage: '이전 슬라이드',
+		   		            nextSlideMessage: '다음 슬라이드',
+		   		            firstSlideMessage: '첫 번째 슬라이드입니다',
+		   		            lastSlideMessage: '마지막 슬라이드입니다',
+		   		            paginationBulletMessage: '{{index}}번째 슬라이드로 이동',
+		   		        },
+	   					on: {
+	   						init: function () {
+	   							thisSlide = this;
+	   							autoPlayBtn = document.querySelector('.autoplay-control > button');
+	   							autoPlayBtn.addEventListener('click', (e) => {
+	   								autoPlayState = autoPlayBtn.getAttribute('aria-pressed');
+	   								if (autoPlayState === 'false') {
+	   									autoPlayBtn.setAttribute('aria-pressed', 'true');
+	   									thisSlide.autoplay.stop();
+	   								} else if (autoPlayState === 'true') {
+	   									autoPlayBtn.setAttribute('aria-pressed', 'false');
+	   									thisSlide.autoplay.start();
+	   								};
+	   							});
+	   						},
+	   					}
+	    			});
+	    		});
+	    	}
+	    		    	
+	    } else if (calback_id=='TWMAIN0013?gubun=13') {
+	        /* 레이어 팝업 공지 조회 */
+	        const { DATA_LIST: dataList, TOTAL_COUNT: totalCount } = result;
+
+	        if (totalCount === 0) {
+	            return;
+	        }
+
+	        jQuery('.main_modal').show();
+
+	        const slideDivs = dataList.map(data => {
+	            const {
+	                popupId,
+	                popupSjNm,
+	                hmpgCntntsCn,
+	                hmpgLinkUrl,
+	                hmpgPageCnnc,
+	                hmpgTextSort
+	            } = data;
+
+	            const targetLayer = (hmpgPageCnnc === '1') ? '_self' : '_blank';
+	            let textSortClass;
+	            switch (hmpgTextSort) {
+	                case 'C':
+	                    textSortClass = 'body center';
+	                    break;
+	                case 'R':
+	                    textSortClass = 'body right';
+	                    break;
+	                default:
+	                    textSortClass = 'body left';
+	            }
+
+	            const hasLink = hmpgLinkUrl !== '';
+	            const headerHtml = hasLink
+	                ? '<a href="'+hmpgLinkUrl+'" target="'+targetLayer+'">'+popupSjNm+'</a>'
+	                : popupSjNm;
+	            
+	            const bodyContentHtml = hasLink
+	                ? '<div class="'+textSortClass+'"><a href="'+hmpgLinkUrl+'" target="'+targetLayer+'">'+hmpgCntntsCn+'</a></div>'
+	                : '<div class="body">'+hmpgCntntsCn+'</div>';
+	            
+	            const layerPopupResult = '<div class="swiper-slide" id="'+popupId+'">'
+                +    '<div class="modal">'
+                +        '<div class="modal_header">'+headerHtml+'</div>'
+                +        '<div class="modal_body">'+bodyContentHtml+'</div>'
+                +        '<div class="modal_footer">'
+                +            '<a class="btns_modal left_btn" href="javascript:fnPopupClose()" title="오늘 하루 그만 보기">오늘 하루 그만 보기</a>'
+                +            '<a class="btns_modal right_btn" id="closePoint" href="javascript:modalClose(\'.main_modal\')" title="닫기">닫기</a>'
+                +        '</div>'
+                +    '</div>'
+                +'</div>';
+
+	            return layerPopupResult;
+	            
+	        }).join('');
+	        
+	        jQuery('#swiper_wrapper_pop_div').append(slideDivs);
+	        
+	        // PC에서만 Swiper를 초기화합니다.
+	        if (!isMobile()) {
+	            jQuery('#closePoint').focus();
+	            new Swiper('.modal_swipe', {
+	                speed: 400,
+	                spaceBetween: 0,
+	                autoHeight: true,
+	                navigation: {
+	                    nextEl: '.swiper-button-next-modal',
+	                    prevEl: '.swiper-button-prev-modal',
+	                },
+	                keyboard: {
+	                    enabled: true,
+	                }
+	            });
+	        }
+	    }
+	}
+		
+/* rceptChk 3(접수중)일때 링크 추가 */
+function authUrl(gubun,opertnGroupId) {
+	location.href="https://register.topik.go.kr/login.do";
+}		
+
+function stik_open(){
+	var url = "http://www.studyinkorea.go.kr";
+	window.open(url, "_blank");  
+}
+</script>
+
+<form id="form" name="form" action="/TWMAIN/TWMAIN0010.do" method="post">
+
+</form>
+
+<!-- 화면 메인(전체) -->
+<article class="main">
+	<div class="inner" style="padding:0px;">
+		<section>
+			<!-- 좌상단 베너 -->
+			<div class="swiper swiper-container mainSwiper">
+				<div class="swiper-wrapper" id="swiper-wrapper_Bannerdiv">
+					<!-- Slides -->
+				</div>
+				<div class="swiper-button-next ltBanner"></div>
+				<div class="swiper-button-prev ltBanner"></div>
+				<div class="controller">
+					<div class="swiper-pagination"></div>
+					<div class="autoplay-control">
+						<button aria-pressed="false" aria-label="자동 재생 일시정지"></button>
+					</div>
+				</div>
+			</div>
+			<!-- 우상단 일정보기 -->
+			<section class="typePc">
+				<div class="schedule typePc">
+					<div class="subject">
+						<h5>
+							<img src="/asset/image/rePub/calendar_time.png" alt="calendar" />
+							<a href="/TWGUID/TWGUID0020.do"class="sch_btn" id="id_twguid0020_title" title="년도 한국어능력시험 일정 보기"> <!-- 년도 한국어능력시험 일정 보기 -->
+							</a>
+						</h5>
+					</div>
+					<div class="sch_info swiper_cover">
+						<div class="swiper swiper-container sch_swipe typePc ">
+							<div class="swiper-wrapper" id="swiper-wrapper_div">
+								<!-- Slides -->
+							</div>
+						</div>
+						<div class="swiper-button-prev _sch"></div>
+						<div class="swiper-button-next _sch"></div>
+					</div>
+				</div>
+			</section>
+		</section>
+		<section name="mobile_sec">
+			<!-- 모바일 일정보기 -->
+			<div class="schedule typeMobile">
+				<div class="subject">
+					<h5>
+						<img src="/asset/image/rePub/calendar_time.png" alt="calendar" />
+						<a href="/TWGUID/TWGUID0020.do"class="sch_btn" id="id_twguid0020_mobile_title" title="년도 한국어능력시험 일정 보기"> <!-- 년도 한국어능력시험 일정 보기 -->
+						</a>
+					</h5>
+				</div>
+				<div class="sch_info swiper_cover">
+					<div class="swiper swiper-container sch_swipe" style="margin-bottom: 16px;">
+						<div class="swiper-wrapper" id="swiper-wrapper_mobile_div">
+							<!-- Slides -->
+						</div>
+						<div class="swiper-pagination"></div>
+					</div>
+					<a href="/TWGUID/TWGUID0020.do" class="more">해외 시험일 알아보기</a>
+				</div>
+			</div>
+		</section>
+		<section class="mt30" name="mobile_sec">
+			<!-- 하단 큰버튼 메뉴 -->
+			<div class="member">
+				<span class="title">회원</span>
+				<button type="button" class="print arrow" onclick="location.href='/TWMYPG/TWMYPG0010.do'">
+					<p style="font-size: 12px;">접수확인/수험표 출력</p> <!-- 접수확인 / 수험표 출력 -->
+					<img src="/asset/image/rePub/exam_card.svg" alt="" width="35px" height="39px" />
+				</button>
+				<button type="button" class="grades arrow" onclick="location.href='/TWMYPG/TWMYPG0060.do'">
+					<p style="font-size: 12px;">성적 확인/성적증명서 출력</p> <!-- 성적 확인 / 성적증명서 출력-->
+					<img src="/asset/image/rePub/grades.svg" alt="" width="35px" height="39px" />
+				</button>
+			</div>
+			<div class="non_member ml10" style="flex: 3; background-color: #FDFFBD;">
+				<span class="title">비회원</span>
+				<button type="button" class="grades arrow" onclick="location.href='/TWMYPG/TWMYPG0030-001.do'">
+					<p style="font-size: 12px;">수험표 출력</p> <!-- 수험표 출력 -->
+					<img src="/asset/image/rePub/exam_card.svg" alt="" width="35px" height="39px" />
+				</button>	
+				<button type="button" class="grades arrow" onclick="location.href='/TWMYPG/TWMYPG0060-001.do'">
+					<p style="font-size: 12px;">성적증명서 출력</p> <!-- 성적증명서 출력 -->
+					<img src="/asset/image/rePub/grades.svg" alt="" width="35px" height="39px" />
+				</button>			
+			</div>
+		</section>
+		<section class="mt30 typePc">
+			<!-- 하단 큰버튼 메뉴 -->
+			<div class="member">
+				<span class="title">회원</span>
+				<button type="button" class="receipt arrow" onclick="fnIsReceipt(true)">
+					<p>접수 바로가기</p> <!-- 접수 바로가기 -->
+					<img src="/asset/image/rePub/receipt.svg" alt="" width="51px" height="47px"/>
+				</button>
+				<button type="button" class="print arrow" onclick="location.href='/TWMYPG/TWMYPG0010.do'">
+					<p>접수확인/수험표 출력</p> <!-- 접수확인 / 수험표 출력 -->
+					<img src="/asset/image/rePub/exam_card.svg" alt="" width="40px" height="44px"/>
+				</button>
+				<button type="button" class="grades arrow" onclick="location.href='/TWMYPG/TWMYPG0060.do'">
+					<p>성적 확인/성적증명서 출력</p> <!-- 성적 확인 / 성적증명서 출력-->
+					<img src="/asset/image/rePub/grades.svg" alt="" width="42px" height="44px"/>
+				</button>
+			</div>
+			<div class="non_member ml10" style="background-color: #FDFFBD;">
+				<div class="title">비회원
+					<p style="margin-top: 4px; color: #0067A3;">※ 국외 응시자는 비회원 메뉴 이용</p>
+				</div>
+				<button type="button" class="grades arrow" onclick="location.href='/TWMYPG/TWMYPG0030-001.do'">
+					<p>수험표 출력</p> <!-- 수험표 출력 -->
+					<img src="/asset/image/rePub/exam_card.svg" alt="" width="40px" height="44px" />
+				</button>	
+				<button type="button" class="grades arrow" onclick="location.href='/TWMYPG/TWMYPG0060-001.do'">
+					<p>성적증명서 출력</p> <!-- 성적증명서 출력 -->
+					<img src="/asset/image/rePub/grades.svg" alt="" width="42px" height="44px"  />
+				</button>			
+			</div>
+		</section>
+		<section class="mt10 typePc">
+		  <div class="btn_wrap">
+		    <button type="button" class="arrow" onclick="location.href='/HMENU0/HMENU00581.do'">응시 규정</button> <!-- 응시규정 -->
+			<button type="button" class="arrow" onclick="location.href='/TWGUID/TWGUID0060.do'">시험 신청 방법</button> <!-- 접수 방법 -->
+			<button type="button" class="arrow" onclick="location.href='/TWMYPG/TWMYPG0010.do'">환불신청</button> <!-- 환불 신청 --> 
+			<button type="button" class="arrow" onclick="location.href='/TWGUID/TWGUID0110.do'">성적증명서 진위확인</button> <!-- 성적표 진위확인 -->
+		  </div>
+		</section>
+		<section class="mt10 typePc">
+		  <div class="info">
+		    <button type="button" class="action_criteria" onclick="location.href='/HMENU0/HMENU00683.do'">
+		      <p>부정행위 조치 기준<p>
+		    </button>
+		  </div>
+		  <div class="notice ml10">
+		    <p>공지사항</p> <!-- 공지사항 -->
+		    <a href="/TWINFO/TWINFO0010.do" class="more" title="더보기">더보기</a><!-- 공지사항더보기 -->
+			<ul class="mt10 notice_list"></ul>
+		  </div>
+		  <button type="button" class="faq ml10" onclick="location.href='/TWINFO/TWINFO0030.do'"> 
+		    <img src="/asset/image/rePub/people_faq.png" alt="" />
+			<p>TOPIK FAQ</p>
+		  </button>
+		</section>
+		<section class="mt10 typePc">
+		  <button type="button" class="test" onclick="location.href='/TWSTDY/TWSTDY0080.do'">
+		    <p>토픽 기출문제 풀어보기<p>
+		  </button>
+		  <button type="button" class="experience ml10" onclick="location.href='/TWSTDY/TWSTDY0110.do'">
+		    <p>토픽 기초 풀어보기</p>
+		  </button>
+		  <button type="button" class="tutorial ml10" onclick="location.href='/TWSTDY/TWSTDY0210.do'">
+		    <p>토픽 IBT 체험하기</p>
+		  </button>
+		  <button type="button" class="basic ml10" onclick="location.href='/TWSTDY/TWSTDY0060.do'">
+		    <p>토픽 말하기 평가 체험하기</p>
+		  </button>
+		</section>
+		
+		<!-- 웹 접근성 수정 1 -->
+		<section class="mt10 typePc">
+			<button type="button" 
+					class="experience_stik_ko" 
+					onclick="stik_open()"
+					aria-label="한국 유학의 시작, Study in Korea 바로가기, 새 창으로 열림">
+					</button>
+					
+		</section>
+	</div>
+</article>
+
+<!-- 팝업 모달 -->
+<div class="modal_box main_modal">
+	<div class="modal_bg"></div>
+		<div class="swiper-container modal_swipe">
+			<div class="swiper-wrapper" id="swiper_wrapper_pop_div">
+				<!-- Slides -->
+			</div>
+			<div class="swiper-pagination"></div>
+		</div>
+		<div class="swiper-button-prev-modal"></div>
+		<div class="swiper-button-next-modal"></div>
+</div>
+
+<!-- 모바일 팝업 모달 -->
+<div class="modal_box main_mobile_modal">
+	<div class="modal_bg"></div>
+	<div class="modal modal_l">
+		<div class="modal_header">
+				<div class="today_title">
+					<img src="/asset/image/40x40_cal_1.png" alt="달력"> 오늘의 <b>TOPIK </b> <!-- 오늘의 <b>TOPIK </b> --> 
+					<span class="date">09.01 <small>(화)</small></span>
+				</div>
+		</div>
+		<div class="modal_body">
+			<div class="modal_go_box">
+			 	<a href="/TWSTDY/TWSTDY0010.do?todayTopik=7" class="go_study_1 modal_go"><span class="hide">TOPIK 문제풀기</span></a> <!-- TOPIK 문제풀기 -->
+			 	<a href="/TWSTDY/TWSTDY0010.do?todayTopik=8" class="go_study_2 modal_go"><span class="hide">TOPIK 문제풀기</span></a> <!-- TOPIK 문제풀기 -->
+				 <a href="/MMENU0/MMENU00016.do" class="go_study modal_go" title="TOPIK"><span class="hide">TOPIK</span></a>
+			 	<a href="/MMENU0/MMENU00032.do" class="go_i modal_go" title="i-TOPIK"><span class="hide">i-TOPIK</span></a>
+			 	<a href="/MMENU0/MMENU00048.do" class="go_speaking modal_go" title="TOPIK Speaking"><span class="hide">TOPIK Speaking</span></a>
+			 	<a href="/TWGUID/TWGUID0010.do" class="go_info modal_go" title="TOPIK"><span class="hide">TOPIK   </span></a>
+		 	</div>
+		</div>
+		<div class="modal_footer">
+			<a class="btns_modal left_btn gray_btn" href="javascript:fnMobilePopupClose()" title="오늘 하루 그만보기">오늘 하루 그만보기</a> <!-- 오늘 하루 그만보기 -->
+			<a class="btns_modal right_btn gray_btn" href="javascript:modalClose('.main_mobile_modal')" title="닫기">닫기</a> <!-- 닫기 -->
+		</div>
+	</div>
+</div>
+
+	</div>
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div style="position: fixed; bottom: 2px; left: 2px; z-index: 9999; font-size: 9px; color: #fff;" title="Server IP: 10.176.51.69">
+	69
+</div>
+<div class="footer">
+	<div class="footer_menu">
+		<div class="inner">
+			<a href=http://www.niied.go.kr/user/nd52026.do class="menu point" style="color: #0000cf;" title="개인정보처리방침 새 창으로 열림" target='_blank'>개인정보처리방침</a>
+			<a href="/TWETCS/TWETCS0020.do" class="menu" title="이용약관">이용약관</a>
+			<a href="/TWETCS/TWETCS0030.do" class="menu" title="이메일수집거부">이메일수집거부</a>
+			<a href="/TWETCS/TWETCS0040.do" class="menu" title="찾아오시는길">찾아오시는길</a>
+			<a href="/TWMYPG/TWMYPG0140.do" class="menu" title="회원탈퇴">회원탈퇴</a>
+<!-- 			<a href="https://www.topik.go.kr/" class="menu mobile_view" title="PC 버전">PC 버전</a> -->
+		</div>
+	</div>
+    <div class="inner">
+    	<div class="footer_logo">
+    		<span class="sr_only">
+    			TOPCIT 한국어능력시험
+    		</span>
+    	</div>
+    	<div class="address">
+    	<div class="mobile_view address_title" onClick="address_view()">
+    		국립국제교육원 한국어능력시험 정보
+    		<span class="up"></span>
+    	</div>
+    	<div class="address_detail">
+    	13557 경기도 성남시 분당구 정자일로 191<br>
+		#191 Jeongjail-ro, Bundang-gu, Seongnam-si, Gyeonggi, Republic of Korea, 13557<br>
+		대표전화(Tel.): <a href='tel:02-3668-1331'>02-3668-1331</a> 팩스(FAX):02-3668-1597<br>
+		이메일(Email): (토픽 PBT) topik@korea.kr (토픽 IBT) kitopik@korea.kr
+		</div>
+		<div class="copyright">
+			Copyright 2021NIIED. All Rights Reserved
+    	</div>
+        </div>  
+        <div class="footer_tool">
+        	<a href="http://as82.kr/topik/" target="_blank" class="romote_btn" title="원격지원 새창">
+        		원격지원
+        	</a>
+			  <div class="input-field form_inline">
+			  	<label for="dynamic_select" class="sr_only">관련 사이트</label>
+			    <select class="line_select" id="dynamic_select" title="관련 사이트">
+			      <option value="" disabled selected>관련 사이트</option>
+			      <option value="http://www.moe.go.kr">Ministry of Education</option>
+			      <option value="http://www.studyinkorea.go.kr">StudyInKOREA</option>
+			      <option value="https://topik.neea.cn">중국 교육부고시중심 접수 홈페이지</option>
+			      <option value="https://www.kref.or.jp">일본 한국교육재단 접수 홈페이지</option>
+			    </select>
+			    <label>관련 사이트</label>
+			  </div> 
+			  <a href="#none" id="btnLocationSite" class="btns move_btn"  target="_blank" title="이동 새창">이동</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+	
+	jQuery(document).ready(function(){
+		// bind change event to select
+		jQuery('#btnLocationSite').on('click', function () {
+			var url = jQuery("#dynamic_select").val(); // get selected value
+			if (url) { // require a URL
+				window.open(url, "_blank");
+			}
+			return false;
+		});
+	});
+	
+	function fnCheckPwdExpire() {
+		var isSkipped = sessionStorage.getItem("pwdExpireSkipped_");
+		
+		if(isSkipped != "Y"){
+			fnComPwdExpireCommon('/TWMYPG/pop/TWMYPG0135.do','ifPwdExpire');
+		}
+	}
+	
+	
+	
+	//모달 공통
+	function fnComPwdExpireCommon(src,id){
+		var ifHtml = '<iframe src="'+src+'" id="'+id+'" name="'+id+'" scrolling=\"no\"  class=\"full_layer_if\"" allowTransparency=\"true\"><p>현재 사용 중인 브라우저는 iframe 요소를 지원하지 않습니다!</p></iframe>';
+		jQuery("body").append(ifHtml);
+	}
+</script>
+
+ 
+</body>
+</html>
+
+

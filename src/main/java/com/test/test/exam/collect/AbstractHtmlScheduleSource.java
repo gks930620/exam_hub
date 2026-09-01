@@ -8,6 +8,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,7 +67,17 @@ public abstract class AbstractHtmlScheduleSource implements ScheduleSource {
 
     /** 페이지를 받아 문자셋을 판별해 문자열로 만든다. 국내 시행처는 EUC-KR 이 아직 섞여 있다. */
     protected String get(String url) {
-        byte[] body = http.get().uri(URI.create(url)).retrieve().body(byte[].class);
+        return get(url, Map.of());
+    }
+
+    /**
+     * 헤더를 얹어 받는 판 — TOPIK 처럼 <b>쿠키가 없으면 인트로 셸만 주는</b> 사이트가 있다
+     * (timezone 쿠키를 놓고 리다이렉트하는 구조라, 처음부터 보내야 본문이 온다).
+     */
+    protected String get(String url, Map<String, String> headers) {
+        byte[] body = http.get().uri(URI.create(url))
+                .headers(h -> headers.forEach(h::add))
+                .retrieve().body(byte[].class);
         if (body == null) {
             return "";
         }
