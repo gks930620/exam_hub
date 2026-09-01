@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
+import { useAuth, useRequireLogin } from '../auth';
 import type { DetailResponse } from '../api/types';
 
 const TYPE_LABEL: Record<string, string> = { WRITTEN: '필기', PRACTICAL: '실기' };
@@ -8,6 +9,8 @@ const TYPE_LABEL: Record<string, string> = { WRITTEN: '필기', PRACTICAL: '실�
 // 자격증 상세: 다음 이벤트를 히어로로(페이지당 하나) + 연간 회차 표 + 관심 토글.
 export default function DetailPage() {
   const { id } = useParams();
+  const { me } = useAuth();
+  const requireLogin = useRequireLogin();
   const [d, setD] = useState<DetailResponse | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -17,6 +20,11 @@ export default function DetailPage() {
 
   async function toggle() {
     if (!d) return;
+    // 비로그인이면 부르지 않는다 — 어차피 401 이고, 그 401 은 화면에 빨간 줄로만 남는다
+    if (!me) {
+      requireLogin();
+      return;
+    }
     try {
       if (d.favorited) await examApi.removeFavorite(d.id);
       else await examApi.addFavorite(d.id);
@@ -38,13 +46,20 @@ export default function DetailPage() {
           <p>{[d.category, d.agency].filter(Boolean).join(' · ')}</p>
         </div>
         <div style={{ marginLeft: 'auto' }}>
-          <button className={`btn${d.favorited ? '' : ' primary'}`} onClick={toggle} aria-pressed={d.favorited}>
-            {d.favorited ? '★ 등록됨' : '☆ 관심 등록'}
+          <button className={`btn${d.favorited ? '' : ' primary'}`} onClick={toggle}
+                  aria-pressed={me ? d.favorited : undefined}>
+            {!me ? '☆ 로그인하고 등록' : d.favorited ? '★ 등록됨' : '☆ 관심 등록'}
           </button>
         </div>
       </div>
 
       {err && <div className="notice error">{err}</div>}
+
+      {!d.favorited && (
+        <p className="fineprint" style={{ marginTop: -6, marginBottom: 16 }}>
+          등록해 두면 <b>내 시험</b>과 캘린더에 뜨고, 원서접수 시작·마감에 알림을 보내 드립니다.
+        </p>
+      )}
 
       {d.nextEvent && (
         <section className="hero">

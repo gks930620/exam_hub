@@ -1,8 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import SearchPage from './SearchPage';
 import { examApi } from '../api/exams';
+import * as auth from '../auth';
 
 /**
  * 시험 찾기 — <b>일정이 없는 시험도 목록에 나와야 한다</b>는 계약을 못 박는다.
@@ -22,6 +23,11 @@ function item(over: Partial<Record<string, unknown>> = {}) {
 
 describe('SearchPage', () => {
   beforeEach(() => {
+    // 관심 별표가 로그인 상태를 보게 되면서 필요해졌다(비로그인이면 로그인 화면으로 보낸다).
+    vi.spyOn(auth, 'useAuth').mockReturnValue({
+      me: null, loading: false,
+      login: vi.fn(), loginWithToken: vi.fn(), logout: vi.fn(), refresh: vi.fn(),
+    });
     vi.spyOn(examApi, 'categories').mockResolvedValue({
       items: [{ name: '국가기술자격-정보통신', count: 23 }, { name: '어학-영어', count: 13 }],
     });
@@ -84,5 +90,19 @@ describe('SearchPage', () => {
     render(<MemoryRouter><SearchPage /></MemoryRouter>);
 
     expect(await screen.findByText('결과가 없습니다')).toBeInTheDocument();
+  });
+
+  /** 상세와 같은 계약 — 비로그인은 401 대신 로그인 화면으로 간다. */
+  it('비로그인이 별표를 누르면 API 를 부르지 않는다', async () => {
+    vi.spyOn(examApi, 'browse').mockResolvedValue({
+      items: [item()], page: 0, size: 24, totalElements: 1, totalPages: 1,
+    });
+    const add = vi.spyOn(examApi, 'addFavorite');
+
+    render(<MemoryRouter><SearchPage /></MemoryRouter>);
+    await waitFor(() => expect(screen.getByText('정보처리기사')).toBeTruthy());
+    fireEvent.click(screen.getByRole('button', { name: '관심 등록' }));
+
+    expect(add).not.toHaveBeenCalled();
   });
 });

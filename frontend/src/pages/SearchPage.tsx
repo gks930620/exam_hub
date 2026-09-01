@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
+import { useAuth, useRequireLogin } from '../auth';
 import type { CategoryItem, CertItem } from '../api/types';
 
 // 시험 찾기: 전체 목록을 기본으로 보여준다.
@@ -9,6 +10,8 @@ import type { CategoryItem, CertItem } from '../api/types';
 const PAGE_SIZE = 24;
 
 export default function SearchPage() {
+  const { me } = useAuth();
+  const requireLogin = useRequireLogin();
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('');
   const [cats, setCats] = useState<CategoryItem[]>([]);
@@ -57,6 +60,10 @@ export default function SearchPage() {
   }
 
   async function toggle(c: CertItem) {
+    if (!me) {
+      requireLogin();
+      return;
+    }
     try {
       if (c.favorited) await examApi.removeFavorite(c.id);
       else await examApi.addFavorite(c.id);

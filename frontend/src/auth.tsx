@@ -2,6 +2,7 @@
 // 토큰은 OAuth 콜백에서 URL 프래그먼트(#token=)로 받는다. 쿼리스트링이 아닌 이유는
 // 쿼리가 서버 접근로그·Referer 에 남기 때문이다.
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { examApi } from './api/exams';
 import { clearToken, setToken } from './api/client';
 import type { MeResponse } from './api/types';
@@ -9,7 +10,8 @@ import type { MeResponse } from './api/types';
 interface AuthState {
   me: MeResponse | null;
   loading: boolean;
-  login: (provider: 'kakao' | 'google') => void;
+  /** returnTo 를 주면 로그인 뒤 그리로 돌아간다(안 주면 지금 있는 주소). */
+  login: (provider: 'kakao' | 'google', returnTo?: string) => void;
   /** 매니저 폼 로그인 — 토큰을 직접 받아 저장한다(소셜 리다이렉트를 타지 않는다). */
   loginWithToken: (token: string) => Promise<void>;
   logout: () => void;
@@ -38,9 +40,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void refresh();
   }, [refresh]);
 
-  const login = useCallback((provider: 'kakao' | 'google') => {
-    // 돌아온 뒤 원래 있던 곳으로 보내기 위해 저장
-    sessionStorage.setItem('afterLogin', window.location.pathname + window.location.search);
+  const login = useCallback((provider: 'kakao' | 'google', returnTo?: string) => {
+    // 돌아온 뒤 원래 있던 곳으로 보내기 위해 저장.
+    // 로그인 화면을 거쳐 왔으면 지금 주소는 /login 이라, 원래 보던 곳을 따로 받는다.
+    sessionStorage.setItem('afterLogin',
+      returnTo ?? window.location.pathname + window.location.search);
     window.location.href = `/oauth2/authorization/${provider}`;
   }, []);
 
@@ -78,4 +82,18 @@ export function consumeTokenFromHash(): boolean {
   // 주소창에서 토큰을 지운다 — 새로고침·공유로 새어 나가지 않게
   history.replaceState(null, '', window.location.pathname);
   return true;
+}
+
+/**
+ * 로그인이 필요한 행동을 눌렀을 때 로그인 화면으로 보낸다.
+ *
+ * 그냥 API 를 불러 401 을 받으면 화면에는 "요청 실패 (401)" 만 남는다 — 무엇이 잘못됐는지도,
+ * 어디로 가야 하는지도 알 수 없다. 보던 자리를 넘겨서 로그인 뒤 그리로 돌아오게 한다.
+ */
+export function useRequireLogin(): () => void {
+  const navigate = useNavigate();
+  const location = useLocation();
+  return useCallback(() => {
+    navigate('/login', { state: { from: location.pathname + location.search } });
+  }, [navigate, location]);
 }

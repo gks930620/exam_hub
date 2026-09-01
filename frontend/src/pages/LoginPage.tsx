@@ -59,7 +59,7 @@ export default function LoginPage() {
           </p>
         ) : (
           usable.map((p) => (
-            <button key={p.id} className={`social ${p.id}`} onClick={() => login(p.id)}>
+            <button key={p.id} className={`social ${p.id}`} onClick={() => login(p.id, from)}>
               <span aria-hidden="true">{p.icon}</span> {p.label}
             </button>
           ))
