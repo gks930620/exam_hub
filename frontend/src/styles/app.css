@@ -9,17 +9,10 @@
 /* ── 이 앱에서 더 필요한 토큰 ──
    halo-tokens.css 는 키트 원본이라 손대지 않고, 부족한 것만 여기서 확장한다.
    (색을 컴포넌트에 하드코딩하면 다크에서 그 부분만 깨진다 — 가이드 §3-4) */
-:root {
-  --scrim: rgba(43, 39, 69, .42);   /* 모바일 드로어 뒤를 덮는 면 */
-}
-:root[data-theme="dark"] {
-  --scrim: rgba(0, 0, 0, .58);
-}
-
 /* ── 앱 골격 ── */
 .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
 
-/* 헤더 우측 도구(테마 전환·메뉴) */
+/* 헤더 우측 도구(테마 전환·계정) */
 .hdr-tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -30,13 +23,6 @@
 .icon-btn:hover { color: var(--point); }
 .icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--point-soft); }
 
-/* 모바일 드로어 열렸을 때 뒤를 덮는 면 */
-.scrim {
-  position: fixed; inset: 0; z-index: 35;
-  background: var(--scrim);
-  border: none; padding: 0; cursor: pointer;
-}
-@media (min-width: 769px) { .scrim, .only-mobile { display: none; } }
 
 /* ── 페이지 공통 ── */
 .section-head {

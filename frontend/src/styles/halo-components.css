@@ -36,45 +36,33 @@
   font-weight: 750; color: var(--text); letter-spacing: -.02em;
 }
 .header-logo:hover { text-decoration: none; }
-.hdr-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 12px; color: var(--muted); font-weight: 500;
-  background: var(--glass-chip);
-  border: none; padding: 5px 13px; border-radius: 999px;
-}
 
 /* ─────────────────────────────────────────────
-   레이아웃 — 사이드바 + 본문
+   레이아웃 — 메뉴는 헤더 안, 본문은 한 단
    ───────────────────────────────────────────── */
 .app-body {
-  display: flex; flex: 1; gap: 20px;
+  flex: 1;
   max-width: 1360px; width: 100%; margin: 0 auto; padding: 20px;
 }
-/* ① 사이드바도 "읽는 면" — 불투명 카드로 띄운다. 유리 금지 */
-.sidebar {
-  width: 250px; flex-shrink: 0;
-  background: var(--surface);
-  border: none; border-radius: var(--radius);
-  box-shadow: var(--sh);
-  padding: 16px 12px;
-  position: sticky; top: 84px; align-self: flex-start;
-  max-height: calc(100vh - 104px); overflow-y: auto;
-}
-.content-area { flex: 1; min-width: 0; }
+.content-area { min-width: 0; }
 
-.side-heading {
-  font-size: 11px; font-weight: 700; color: var(--muted2);
-  text-transform: uppercase; letter-spacing: .1em; margin: 12px 10px 5px;
+/* 헤더 안의 주 메뉴. 좁아지면 가로로 스크롤한다 — 항목이 줄바꿈으로 흩어지면
+   알약형 헤더가 무너지고, 접었다 펴는 장치를 다시 만들 이유도 없다. */
+.top-nav {
+  display: flex; align-items: center; gap: 2px;
+  min-width: 0; overflow-x: auto;
+  scrollbar-width: none;
 }
-.side-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 7px 10px; border-radius: var(--radius-sm); color: var(--muted);
-  font-size: 13.5px; margin-bottom: 1px;
+.top-nav::-webkit-scrollbar { display: none; }
+.nav-item {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  padding: 7px 12px; border-radius: 999px; color: var(--muted);
+  font-size: 13.5px; font-weight: 600;
 }
-.side-item:hover { background: var(--soft); text-decoration: none; }
+.nav-item:hover { background: var(--glass-chip); text-decoration: none; color: var(--text); }
 /* ② 활성 항목만 그라디언트 — 목록에서 "지금 여기" 하나만 빛난다 */
-.side-item.active {
-  background: var(--grad); color: #fff; font-weight: 600; box-shadow: var(--sh-acc);
+.nav-item.active {
+  background: var(--grad); color: #fff; box-shadow: var(--sh-acc);
 }
 
 /* ─────────────────────────────────────────────
@@ -271,19 +259,16 @@
 .count-big.accent .l { color: rgba(255, 255, 255, .82); }
 
 /* ─────────────────────────────────────────────
-   반응형 — 사이드바는 모바일에서 드로어로
+   반응형 — 좁은 화면에서는 메뉴가 헤더 아래 줄로 내려간다
    ───────────────────────────────────────────── */
 @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) {
   .card-grid { grid-template-columns: 1fr; }
-  .app-body { padding: 14px; gap: 0; }
-  .sidebar {
-    position: fixed; left: 0; top: 0; bottom: 0; z-index: 40;
-    border-radius: 0 var(--radius) var(--radius) 0;
-    transform: translateX(-100%); transition: transform .22s;
-    max-height: none;
-  }
-  .sidebar.open { transform: none; box-shadow: var(--sh-lg); }
+  .app-body { padding: 14px; }
+  /* 좁은 화면에서는 로고 아래로 메뉴가 내려가 가로 스크롤된다 */
+  .header-container { flex-wrap: wrap; border-radius: 22px; row-gap: 6px; }
+  .top-nav { order: 3; width: 100%; }
+  .nav-item { font-size: 13px; padding: 6px 10px; }
   .hero { padding: 32px 22px; border-radius: 22px; }
   .hero h1 { font-size: 24px; }
 }

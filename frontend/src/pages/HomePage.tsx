@@ -32,7 +32,7 @@ export default function HomePage() {
           <span className="big">아직 등록한 시험이 없어요</span>
           시험을 등록하면 여기에 D-day가 표시됩니다.
           <div style={{ marginTop: 18 }}>
-            <Link to="/search" className="btn primary lg">시험 찾으러 가기</Link>
+            <Link to="/" className="btn primary lg">시험 찾으러 가기</Link>
           </div>
         </div>
       </>
