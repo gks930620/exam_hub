@@ -15,6 +15,7 @@ import AdminPage from './pages/AdminPage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 import { useAuth } from './auth';
 import { applyTheme, isDark, readTheme, type ThemeSetting } from './theme';
+import Avatar from './components/Avatar';
 
 // Halo 골격: 유리 헤더(원칙 ③ — 유리는 여기 한 곳만) + 불투명 사이드바(원칙 ①) + 본문.
 const NAV = [
@@ -81,9 +82,7 @@ export default function App() {
             </button>
             {loading ? null : me ? (
               <NavLink to="/me" className="who">
-                {me.profileImage
-                  ? <img src={me.profileImage} alt="" />
-                  : <span className="avatar-fallback" aria-hidden="true">{me.nickname.slice(0, 1)}</span>}
+                <Avatar src={me.profileImage} nickname={me.nickname} />
                 <span className="only-desktop">{me.nickname}</span>
               </NavLink>
             ) : (
