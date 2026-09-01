@@ -1,0 +1,896 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!--[if IE 9 ]><html lang="ko" class="ie9"><![endif]-->
+<!--[if (gt IE 9)]><!--><html lang="ko"><!--<![endif]-->
+<head>
+	
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="format-detection" content="telephone=no, address=no, email=no">
+<link href="/images/favicon.ico" type="image/x-icon" rel="shortcut icon">
+<link rel="stylesheet" href="/css/common.css?css_ver=0.4">
+<link rel="stylesheet" href="/css/sub.css?css_ver=0.4">
+<link rel="stylesheet" href="/css/main.css?css_ver=0.1">
+<link rel="stylesheet" href="/css/jquery/jquery-ui.min.css?css_ver=0.1">
+<link rel="stylesheet" href="/css/sub2.css?css_ver=0.1">
+<script src="/js/jquery-1.12.4.min.js?version=0.1"></script>
+<script src="/js/jquery-ui.min.js?version=0.1"></script>
+<!--[if IE 9 ]>
+<script src="/js/placeholder.min.js"></script>
+<script src="/js/matchMedia.js"></script>
+<script src="/js/matchMedia.addListener.js"></script>
+<![endif]-->
+<script src="/js/slick.js?version=0.1"></script>
+<script src="/js/ui.js?version=0.2"></script>
+<script src="/js/wwwcommon.js?version=0.1"></script>
+<script src="/js/main.js?version=0.1"></script>
+<script src="/js/sessionTimer.js?version=0.2"></script>
+<script src="/js/quickmenu.js?version=0.1"></script>
+	<title>
+		한국보건의료인국가시험원
+		
+		
+		
+		시험정보 &gt;
+		
+		직종별 시험정보
+		
+		
+	</title>
+
+</head>
+
+<body>
+	<div id="wrap">
+		
+<div id="accessibility">
+	<a href="#content">본문 바로가기</a>
+	<a href="#gnb">주메뉴 바로가기</a>
+</div>
+		
+
+
+
+
+
+
+
+
+
+
+
+<!-- //popup -->
+<div class="layer-popup-box modal-popup" data-popup="sessionExtendPromptPopup" style="z-index: 1000;">
+    <div class="popup-content">
+        <div class="popup_title">
+            <h1 class="popup_name">시스템 이용안내</h1>
+        </div>
+        <div class="popup_inner">
+            <div>
+                <h2>로그인 후 20분 동안 서비스 이용이 없는 경우 자동으로 로그아웃 됩니다.</h2>
+                <br>
+                <h2>자동 로그아웃까지 남은 시간 : <span id="popup-timer-text" style="color: red;"></span></h2>
+            </div>
+            <div class="popup_btn">
+                <button type="button" class="btn btn-blue-bg" onclick="SessionTimer.keepSessionAlive();LayerPopupClose('sessionExtendPromptPopup')">로그인 시간 연장</button>
+                <button type="button" class="btn btn-gray-bg" onclick="LayerPopupClose('sessionExtendPromptPopup');">취소</button>
+            </div>
+        </div>
+        <button type="button" class="btn_popup_close popup_close" onclick="LayerPopupClose('sessionExtendPromptPopup');"></button>
+    </div>
+</div>
+
+
+
+
+
+
+	<script type="text/javascript">
+		var ssl = String(window.location);
+		if(ssl.toLowerCase().indexOf("https") == -1){
+			ssl = ssl.replace("http","https");
+			window.location.href = ssl;
+		}
+	</script>
+
+
+
+	<header id="header">
+		<div class="hd-tp">
+			<h1><a href="/index.do"><img src="/images/common/logo.png" alt="한국보건의료인국가시험원"></a></h1>
+			<div class="util-link">
+			
+				<div class="hd-util">
+						
+							
+							
+								<a href="/login.do">로그인</a>
+							
+						
+
+					<a href="/cnt/c_7003/view.do?seq=104">사이트맵</a>
+						<a href="/grp/index.do" target="_blank" rel="noopener noreferrer" title="새창으로 열림">단체기관 담당자</a>
+					
+						<a href="/uni/index.do" target="_blank" rel="noopener noreferrer" title="새창으로 열림">대학담당자</a>
+					
+					
+					
+						<a href="/hos/index.do" target="_blank" rel="noopener noreferrer" title="새창으로 열림">병원담당자</a>
+					
+					
+					<a href="http://757.co.kr/kuksiwon" target="_blank" rel="noopener noreferrer" title="새창으로 열림">원격바로가기</a>
+				</div>
+				<div class="hd-link">
+				
+					<a href="/EngHome/index.do" class="btn-hd-eng">English</a>
+					<a href="#n" class="btn-hd-menu"><span class="blind">전체메뉴</span></a>
+				</div>
+			</div>
+		</div>
+		<div class="gnb-box">
+			<div class="inner-ctr">
+			<div class="m-navi-top">
+				<div class="tp">
+				
+							
+							
+								<a href="/login.do" class="login-link">로그인하세요</a>
+							
+						
+
+					<a href="#n" role="button"><span class="blind">닫기</span></a>
+				</div>
+				<div class="mb">
+					<ul>
+						<li><a href="/index.do">Home</a></li>
+						<li>
+						
+							
+							
+								<a href="/login.do">Login</a>
+							
+						
+						</li>
+						<li><a href="/EngHome/index.do">English</a></li>
+					</ul>
+				</div>
+			</div>
+				<nav id="gnb">
+					<ul>
+					
+						<li>
+							<a href="javascript:;" class="1"><span>시험정보</span></a>
+							<div>
+								<div class="navi-dep2-tit"><strong>시험정보</strong></div>
+								<ul>
+								
+									<li>
+										<a href="/cnt/c_1/view.do?seq=7" >직종별 시험정보</a>
+									</li>
+								
+									<li>
+										<a href="/exam/brd/m_8/list.do?seq=8" >서식모음</a>
+									</li>
+								
+									<li>
+										<a href="/mypage/examResult/list.do?seq=9" >합격자조회</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_2033/view.do?seq=10" >컴퓨터시험</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3008/view.do?seq=13" >출제자료</a>
+									</li>
+								
+								</ul>
+							</div>
+						</li>
+					
+						<li>
+							<a href="javascript:;" class="2"><span>응시원서접수</span></a>
+							<div>
+								<div class="navi-dep2-tit"><strong>응시원서접수</strong></div>
+								<ul>
+								
+									<li>
+										<a href="/cnt/c_3010/view.do?seq=14" >응시원서 접수방법</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_1003/view.do?seq=15" >응시원서 접수</a>
+									</li>
+								
+									<li>
+										<a href="/app/payment/list.do?seq=17" >응시수수료 결제</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3016/view.do?seq=16" >응시수수료 감면</a>
+									</li>
+								
+									<li>
+										<a href="/mypage/appResult/list.do?seq=18" >응시원서 접수결과</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3018/view.do?seq=19" >응시취소신청</a>
+									</li>
+								
+									<li>
+										<a href="/mypage/appResult/examSelectSite.do?seq=20" >시험장소 선택</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3019/view.do?seq=21" >보건의료인국가시험 편의제공 대상자 지정 신청</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3020/view.do?seq=22" >응시지역(시험장) 변경</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3021/view.do?seq=42" >응시자격 자가진단</a>
+									</li>
+								
+								</ul>
+							</div>
+						</li>
+					
+						<li>
+							<a href="javascript:;" class="3"><span>면허·자격·증명서</span></a>
+							<div>
+								<div class="navi-dep2-tit"><strong>면허·자격·증명서</strong></div>
+								<ul>
+								
+									<li>
+										<a href="/cnt/c_3022/view.do?seq=26" >면허·자격 발급신청 안내</a>
+									</li>
+								
+									<li>
+										<a href="/license/licenseIssueApp.do?seq=29" >면허·자격 신청 및 조회</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3024/view.do?seq=43" >증명서 발급신청</a>
+									</li>
+								
+									<li>
+										<a href="/license/omrCardReadingApp.do?seq=47" >답안카드 열람 방문신청</a>
+									</li>
+								
+									<li>
+										<a href="/license/certificateOpenGrade.do?seq=48" >성적열람</a>
+									</li>
+								
+									<li>
+										<a href="/license/issuanceOfConfirmation.do?seq=49" >응시확인서 발급</a>
+									</li>
+								
+									<li>
+										<a href="/license/forgeryChkList.do?seq=50" >원본확인</a>
+									</li>
+								
+								</ul>
+							</div>
+						</li>
+					
+						<li>
+							<a href="javascript:;" class="4"><span>고객소통</span></a>
+							<div>
+								<div class="navi-dep2-tit"><strong>고객소통</strong></div>
+								<ul>
+								
+									<li>
+										<a href="/notice/brd/m_51/list.do?seq=51" >공지사항</a>
+									</li>
+								
+									<li>
+										<a href="/faq/brd/m_52/list.do?seq=52" >자주하는 질문</a>
+									</li>
+								
+									<li>
+										<a href="/question/kswbrd/list.do?id=QANDA&seq=53" >질문하기</a>
+									</li>
+								
+									<li>
+										<a href="/participation/kswbrd/write.do?id=PRADA&seq=110" >칭찬하기</a>
+									</li>
+								
+									<li>
+										<a href="/customer/minwon1.do?seq=111" >참여하기</a>
+									</li>
+								
+									<li>
+										<a href="/customer/minwon.do?seq=56" >신고하기</a>
+									</li>
+								
+									<li>
+										<a href="/app/announce/list.do?seq=57" >이의신청</a>
+									</li>
+								
+									<li>
+										<a href="/opendata/kswbrd/list.do?id=PUBLIC_DATA&seq=117" >공공데이터 의견수렴</a>
+									</li>
+								
+									<li>
+										<a href="/news/brd/m_54/list.do?seq=54" >국시원 뉴스</a>
+									</li>
+								
+									<li>
+										<a href="/news/brd/m_88/list.do?seq=55" >국시원 간행물</a>
+									</li>
+								
+									<li>
+										<a href="https://rnd.kuksiwon.or.kr/mypage/index.do?seq=106"  target="_blank" rel="noopener noreferrer" title="새창열림">연구정보센터</a>
+									</li>
+								
+									<li>
+										<a href="https://www.jeehp.org/"  target="_blank" rel="noopener noreferrer" title="새창열림">기관학술지 Jeehp</a>
+									</li>
+								
+									<li>
+										<a href="/LostAndFound/brd/m_109/list.do?seq=109" >유실물관리센터</a>
+									</li>
+								
+								</ul>
+							</div>
+						</li>
+					
+						<li>
+							<a href="javascript:;" class="5"><span>국시원 소개</span></a>
+							<div>
+								<div class="navi-dep2-tit"><strong>국시원 소개</strong></div>
+								<ul>
+								
+									<li>
+										<a href="/cnt/c_3031/view.do?seq=38" >인사말</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3032/view.do?seq=39" >원장소개</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3034/view.do?seq=58" >사무총장소개</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3036/view.do?seq=59" >기관현황</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3041/view.do?seq=60" >경영공시</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3042/view.do?seq=61" >윤리경영</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3050/view.do?seq=62" >고객만족경영</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3053/view.do?seq=63" >조직소개</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3054/view.do?seq=64" >찾아오시는 길</a>
+									</li>
+								
+									<li>
+										<a href="/cnt/c_3057/view.do?seq=65" >정보공개(공공데이터)</a>
+									</li>
+								
+								</ul>
+							</div>
+						</li>
+					
+						
+						<li class="m-ctn">
+							<a href="/PrivateInfo/brd/m_102/list.do">이용안내</a>
+							<div>
+								<div class="navi-dep2-tit"><strong>이용안내</strong></div>
+								<ul>
+									<li><a href="/PrivateInfo/brd/m_102/list.do">개인정보 목적외 이용·제공 안내</a></li>
+									<li><a href="/RelatedSite/brd/m_103/list.do?seq=103">관련기관 안내</a></li>
+									<li><a href="/cnt/c_7003/view.do?seq=104&seq=104">사이트맵</a></li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</header>
+
+
+
+		
+		<!-- container -->
+		<main id="container">
+
+			<!-- subTop -->
+			<div class="sub-top">
+				<div class="inner-ctr">
+					<!-- location -->
+					<div class="location">
+
+						<span class="home">홈</span>
+						
+						
+						
+						
+						<span>시험정보</span>
+						
+						
+							
+						
+						
+						
+						<strong>직종별 시험정보</strong>
+						
+						
+						
+							
+					</div>
+					<!-- // print -->
+				</div>
+			</div>
+			<!-- // subTop -->
+			<div class="inner-ctr">
+
+				<!-- lnb -->
+
+				<aside id="aside">
+					
+					<h2><span>시험정보</span></h2>
+					<ul>
+						
+						<li>
+							<a href="/cnt/c_1/view.do?seq=7"   class="on">
+								직종별 시험정보
+							</a>
+							
+							
+							
+						</li>
+							
+						<li>
+							<a href="/exam/brd/m_8/list.do?seq=8"  >
+								서식모음
+							</a>
+							
+						</li>
+							
+						<li>
+							<a href="/mypage/examResult/list.do?seq=9"  >
+								합격자조회
+							</a>
+							
+						</li>
+							
+						<li>
+							<a href="/cnt/c_2033/view.do?seq=10"  >
+								컴퓨터시험
+							</a>
+							
+						</li>
+							
+						<li>
+							<a href="/cnt/c_3008/view.do?seq=13"  >
+								출제자료
+							</a>
+							
+						</li>
+							
+					</ul>
+				</aside>
+				<!-- // lnb -->
+				<article id="content">
+					<div class="tit-share">
+						<h3>직종별 시험정보</h3>
+					</div>
+					<div class="ctn">
+							
+							
+<script>
+    $(".tit-share h3").text($(".tit-share h3").text().replace("직종별", "물리치료사"))
+</script>
+<h4 class="tit">직종안내</h4>
+<div class="job-top">
+    <div class="img-area">
+        <img src="/images/sub/img_job16.jpg" alt="" class="pc-ctn">
+        <img src="/images/sub/img_job16_m.jpg" alt="" class="m-ctn">
+        <div class="calendar-btn" jjCode="11"></div>
+    </div>
+    <div class="txt-area">
+        <div class="box">
+            <strong>개요</strong>
+            <ul class="ul-list1">
+                <li>물리치료사는 의사 또는 치과의사의 지도 아래 진료나 의화학적(醫化學的) 검사에 종사하는 의료기사의 한 종류로, 의사의 진단 및 처방에 따라 환자에게 운동, 열, 전기, 광선 등의 물리적인 방법을 적용하여 신체기능장애나 통증을 완화, 회복시키는 업무를 수행하는 자를 말한다. </li>
+<li> (출처 : 「의료기사 등에 관한 법률」 제1조의2, 통계청 한국표준직업분류) </li>
+            </ul>
+        </div>
+        <div class="box">
+            <strong>수행직무</strong>
+            <ul class="ul-list1">
+                <li>물리치료사는 신체의 교정 및 재활을 위한 물리요법적 치료에 관한 다음의 구분에 따른 업무를 수행한다.
+<ul class="list">
+      <li>가. 물리요법적 기능훈련ㆍ재활훈련</li>
+      <li>나. 기계ㆍ기구를 이용한 물리요법적 치료</li>
+      <li>다. 도수치료: 기구나 약물을 사용하지 않고 손으로 하는 치료</li>
+      <li>라. 도수근력(손근력)ㆍ관절가동범위 검사</li>
+      <li>마. 마사지</li>
+      <li>바. 물리요법적 치료에 필요한 기기ㆍ약품의 사용ㆍ관리</li>
+      <li>사. 신체 교정운동</li>
+      <li>아. 온열ㆍ전기ㆍ광선ㆍ수(水)치료</li>
+      <li>자. 물리요법적 교육</li>
+<li>- 그 밖에 신체의 교정 및 재활을 위한 물리요법적 치료에 관한 업무</li>
+</ul>
+(출처 : 「의료기사 등에 관한 법률」 제2조, 동법 시행령 제2조 및 [별표 1])
+</li>
+            </ul>
+        </div>
+    </div>
+</div>
+							
+							
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="job-content">
+	<div class="tab-area">
+		<div class="tab">
+			<button class="tab-tit" type="button">시험일정</button>
+			<ul>
+				<li><a class="active" href="/subcnt/c_2014/1/view.do?seq=7">시험일정</a></li>
+				<li><a href="/subcnt/c_2014/2/view.do?seq=7">응시자격</a></li>
+				<li><a href="/subcnt/c_2014/3/view.do?seq=7">응시자 유의사항</a></li>
+				<li><a href="/subcnt/c_2014/4/view.do?seq=7">응시원서 접수안내</a></li>
+				<li><a href="/subcnt/c_2014/5/view.do?seq=7">합격기준</a></li>
+				<li><a href="/subcnt/c_2014/6/view.do?seq=7">외국대학 졸업자 안내</a></li>
+				<li><a href="/subcnt/c_2014/7/view.do?seq=7">시험시간표</a></li>
+				<li><a onclick="window.open('/place/list.do?itm_seq=11','','width = 700, height = 760, location = no, scrollbars = yes');return false;" href="#n">시험장소</a></li>
+			</ul>
+		</div>
+		<a title="새창으로 열림" class="btn_view" onclick="openNewWindow()" href="#n">새창보기</a>
+	</div>
+	<div class="tab-content">
+		<div class="pop-tit">
+			시험일정
+			<a class="btn-close" onclick="javascript:self.close();" href="#n"><span class="blind">현재창 닫기</span></a>
+		</div>
+		<div class="pop-tab-content" id="pop-tab-content">
+			<h5 class="sub-tit">시험일정</h5>
+			<div></div>
+			<div class="table-box mt10">
+<table class="data-table schedule-table td-left v2">
+    <caption>물리치료사 시험일정 표로 구분,일정,비고 정보 제공</caption>
+    <colgroup>
+        <col style="width: 15%;">
+        <col style="width: 10%;">
+        <col>
+        <col style="width: 32%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th colspan="2" scope="col">구분</th>
+            <th scope="col">일정</th>
+            <th scope="col">비고</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2">응시원서<br>접수</td>
+            <td>기간</td>
+            <td>
+                ㆍ인터넷 접수 : 2026. 9. 2.(수) ~ 9. 9.(수)<br><br>
+                다만, 외국대학 졸업자로 응시자격 확인서류를 제출하여야 하는 자는 접수기간 내에 반드시 국시원 별관(2층 자격관리부)에 방문하여 서류확인 후 접수가능 함
+            </td>
+            <td rowspan="2">
+                [응시수수료]<br> 110,000원<br><br>
+                [접수시간]
+                ㆍ인터넷접수 : 해당 시험직종 원서접수 시작일 09:00부터 접수 마감일 18:00까지
+            </td>
+        </tr>
+        <tr>
+            <td>장소</td>
+            <td>
+                ㆍ인터넷 접수 : 국시원 홈페이지 [원서접수]메뉴
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">시험장 공고일</td>
+            <td>- 2026. 11. 4.(수)</td><td><p>[시험장소 선택기간]</p><p>ㆍ2026. 11. 4.(수) ~ 8.(일)</p><p>[응시표 출력]</p><p>ㆍ2026. 11. 11.(수)부터 가능</p></td>
+        </tr>
+        <tr>
+            <td rowspan="2">시험시행</td>
+            <td>일시</td>
+            <td>- 2026. 12. 13.(일)</td>
+            <td rowspan="2">
+                [응시자 준비물]<br>
+                - 응시표, 신분증, <b>컴퓨터용 흑색 수성사인펜</b>, 필기도구 지참<br>
+                ※ 식수(생수)는 제공하지 않습니다.
+            </td>
+        </tr>
+        <tr>
+            <td>장소</td>
+            <td>[국시원 홈페이지]-[직종별 시험정보]-[물리치료사]-[시험장소]</td>
+        </tr>
+        <tr>
+            <td rowspan="2">최종합격자<br>발표</td>
+            <td>일시</td>
+            <td>- 2026. 12. 30.(수)</td>
+            <td rowspan="2">ㆍ휴대전화번호가 기입된 경우에 한하여 SMS통보</td>
+        </tr>
+        <tr>
+            <td>장소</td>
+            <td>
+                ㆍ국시원 홈페이지 [합격자조회]메뉴<br>
+            </td>
+        </tr>
+    </tbody>
+</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+							
+
+
+
+
+
+
+
+
+
+<div class="board-area">
+	<div class="l">
+		<strong class="title">공지사항</strong>
+		<ul>
+			
+				
+				
+					
+						<li><a
+							href="/notice/brd/m_51/view.do?seq=3989&itm_seq_1=1&etc1=11">2026년도 하반기 및 2027년도 상반기 보건의료인국가시험(필기시험 지필시험(PBT) 시행 직종) 종합안내서</a><span
+							class="date">2026-08-24</span></li>
+					
+						<li><a
+							href="/notice/brd/m_51/view.do?seq=3977&itm_seq_1=1&etc1=11">2026년도 하반기 및 2027년도 상반기 보건의료인국가시험 시행계획(필기시험 지필시험(PBT) 시행 직종) 공고</a><span
+							class="date">2026-07-16</span></li>
+					
+						<li><a
+							href="/notice/brd/m_51/view.do?seq=3889&itm_seq_1=1&etc1=11">2026년도 보건의료인국가시험 외국학교 등 인정심사 신청 안내</a><span
+							class="date">2026-01-26</span></li>
+					
+						<li><a
+							href="/notice/brd/m_51/view.do?seq=3814&itm_seq_1=1&etc1=11">부정행위 온라인 신고센터 개설 안내</a><span
+							class="date">2025-08-28</span></li>
+					
+						<li><a
+							href="/notice/brd/m_51/view.do?seq=3797&itm_seq_1=1&etc1=11">의료기사 등에 관한 법률 개정에 따른 응시자격 변경 안내</a><span
+							class="date">2025-07-30</span></li>
+					
+				
+			
+		</ul>
+		<a href="/notice/brd/m_51/list.do?seq=51&etc1=11" class="btn-more"><span class="blind">공지사항 더보기</span></a>
+	</div>
+	<div class="r">
+		<strong class="title">서식모음</strong>
+		<ul>
+			
+				
+					<li><a href="#">데이터가 없습니다.</a></li>
+				
+				
+			
+		</ul>
+		<a href="/exam/brd/m_8/list.do?seq=8" class="btn-more"><span
+			class="blind">서식모음 더보기</span></a>
+	</div>
+</div>
+
+<!-- 시험일정 캘린더 저장 popup -->
+<div class="modal-popup"  data-popup="calendarConfirmPop">
+	<div class="popup-content">
+		<div class="popup_title">
+			<h1 class="popup_name">일정등록</h1>
+		</div>
+		<div class="popup_inner">
+			<input type="hidden" id="calJjCode" />
+			<div>
+				<p class="ml-10" id="calendarExamInfo"></p>
+			</div>
+			<div class="popup_btn">
+				<button type="button" class="btn btn-blue-bg" onclick="regNaverCalendar();">등록</button>
+				<button type="button" class="btn btn-gray-bg ml-10" onclick="closeCalendarConfirmPop();">취소</button>
+			</div>
+		</div>
+		<button type="button" class="btn_popup_close popup_close" onclick="closeCalendarConfirmPop();">팝업닫기</button>
+		</div>
+</div>
+<!-- //시험일정 캘린더 저장 popup -->
+					</div>
+				</article>
+							
+			</div>
+
+		</main>
+		<!-- // container -->
+
+		
+
+<footer id="footer">
+	<div class="ft-tp">
+		<div class="inner-ctr">
+			<ul>
+				<li><a href="/cnt/c_7023/view.do?seq=108" class="font-color-blue3">개인정보처리방침</a></li>
+				<!-- <li><a href="#n">정보보호 생활가이드</a></li> -->
+				<li><a href="/PrivateInfo/brd/m_102/list.do?seq=102">개인정보 목적외 이용·제공 안내</a></li>
+				<li class="dn"><a href="/employee/list.do?seq=79">전화번호 안내</a></li>
+				<li class="dn"><a href="/RelatedSite/brd/m_103/list.do?seq=103">관련기관 안내</a></li>
+				<li class="dn"><a href="/cnt/c_7003/view.do?seq=104">사이트맵</a></li>
+				<li class="dn"><a href="/cnt/c_3054/view.do?seq=64">찾아오시는 길</a></li>
+				<li class="dn"><a href="/EngHome/index.do" target="_blank" title="새창으로 열림">ENGLISH</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="ft-bm">
+		<div class="l">
+			<address>
+				<div>[본관] 05103 서울특별시 광진구 자양로 45 사업자등록번호 106-82-05880 <span>대표번호 1544-4244</span></div>
+				<div>[별관] 05043 서울특별시 광진구 자양로 126 성지하이츠 2층(원서접수, 면허신청)</div>
+			</address>
+			<small>Copyright &copy; 2007 Korea Health Personnel Licensing Examination Institute. All Rights Reserved</small>
+		</div>
+		<div class="r">
+			<img src="/images/common/img_footer_logo.png" alt="가족친화 우수기관 인증마크">
+		</div>
+	</div>
+</footer>
+		
+		<!-- quickmenu 위치 -->
+		<div class="menu-overlay"></div>
+		<div class="ko menu-container">
+			<div class="quick-menu">
+				<div class="list-container">
+					<div class="menu-list-header">
+						<div>&#8226;</div>
+						<span>Quick Menu</span>
+						<div>&#8226;</div>
+					</div>
+					<ul class="menu-list">
+						<li>
+							<a href="/cnt/c_1003/view.do?seq=15">
+								<div class="img">
+									<img src="/images/quickmenu/icon_acc.png" alt="응시원서 접수" class="img_acc" />
+								</div>
+								<p>응시원서 접수</p>
+							</a>
+						</li>
+						<li>
+							<a href="/mypage/appResult/list.do">
+								<div class="img">
+									<img src="/images/quickmenu/icon_loc.png" alt="시험일자/장소변경" class="img_loc" />
+								</div>
+								<p>시험일자/장소변경</p>
+							</a>
+						</li>
+						<li>
+							<a href="/mypage/examResult/list.do">
+								<div class="img">
+									<img src="/images/quickmenu/icon_res.png" alt="시험결과" class="img_res" />
+								</div>
+								<p>시험결과</p>
+							</a>
+						</li>
+						<li>
+							<a href="/cnt/c_3024/view.do?seq=43">
+								<div class="img">
+									<img src="/images/quickmenu/icon_cer.png" alt="증명서 발급 신청" class="img_cer" />
+								</div>
+								<p>증명서 발급 신청</p>
+							</a>
+						</li>
+						<li>
+							<a href="/license/licenseIssueApp.do?seq=29">
+								<div class="img">
+									<img src="/images/quickmenu/icon_chec.png" alt="자격증 신청 (조회)" class="img_chec" />
+								</div>
+								<div class="flex">
+									<p>자격증 신청</p>
+									<span class="normal">(조회)</span>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="toggle mb-2r">
+					<div class="menu-btn">
+						<p>Quick Menu</p>
+					</div>
+					<div class="quick-btn">
+						<img src="/images/quickmenu/icon_plus.png" alt="퀵메뉴 버튼" class="icon_plus" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- quickmenu 위치 END-->
+	</div>
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-174913756-1"></script>
+	<script>
+								window.dataLayer = window.dataLayer || [];
+								function gtag(){dataLayer.push(arguments);}
+								gtag('js', new Date());
+
+								gtag('config', 'UA-174913756-1');
+	</script>
+<div class="wrap-loading display-none">
+    <div><img src="/images/sub/loading_img4.svg" alt="화면 로딩 이미지" /></div>
+</div>
+</body>
+</html>
