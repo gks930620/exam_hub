@@ -1,0 +1,81 @@
+import { useEffect, useState } from 'react';
+import { examApi } from '../api/exams';
+import type { LifecycleResponse } from '../api/types';
+
+/**
+ * 시험 변천사 — 폐지·개칭된 시험이 어디로 갔나.
+ *
+ * 폐지된 시험을 그냥 지우면 <b>있었다는 사실까지 사라진다.</b> "웹디자인기능사 왜 없죠?"에
+ * 답할 근거가 없고, 관심 등록해 둔 사람에게 알림이 왜 안 가는지도 설명하지 못한다.
+ * 사용자 화면에서만 빼고 기록은 여기 남긴다.
+ */
+export default function AdminLifecycle() {
+  const [data, setData] = useState<LifecycleResponse | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    examApi.adminLifecycle()
+      .then(setData)
+      .catch((e) => setErr(e instanceof Error ? e.message : '불러오지 못했습니다.'));
+  }, []);
+
+  if (err) return <div className="notice error">{err}</div>;
+  if (!data) return <div className="state">불러오는 중…</div>;
+  if (data.items.length === 0) {
+    return <p className="fineprint" style={{ margin: 0 }}>폐지·개칭된 시험이 없습니다.</p>;
+  }
+
+  return (
+    <>
+      <button className="btn" style={{ width: '100%', justifyContent: 'flex-start' }}
+              onClick={() => setOpen((v) => !v)}>
+        폐지·개칭 {data.items.length}건
+        {data.needsCheck > 0 && (
+          <span className="badge todo" style={{ marginLeft: 10 }}>확인 필요 {data.needsCheck}</span>
+        )}
+        <span style={{ marginLeft: 'auto' }}>{open ? '▾' : '▸'}</span>
+      </button>
+
+      {open && (
+        <div className="panel" style={{ padding: 18, marginTop: 10 }}>
+          <p className="fineprint" style={{ margin: '0 0 14px' }}>
+            이 시험들은 <b>검색·목록에서 빠져 있습니다</b>(오지 않을 접수를 기다리게 두지 않으려고).
+            기록은 여기 남아 있어서 "왜 없어졌는지" 답할 수 있습니다.
+          </p>
+          <div className="notice warn" style={{ marginBottom: 16 }}>
+            <b>확인 필요</b>가 붙은 것은 <b>큐넷 목록에 없다는 것만</b> 확인된 상태입니다.
+            시행처가 큐넷이 아니라서 없는 것일 수도 있습니다 —
+            컴퓨터활용능력은 대한상공회의소 시행이라 큐넷에 없지만 멀쩡히 살아 있습니다.
+            시행처 사이트를 보고 판단해 주세요.
+          </div>
+
+          <div style={{ overflowX: 'auto' }}>
+            <table className="data-table">
+              <thead>
+                <tr><th>시험</th><th>상태</th><th>지금은</th><th>근거</th></tr>
+              </thead>
+              <tbody>
+                {data.items.map((r) => (
+                  <tr key={r.certificateId}>
+                    <td>
+                      <b>{r.name}</b>
+                      {r.category && <div style={{ fontSize: 12, color: 'var(--muted2)' }}>{r.category}</div>}
+                    </td>
+                    <td>
+                      <span className={`badge ${r.lifecycle === 'UNVERIFIED' ? 'todo' : ''}`}>
+                        {r.lifecycleLabel}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: 13 }}>{r.supersededBy ?? '—'}</td>
+                    <td style={{ fontSize: 12.5, color: 'var(--muted)' }}>{r.note ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

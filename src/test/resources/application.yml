@@ -1,0 +1,41 @@
+spring:
+  # 페이징 상한(운영과 동일 파리티) — 테스트 프로파일 yml이 main을 shadow하므로 여기에도 명시.
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 100
+
+  # 통합 테스트는 외부 DB 없이 인메모리 H2(MySQL 호환 모드)로 실행
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # 테스트 시작 시 생성, 종료 시 삭제
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+    # data.sql 을 스키마 생성 뒤에 실행한다. 이 파일이 main 의 application.yml 을 통째로
+    # 가리므로 여기에도 써야 한다 — 빠뜨리면 테이블 없는 상태에서 INSERT 가 돌아 전 테스트가 깨진다.
+    defer-datasource-initialization: true
+
+# 시험 데이터는 SQL 시드가 아니라 ExamDataInitializer(@Profile("!prod"))가
+# ApplicationReadyEvent 시점에 적재한다(데모 자격증 10종).
+# data.sql 은 매니저 계정만 넣는다 — 테스트에서도 그대로 들어온다(로컬과 같은 상태로 검증).
+spring.sql:
+  init:
+    mode: embedded
+    encoding: UTF-8
+
+# 비큐넷 시험 시드(SeedFileScheduleSource)는 테스트에서 비활성 —
+# 기존 통합테스트 픽스처(데모 10종)를 그대로 유지하기 위함.
+seed:
+  nonqnet:
+    enabled: false

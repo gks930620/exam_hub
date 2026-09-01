@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Halo 디자인 미리보기</title>
+<link rel="stylesheet" href="halo-tokens.css" />
+<link rel="stylesheet" href="halo-components.css" />
+<style>
+  /* 이 미리보기 전용 — 실제 프로젝트에는 옮기지 않는다 */
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  .demo-section { margin-bottom: 34px; }
+  .demo-label {
+    font-size: 11px; font-weight: 700; color: var(--muted2);
+    text-transform: uppercase; letter-spacing: .1em; margin: 0 0 12px;
+  }
+  .demo-note {
+    font-size: 12.5px; color: var(--muted2); margin: 8px 0 0; line-height: 1.6;
+  }
+  .swatch-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .swatch { text-align: center; font-size: 11px; color: var(--muted2); }
+  .swatch i {
+    display: block; width: 68px; height: 52px; border-radius: var(--radius-sm);
+    box-shadow: var(--sh); margin-bottom: 5px;
+  }
+  .theme-btn {
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+    background: var(--surface); border: none; color: var(--muted);
+    padding: 6px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+    font-family: inherit; box-shadow: var(--sh); margin-left: auto;
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-container">
+    <a class="header-logo" href="#">◎ Halo</a>
+    <span class="hdr-badge">③ 유리는 여기 하나뿐</span>
+    <button class="theme-btn" id="themeBtn" type="button">🌗 다크 전환</button>
+  </div>
+</header>
+
+<div class="app-body">
+
+  <aside class="sidebar">
+    <p class="side-heading">첫 번째 그룹</p>
+    <a class="side-item active" href="#">② 활성 항목은 그라디언트</a>
+    <a class="side-item" href="#">비활성 항목</a>
+    <a class="side-item" href="#">비활성 항목</a>
+    <p class="side-heading">두 번째 그룹</p>
+    <a class="side-item" href="#">항목 하나</a>
+    <a class="side-item" href="#">항목 둘</a>
+    <a class="side-item" href="#">항목 셋</a>
+  </aside>
+
+  <main class="content-area">
+
+    <!-- ② 히어로 -->
+    <section class="hero">
+      <h1>화려함을 한 곳에 모은다</h1>
+      <p>페이지에서 가장 화려한 블록은 이것 하나뿐입니다. 나머지는 전부 조용합니다.</p>
+    </section>
+
+    <!-- ①+④ 카드 -->
+    <section class="demo-section">
+      <p class="demo-label">① 읽는 면은 불투명 · ④ 윗변 1px 그라디언트 선</p>
+      <div class="card-grid">
+        <a class="card" href="#">
+          <span class="card-icon">◆</span>
+          <span class="card-body"><h3>카드 제목</h3><p>배경은 불투명 흰색입니다. 색이 있는 곳은 아이콘 배지 하나뿐입니다.</p></span>
+        </a>
+        <a class="card" href="#">
+          <span class="card-icon">▲</span>
+          <span class="card-body"><h3>마우스를 올려보세요</h3><p>윗변의 선이 또렷해지고 카드가 3px 떠오릅니다.</p></span>
+        </a>
+        <a class="card" href="#">
+          <span class="card-icon">●</span>
+          <span class="card-body"><h3>테두리가 없습니다</h3><p>경계는 그림자로만 만듭니다. 선을 그으면 답답해집니다.</p></span>
+        </a>
+      </div>
+      <p class="demo-note">윗변 선은 좌우를 16px 씩 띄웁니다. 끝까지 채우면 촌스러워집니다.</p>
+    </section>
+
+    <!-- 페이지 헤더 -->
+    <section class="demo-section">
+      <p class="demo-label">페이지 제목</p>
+      <div class="page-header">
+        <span class="page-avatar">✦</span>
+        <div>
+          <h1>큰 아이콘 배지 + 제목</h1>
+          <p>배지는 ②에 해당합니다 — 초점이므로 그라디언트를 씁니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 버튼 -->
+    <section class="demo-section">
+      <p class="demo-label">② 주 버튼만 그라디언트 — 전부 알약형</p>
+      <div class="toolbar">
+        <button class="btn primary" type="button">주 버튼</button>
+        <button class="btn" type="button">보조 버튼</button>
+        <button class="btn" type="button">보조 버튼</button>
+        <button class="btn ghost" type="button">고스트</button>
+        <button class="btn" type="button" disabled>비활성</button>
+      </div>
+      <div class="chip-row">
+        <button class="chip on" type="button">선택됨</button>
+        <button class="chip" type="button">칩 하나</button>
+        <button class="chip" type="button">칩 둘</button>
+        <button class="chip" type="button">칩 셋</button>
+      </div>
+      <p class="demo-note">주 버튼은 화면당 1~2개로 제한하세요. 여러 개면 대비가 죽습니다.</p>
+    </section>
+
+    <!-- 입력 -->
+    <section class="demo-section">
+      <p class="demo-label">입력 — 테두리 없이 바탕색, 포커스는 링으로</p>
+      <div class="field">
+        <span>라벨</span>
+        <input class="input" placeholder="클릭해서 포커스 링을 확인하세요" />
+      </div>
+      <div class="field">
+        <span>여러 줄</span>
+        <textarea class="area" rows="3" placeholder="배경은 --soft, 포커스 시 --point-soft 로 바뀝니다"></textarea>
+      </div>
+    </section>
+
+    <!-- 숫자 요약 -->
+    <section class="demo-section">
+      <p class="demo-label">숫자 요약 — 여럿 중 딱 하나만 강조</p>
+      <div class="count-grid">
+        <div class="count-big accent"><span class="v">1,284</span><span class="l">가장 중요한 값</span></div>
+        <div class="count-big"><span class="v">327</span><span class="l">보조 값</span></div>
+        <div class="count-big"><span class="v">96%</span><span class="l">보조 값</span></div>
+        <div class="count-big"><span class="v">12.4</span><span class="l">보조 값</span></div>
+      </div>
+    </section>
+
+    <!-- 알림 -->
+    <section class="demo-section">
+      <p class="demo-label">알림 — 기본은 흰 카드, 의미색은 은은하게</p>
+      <div class="notice">기본 알림입니다. 흰 카드에 그림자만 있습니다.</div>
+      <div class="notice info">정보 — 강조색 계열입니다.</div>
+      <div class="notice ok">성공 — 초록 계열입니다.</div>
+      <div class="notice warn">주의 — 노랑 계열입니다.</div>
+      <div class="notice error">오류 — 빨강 계열입니다.</div>
+    </section>
+
+    <!-- 표 -->
+    <section class="demo-section">
+      <p class="demo-label">표 · 키값 목록</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>이름</th><th>값</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td>첫 번째 항목</td><td>1,234</td><td><span class="status-badge ok">정상</span></td></tr>
+            <tr><td>두 번째 항목</td><td>5,678</td><td><span class="tag">대기</span></td></tr>
+            <tr><td>세 번째 항목</td><td>90</td><td><span class="tag">대기</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="kv-card">
+        <div class="kv-row"><span class="kv-label">키 이름</span><span class="kv-value">값이 들어갑니다</span></div>
+        <div class="kv-row"><span class="kv-label">긴 키 이름</span><span class="kv-value">라벨 폭은 고정, 값은 남는 공간을 씁니다</span></div>
+      </div>
+      <div class="statusbar">
+        <span>항목 <b>3</b>개</span><span>처리 <b>0.4</b>초</span><span>크기 <b>12.8KB</b></span>
+      </div>
+    </section>
+
+    <!-- 패널 -->
+    <section class="demo-section">
+      <p class="demo-label">패널 — 헤더가 붙은 카드</p>
+      <div class="panel">
+        <div class="panel-head"><span>패널 제목</span><button class="btn ghost" type="button">복사</button></div>
+        <div style="padding:18px">패널 본문입니다. 카드와 같은 표면이며 윗변 선도 동일하게 붙습니다.</div>
+      </div>
+    </section>
+
+    <!-- 토큰 -->
+    <section class="demo-section">
+      <p class="demo-label">토큰 — 이 색들만 쓴다</p>
+      <div class="swatch-row">
+        <div class="swatch"><i style="background:var(--grad)"></i>--grad</div>
+        <div class="swatch"><i style="background:var(--grad-hot)"></i>--grad-hot</div>
+        <div class="swatch"><i style="background:var(--point)"></i>--point</div>
+        <div class="swatch"><i style="background:var(--point-soft)"></i>--point-soft</div>
+        <div class="swatch"><i style="background:var(--surface)"></i>--surface</div>
+        <div class="swatch"><i style="background:var(--soft)"></i>--soft</div>
+        <div class="swatch"><i style="background:var(--bg)"></i>--bg</div>
+        <div class="swatch"><i style="background:var(--ok)"></i>--ok</div>
+        <div class="swatch"><i style="background:var(--warn)"></i>--warn</div>
+        <div class="swatch"><i style="background:var(--err)"></i>--err</div>
+      </div>
+      <p class="demo-note">
+        새 컴포넌트를 만들 때 여기 없는 색을 쓰고 싶어지면, 토큰이 하나 부족한 것입니다 —
+        하드코딩하지 말고 토큰을 먼저 늘리세요.
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // 다크 모드 — data-theme 만 바꾸면 토큰이 전부 따라온다
+  const btn = document.getElementById("themeBtn");
+  btn.addEventListener("click", () => {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+    btn.textContent = dark ? "🌗 다크 전환" : "☀ 라이트 전환";
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.vite
+
+# TypeScript 증분 빌드 정보 (산출물)
+*.tsbuildinfo

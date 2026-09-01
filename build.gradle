@@ -1,0 +1,129 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// (spring-boot-starter-thymeleaf 제거 — 2026-07-29 CSR 전환. 웹은 React CSR(frontend/), 백엔드는 REST API 전용)
+	implementation 'org.springframework.boot:spring-boot-starter-validation'  // Validation 추가
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// 인증: 소셜 로그인(카카오·구글 OAuth2) → Member + JWT (설계 08).
+	// 구 기기식별(X-Device-Id)은 폐기했다.
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+	// 알림 발송: 이메일 (사용자 결정 2026-08-07). 웹 푸시 아님.
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'  // 메일 본문 템플릿 전용(화면 렌더 아님)
+
+	// .env 파일 읽기용
+	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+	// Swagger (API 문서화)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+	// Actuator (서버 상태 모니터링)
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	runtimeOnly 'com.mysql:mysql-connector-j'  // 배포(prod)용 MySQL 드라이버 (Railway MySQL)
+	runtimeOnly 'com.h2database:h2'  // 개발/테스트용 인메모리 DB (외부 DB 불필요). 배포는 prod 프로파일에서 Railway MySQL 사용
+
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// ─────────────────────────────────────────────────────────────
+// 프런트(React CSR) 번들을 이 서버가 함께 서빙한다 — 단일 서버 실행(2026-08-06 사용자 지시).
+//   frontend/ 를 vite 로 빌드 → frontend/dist → src/main/resources/static 으로 복사.
+//   그러면 http://localhost:8081 하나로 화면 + API 가 모두 뜬다.
+//
+// 입력/출력을 선언했으므로 소스가 안 바뀌면 Gradle 이 UP-TO-DATE 로 건너뛴다(테스트가 느려지지 않음).
+// npm 이 없는 환경(도커 JDK 이미지 등)에서는 -PskipFrontend 로 끄고, 미리 만든 dist 를 넣어 쓴다.
+// ─────────────────────────────────────────────────────────────
+def frontendDir = file("$projectDir/frontend")
+def skipFrontend = project.hasProperty('skipFrontend')
+def npm = org.gradle.internal.os.OperatingSystem.current().isWindows() ? 'npm.cmd' : 'npm'
+
+tasks.register('frontendInstall', Exec) {
+	onlyIf { !skipFrontend && frontendDir.exists() }
+	workingDir frontendDir
+	commandLine npm, 'install', '--no-audit', '--no-fund'
+	inputs.file("$frontendDir/package.json")
+	inputs.file("$frontendDir/package-lock.json")
+	outputs.dir("$frontendDir/node_modules")
+}
+
+tasks.register('frontendBuild', Exec) {
+	onlyIf { !skipFrontend && frontendDir.exists() }
+	dependsOn 'frontendInstall'
+	workingDir frontendDir
+	commandLine npm, 'run', 'build'
+	inputs.dir("$frontendDir/src")
+	inputs.file("$frontendDir/index.html")
+	inputs.file("$frontendDir/vite.config.ts")
+	inputs.file("$frontendDir/package.json")
+	outputs.dir("$frontendDir/dist")
+}
+
+tasks.register('copyFrontendBuild', Copy) {
+	onlyIf { !skipFrontend && file("$frontendDir/dist").exists() }
+	dependsOn 'frontendBuild'
+	from "$frontendDir/dist"
+	into "$projectDir/src/main/resources/static"
+	// 이전 빌드의 해시 파일명이 남지 않도록 비우고 채운다(.gitkeep 은 보존)
+	doFirst {
+		delete fileTree("$projectDir/src/main/resources/static") {
+			exclude '.gitkeep'
+		}
+	}
+}
+
+tasks.named('processResources') {
+	dependsOn 'copyFrontendBuild'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// 운영 DB 에 매니저를 직접 INSERT 할 때 쓸 비밀번호 해시를 찍는다.
+// 평문을 password_hash 에 넣으면 로그인이 안 되고, 온라인 해시 생성기에 운영 비밀번호를
+// 붙여넣는 것도 곤란해서 프로젝트 안에 둔다.
+//   ./gradlew managerHash -Ppassword=내가정한비밀번호
+tasks.register('managerHash', JavaExec) {
+	group = 'application'
+	description = '매니저 비밀번호의 BCrypt 해시를 출력한다 (운영 DB 직접 INSERT 용)'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.test.test.exam.manager.ManagerPasswordHasher'
+	args = [project.findProperty('password') ?: '']
+}

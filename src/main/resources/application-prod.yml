@@ -1,0 +1,85 @@
+
+# Railway는 컨테이너가 반드시 주입된 PORT로 리슨해야 한다. 미주입 시(로컬 prod 테스트) 8080.
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: framework  # 프록시(HTTPS 종단) 뒤에서 scheme/host 를 신뢰
+
+spring:
+  datasource:
+    # 운영 DB: Railway MySQL. 접속정보는 기본값을 두지 않는다(fail-fast) — 미설정 시 기동을 실패시켜
+    # 배포 설정 누락을 즉시 드러낸다. Railway 서비스 변수 예시(Reference Variables):
+    #   SPRING_DATASOURCE_URL=jdbc:mysql://${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}/${{MySQL.MYSQLDATABASE}}
+    #   SPRING_DATASOURCE_USERNAME=${{MySQL.MYSQLUSER}}
+    #   SPRING_DATASOURCE_PASSWORD=${{MySQL.MYSQLPASSWORD}}
+    url: ${SPRING_DATASOURCE_URL}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:com.mysql.cj.jdbc.Driver}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  h2:
+    console:
+      enabled: false  # 운영에서 H2 콘솔은 절대 노출 금지
+
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_DDL_AUTO:update}  # 운영 안정기엔 validate 로 전환 권장
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        default_batch_fetch_size: 100
+        # MySQL 8.x dialect
+        dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+  devtools:
+    livereload:
+      enabled: false
+    restart:
+      enabled: false
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.type: WARN
+    com.test.test: INFO   # 실제 애플리케이션 패키지
+
+# 공개 도메인은 application.yml 의 app.link-base 가 APP_PUBLIC_BASE_URL 을 직접 읽는다.
+# (구 app.public-base-url 은 sitemap 용이었는데 CSR 전환으로 sitemap 이 사라져 아무도 안 읽었다 → 제거)
+# 미설정이면 localhost 로 떨어지고 RailwayDeploymentValidator 가 기동을 막는다.
+
+# Swagger/OpenAPI: 운영에서는 비활성화 (API 명세 비인증 노출 방지)
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+# Actuator 설정 (서버 상태 모니터링)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# ===== exam-hub 수집/알림 설정 (운영) =====
+# 운영에는 데모/Mock·시드 소스(@Profile("!prod"))가 없으므로 실 소스를 활성화한다.
+# QnetApiScheduleSource 는 구현 완료(RestClient) — QNET_API_KEY(Encoding 키) 주입 + 실 네트워크 검증만 남음.
+# 비큐넷(한능검·어학 등)은 실 스크래퍼 추가 전까지 운영에 없음(로컬 시드 전용).
+qnet:
+  api:
+    enabled: true
+    key: ${QNET_API_KEY:}
+    base-url: ${QNET_API_BASE_URL:https://apis.data.go.kr/B490007/qualExamSchd}
+
+# ⚠️ 웹 전용: 실발송은 웹 푸시/이메일로 구현 예정. 그 전까지 LogNotificationSender(로그). (모바일 FCM 제거함)

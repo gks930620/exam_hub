@@ -1,0 +1,4913 @@
+{
+  "_comment": "큐넷 종목목록 API(InquiryListNationalQualifcationSVC/getList) 응답을 그대로 옮긴 시험 마스터. 일정은 없다 — sourceCode(jmCd)가 있어 나중에 시험일정 API 와 이름이 아니라 코드로 붙는다.",
+  "_source": "설계/시험데이터/큐넷_API/samples/종목목록_전체_613종.xml (2026-08-10 실호출)",
+  "_prod": "CertificateMasterInitializer 가 운영에서도 읽는다 — 실참조 데이터(코드컨벤션 §5-2).",
+  "generatedAt": "2026-08-10",
+  "count": 613,
+  "exams": [
+    {
+      "name": "가스기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0752",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0080",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설안전기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0740",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축구조기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0490",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축기계설비기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0501",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축시공기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0510",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축전기설비기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "0502",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축품질시험기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0511",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공장관리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "0760",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공조냉동기계기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0071",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "교통기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0951",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속가공기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "0130",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "0110",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속제련기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "0094",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금형기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0012",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0872",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계안전기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0710",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기상예보기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "0891",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농어업토목기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0470",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농화학기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "0950",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "대기관리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "0920",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "도로및공항기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0420",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "도시계획기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0650",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "발송배전기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "0230",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "비파괴검사기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0802",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산림기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "0801",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업계측제어기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "0270",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업기계설비기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0060",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업위생관리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0751",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "상하수도기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0460",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "섬유기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "0551",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "세라믹기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "0790",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0750",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소음진동기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "0940",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산양식기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "0701",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산제조기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "0810",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수자원개발기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0451",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수질관리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "0930",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "시설원예기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "0841",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식품기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "0800",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "어업기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "0702",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "용접기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "0011",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "의류기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "0561",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "인간공학기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0875",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자연환경관리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "0938",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기안전기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0730",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기응용기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "0250",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기철도기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "0432",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자응용기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "0301",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보관리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "0601",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제품디자인기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "0960",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조경기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0670",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조선기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0320",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "종자기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "0840",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지적기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0690",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지질및지반기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0825",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "차량기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0050",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0430",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도신호기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "0261",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도차량기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0431",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "축산기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "0851",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "측량및지형공간정보기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0680",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터시스템응용기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "0622",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토목구조기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0400",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토목시공기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0480",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토목품질시험기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0481",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토양환경기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "0948",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토질및기초기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0390",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "폐기물처리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "0970",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "포장기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "0780",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "표면처리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "0120",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "품질관리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "0770",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공기관기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0370",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공기체기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "0360",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항만및해안기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0410",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "해양기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "0700",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화공기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "0210",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화공안전기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "0720",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화약류관리기술사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "0591",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "3375",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계정비기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "3120",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축목재시공기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "3611",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축일반시공기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "3621",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "귀금속가공기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "3770",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "3221",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금형기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "3061",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계가공기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "3021",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "3924",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "배관기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "3081",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산림기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "9773",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "압연기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "3270",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "에너지관리기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "3170",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "용접기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "3100",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "위험물기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "3360",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "이용장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "3925",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차정비기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "3110",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "잠수기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "3911",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "3380",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "3410",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제강기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "3240",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제과기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "3923",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제선기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "3230",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조리기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "3922",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "주조기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "3200",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도차량정비기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "3150",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "판금제관기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "3095",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "표면처리기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "3210",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한복기능장",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "3643",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "3D프린터개발산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2177",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가구제작산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2142",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1471",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2471",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "객화차정비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2044",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계설비기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1040",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계설비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2040",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계정비기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1050",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계정비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2050",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설안전기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1440",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설안전산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2390",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설재료시험기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1750",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설재료시험산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2600",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1630",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축목공산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2253",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2530",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축설비기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1632",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축설비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2531",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축일반시공산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2251",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공간정보융합산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2331",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공공조달관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9777",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공조냉동기계기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1730",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공조냉동기계산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2590",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "광학기기산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2108",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "광학기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1513",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "교통기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1751",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "교통산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2751",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국제의료관광코디네이터",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-보건의료",
+      "sourceCode": "9105",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "궤도장비정비기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1051",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "궤도장비정비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2051",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "귀금속가공산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2760",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "그린전동자동차기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1027",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "1104",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "2101",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계설계산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2031",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계조립산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2011",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기상감정기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1601",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기상기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1600",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농림토양평가관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1582",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농림토양평가관리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2582",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농업기계기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1023",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농업기계산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2027",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농작업안전보건기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1442",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "누설비파괴검사기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1617",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "대기환경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1661",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "대기환경산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2571",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "도시계획기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1350",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "디지털인쇄산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2391",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "로봇기구개발기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1177",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "로봇소프트웨어개발기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1178",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "로봇하드웨어개발기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1179",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "멀티미디어콘텐츠제작전문가",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "9545",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "메카트로닉스산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2060",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "바이오화학제품제조기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1800",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "바이오화학제품제조산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2570",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "반도체커스텀레이아웃산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2175",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방사선비파괴검사기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1611",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방사선비파괴검사산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2611",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방수산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2630",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방재기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1443",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "배관산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2041",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "버섯산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1641",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "보석감정산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2980",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "보석디자인산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2880",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "복어조리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "2975",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사무자동화산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "2193",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사출금형기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1024",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사출금형산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2028",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사회조사분석사1급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9520",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사회조사분석사2급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9521",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산림기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1564",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산림산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "2481",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1431",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2381",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업위생관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1472",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업위생관리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2472",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "생물분류기사(동물)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1989",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "생물분류기사(식물)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1988",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "설비보전기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1837",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "설비보전산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2035",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "섬유기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "1297",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "섬유디자인산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2264",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "섬유산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2277",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방설비기사(기계분야)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1900",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방설비기사(전기분야)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1910",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방설비산업기사(기계분야)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2900",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방설비산업기사(전기분야)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2910",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소비자전문상담사1급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9537",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소비자전문상담사2급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9538",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소음진동기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1663",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소음진동산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2573",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산양식기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1625",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산양식산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "2520",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산제조기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "1540",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수질환경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1662",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수질환경산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2572",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "스마트공장산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "9772",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "스포츠경영관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "9546",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "승강기기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1555",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "승강기산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2395",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "시각디자인기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "1790",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "시각디자인산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "2434",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "시설원예기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1780",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식물보호기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1562",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식물보호산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "2562",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식육가공기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "1541",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식품산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "2450",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식품안전기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "1530",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "신발산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2302",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "신재생에너지발전설비기사(태양광)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1114",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "신재생에너지발전설비산업기사(태양광)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2114",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "실내건축기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1282",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "실내건축산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2282",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "양식조리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "2972",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "어로산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "2631",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "어병기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1626",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "어업생산관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1633",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "에너지관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1340",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "에너지관리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2960",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "온실가스관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1028",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "와전류비파괴검사기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1615",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "용접기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "1022",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "용접산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "2026",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "위험물산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2121",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유기농업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1592",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유기농업산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "2592",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "응용지질기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1550",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "의공기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1176",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "의공산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2176",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "의류기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "1301",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "이러닝운영관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9547",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "인간공학기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1875",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "인쇄설계기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "1391",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "일반기계기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1021",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "일식조리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "2973",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임베디드기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1121",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임산가공기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1590",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임상심리사1급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-보건의료",
+      "sourceCode": "9539",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임상심리사2급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-보건의료",
+      "sourceCode": "9540",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임업종묘기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1570",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자기비파괴검사기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1613",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자기비파괴검사산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2613",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차정비기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1070",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차정비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2070",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동화설비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2034",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자연생태복원기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1938",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자연생태복원산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2938",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "잠수산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2521",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기공사기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1160",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기공사산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2150",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기기기산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2151",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1150",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2140",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기철도기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1741",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기철도산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2036",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1170",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2170",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자회로설계산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2172",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정밀측정산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2104",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정밀화학기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1125",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보처리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "1320",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보처리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "2290",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제과산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "4223",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제빵산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "4224",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제판기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "1810",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제품디자인기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "1512",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제품디자인산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "2432",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1370",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조경산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2320",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조선산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2220",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조선선체기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1221",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조선의장기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1222",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "종자기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1560",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "종자산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "2470",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "주조산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "2105",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "중식조리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "2974",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지적기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1390",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지적산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2340",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "직업상담사1급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-사회복지",
+      "sourceCode": "9510",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "직업상담사2급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-사회복지",
+      "sourceCode": "9511",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도동력차기관정비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2042",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도동력차전기정비산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2043",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도신호기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "1740",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도신호산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "2160",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도운송산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "2045",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도차량기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1030",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도차량산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2030",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도토목기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1760",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "초음파비파괴검사기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1612",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "초음파비파괴검사산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2612",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "축산기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1581",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "축산산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "2491",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "측량및지형공간정보기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1380",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "측량및지형공간정보산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2330",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "침투비파괴검사기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1614",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "침투비파괴검사산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2614",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컨벤션기획사1급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9535",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컨벤션기획사2급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9536",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컬러리스트기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "1982",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컬러리스트산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "2982",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터시스템기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "1998",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터응용가공산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2025",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "콘크리트기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1048",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "콘크리트산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2048",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "텔레마케팅관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "9541",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토목기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1250",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토목산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2240",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토양환경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1948",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "판금제관산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "2012",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "패션디자인산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2301",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "패션머천다이징산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2085",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "폐기물처리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1950",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "폐기물처리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2950",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "포장기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "1511",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "포장산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "2431",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "표면처리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "2106",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "품질경영기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "1500",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "품질경영산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "2420",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "프레스금형기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1025",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "프레스금형산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2029",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "피아노조율산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2551",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한복산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "2268",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한식조리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "2971",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "1240",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "2230",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항로표지기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1351",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항로표지산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2351",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "해양공학기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1403",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "해양자원개발기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1402",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "해양조사산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "2350",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "해양환경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "1401",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화공기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1110",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화약류관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "1140",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화약류관리산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "2130",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화약류제조기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1130",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화약류제조산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "2120",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화재감식평가기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "1441",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화재감식평가산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "2441",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화학분석기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1563",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화훼장식기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "1576",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화훼장식산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "2625",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "환경위해관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "1029",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "3D프린터운용기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "7785",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가구제작기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7140",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "6335",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스텅스텐아크용접기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6224",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "거푸집기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7170",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6298",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설재료시험기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7132",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축도장기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7150",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축목공기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7130",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공간정보융합기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "6981",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공구제작기능사보",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "8070",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공조냉동기계기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6320",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "광산보안기능사(화약분야)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "7385",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "광산차량기계운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "7371",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "광산환경기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "7372",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "굴착기운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7862",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "궤도장비정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6051",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "귀금속가공기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7460",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속도장기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "7450",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료시험기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6490",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재창호기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7102",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금형기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6105",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계가공조립기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6042",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기중기운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7861",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "남성복기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7931",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농기계운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "6301",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농업기계정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6300",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "도배기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7180",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "도자공예기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7890",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "도화기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7660",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "떡제조기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7992",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "로더운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7866",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "롤러운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7871",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "메카트로닉스기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6903",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "모터그레이더운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7872",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "목공예기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7480",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "목재가공기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7645",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "목재창호기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7101",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "목질재료기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7643",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용사(네일)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "7957",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용사(메이크업)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "7967",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용사(일반)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "7937",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용사(피부)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "7947",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미장기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7110",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "바이오공정기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "9775",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "반도체설비보전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6033",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방사선비파괴검사기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "7471",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방수기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7030",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "배관기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "6213",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "버섯종균기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7631",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "보석가공기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7889",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "보석감정사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7980",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "복어조리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7914",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "봉제기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "9776",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "불도저운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7863",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "비계기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7120",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사진기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7795",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사출금형기능사보",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "8090",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산림기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7632",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "석공기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "6990",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "석공예기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "6792",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "선박기관정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6960",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "선체건조기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6920",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "선체설계기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6910",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "설비보전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6837",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "세탁기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7960",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산양식기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7700",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "스마트공장기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "9771",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "승강기기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "7940",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식육처리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7482",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식품가공기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7591",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "신발제조기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7904",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "신재생에너지발전설비기능사(태양광)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "7114",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "실내건축기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7152",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "아스팔트피니셔운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7873",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "압연기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6543",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "양식조리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7911",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "양화장치운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7930",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "에너지관리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "7761",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "여성복기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7932",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "열처리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6420",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "염색기능사(날염)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7302",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "염색기능사(침염)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7301",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "온수온돌기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7161",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "원예기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7901",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "웹디자인개발기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "7798",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "위험물기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "6697",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유기농업기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "6592",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유리시공기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7151",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "의료전자기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "6176",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "이륜자동차정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "9774",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "이산화탄소가스아크용접기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6225",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "이용사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-서비스",
+      "sourceCode": "7908",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "인쇄기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7524",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "일식조리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7912",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임베디드기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "6801",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임업종묘기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7630",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자기비파괴검사기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "7473",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차보수도장기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6836",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6281",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차차체수리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6285",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동화설비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6415",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "잠수기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7612",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "7780",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산응용건축제도기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7061",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산응용기계제도기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6151",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산응용토목제도기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7072",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "6790",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자출판기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "6791",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자캐드기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "6785",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정밀측정기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6120",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보기기운용기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "6892",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제강기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6515",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제과기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7892",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제빵기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7893",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제선기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6500",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제품응용모델링기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "6793",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조경기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7900",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조적기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7070",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조주기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7916",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "종자기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7620",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "주조기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6461",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "중식조리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7913",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지게차운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7875",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지도제작기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7680",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지적기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7650",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "천공기운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7483",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "천장크레인운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7864",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철근기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7080",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도전기신호기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "6772",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도차량정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6352",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도토목기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7010",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "초음파비파괴검사기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "7472",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "축로기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6381",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "축산기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7481",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "측량기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "6980",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "침투비파괴검사기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "7474",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컨테이너크레인운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7835",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터그래픽기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "7796",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터응용밀링기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6032",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터응용선반기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6012",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "콘크리트기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7020",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "타워크레인운전기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7834",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "타일기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7210",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "판금제관기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6175",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "펄프종이제조기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7646",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "표면실장장비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6835",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "표면처리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6480",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "프레스금형기능사보",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "8080",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "프로그래밍기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "6921",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "플라스틱창호기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7103",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "피복아크용접기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "6223",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "피아노조율기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7917",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한복기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "7723",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한식조리기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "7910",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공기정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6288",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공사진기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "7670",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공전기·전자정비기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "6289",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항로표지기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "6351",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화약취급기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "7970",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화학분석기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "6560",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화훼장식기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "7625",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "환경기능사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "7918",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공인노무사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9500",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가맹거래사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9503",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공인중개사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9630",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계경비지도사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9502",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "일반경비지도사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9501",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "세무사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9641",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관세사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9640",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "외국어번역행정사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9722",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "일반행정사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9721",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "해사행정사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9723",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방안전교육사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9657",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방시설관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9658",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "박물관및미술관준학예사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9659",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한국어교육능력검정시험",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9660",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(독어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9625",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(러시아어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9627",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(말레이/인도네시아어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9634",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(베트남어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9633",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(불어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9624",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(스페인어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9626",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(아랍어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9635",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(영어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9661",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(이탈리아어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9631",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(일본어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9628",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(중국어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9629",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사(태국어)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9632",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "호텔관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9663",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "호텔경영사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9662",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국내여행안내사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9664",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "호텔서비스사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9665",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기술자(단청)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9667",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기술자(보수)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9666",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기술자(보존과학)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9670",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기술자(식물보호)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9671",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기술자(실측설계)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9668",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기술자(조경)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9669",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(가공석공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9674",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(대목수)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9672",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(도금공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9685",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(드잡이공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9677",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(모사공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9706",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(목조각공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9682",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(박제및표본제작공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9693",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(번와와공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9678",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(보존처리공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9690",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(석조각공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9683",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(세척공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9688",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(소목수)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9673",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(식물보호공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9691",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(실측설계사보)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9692",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(쌓기석공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9675",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(온돌공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9694",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(제작와공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9679",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(조경공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9687",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(철물공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9681",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(칠공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9684",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(표구공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9686",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(한식미장공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9680",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(화공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9676",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국가유산수리기능자(훈증공)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9689",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "농산물품질관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9695",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경매사(수산)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9697",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경매사(약용)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9700",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경매사(양곡)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9728",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경매사(청과)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9696",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경매사(축산)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9698",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경매사(화훼)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9699",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경영지도사(1차공통)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9705",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경영지도사(마케팅)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9704",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경영지도사(생산관리)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9703",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경영지도사(인적자원관리)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9701",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경영지도사(재무관리)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9702",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기술지도사(1차공통)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9729",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기술지도사(기술혁신관리)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9758",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기술지도사(정보기술관리)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9759",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "변리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9737",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사회복지사 1급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9738",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정수시설운영관리사1급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9739",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정수시설운영관리사2급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9740",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정수시설운영관리사3급",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9741",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전지도사(건설안전)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9714",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전지도사(기계안전)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9711",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전지도사(전기안전)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9712",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전지도사(화공안전)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9713",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업보건지도사(산업위생공학)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9716",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업보건지도사(직업환경의학)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9715",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "주택관리사보",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9744",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "감정평가사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9745",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "물류관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9746",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "검수사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9747",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "검량사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9748",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "감정사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9749",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "1급 청소년지도사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9750",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "2급 청소년지도사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9751",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "3급 청소년지도사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9752",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "1급 청소년상담사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9753",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "2급 청소년상담사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9754",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "3급 청소년상담사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9755",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산물품질관리사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9762",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "손해평가사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "9763",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    }
+  ]
+}

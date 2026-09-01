@@ -1,0 +1,275 @@
+/* ═══════════════════════════════════════════════════════════════════
+   exam-hub 전용 컴포넌트 — Halo 위에 얹는 얇은 층.
+
+   halo-tokens.css → halo-components.css → 이 파일 순서로 불러온다.
+   규칙(가이드 §3-4): 여기에 #hex 를 쓰고 싶어지면 토큰이 부족한 것이다.
+   색·그림자·둥글기는 전부 var(--토큰) 으로만 참조한다 — 그래야 다크가 따라온다.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 이 앱에서 더 필요한 토큰 ──
+   halo-tokens.css 는 키트 원본이라 손대지 않고, 부족한 것만 여기서 확장한다.
+   (색을 컴포넌트에 하드코딩하면 다크에서 그 부분만 깨진다 — 가이드 §3-4) */
+:root {
+  --scrim: rgba(43, 39, 69, .42);   /* 모바일 드로어 뒤를 덮는 면 */
+}
+:root[data-theme="dark"] {
+  --scrim: rgba(0, 0, 0, .58);
+}
+
+/* ── 앱 골격 ── */
+.app-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* 헤더 우측 도구(테마 전환·메뉴) */
+.hdr-tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border: none; border-radius: 999px;
+  background: var(--glass-chip); color: var(--muted);
+  font-size: 15px; cursor: pointer; font-family: inherit; line-height: 1;
+}
+.icon-btn:hover { color: var(--point); }
+.icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--point-soft); }
+
+/* 모바일 드로어 열렸을 때 뒤를 덮는 면 */
+.scrim {
+  position: fixed; inset: 0; z-index: 35;
+  background: var(--scrim);
+  border: none; padding: 0; cursor: pointer;
+}
+@media (min-width: 769px) { .scrim, .only-mobile { display: none; } }
+
+/* ── 페이지 공통 ── */
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin: 26px 0 12px;
+}
+.section-head h2 {
+  margin: 0; font-size: 11px; font-weight: 700; color: var(--muted2);
+  text-transform: uppercase; letter-spacing: .1em;
+}
+.section-head .more { font-size: 12.5px; color: var(--muted2); }
+
+.state {
+  background: var(--surface); border-radius: var(--radius); box-shadow: var(--sh);
+  padding: 44px 24px; text-align: center; color: var(--muted);
+}
+.state .big { display: block; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+
+.fineprint { font-size: 12.5px; color: var(--muted2); line-height: 1.75; margin: 18px 2px 0; }
+
+/* ── 히어로 안의 D-day (홈·상세) ──
+   ② 히어로는 페이지당 하나뿐이므로 그라디언트 예산을 여기에 몰아 쓴다. */
+.hero-dday {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  gap: clamp(16px, 4vw, 40px); flex-wrap: wrap; text-align: left;
+}
+.hero-dday .num {
+  font-size: clamp(56px, 11vw, 92px); font-weight: 800; letter-spacing: -.055em;
+  line-height: .95; font-variant-numeric: tabular-nums;
+}
+.hero-dday .num small { font-size: .34em; font-weight: 700; letter-spacing: -.01em; margin-left: 4px; }
+.hero-dday .what { max-width: 34ch; }
+.hero-dday .what strong { display: block; font-size: 19px; font-weight: 750; letter-spacing: -.02em; }
+.hero-dday .what span { display: block; margin-top: 6px; opacity: .9; font-size: 13.5px; }
+.hero-actions { position: relative; margin-top: 22px; display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; }
+/* 히어로 위 버튼 — 그라디언트 위에 그라디언트를 얹지 않는다(원칙 ②) */
+.hero .btn { background: var(--glass-chip); color: #fff; box-shadow: none; }
+.hero .btn:hover { background: var(--glass-edge); color: #fff; }
+
+/* ── 시험 카드 (홈·검색·캘린더 공용) ── */
+.exam-card { display: block; padding: 17px 18px; }
+.exam-card .top { display: flex; align-items: flex-start; gap: 10px; }
+.exam-card h3 {
+  margin: 0; font-size: 15.5px; font-weight: 700; letter-spacing: -.015em;
+  color: var(--text); flex: 1; min-width: 0;
+}
+.exam-card .sub { margin: 4px 0 0; font-size: 12.5px; color: var(--muted2); }
+.exam-card .grow { flex: 1; min-width: 0; }
+.exam-card .foot {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-top: 13px; flex-wrap: wrap;
+}
+.exam-card .when { font-size: 12.5px; color: var(--muted); }
+
+/* D-day 숫자 — 카드에서 눈이 가야 하는 곳. 색은 단색 강조(--point)로 두고
+   그라디언트는 히어로에만 남긴다(원칙 ②). */
+.dday {
+  font-size: 20px; font-weight: 800; letter-spacing: -.03em;
+  color: var(--point); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.dday.soon { color: var(--err); }
+
+/* 상태 배지 — 접수중만 강조색, 나머지는 조용하게 */
+.badge {
+  display: inline-block; padding: 4px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+  background: var(--soft); color: var(--muted);
+}
+.badge.open { background: var(--point-soft); color: var(--point-dark); }
+.badge.warn { background: var(--ok-soft); color: var(--ok-text); }
+
+/* 관심 등록 별 */
+.star {
+  flex: none; border: none; background: none; cursor: pointer; padding: 2px;
+  font-size: 19px; line-height: 1; color: var(--muted2); font-family: inherit;
+}
+.star[data-on="true"] { color: var(--warn); }
+.star:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--point-soft); border-radius: 999px; }
+
+/* 분류 칩의 개수 — 칩 안에서 조용히 */
+.chip b { font-weight: 700; opacity: .55; margin-left: 2px; font-variant-numeric: tabular-nums; }
+.chip.on b { opacity: .75; }
+
+/* ── 검색 ── */
+.searchbar { position: relative; margin-bottom: 14px; }
+.searchbar .input { padding-left: 44px; }
+.searchbar .ico {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  color: var(--muted2); font-size: 15px; pointer-events: none;
+}
+
+/* ── 상세: 연간 일정 표 ── */
+.data-table td.round { font-weight: 700; color: var(--text); white-space: nowrap; }
+.data-table .nowrap { white-space: nowrap; }
+.data-table td { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ── 캘린더 ── */
+.month-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.month-bar strong { font-size: 19px; font-weight: 750; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+
+.day-list { display: flex; flex-direction: column; gap: 10px; }
+.day-row { display: flex; gap: 16px; align-items: center; padding: 15px 18px; }
+.day-row .date {
+  flex: none; width: 52px; text-align: center; line-height: 1.1;
+  font-variant-numeric: tabular-nums; color: var(--muted2);
+}
+.day-row .date b { display: block; font-size: 21px; font-weight: 750; letter-spacing: -.03em; color: var(--text); }
+.day-row .date span { font-size: 11.5px; }
+.day-row .body { flex: 1; min-width: 0; }
+.day-row .body h3 { margin: 0 0 4px; font-size: 14.5px; font-weight: 700; letter-spacing: -.01em; }
+
+/* ── 설정: 스위치 ──
+   켜짐은 단색 --point. 그라디언트를 쓰면 화면당 3개가 되어 원칙 ② 를 깬다. */
+.switch-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 15px 18px; border-bottom: 1px solid var(--border);
+  width: 100%; background: none; border-left: none; border-right: none; border-top: none;
+  text-align: left; cursor: pointer; font-family: inherit; color: inherit;
+}
+.switch-row:last-of-type { border-bottom: none; }
+.switch-row:hover { background: var(--soft); }
+.switch-row:focus-visible { outline: none; background: var(--point-soft); }
+.switch-row .label { flex: 1; min-width: 0; }
+.switch-row .label b { display: block; font-size: 14.5px; font-weight: 700; letter-spacing: -.01em; }
+.switch-row .label span { display: block; margin-top: 3px; font-size: 12.5px; color: var(--muted2); }
+
+.switch {
+  flex: none; width: 46px; height: 27px; border-radius: 999px;
+  background: var(--soft); position: relative; transition: background .16s;
+}
+.switch i {
+  position: absolute; top: 3px; left: 3px; width: 21px; height: 21px; border-radius: 50%;
+  background: var(--surface); box-shadow: var(--sh); transition: transform .16s;
+}
+.switch-row[aria-pressed="true"] .switch { background: var(--point); }
+.switch-row[aria-pressed="true"] .switch i { transform: translateX(19px); }
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .hero-dday { justify-content: flex-start; }
+  .day-row { gap: 12px; padding: 14px; }
+}
+
+/* ═══ 계정 · 커뮤니티 · 관리자 (설계 08) ═══
+   전부 halo-tokens 의 var(--...) 만 조합한다. 색 하드코딩 금지(다크가 그 부분만 깨진다). */
+
+/* ── 헤더의 로그인 상태 ── */
+.who {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 13px 5px 5px; border-radius: 999px;
+  background: var(--glass-chip); color: var(--text);
+  font-size: 13px; font-weight: 600; text-decoration: none;
+}
+.who:hover { text-decoration: none; color: var(--point); }
+.who img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.avatar-fallback {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--grad); color: #fff; font-size: 12px; font-weight: 700;
+}
+@media (max-width: 768px) { .only-desktop { display: none; } }
+
+/* ── 로그인 화면 ── */
+.login-wrap { max-width: 420px; margin: 6vh auto 0; }
+.login-card { padding: 26px; display: flex; flex-direction: column; gap: 10px; }
+.social {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 14px 18px; border: none; border-radius: 999px;
+  font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  background: var(--soft); color: var(--text);
+}
+.social:hover { box-shadow: var(--sh); }
+.social:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--point-soft); }
+/* 카카오·구글은 브랜드 색이 정해져 있어 토큰으로 대체할 수 없다 — 의도된 예외 */
+.social.kakao { background: #fee500; color: #191600; }
+.social.google { background: var(--surface); box-shadow: var(--sh); }
+
+/* ── 커뮤니티 목록 ── */
+.post-list { display: flex; flex-direction: column; gap: 10px; }
+.post-row {
+  display: flex; align-items: center; gap: 16px; padding: 16px 20px;
+  text-decoration: none; color: inherit;
+}
+.post-main { flex: 1; min-width: 0; }
+.post-row h3 {
+  margin: 8px 0 5px; font-size: 15.5px; font-weight: 700; letter-spacing: -.015em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.post-row .cnt { font-style: normal; color: var(--point); font-size: 13px; margin-left: 6px; }
+.post-row .sub { margin: 0; font-size: 12.5px; color: var(--muted2); }
+.post-row .views { flex: none; font-size: 12px; color: var(--muted2); font-variant-numeric: tabular-nums; }
+
+/* ── 글 본문 ── */
+.post-body {
+  padding: 24px; font-size: 15px; line-height: 1.85;
+  white-space: pre-wrap; word-break: break-word;   /* 줄바꿈을 그대로 살린다 */
+}
+
+/* ── 댓글 ── */
+.comment-list { display: flex; flex-direction: column; gap: 10px; }
+.comment { padding: 15px 18px; }
+.comment .head { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.comment .head b { font-size: 13.5px; font-weight: 700; }
+.comment .head .when { font-size: 12px; color: var(--muted2); }
+.comment p { margin: 0; font-size: 14.5px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+.comment-form { padding: 16px 18px; margin-top: 14px; }
+
+.link-danger {
+  margin-left: auto; border: none; background: none; cursor: pointer;
+  font: inherit; font-size: 12px; color: var(--err); padding: 2px 4px;
+}
+.link-danger:hover { text-decoration: underline; }
+.btn.danger { color: var(--err); }
+.btn.danger:hover { color: var(--err); box-shadow: var(--sh-lg); }
+
+/* ── 관리자 입력 폼 ── */
+.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; }
+.form-grid .wide { grid-column: 1 / -1; }
+@media (max-width: 760px) { .form-grid { grid-template-columns: 1fr; } }
+
+.pick-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.pick {
+  display: flex; flex-direction: column; gap: 3px; align-items: flex-start;
+  width: 100%; text-align: left; cursor: pointer; font: inherit;
+  border: none; border-radius: var(--radius-sm); background: var(--soft); padding: 11px 14px;
+}
+.pick:hover { background: var(--point-soft); }
+.pick b { font-size: 14px; font-weight: 700; }
+.pick span { font-size: 12px; color: var(--muted2); }
+
+/* 매니저가 손대야 하는 상태 — 기존 .badge.warn 은 초록(ok)이라 "괜찮다"로 읽힌다.
+   비어 있거나 지난 일정은 눈에 걸려야 해서 경고색 토큰을 따로 쓴다. */
+.badge.todo {
+  background: color-mix(in srgb, var(--warn) 16%, transparent);
+  color: var(--warn);
+}

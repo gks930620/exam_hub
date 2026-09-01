@@ -1,0 +1,3832 @@
+{
+  "_comment": "시험 마스터 시드 — \"어떤 시험이 존재하는가\"만 담는다. 일정(ExamSchedule)은 여기 없다. 일정이 없어도 검색·목록·상세·관심등록이 되어야 하므로 마스터를 먼저 적재한다. 일정은 큐넷 API/스크래퍼/수기입력이 나중에 채운다. 출처 목록: 설계/설계문서/09_시험_전수목록.md",
+  "_prod": "CertificateMasterInitializer 가 @Profile(\"!prod\") 로 읽는다. 운영은 실 수집 소스가 대체한다.",
+  "generatedAt": "2026-08-06",
+  "count": 478,
+  "exams": [
+    {
+      "name": "정보처리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0001",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보보안기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0002",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "빅데이터분석기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0003",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자계산기기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0004",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자계산기조직응용기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0005",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보통신기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0006",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "무선설비기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0007",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방송통신기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0008",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전파전자통신기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0009",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보처리산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0010",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보보안산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0011",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사무자동화산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0012",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보통신산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0013",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "무선설비산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0014",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방송통신산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0015",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전파전자통신산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0016",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보처리기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0017",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보기기운용기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0018",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자계산기기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0019",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방송통신기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0020",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보관리기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0021",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터시스템응용기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0022",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "정보통신기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-정보통신",
+      "sourceCode": "M0023",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터활용능력 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0024",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터활용능력 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0025",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "워드프로세서",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0026",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산회계운용사 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0027",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산회계운용사 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0028",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산회계운용사 3급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0029",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사회조사분석사 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0030",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사회조사분석사 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0031",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소비자전문상담사 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0032",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소비자전문상담사 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0033",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "비서 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0034",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "비서 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0035",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "비서 3급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0036",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한글속기 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0037",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한글속기 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0038",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한글속기 3급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0039",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자상거래관리사 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0040",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자상거래관리사 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0041",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자상거래운용사",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0042",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유통관리사 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0043",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유통관리사 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0044",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유통관리사 3급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0045",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "텔레마케팅관리사",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0046",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컨벤션기획사 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0047",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컨벤션기획사 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0048",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "직업상담사 1급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0049",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "직업상담사 2급",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0050",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "스포츠경영관리사",
+      "series": "SERVICE",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0051",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "품질경영기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0052",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "포장기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0053",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "품질경영산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0054",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "포장산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-경영사무",
+      "sourceCode": "M0055",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0056",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기공사기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0057",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0058",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기철도기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0059",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도신호기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0060",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "승강기기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0061",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0062",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기공사산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0063",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0064",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기철도산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0065",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도신호산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0066",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "승강기산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0067",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0068",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0069",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자캐드기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0070",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "승강기기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0071",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도전기신호기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0072",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0073",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전자기기기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0074",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축전기설비기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0075",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "발송배전기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0076",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전기응용기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-전기전자",
+      "sourceCode": "M0077",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "일반기계기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0078",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계설비기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0079",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공조냉동기계기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0080",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "에너지관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0081",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차정비기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0082",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "설비보전기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0083",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "메카트로닉스기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0084",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0085",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조선기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0086",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도차량기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0087",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계설계산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0088",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설기계설비산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0089",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공조냉동기계산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0090",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "에너지관리산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0091",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차정비산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0092",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "생산자동화산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0093",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터응용가공산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0094",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0095",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조선산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0096",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공조냉동기계기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0097",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차정비기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0098",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산응용기계제도기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0099",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터응용선반기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0100",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터응용밀링기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0101",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계가공조립기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0102",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "에너지관리기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0103",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "항공기체정비기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0104",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기계가공기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0105",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자동차정비기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0106",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "에너지관리기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-기계",
+      "sourceCode": "M0107",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0108",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토목기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0109",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "실내건축기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0110",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설재료시험기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0111",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0112",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "측량 및 지형공간정보기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0113",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지적기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0114",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "도시계획기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0115",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "교통기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0116",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도토목기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0117",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0118",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토목산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0119",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "실내건축산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0120",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설재료시험산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0121",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조경산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0122",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "측량 및 지형공간정보산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0123",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지적산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0124",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철도토목산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0125",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산응용건축제도기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0126",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "전산응용토목제도기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0127",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조경기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0128",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지적기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0129",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "거푸집기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0130",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "철근기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0131",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미장기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0132",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "타일기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0133",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방수기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0134",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축도장기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0135",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "실내건축기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0136",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "측량기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0137",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축시공기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0138",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토목시공기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0139",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건축구조기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0140",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토질및기초기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-건설",
+      "sourceCode": "M0141",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0142",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설안전기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0143",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "인간공학기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0144",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방설비기사(기계분야)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0145",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방설비기사(전기분야)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0146",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0147",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화재감식평가기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0148",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "방재기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0149",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0150",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설안전산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0151",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방설비산업기사(기계분야)",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0152",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방설비산업기사(전기분야)",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0153",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0154",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "위험물산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0155",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업위생관리산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0156",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "위험물기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0157",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0158",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업안전지도사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0159",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "건설안전기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0160",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소방기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0161",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가스기술사",
+      "series": "PROFESSIONAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-안전",
+      "sourceCode": "M0162",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화공기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0163",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화학분석기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0164",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "대기환경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0165",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수질환경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0166",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "폐기물처리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0167",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소음진동기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0168",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "토양환경기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0169",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자연생태복원기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0170",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "온실가스관리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0171",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "신재생에너지발전설비기사(태양광)",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0172",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화공산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0173",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "대기환경산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0174",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수질환경산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0175",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "폐기물처리산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0176",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "소음진동산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0177",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자연생태복원산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0178",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화학분석기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0179",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "환경기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-화학환경",
+      "sourceCode": "M0180",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0181",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "표면처리기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0182",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "용접기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0183",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "세라믹기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0184",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "재료조직평가산업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0185",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0186",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "표면처리산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0187",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "용접산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0188",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "용접기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0189",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "특수용접기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0190",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "주조기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0191",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "열처리기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0192",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료시험기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0193",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "용접기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0194",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "금속재료기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-재료",
+      "sourceCode": "M0195",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식품기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0196",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산제조기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0197",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식품산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0198",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한식조리기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0199",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "양식조리기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0200",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "중식조리기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0201",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "일식조리기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0202",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "복어조리기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0203",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제과기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0204",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제빵기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0205",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조주기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0206",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식품가공기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0207",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "떡제조기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0208",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "조리기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0209",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제과기능장",
+      "series": "MASTER",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-식품조리",
+      "sourceCode": "M0210",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "지게차운전기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-운전운송",
+      "sourceCode": "M0211",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "굴착기운전기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-운전운송",
+      "sourceCode": "M0212",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기중기운전기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-운전운송",
+      "sourceCode": "M0213",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "로더운전기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-운전운송",
+      "sourceCode": "M0214",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "불도저운전기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-운전운송",
+      "sourceCode": "M0215",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "천장크레인운전기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-운전운송",
+      "sourceCode": "M0216",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컨테이너크레인운전기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-운전운송",
+      "sourceCode": "M0217",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "시각디자인기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0218",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제품디자인기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0219",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컬러리스트기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0220",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "시각디자인산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0221",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제품디자인산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0222",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컬러리스트산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0223",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "컴퓨터그래픽스운용기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0224",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "웹디자인기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0225",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "제품응용모델링기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0226",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "사진기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0227",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "영사기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-디자인",
+      "sourceCode": "M0228",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산림기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0229",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식물보호기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0230",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유기농업기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0231",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "종자기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0232",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "수산양식기사",
+      "series": "TECHNICIAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0233",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산림산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0234",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "식물보호산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0235",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유기농업산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0236",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "종자산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0237",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "유기농업기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0238",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "종자기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0239",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "원예기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0240",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "화훼장식기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0241",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "버섯종균기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0242",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임업종묘기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-농림어업",
+      "sourceCode": "M0243",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용사(일반)",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-미용",
+      "sourceCode": "M0244",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용사(피부)",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-미용",
+      "sourceCode": "M0245",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용사(네일)",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-미용",
+      "sourceCode": "M0246",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용사(메이크업)",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-미용",
+      "sourceCode": "M0247",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "이용사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-미용",
+      "sourceCode": "M0248",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "미용장",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-미용",
+      "sourceCode": "M0249",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "패션디자인산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0250",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "패션머천다이징산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0251",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "섬유산업기사",
+      "series": "INDUSTRIAL",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0252",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "양복기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0253",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "한복기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0254",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "양장기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0255",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "가구제작기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0256",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "목공예기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0257",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "도자기공예기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0258",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "귀금속가공기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0259",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "인쇄기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0260",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "자수기능사",
+      "series": "CRAFTSMAN",
+      "agency": "한국산업인력공단",
+      "category": "국가기술자격-섬유공예",
+      "sourceCode": "M0261",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공인중개사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0262",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "주택관리사보",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0263",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "감정평가사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0264",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공인노무사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0265",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관세사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0266",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "세무사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0267",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "변리사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0268",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "물류관리사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0269",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경영지도사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0270",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "기술지도사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0271",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "손해평가사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0272",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "보세사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0273",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "행정사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0274",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "경비지도사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0275",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "청소년상담사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0276",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "청소년지도사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0277",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국제의료관광코디네이터",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0278",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임상심리사 1급",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0279",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "임상심리사 2급",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0280",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "산업보건지도사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0281",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "관광통역안내사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0282",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "국내여행안내사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0283",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "호텔경영사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0284",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "호텔관리사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0285",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "호텔서비스사",
+      "series": "ETC",
+      "agency": "한국산업인력공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0286",
+      "sourceUrl": "https://www.q-net.or.kr/"
+    },
+    {
+      "name": "공인회계사",
+      "series": "ETC",
+      "agency": "금융감독원",
+      "category": "국가전문자격",
+      "sourceCode": "M0287",
+      "sourceUrl": "https://www.fss.or.kr/"
+    },
+    {
+      "name": "보험계리사",
+      "series": "ETC",
+      "agency": "금융감독원",
+      "category": "국가전문자격",
+      "sourceCode": "M0288",
+      "sourceUrl": "https://www.fss.or.kr/"
+    },
+    {
+      "name": "손해사정사",
+      "series": "ETC",
+      "agency": "금융감독원",
+      "category": "국가전문자격",
+      "sourceCode": "M0289",
+      "sourceUrl": "https://www.fss.or.kr/"
+    },
+    {
+      "name": "보험중개사",
+      "series": "ETC",
+      "agency": "금융감독원",
+      "category": "국가전문자격",
+      "sourceCode": "M0290",
+      "sourceUrl": "https://www.fss.or.kr/"
+    },
+    {
+      "name": "소방시설관리사",
+      "series": "ETC",
+      "agency": "한국소방안전원",
+      "category": "국가전문자격",
+      "sourceCode": "M0291",
+      "sourceUrl": "https://www.kfsi.or.kr/"
+    },
+    {
+      "name": "소방안전관리자 특급",
+      "series": "ETC",
+      "agency": "한국소방안전원",
+      "category": "국가전문자격",
+      "sourceCode": "M0292",
+      "sourceUrl": "https://www.kfsi.or.kr/"
+    },
+    {
+      "name": "소방안전관리자 1급",
+      "series": "ETC",
+      "agency": "한국소방안전원",
+      "category": "국가전문자격",
+      "sourceCode": "M0293",
+      "sourceUrl": "https://www.kfsi.or.kr/"
+    },
+    {
+      "name": "소방안전관리자 2급",
+      "series": "ETC",
+      "agency": "한국소방안전원",
+      "category": "국가전문자격",
+      "sourceCode": "M0294",
+      "sourceUrl": "https://www.kfsi.or.kr/"
+    },
+    {
+      "name": "소방안전관리자 3급",
+      "series": "ETC",
+      "agency": "한국소방안전원",
+      "category": "국가전문자격",
+      "sourceCode": "M0295",
+      "sourceUrl": "https://www.kfsi.or.kr/"
+    },
+    {
+      "name": "한국어교원 2급",
+      "series": "ETC",
+      "agency": "국립국어원",
+      "category": "국가전문자격",
+      "sourceCode": "M0296",
+      "sourceUrl": "https://kteacher.korean.go.kr/"
+    },
+    {
+      "name": "한국어교원 3급",
+      "series": "ETC",
+      "agency": "국립국어원",
+      "category": "국가전문자격",
+      "sourceCode": "M0297",
+      "sourceUrl": "https://kteacher.korean.go.kr/"
+    },
+    {
+      "name": "버스운전자격",
+      "series": "ETC",
+      "agency": "TS한국교통안전공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0298",
+      "sourceUrl": "https://lic.kotsa.or.kr/"
+    },
+    {
+      "name": "화물운송종사자격",
+      "series": "ETC",
+      "agency": "TS한국교통안전공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0299",
+      "sourceUrl": "https://lic.kotsa.or.kr/"
+    },
+    {
+      "name": "택시운전자격",
+      "series": "ETC",
+      "agency": "TS한국교통안전공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0300",
+      "sourceUrl": "https://lic.kotsa.or.kr/"
+    },
+    {
+      "name": "제1종 운전면허",
+      "series": "ETC",
+      "agency": "도로교통공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0301",
+      "sourceUrl": "https://www.safedriving.or.kr/"
+    },
+    {
+      "name": "제2종 운전면허",
+      "series": "ETC",
+      "agency": "도로교통공단",
+      "category": "국가전문자격",
+      "sourceCode": "M0302",
+      "sourceUrl": "https://www.safedriving.or.kr/"
+    },
+    {
+      "name": "간호사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0303",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "임상병리사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0304",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "방사선사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0305",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "물리치료사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0306",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "작업치료사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0307",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "치과위생사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0308",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "치과기공사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0309",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "응급구조사 1급",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0310",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "응급구조사 2급",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0311",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "영양사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0312",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "위생사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0313",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "보건교육사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0314",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "안경사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0315",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "의무기록사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0316",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "약사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0317",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "한약사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0318",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "요양보호사",
+      "series": "ETC",
+      "agency": "한국보건의료인국가시험원",
+      "category": "보건의료",
+      "sourceCode": "M0319",
+      "sourceUrl": "https://www.kuksiwon.or.kr/"
+    },
+    {
+      "name": "사회복지사 1급",
+      "series": "ETC",
+      "agency": "한국사회복지사협회",
+      "category": "보건의료",
+      "sourceCode": "M0320",
+      "sourceUrl": "https://www.welfare.net/"
+    },
+    {
+      "name": "보육교사",
+      "series": "ETC",
+      "agency": "한국사회복지사협회",
+      "category": "보건의료",
+      "sourceCode": "M0321",
+      "sourceUrl": "https://www.welfare.net/"
+    },
+    {
+      "name": "정신건강사회복지사",
+      "series": "ETC",
+      "agency": "한국사회복지사협회",
+      "category": "보건의료",
+      "sourceCode": "M0322",
+      "sourceUrl": "https://www.welfare.net/"
+    },
+    {
+      "name": "TOEIC 토익",
+      "series": "ETC",
+      "agency": "YBM",
+      "category": "어학-영어",
+      "sourceCode": "M0323",
+      "sourceUrl": "https://exam.toeic.co.kr/"
+    },
+    {
+      "name": "TOEIC Speaking 토익스피킹",
+      "series": "ETC",
+      "agency": "YBM",
+      "category": "어학-영어",
+      "sourceCode": "M0324",
+      "sourceUrl": "https://exam.toeic.co.kr/"
+    },
+    {
+      "name": "TOEIC Writing 토익라이팅",
+      "series": "ETC",
+      "agency": "YBM",
+      "category": "어학-영어",
+      "sourceCode": "M0325",
+      "sourceUrl": "https://exam.toeic.co.kr/"
+    },
+    {
+      "name": "TOEIC Bridge",
+      "series": "ETC",
+      "agency": "YBM",
+      "category": "어학-영어",
+      "sourceCode": "M0326",
+      "sourceUrl": "https://exam.toeic.co.kr/"
+    },
+    {
+      "name": "TEPS 텝스",
+      "series": "ETC",
+      "agency": "서울대학교 TEPS관리위원회",
+      "category": "어학-영어",
+      "sourceCode": "M0327",
+      "sourceUrl": "https://www.teps.or.kr/"
+    },
+    {
+      "name": "TEPS Speaking",
+      "series": "ETC",
+      "agency": "서울대학교 TEPS관리위원회",
+      "category": "어학-영어",
+      "sourceCode": "M0328",
+      "sourceUrl": "https://www.teps.or.kr/"
+    },
+    {
+      "name": "TEPS Writing",
+      "series": "ETC",
+      "agency": "서울대학교 TEPS관리위원회",
+      "category": "어학-영어",
+      "sourceCode": "M0329",
+      "sourceUrl": "https://www.teps.or.kr/"
+    },
+    {
+      "name": "OPIc 오픽",
+      "series": "ETC",
+      "agency": "크레듀(ACTFL)",
+      "category": "어학-영어",
+      "sourceCode": "M0330",
+      "sourceUrl": "https://www.opic.or.kr/"
+    },
+    {
+      "name": "G-TELP 지텔프(Level 2)",
+      "series": "ETC",
+      "agency": "G-TELP KOREA",
+      "category": "어학-영어",
+      "sourceCode": "M0331",
+      "sourceUrl": "https://www.g-telp.co.kr/"
+    },
+    {
+      "name": "G-TELP Speaking",
+      "series": "ETC",
+      "agency": "G-TELP KOREA",
+      "category": "어학-영어",
+      "sourceCode": "M0332",
+      "sourceUrl": "https://www.g-telp.co.kr/"
+    },
+    {
+      "name": "TOEFL iBT 토플",
+      "series": "ETC",
+      "agency": "ETS",
+      "category": "어학-영어",
+      "sourceCode": "M0333",
+      "sourceUrl": "https://www.ets.org/toefl"
+    },
+    {
+      "name": "IELTS 아이엘츠",
+      "series": "ETC",
+      "agency": "British Council / IDP",
+      "category": "어학-영어",
+      "sourceCode": "M0334",
+      "sourceUrl": "https://www.britishcouncil.kr/"
+    },
+    {
+      "name": "FLEX 영어",
+      "series": "ETC",
+      "agency": "한국외국어대학교",
+      "category": "어학-영어",
+      "sourceCode": "M0335",
+      "sourceUrl": "https://flex.hufs.ac.kr/"
+    },
+    {
+      "name": "JLPT 일본어능력시험",
+      "series": "ETC",
+      "agency": "JEES / 국제교류기금",
+      "category": "어학-일본어",
+      "sourceCode": "M0336",
+      "sourceUrl": "https://www.jlpt.or.kr/"
+    },
+    {
+      "name": "JPT 일본어능력시험",
+      "series": "ETC",
+      "agency": "YBM",
+      "category": "어학-일본어",
+      "sourceCode": "M0337",
+      "sourceUrl": "https://www.jpt.co.kr/"
+    },
+    {
+      "name": "SJPT 일본어 말하기시험",
+      "series": "ETC",
+      "agency": "YBM",
+      "category": "어학-일본어",
+      "sourceCode": "M0338",
+      "sourceUrl": "https://www.jpt.co.kr/"
+    },
+    {
+      "name": "BJT 비즈니스일본어",
+      "series": "ETC",
+      "agency": "JEES",
+      "category": "어학-일본어",
+      "sourceCode": "M0339",
+      "sourceUrl": "https://www.jlpt.or.kr/"
+    },
+    {
+      "name": "FLEX 일본어",
+      "series": "ETC",
+      "agency": "한국외국어대학교",
+      "category": "어학-일본어",
+      "sourceCode": "M0340",
+      "sourceUrl": "https://flex.hufs.ac.kr/"
+    },
+    {
+      "name": "HSK 중국어능력시험(필기)",
+      "series": "ETC",
+      "agency": "HSK한국사무국",
+      "category": "어학-중국어",
+      "sourceCode": "M0341",
+      "sourceUrl": "https://www.hsk.or.kr/"
+    },
+    {
+      "name": "HSKK 중국어 회화시험",
+      "series": "ETC",
+      "agency": "HSK한국사무국",
+      "category": "어학-중국어",
+      "sourceCode": "M0342",
+      "sourceUrl": "https://www.hsk.or.kr/"
+    },
+    {
+      "name": "TSC 중국어 말하기시험",
+      "series": "ETC",
+      "agency": "YBM",
+      "category": "어학-중국어",
+      "sourceCode": "M0343",
+      "sourceUrl": "https://www.ybmtsc.co.kr/"
+    },
+    {
+      "name": "BCT 비즈니스중국어",
+      "series": "ETC",
+      "agency": "YBM",
+      "category": "어학-중국어",
+      "sourceCode": "M0344",
+      "sourceUrl": "https://www.ybmtsc.co.kr/"
+    },
+    {
+      "name": "FLEX 중국어",
+      "series": "ETC",
+      "agency": "한국외국어대학교",
+      "category": "어학-중국어",
+      "sourceCode": "M0345",
+      "sourceUrl": "https://flex.hufs.ac.kr/"
+    },
+    {
+      "name": "DELE 스페인어",
+      "series": "ETC",
+      "agency": "인스티투토 세르반테스",
+      "category": "어학-기타",
+      "sourceCode": "M0346",
+      "sourceUrl": "https://seul.cervantes.es/"
+    },
+    {
+      "name": "DELF 프랑스어",
+      "series": "ETC",
+      "agency": "주한프랑스문화원",
+      "category": "어학-기타",
+      "sourceCode": "M0347",
+      "sourceUrl": "https://www.delfdalf.kr/"
+    },
+    {
+      "name": "DALF 프랑스어",
+      "series": "ETC",
+      "agency": "주한프랑스문화원",
+      "category": "어학-기타",
+      "sourceCode": "M0348",
+      "sourceUrl": "https://www.delfdalf.kr/"
+    },
+    {
+      "name": "Goethe-Zertifikat 독일어",
+      "series": "ETC",
+      "agency": "주한독일문화원(괴테)",
+      "category": "어학-기타",
+      "sourceCode": "M0349",
+      "sourceUrl": "https://www.goethe.de/korea"
+    },
+    {
+      "name": "TestDaF 독일어",
+      "series": "ETC",
+      "agency": "주한독일문화원(괴테)",
+      "category": "어학-기타",
+      "sourceCode": "M0350",
+      "sourceUrl": "https://www.goethe.de/korea"
+    },
+    {
+      "name": "FLEX 스페인어",
+      "series": "ETC",
+      "agency": "한국외국어대학교",
+      "category": "어학-기타",
+      "sourceCode": "M0351",
+      "sourceUrl": "https://flex.hufs.ac.kr/"
+    },
+    {
+      "name": "FLEX 프랑스어",
+      "series": "ETC",
+      "agency": "한국외국어대학교",
+      "category": "어학-기타",
+      "sourceCode": "M0352",
+      "sourceUrl": "https://flex.hufs.ac.kr/"
+    },
+    {
+      "name": "FLEX 독일어",
+      "series": "ETC",
+      "agency": "한국외국어대학교",
+      "category": "어학-기타",
+      "sourceCode": "M0353",
+      "sourceUrl": "https://flex.hufs.ac.kr/"
+    },
+    {
+      "name": "FLEX 러시아어",
+      "series": "ETC",
+      "agency": "한국외국어대학교",
+      "category": "어학-기타",
+      "sourceCode": "M0354",
+      "sourceUrl": "https://flex.hufs.ac.kr/"
+    },
+    {
+      "name": "TOPIK 한국어능력시험(I)",
+      "series": "ETC",
+      "agency": "국립국제교육원",
+      "category": "한국어",
+      "sourceCode": "M0355",
+      "sourceUrl": "https://www.topik.go.kr/"
+    },
+    {
+      "name": "TOPIK 한국어능력시험(II)",
+      "series": "ETC",
+      "agency": "국립국제교육원",
+      "category": "한국어",
+      "sourceCode": "M0356",
+      "sourceUrl": "https://www.topik.go.kr/"
+    },
+    {
+      "name": "KBS한국어능력시험",
+      "series": "ETC",
+      "agency": "KBS한국방송",
+      "category": "국어",
+      "sourceCode": "M0357",
+      "sourceUrl": "https://www.klt.or.kr/"
+    },
+    {
+      "name": "ToKL 국어능력인증시험",
+      "series": "ETC",
+      "agency": "한국언어문화연구원",
+      "category": "국어",
+      "sourceCode": "M0358",
+      "sourceUrl": "https://www.tokl.or.kr/"
+    },
+    {
+      "name": "한국실용글쓰기검정",
+      "series": "ETC",
+      "agency": "한국국어능력평가협회",
+      "category": "국어",
+      "sourceCode": "M0359",
+      "sourceUrl": "https://www.klata.or.kr/"
+    },
+    {
+      "name": "ADsP 데이터분석 준전문가",
+      "series": "ETC",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "M0360",
+      "sourceUrl": "https://www.dataq.or.kr/"
+    },
+    {
+      "name": "ADP 데이터분석 전문가",
+      "series": "ETC",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "M0361",
+      "sourceUrl": "https://www.dataq.or.kr/"
+    },
+    {
+      "name": "SQLD SQL 개발자",
+      "series": "ETC",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "M0362",
+      "sourceUrl": "https://www.dataq.or.kr/"
+    },
+    {
+      "name": "SQLP SQL 전문가",
+      "series": "ETC",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "M0363",
+      "sourceUrl": "https://www.dataq.or.kr/"
+    },
+    {
+      "name": "DAsP 데이터아키텍처 준전문가",
+      "series": "ETC",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "M0364",
+      "sourceUrl": "https://www.dataq.or.kr/"
+    },
+    {
+      "name": "DAP 데이터아키텍처 전문가",
+      "series": "ETC",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "M0365",
+      "sourceUrl": "https://www.dataq.or.kr/"
+    },
+    {
+      "name": "ISMS-P 인증심사원",
+      "series": "ETC",
+      "agency": "한국인터넷진흥원(KISA)",
+      "category": "IT-보안",
+      "sourceCode": "M0366",
+      "sourceUrl": "https://isms.kisa.or.kr/"
+    },
+    {
+      "name": "디지털포렌식전문가 2급",
+      "series": "ETC",
+      "agency": "한국방송통신전파진흥원(KCA)",
+      "category": "IT-보안",
+      "sourceCode": "M0367",
+      "sourceUrl": "https://www.cq.or.kr/"
+    },
+    {
+      "name": "CPPG 개인정보관리사",
+      "series": "ETC",
+      "agency": "한국CPO포럼",
+      "category": "IT-보안",
+      "sourceCode": "M0368",
+      "sourceUrl": "https://www.cpptg.or.kr/"
+    },
+    {
+      "name": "네트워크관리사 1급",
+      "series": "ETC",
+      "agency": "한국정보통신자격협회(ICQA)",
+      "category": "IT-보안",
+      "sourceCode": "M0369",
+      "sourceUrl": "https://www.icqa.or.kr/"
+    },
+    {
+      "name": "네트워크관리사 2급",
+      "series": "ETC",
+      "agency": "한국정보통신자격협회(ICQA)",
+      "category": "IT-보안",
+      "sourceCode": "M0370",
+      "sourceUrl": "https://www.icqa.or.kr/"
+    },
+    {
+      "name": "PC정비사 1급",
+      "series": "ETC",
+      "agency": "한국정보통신자격협회(ICQA)",
+      "category": "IT-보안",
+      "sourceCode": "M0371",
+      "sourceUrl": "https://www.icqa.or.kr/"
+    },
+    {
+      "name": "PC정비사 2급",
+      "series": "ETC",
+      "agency": "한국정보통신자격협회(ICQA)",
+      "category": "IT-보안",
+      "sourceCode": "M0372",
+      "sourceUrl": "https://www.icqa.or.kr/"
+    },
+    {
+      "name": "리눅스마스터 1급",
+      "series": "ETC",
+      "agency": "한국정보통신인력개발센터",
+      "category": "IT-보안",
+      "sourceCode": "M0373",
+      "sourceUrl": "https://www.ihd.or.kr/"
+    },
+    {
+      "name": "리눅스마스터 2급",
+      "series": "ETC",
+      "agency": "한국정보통신인력개발센터",
+      "category": "IT-보안",
+      "sourceCode": "M0374",
+      "sourceUrl": "https://www.ihd.or.kr/"
+    },
+    {
+      "name": "ITQ 정보기술자격(한글)",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0375",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "ITQ 정보기술자격(엑셀)",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0376",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "ITQ 정보기술자격(파워포인트)",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0377",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "ITQ 정보기술자격(액세스)",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0378",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "ITQ 정보기술자격(인터넷)",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0379",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "GTQ 그래픽기술자격 1급",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0380",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "GTQ 그래픽기술자격 2급",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0381",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "GTQi 일러스트 1급",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0382",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "ERP정보관리사 회계",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0383",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "ERP정보관리사 인사",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0384",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "ERP정보관리사 물류",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0385",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "ERP정보관리사 생산",
+      "series": "ETC",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "M0386",
+      "sourceUrl": "https://license.kpc.or.kr/"
+    },
+    {
+      "name": "MOS Word",
+      "series": "ETC",
+      "agency": "Microsoft·YBM",
+      "category": "사무-IT",
+      "sourceCode": "M0387",
+      "sourceUrl": "https://mos.co.kr/"
+    },
+    {
+      "name": "MOS Excel",
+      "series": "ETC",
+      "agency": "Microsoft·YBM",
+      "category": "사무-IT",
+      "sourceCode": "M0388",
+      "sourceUrl": "https://mos.co.kr/"
+    },
+    {
+      "name": "MOS PowerPoint",
+      "series": "ETC",
+      "agency": "Microsoft·YBM",
+      "category": "사무-IT",
+      "sourceCode": "M0389",
+      "sourceUrl": "https://mos.co.kr/"
+    },
+    {
+      "name": "MOS Master",
+      "series": "ETC",
+      "agency": "Microsoft·YBM",
+      "category": "사무-IT",
+      "sourceCode": "M0390",
+      "sourceUrl": "https://mos.co.kr/"
+    },
+    {
+      "name": "DIAT 디지털정보활용능력",
+      "series": "ETC",
+      "agency": "한국정보통신진흥협회(KAIT)",
+      "category": "사무-IT",
+      "sourceCode": "M0391",
+      "sourceUrl": "https://www.ihd.or.kr/"
+    },
+    {
+      "name": "인터넷정보관리사",
+      "series": "ETC",
+      "agency": "한국정보통신진흥협회(KAIT)",
+      "category": "사무-IT",
+      "sourceCode": "M0392",
+      "sourceUrl": "https://www.ihd.or.kr/"
+    },
+    {
+      "name": "AWS Certified Solutions Architect – Associate",
+      "series": "ETC",
+      "agency": "Amazon Web Services",
+      "category": "IT-벤더",
+      "sourceCode": "M0393",
+      "sourceUrl": "https://aws.amazon.com/certification/"
+    },
+    {
+      "name": "AWS Certified Developer – Associate",
+      "series": "ETC",
+      "agency": "Amazon Web Services",
+      "category": "IT-벤더",
+      "sourceCode": "M0394",
+      "sourceUrl": "https://aws.amazon.com/certification/"
+    },
+    {
+      "name": "AWS Certified Cloud Practitioner",
+      "series": "ETC",
+      "agency": "Amazon Web Services",
+      "category": "IT-벤더",
+      "sourceCode": "M0395",
+      "sourceUrl": "https://aws.amazon.com/certification/"
+    },
+    {
+      "name": "Microsoft Azure Fundamentals (AZ-900)",
+      "series": "ETC",
+      "agency": "Microsoft",
+      "category": "IT-벤더",
+      "sourceCode": "M0396",
+      "sourceUrl": "https://learn.microsoft.com/credentials/"
+    },
+    {
+      "name": "Microsoft Azure Administrator (AZ-104)",
+      "series": "ETC",
+      "agency": "Microsoft",
+      "category": "IT-벤더",
+      "sourceCode": "M0397",
+      "sourceUrl": "https://learn.microsoft.com/credentials/"
+    },
+    {
+      "name": "CCNA",
+      "series": "ETC",
+      "agency": "Cisco",
+      "category": "IT-벤더",
+      "sourceCode": "M0398",
+      "sourceUrl": "https://www.cisco.com/"
+    },
+    {
+      "name": "CCNP",
+      "series": "ETC",
+      "agency": "Cisco",
+      "category": "IT-벤더",
+      "sourceCode": "M0399",
+      "sourceUrl": "https://www.cisco.com/"
+    },
+    {
+      "name": "OCA",
+      "series": "ETC",
+      "agency": "Oracle",
+      "category": "IT-벤더",
+      "sourceCode": "M0400",
+      "sourceUrl": "https://education.oracle.com/"
+    },
+    {
+      "name": "OCP",
+      "series": "ETC",
+      "agency": "Oracle",
+      "category": "IT-벤더",
+      "sourceCode": "M0401",
+      "sourceUrl": "https://education.oracle.com/"
+    },
+    {
+      "name": "Google Cloud Associate Cloud Engineer",
+      "series": "ETC",
+      "agency": "Google Cloud",
+      "category": "IT-벤더",
+      "sourceCode": "M0402",
+      "sourceUrl": "https://cloud.google.com/certification"
+    },
+    {
+      "name": "CompTIA A+",
+      "series": "ETC",
+      "agency": "CompTIA",
+      "category": "IT-벤더",
+      "sourceCode": "M0403",
+      "sourceUrl": "https://www.comptia.org/"
+    },
+    {
+      "name": "CompTIA Network+",
+      "series": "ETC",
+      "agency": "CompTIA",
+      "category": "IT-벤더",
+      "sourceCode": "M0404",
+      "sourceUrl": "https://www.comptia.org/"
+    },
+    {
+      "name": "CompTIA Security+",
+      "series": "ETC",
+      "agency": "CompTIA",
+      "category": "IT-벤더",
+      "sourceCode": "M0405",
+      "sourceUrl": "https://www.comptia.org/"
+    },
+    {
+      "name": "PMP 프로젝트관리전문가",
+      "series": "ETC",
+      "agency": "PMI",
+      "category": "IT-벤더",
+      "sourceCode": "M0406",
+      "sourceUrl": "https://www.pmi.org/"
+    },
+    {
+      "name": "투자자산운용사",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0407",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "펀드투자권유대행인",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0408",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "증권투자권유대행인",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0409",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "파생상품투자권유대행인",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0410",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "펀드투자권유자문인력",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0411",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "증권투자권유자문인력",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0412",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "파생상품투자권유자문인력",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0413",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "금융투자분석사",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0414",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "재무위험관리사",
+      "series": "ETC",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "M0415",
+      "sourceUrl": "https://license.kofia.or.kr/"
+    },
+    {
+      "name": "신용분석사",
+      "series": "ETC",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "M0416",
+      "sourceUrl": "https://www.kbi.or.kr/"
+    },
+    {
+      "name": "여신심사역",
+      "series": "ETC",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "M0417",
+      "sourceUrl": "https://www.kbi.or.kr/"
+    },
+    {
+      "name": "자산관리사(FP)",
+      "series": "ETC",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "M0418",
+      "sourceUrl": "https://www.kbi.or.kr/"
+    },
+    {
+      "name": "국제금융역",
+      "series": "ETC",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "M0419",
+      "sourceUrl": "https://www.kbi.or.kr/"
+    },
+    {
+      "name": "외환전문역 1종",
+      "series": "ETC",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "M0420",
+      "sourceUrl": "https://www.kbi.or.kr/"
+    },
+    {
+      "name": "외환전문역 2종",
+      "series": "ETC",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "M0421",
+      "sourceUrl": "https://www.kbi.or.kr/"
+    },
+    {
+      "name": "은행텔러",
+      "series": "ETC",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "M0422",
+      "sourceUrl": "https://www.kbi.or.kr/"
+    },
+    {
+      "name": "영업점컴플라이언스오피서",
+      "series": "ETC",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "M0423",
+      "sourceUrl": "https://www.kbi.or.kr/"
+    },
+    {
+      "name": "AFPK 재무설계사",
+      "series": "ETC",
+      "agency": "한국FPSB",
+      "category": "금융",
+      "sourceCode": "M0424",
+      "sourceUrl": "https://www.fpsbkorea.org/"
+    },
+    {
+      "name": "CFP 국제재무설계사",
+      "series": "ETC",
+      "agency": "한국FPSB",
+      "category": "금융",
+      "sourceCode": "M0425",
+      "sourceUrl": "https://www.fpsbkorea.org/"
+    },
+    {
+      "name": "보험심사역(AIU)",
+      "series": "ETC",
+      "agency": "보험연수원",
+      "category": "금융",
+      "sourceCode": "M0426",
+      "sourceUrl": "https://www.in.or.kr/"
+    },
+    {
+      "name": "보험심사역(CIU)",
+      "series": "ETC",
+      "agency": "보험연수원",
+      "category": "금융",
+      "sourceCode": "M0427",
+      "sourceUrl": "https://www.in.or.kr/"
+    },
+    {
+      "name": "신용관리사",
+      "series": "ETC",
+      "agency": "한국신용정보협회",
+      "category": "금융",
+      "sourceCode": "M0428",
+      "sourceUrl": "https://www.cretop.or.kr/"
+    },
+    {
+      "name": "전산세무 1급",
+      "series": "ETC",
+      "agency": "한국세무사회",
+      "category": "회계-세무",
+      "sourceCode": "M0429",
+      "sourceUrl": "https://license.kacpta.or.kr/"
+    },
+    {
+      "name": "전산세무 2급",
+      "series": "ETC",
+      "agency": "한국세무사회",
+      "category": "회계-세무",
+      "sourceCode": "M0430",
+      "sourceUrl": "https://license.kacpta.or.kr/"
+    },
+    {
+      "name": "전산회계 1급",
+      "series": "ETC",
+      "agency": "한국세무사회",
+      "category": "회계-세무",
+      "sourceCode": "M0431",
+      "sourceUrl": "https://license.kacpta.or.kr/"
+    },
+    {
+      "name": "전산회계 2급",
+      "series": "ETC",
+      "agency": "한국세무사회",
+      "category": "회계-세무",
+      "sourceCode": "M0432",
+      "sourceUrl": "https://license.kacpta.or.kr/"
+    },
+    {
+      "name": "FAT 회계실무 1급",
+      "series": "ETC",
+      "agency": "한국공인회계사회",
+      "category": "회계-세무",
+      "sourceCode": "M0433",
+      "sourceUrl": "https://at.kicpa.or.kr/"
+    },
+    {
+      "name": "FAT 회계실무 2급",
+      "series": "ETC",
+      "agency": "한국공인회계사회",
+      "category": "회계-세무",
+      "sourceCode": "M0434",
+      "sourceUrl": "https://at.kicpa.or.kr/"
+    },
+    {
+      "name": "TAT 세무실무 1급",
+      "series": "ETC",
+      "agency": "한국공인회계사회",
+      "category": "회계-세무",
+      "sourceCode": "M0435",
+      "sourceUrl": "https://at.kicpa.or.kr/"
+    },
+    {
+      "name": "TAT 세무실무 2급",
+      "series": "ETC",
+      "agency": "한국공인회계사회",
+      "category": "회계-세무",
+      "sourceCode": "M0436",
+      "sourceUrl": "https://at.kicpa.or.kr/"
+    },
+    {
+      "name": "재경관리사",
+      "series": "ETC",
+      "agency": "삼일회계법인",
+      "category": "회계-세무",
+      "sourceCode": "M0437",
+      "sourceUrl": "https://www.samilexam.com/"
+    },
+    {
+      "name": "회계관리 1급",
+      "series": "ETC",
+      "agency": "삼일회계법인",
+      "category": "회계-세무",
+      "sourceCode": "M0438",
+      "sourceUrl": "https://www.samilexam.com/"
+    },
+    {
+      "name": "회계관리 2급",
+      "series": "ETC",
+      "agency": "삼일회계법인",
+      "category": "회계-세무",
+      "sourceCode": "M0439",
+      "sourceUrl": "https://www.samilexam.com/"
+    },
+    {
+      "name": "TESAT 경제이해력검증시험",
+      "series": "ETC",
+      "agency": "한국경제신문",
+      "category": "경제-경영",
+      "sourceCode": "M0440",
+      "sourceUrl": "https://www.tesat.or.kr/"
+    },
+    {
+      "name": "매경TEST 경제경영이해력시험",
+      "series": "ETC",
+      "agency": "매일경제신문",
+      "category": "경제-경영",
+      "sourceCode": "M0441",
+      "sourceUrl": "https://exam.mk.co.kr/"
+    },
+    {
+      "name": "무역영어 1급",
+      "series": "ETC",
+      "agency": "대한상공회의소",
+      "category": "유통-무역",
+      "sourceCode": "M0442",
+      "sourceUrl": "https://license.korcham.net/"
+    },
+    {
+      "name": "무역영어 2급",
+      "series": "ETC",
+      "agency": "대한상공회의소",
+      "category": "유통-무역",
+      "sourceCode": "M0443",
+      "sourceUrl": "https://license.korcham.net/"
+    },
+    {
+      "name": "무역영어 3급",
+      "series": "ETC",
+      "agency": "대한상공회의소",
+      "category": "유통-무역",
+      "sourceCode": "M0444",
+      "sourceUrl": "https://license.korcham.net/"
+    },
+    {
+      "name": "상공회의소한자 1급",
+      "series": "ETC",
+      "agency": "대한상공회의소",
+      "category": "유통-무역",
+      "sourceCode": "M0445",
+      "sourceUrl": "https://license.korcham.net/"
+    },
+    {
+      "name": "상공회의소한자 2급",
+      "series": "ETC",
+      "agency": "대한상공회의소",
+      "category": "유통-무역",
+      "sourceCode": "M0446",
+      "sourceUrl": "https://license.korcham.net/"
+    },
+    {
+      "name": "국제무역사 1급",
+      "series": "ETC",
+      "agency": "한국무역협회",
+      "category": "유통-무역",
+      "sourceCode": "M0447",
+      "sourceUrl": "https://www.tradecampus.com/"
+    },
+    {
+      "name": "외환관리사",
+      "series": "ETC",
+      "agency": "한국무역협회",
+      "category": "유통-무역",
+      "sourceCode": "M0448",
+      "sourceUrl": "https://www.tradecampus.com/"
+    },
+    {
+      "name": "한국사능력검정시험(심화)",
+      "series": "ETC",
+      "agency": "국사편찬위원회",
+      "category": "한국사",
+      "sourceCode": "M0449",
+      "sourceUrl": "https://www.historyexam.go.kr/"
+    },
+    {
+      "name": "한국사능력검정시험(기본)",
+      "series": "ETC",
+      "agency": "국사편찬위원회",
+      "category": "한국사",
+      "sourceCode": "M0450",
+      "sourceUrl": "https://www.historyexam.go.kr/"
+    },
+    {
+      "name": "한자능력검정시험(1급)",
+      "series": "ETC",
+      "agency": "한국어문회",
+      "category": "한자",
+      "sourceCode": "M0451",
+      "sourceUrl": "https://www.hanja.re.kr/"
+    },
+    {
+      "name": "한자능력검정시험(2급)",
+      "series": "ETC",
+      "agency": "한국어문회",
+      "category": "한자",
+      "sourceCode": "M0452",
+      "sourceUrl": "https://www.hanja.re.kr/"
+    },
+    {
+      "name": "한자능력검정시험(3급)",
+      "series": "ETC",
+      "agency": "한국어문회",
+      "category": "한자",
+      "sourceCode": "M0453",
+      "sourceUrl": "https://www.hanja.re.kr/"
+    },
+    {
+      "name": "한자능력검정시험(4급)",
+      "series": "ETC",
+      "agency": "한국어문회",
+      "category": "한자",
+      "sourceCode": "M0454",
+      "sourceUrl": "https://www.hanja.re.kr/"
+    },
+    {
+      "name": "대한검정회 한자 준1급",
+      "series": "ETC",
+      "agency": "대한검정회",
+      "category": "한자",
+      "sourceCode": "M0455",
+      "sourceUrl": "https://www.hanja.ne.kr/"
+    },
+    {
+      "name": "대한검정회 한자 2급",
+      "series": "ETC",
+      "agency": "대한검정회",
+      "category": "한자",
+      "sourceCode": "M0456",
+      "sourceUrl": "https://www.hanja.ne.kr/"
+    },
+    {
+      "name": "국가직 9급 공개경쟁채용",
+      "series": "ETC",
+      "agency": "인사혁신처",
+      "category": "공무원",
+      "sourceCode": "M0457",
+      "sourceUrl": "https://www.gosi.kr/"
+    },
+    {
+      "name": "국가직 7급 공개경쟁채용",
+      "series": "ETC",
+      "agency": "인사혁신처",
+      "category": "공무원",
+      "sourceCode": "M0458",
+      "sourceUrl": "https://www.gosi.kr/"
+    },
+    {
+      "name": "국가직 5급 공개경쟁채용",
+      "series": "ETC",
+      "agency": "인사혁신처",
+      "category": "공무원",
+      "sourceCode": "M0459",
+      "sourceUrl": "https://www.gosi.kr/"
+    },
+    {
+      "name": "지방직 9급 공개경쟁채용",
+      "series": "ETC",
+      "agency": "각 시·도 지방자치단체",
+      "category": "공무원",
+      "sourceCode": "M0460",
+      "sourceUrl": "https://local.gosi.go.kr/"
+    },
+    {
+      "name": "지방직 7급 공개경쟁채용",
+      "series": "ETC",
+      "agency": "각 시·도 지방자치단체",
+      "category": "공무원",
+      "sourceCode": "M0461",
+      "sourceUrl": "https://local.gosi.go.kr/"
+    },
+    {
+      "name": "경찰공무원 순경 공개채용",
+      "series": "ETC",
+      "agency": "경찰청",
+      "category": "공무원",
+      "sourceCode": "M0462",
+      "sourceUrl": "https://www.police.go.kr/"
+    },
+    {
+      "name": "경찰간부후보생",
+      "series": "ETC",
+      "agency": "경찰청",
+      "category": "공무원",
+      "sourceCode": "M0463",
+      "sourceUrl": "https://www.police.go.kr/"
+    },
+    {
+      "name": "소방공무원 공개채용",
+      "series": "ETC",
+      "agency": "소방청",
+      "category": "공무원",
+      "sourceCode": "M0464",
+      "sourceUrl": "https://www.nfa.go.kr/"
+    },
+    {
+      "name": "소방간부후보생",
+      "series": "ETC",
+      "agency": "소방청",
+      "category": "공무원",
+      "sourceCode": "M0465",
+      "sourceUrl": "https://www.nfa.go.kr/"
+    },
+    {
+      "name": "군무원 공개채용",
+      "series": "ETC",
+      "agency": "국방부",
+      "category": "공무원",
+      "sourceCode": "M0466",
+      "sourceUrl": "https://recruit.mnd.go.kr/"
+    },
+    {
+      "name": "법원직 9급 공개채용",
+      "series": "ETC",
+      "agency": "법원행정처",
+      "category": "공무원",
+      "sourceCode": "M0467",
+      "sourceUrl": "https://exam.scourt.go.kr/"
+    },
+    {
+      "name": "국회직 8급 공개채용",
+      "series": "ETC",
+      "agency": "국회사무처",
+      "category": "공무원",
+      "sourceCode": "M0468",
+      "sourceUrl": "https://gosi.assembly.go.kr/"
+    },
+    {
+      "name": "국회직 9급 공개채용",
+      "series": "ETC",
+      "agency": "국회사무처",
+      "category": "공무원",
+      "sourceCode": "M0469",
+      "sourceUrl": "https://gosi.assembly.go.kr/"
+    },
+    {
+      "name": "교육행정직 9급",
+      "series": "ETC",
+      "agency": "각 시·도 교육청",
+      "category": "공무원",
+      "sourceCode": "M0470",
+      "sourceUrl": "https://www.gosi.kr/"
+    },
+    {
+      "name": "중등교사 임용시험",
+      "series": "ETC",
+      "agency": "각 시·도 교육청",
+      "category": "공무원",
+      "sourceCode": "M0471",
+      "sourceUrl": "https://www.gosi.kr/"
+    },
+    {
+      "name": "초등교사 임용시험",
+      "series": "ETC",
+      "agency": "각 시·도 교육청",
+      "category": "공무원",
+      "sourceCode": "M0472",
+      "sourceUrl": "https://www.gosi.kr/"
+    },
+    {
+      "name": "생활스포츠지도사 2급",
+      "series": "ETC",
+      "agency": "국민체육진흥공단",
+      "category": "서비스-기타",
+      "sourceCode": "M0473",
+      "sourceUrl": "https://sqms.kspo.or.kr/"
+    },
+    {
+      "name": "전문스포츠지도사 2급",
+      "series": "ETC",
+      "agency": "국민체육진흥공단",
+      "category": "서비스-기타",
+      "sourceCode": "M0474",
+      "sourceUrl": "https://sqms.kspo.or.kr/"
+    },
+    {
+      "name": "유소년스포츠지도사",
+      "series": "ETC",
+      "agency": "국민체육진흥공단",
+      "category": "서비스-기타",
+      "sourceCode": "M0475",
+      "sourceUrl": "https://sqms.kspo.or.kr/"
+    },
+    {
+      "name": "노인스포츠지도사",
+      "series": "ETC",
+      "agency": "국민체육진흥공단",
+      "category": "서비스-기타",
+      "sourceCode": "M0476",
+      "sourceUrl": "https://sqms.kspo.or.kr/"
+    },
+    {
+      "name": "바리스타 1급",
+      "series": "ETC",
+      "agency": "한국바리스타자격검정원",
+      "category": "서비스-기타",
+      "sourceCode": "M0477",
+      "sourceUrl": "https://www.kbca.or.kr/"
+    },
+    {
+      "name": "바리스타 2급",
+      "series": "ETC",
+      "agency": "한국바리스타자격검정원",
+      "category": "서비스-기타",
+      "sourceCode": "M0478",
+      "sourceUrl": "https://www.kbca.or.kr/"
+    }
+  ]
+}

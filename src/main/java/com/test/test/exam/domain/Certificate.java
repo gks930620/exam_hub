@@ -1,0 +1,123 @@
+package com.test.test.exam.domain;
+
+import com.test.test.exam.common.TimeUtil;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+/**
+ * 자격증 마스터 (설계 04 §2-1).
+ */
+@Entity
+@Table(name = "certificate", indexes = {
+        @Index(name = "idx_certificate_name", columnList = "name")
+})
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+public class Certificate {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    /** pSEO URL 키 (예: 정보처리기사). URL 인코딩 한글 또는 로마자 slug */
+    @Column(nullable = false, length = 120, unique = true)
+    private String slug;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private Series series;
+
+    @Column(nullable = false, length = 50)
+    private String agency;
+
+    /** 시험 분류(각종 시험 통합용): 국가기술자격/한국사/어학-영어/IT-데이터 등. 화면·필터·pSEO 그룹핑. */
+    @Column(length = 40)
+    private String category;
+
+    /** 공공 API 종목코드(jmCd) — diff 매칭 키 */
+    @Column(length = 30, unique = true)
+    private String sourceCode;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer favoriteCount = 0;
+
+    /** 지금도 시행되는가. 폐지·개칭된 시험도 기록은 남긴다 — {@link CertificateLifecycle} */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "lifecycle", nullable = false, length = 20)
+    @Builder.Default
+    private CertificateLifecycle lifecycle = CertificateLifecycle.ACTIVE;
+
+    /** 이름이 바뀐 경우 새 이름. 사용자에게 "이걸 찾으시나요"를 보여주기 위한 것 */
+    @Column(name = "superseded_by", length = 100)
+    private String supersededBy;
+
+    /** 왜 이 상태인지 — 매니저가 판단할 근거. 없으면 나중에 아무도 이유를 모른다 */
+    @Column(name = "lifecycle_note", length = 300)
+    private String lifecycleNote;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = TimeUtil.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+        if (this.favoriteCount == null) {
+            this.favoriteCount = 0;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = TimeUtil.now();
+    }
+
+    // ===== 비즈니스 메서드 =====
+
+    public void incrementFavorite() {
+        this.favoriteCount = (this.favoriteCount == null ? 0 : this.favoriteCount) + 1;
+    }
+
+    public void decrementFavorite() {
+        int next = (this.favoriteCount == null ? 0 : this.favoriteCount) - 1;
+        this.favoriteCount = Math.max(next, 0);
+    }
+
+    public void updateMeta(String name, Series series, String agency, String category) {
+        this.name = name;
+        this.series = series;
+        this.agency = agency;
+        this.category = category;
+    }
+
+    /**
+     * 공공 API 종목코드를 붙인다. 이게 있어야 시험일정을 <b>이름이 아니라 코드로</b> 붙일 수 있다.
+     * 이름 매칭은 "웹디자인기능사 vs 웹디자인개발기능사" 같은 표기 차이에서 반드시 깨진다.
+     */
+    public void linkSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
+    }
+
+    /** 폐지·개칭 기록. 지우지 않고 상태로 남겨 "왜 없어졌는지"를 답할 수 있게 한다. */
+    public void markLifecycle(CertificateLifecycle lifecycle, String supersededBy, String note) {
+        this.lifecycle = lifecycle;
+        this.supersededBy = supersededBy;
+        this.lifecycleNote = note;
+    }
+
+    public boolean isVisibleToUsers() {
+        return lifecycle == null || lifecycle.isVisibleToUsers();
+    }
+}

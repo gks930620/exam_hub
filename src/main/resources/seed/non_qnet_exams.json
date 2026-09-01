@@ -1,0 +1,619 @@
+{
+  "_comment": "비(非)큐넷 시험 통합 시드. 큐넷 국가자격(613종)은 QnetApiScheduleSource(실 API)가 담당하고, 이 파일은 큐넷 밖 시험 — 공무원·어학·한국사·사무/IT·금융·회계·한자·유통 — 을 담는다. SeedFileScheduleSource 가 읽어 CollectedSchedule 로 변환 → 기존 수집 파이프라인이 Certificate+ExamSchedule+알림을 생성한다. examType 은 필기/실기 구분이 없는 시험도 WRITTEN 으로 통일.",
+  "_scope": "취준생이 실제로 준비하는 시험 위주. 전문직 국가시험(변호사·회계사·세무사·변리사·감정평가사·노무사 등)은 제외한다.",
+  "_provenance": "scraped=실제 시행처에서 확인한 값(한능검 심화·ADsP만, 2026-07-28 기준). approx=회차 패턴 기반 추정치. ⚠️ approx 는 실제와 다를 수 있다 — 운영 전환 시 소스별 스크래퍼/수기입력으로 교체해야 한다.",
+  "_prod": "이 파일을 읽는 SeedFileScheduleSource 는 @Profile(\"!prod\") 라 운영에서는 동작하지 않는다. 로컬 개발·데모 전용이다.",
+  "generatedAt": "2026-08-06",
+  "exams": [
+    {
+      "name": "국가직 9급 공개경쟁채용",
+      "agency": "인사혁신처",
+      "category": "공무원",
+      "sourceCode": "GOSI-N9",
+      "sourceUrl": "https://www.gosi.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2027, "round": 1, "examType": "WRITTEN", "regStart": "2027-01-11T09:00", "regEnd": "2027-01-14T18:00", "examStart": "2027-04-10", "examEnd": "2027-04-10", "result": "2027-05-12"}
+      ]
+    },
+    {
+      "name": "국가직 7급 공개경쟁채용",
+      "agency": "인사혁신처",
+      "category": "공무원",
+      "sourceCode": "GOSI-N7",
+      "sourceUrl": "https://www.gosi.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 2, "examType": "PRACTICAL", "regStart": "2026-08-10T09:00", "regEnd": "2026-08-13T18:00", "examStart": "2026-09-12", "examEnd": "2026-09-12", "result": "2026-10-14"},
+        {"year": 2027, "round": 1, "examType": "WRITTEN", "regStart": "2027-05-10T09:00", "regEnd": "2027-05-13T18:00", "examStart": "2027-07-24", "examEnd": "2027-07-24", "result": "2027-08-25"}
+      ]
+    },
+    {
+      "name": "지방직 9급 공개경쟁채용",
+      "agency": "각 시·도 지방자치단체",
+      "category": "공무원",
+      "sourceCode": "LOCAL-9",
+      "sourceUrl": "https://local.gosi.go.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2027, "round": 1, "examType": "WRITTEN", "regStart": "2027-03-15T09:00", "regEnd": "2027-03-19T18:00", "examStart": "2027-06-12", "examEnd": "2027-06-12", "result": "2027-07-14"}
+      ]
+    },
+    {
+      "name": "경찰공무원 순경 공개채용",
+      "agency": "경찰청",
+      "category": "공무원",
+      "sourceCode": "POLICE-SUN",
+      "sourceUrl": "https://www.police.go.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 2, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-08-28T18:00", "examStart": "2026-10-17", "examEnd": "2026-10-17", "result": "2026-11-13"},
+        {"year": 2027, "round": 1, "examType": "WRITTEN", "regStart": "2027-02-22T10:00", "regEnd": "2027-02-26T18:00", "examStart": "2027-04-17", "examEnd": "2027-04-17", "result": "2027-05-14"}
+      ]
+    },
+    {
+      "name": "소방공무원 공개채용",
+      "agency": "소방청",
+      "category": "공무원",
+      "sourceCode": "FIRE-PUB",
+      "sourceUrl": "https://www.nfa.go.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2027, "round": 1, "examType": "WRITTEN", "regStart": "2027-01-25T09:00", "regEnd": "2027-01-29T18:00", "examStart": "2027-03-27", "examEnd": "2027-03-27", "result": "2027-04-28"}
+      ]
+    },
+
+    {
+      "name": "한국사능력검정시험(심화)",
+      "agency": "국사편찬위원회",
+      "category": "한국사",
+      "sourceCode": "HISTORY-SIM",
+      "sourceUrl": "https://www.historyexam.go.kr/",
+      "provenance": "scraped:2026-07-28",
+      "schedules": [
+        {"year": 2026, "round": 79, "examType": "WRITTEN", "regStart": "2026-07-07T10:00", "regEnd": "2026-07-14T18:00", "examStart": "2026-08-09", "examEnd": "2026-08-09", "result": "2026-08-21"},
+        {"year": 2026, "round": 80, "examType": "WRITTEN", "regStart": "2026-09-15T10:00", "regEnd": "2026-09-22T18:00", "examStart": "2026-10-17", "examEnd": "2026-10-17", "result": "2026-10-30"},
+        {"year": 2026, "round": 81, "examType": "WRITTEN", "regStart": "2026-11-03T10:00", "regEnd": "2026-11-10T18:00", "examStart": "2026-11-28", "examEnd": "2026-11-28", "result": "2026-12-11"}
+      ]
+    },
+    {
+      "name": "한국사능력검정시험(기본)",
+      "agency": "국사편찬위원회",
+      "category": "한국사",
+      "sourceCode": "HISTORY-BAS",
+      "sourceUrl": "https://www.historyexam.go.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 80, "examType": "WRITTEN", "regStart": "2026-09-15T10:00", "regEnd": "2026-09-22T18:00", "examStart": "2026-10-17", "examEnd": "2026-10-17", "result": "2026-10-30"},
+        {"year": 2026, "round": 81, "examType": "WRITTEN", "regStart": "2026-11-03T10:00", "regEnd": "2026-11-10T18:00", "examStart": "2026-11-28", "examEnd": "2026-11-28", "result": "2026-12-11"}
+      ]
+    },
+
+    {
+      "name": "TOEIC 토익",
+      "agency": "YBM",
+      "category": "어학-영어",
+      "sourceCode": "TOEIC",
+      "sourceUrl": "https://exam.toeic.co.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202608, "examType": "WRITTEN", "regStart": "2026-07-14T10:00", "regEnd": "2026-07-28T18:00", "examStart": "2026-08-23", "examEnd": "2026-08-23", "result": "2026-09-04"},
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-18T10:00", "regEnd": "2026-09-01T18:00", "examStart": "2026-09-27", "examEnd": "2026-09-27", "result": "2026-10-09"},
+        {"year": 2026, "round": 202610, "examType": "WRITTEN", "regStart": "2026-09-15T10:00", "regEnd": "2026-09-29T18:00", "examStart": "2026-10-25", "examEnd": "2026-10-25", "result": "2026-11-06"}
+      ]
+    },
+    {
+      "name": "TOEIC Speaking 토익스피킹",
+      "agency": "YBM",
+      "category": "어학-영어",
+      "sourceCode": "TOEIC-SP",
+      "sourceUrl": "https://www.toeicswt.co.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202608, "examType": "WRITTEN", "regStart": "2026-07-27T10:00", "regEnd": "2026-08-10T18:00", "examStart": "2026-08-29", "examEnd": "2026-08-30", "result": "2026-09-08"},
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-31T10:00", "regEnd": "2026-09-14T18:00", "examStart": "2026-09-26", "examEnd": "2026-09-27", "result": "2026-10-06"}
+      ]
+    },
+    {
+      "name": "OPIc 오픽",
+      "agency": "ACTFL / 크레듀",
+      "category": "어학-영어",
+      "sourceCode": "OPIC",
+      "sourceUrl": "https://www.opic.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202608, "examType": "WRITTEN", "regStart": "2026-08-01T10:00", "regEnd": "2026-08-25T18:00", "examStart": "2026-08-30", "examEnd": "2026-08-30", "result": "2026-09-04"},
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-09-01T10:00", "regEnd": "2026-09-22T18:00", "examStart": "2026-09-27", "examEnd": "2026-09-27", "result": "2026-10-02"}
+      ]
+    },
+    {
+      "name": "TEPS 텝스",
+      "agency": "서울대학교 TEPS관리위원회",
+      "category": "어학-영어",
+      "sourceCode": "TEPS",
+      "sourceUrl": "https://www.teps.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202608, "examType": "WRITTEN", "regStart": "2026-07-20T10:00", "regEnd": "2026-08-10T18:00", "examStart": "2026-08-22", "examEnd": "2026-08-22", "result": "2026-09-05"},
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-09-07T18:00", "examStart": "2026-09-19", "examEnd": "2026-09-19", "result": "2026-10-02"}
+      ]
+    },
+    {
+      "name": "G-TELP 지텔프(Level 2)",
+      "agency": "국제 TESOL·G-TELP KOREA",
+      "category": "어학-영어",
+      "sourceCode": "GTELP-L2",
+      "sourceUrl": "https://www.g-telp.co.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202608, "examType": "WRITTEN", "regStart": "2026-08-03T10:00", "regEnd": "2026-08-21T18:00", "examStart": "2026-08-30", "examEnd": "2026-08-30", "result": "2026-09-04"},
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-31T10:00", "regEnd": "2026-09-18T18:00", "examStart": "2026-09-27", "examEnd": "2026-09-27", "result": "2026-10-02"}
+      ]
+    },
+    {
+      "name": "IELTS 아이엘츠",
+      "agency": "British Council",
+      "category": "어학-영어",
+      "sourceCode": "IELTS",
+      "sourceUrl": "https://www.britishcouncil.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202608, "examType": "WRITTEN", "regStart": "2026-07-06T10:00", "regEnd": "2026-08-13T18:00", "examStart": "2026-08-22", "examEnd": "2026-08-22", "result": "2026-09-04"},
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-03T10:00", "regEnd": "2026-09-10T18:00", "examStart": "2026-09-19", "examEnd": "2026-09-19", "result": "2026-10-02"}
+      ]
+    },
+    {
+      "name": "TOEFL iBT 토플",
+      "agency": "ETS",
+      "category": "어학-영어",
+      "sourceCode": "TOEFL",
+      "sourceUrl": "https://www.ets.org/toefl",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202608, "examType": "WRITTEN", "regStart": "2026-07-01T10:00", "regEnd": "2026-08-18T18:00", "examStart": "2026-08-29", "examEnd": "2026-08-29", "result": "2026-09-12"},
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-01T10:00", "regEnd": "2026-09-15T18:00", "examStart": "2026-09-26", "examEnd": "2026-09-26", "result": "2026-10-10"}
+      ]
+    },
+
+    {
+      "name": "JLPT 일본어능력시험",
+      "agency": "일본국제교류기금·JEES",
+      "category": "어학-일본어",
+      "sourceCode": "JLPT",
+      "sourceUrl": "https://www.jlpt.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 2, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-09-11T18:00", "examStart": "2026-12-06", "examEnd": "2026-12-06", "result": "2027-01-27"},
+        {"year": 2027, "round": 1, "examType": "WRITTEN", "regStart": "2027-03-15T10:00", "regEnd": "2027-04-02T18:00", "examStart": "2027-07-04", "examEnd": "2027-07-04", "result": "2027-08-25"}
+      ]
+    },
+    {
+      "name": "JPT 일본어능력시험",
+      "agency": "YBM",
+      "category": "어학-일본어",
+      "sourceCode": "JPT",
+      "sourceUrl": "https://www.jpt.co.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-10T10:00", "regEnd": "2026-08-31T18:00", "examStart": "2026-09-20", "examEnd": "2026-09-20", "result": "2026-10-05"},
+        {"year": 2026, "round": 202611, "examType": "WRITTEN", "regStart": "2026-09-28T10:00", "regEnd": "2026-10-19T18:00", "examStart": "2026-11-15", "examEnd": "2026-11-15", "result": "2026-11-30"}
+      ]
+    },
+    {
+      "name": "SJPT 일본어 말하기시험",
+      "agency": "YBM",
+      "category": "어학-일본어",
+      "sourceCode": "SJPT",
+      "sourceUrl": "https://www.sjpt.co.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-17T10:00", "regEnd": "2026-09-07T18:00", "examStart": "2026-09-19", "examEnd": "2026-09-19", "result": "2026-10-02"}
+      ]
+    },
+
+    {
+      "name": "HSK 중국어능력시험(필기)",
+      "agency": "중국교육부 한판·HSK한국사무국",
+      "category": "어학-중국어",
+      "sourceCode": "HSK",
+      "sourceUrl": "https://www.hsk.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-07-27T10:00", "regEnd": "2026-08-25T18:00", "examStart": "2026-09-13", "examEnd": "2026-09-13", "result": "2026-10-13"},
+        {"year": 2026, "round": 202611, "examType": "WRITTEN", "regStart": "2026-09-21T10:00", "regEnd": "2026-10-20T18:00", "examStart": "2026-11-08", "examEnd": "2026-11-08", "result": "2026-12-08"}
+      ]
+    },
+    {
+      "name": "HSKK 중국어 회화시험",
+      "agency": "HSK한국사무국",
+      "category": "어학-중국어",
+      "sourceCode": "HSKK",
+      "sourceUrl": "https://www.hsk.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-07-27T10:00", "regEnd": "2026-08-25T18:00", "examStart": "2026-09-13", "examEnd": "2026-09-13", "result": "2026-10-13"}
+      ]
+    },
+    {
+      "name": "TSC 중국어 말하기시험",
+      "agency": "YBM",
+      "category": "어학-중국어",
+      "sourceCode": "TSC",
+      "sourceUrl": "https://www.ybmtsc.co.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "WRITTEN", "regStart": "2026-08-10T10:00", "regEnd": "2026-08-31T18:00", "examStart": "2026-09-12", "examEnd": "2026-09-12", "result": "2026-09-25"}
+      ]
+    },
+
+    {
+      "name": "TOPIK 한국어능력시험(II)",
+      "agency": "국립국제교육원",
+      "category": "한국어",
+      "sourceCode": "TOPIK-2",
+      "sourceUrl": "https://www.topik.go.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 104, "examType": "WRITTEN", "regStart": "2026-08-04T10:00", "regEnd": "2026-08-10T18:00", "examStart": "2026-10-18", "examEnd": "2026-10-18", "result": "2026-11-26"},
+        {"year": 2026, "round": 105, "examType": "WRITTEN", "regStart": "2026-09-15T10:00", "regEnd": "2026-09-21T18:00", "examStart": "2026-11-15", "examEnd": "2026-11-15", "result": "2026-12-24"}
+      ]
+    },
+    {
+      "name": "KBS한국어능력시험",
+      "agency": "KBS한국방송",
+      "category": "국어",
+      "sourceCode": "KBS-KOR",
+      "sourceUrl": "https://www.klt.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 78, "examType": "WRITTEN", "regStart": "2026-08-17T10:00", "regEnd": "2026-09-04T18:00", "examStart": "2026-09-27", "examEnd": "2026-09-27", "result": "2026-10-23"},
+        {"year": 2026, "round": 79, "examType": "WRITTEN", "regStart": "2026-10-12T10:00", "regEnd": "2026-10-30T18:00", "examStart": "2026-11-22", "examEnd": "2026-11-22", "result": "2026-12-18"}
+      ]
+    },
+    {
+      "name": "ToKL 국어능력인증시험",
+      "agency": "한국언어문화연구원",
+      "category": "국어",
+      "sourceCode": "TOKL",
+      "sourceUrl": "https://www.tokl.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 96, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-09-11T18:00", "examStart": "2026-10-11", "examEnd": "2026-10-11", "result": "2026-11-06"}
+      ]
+    },
+
+    {
+      "name": "컴퓨터활용능력 2급",
+      "agency": "대한상공회의소",
+      "category": "사무-IT",
+      "sourceCode": "KORCHAM-CA2",
+      "sourceUrl": "https://license.korcham.net/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 4, "examType": "WRITTEN", "regStart": "2026-08-13T10:00", "regEnd": "2026-08-19T18:00", "examStart": "2026-09-05", "examEnd": "2026-09-05", "result": "2026-09-18"},
+        {"year": 2026, "round": 4, "examType": "PRACTICAL", "regStart": "2026-09-24T10:00", "regEnd": "2026-09-30T18:00", "examStart": "2026-10-24", "examEnd": "2026-10-24", "result": "2026-11-13"}
+      ]
+    },
+    {
+      "name": "워드프로세서",
+      "agency": "대한상공회의소",
+      "category": "사무-IT",
+      "sourceCode": "KORCHAM-WP",
+      "sourceUrl": "https://license.korcham.net/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 4, "examType": "WRITTEN", "regStart": "2026-08-13T10:00", "regEnd": "2026-08-19T18:00", "examStart": "2026-09-05", "examEnd": "2026-09-05", "result": "2026-09-18"},
+        {"year": 2026, "round": 4, "examType": "PRACTICAL", "regStart": "2026-09-24T10:00", "regEnd": "2026-09-30T18:00", "examStart": "2026-10-24", "examEnd": "2026-10-24", "result": "2026-11-13"}
+      ]
+    },
+    {
+      "name": "ITQ 정보기술자격(한글)",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "KPC-ITQ-HWP",
+      "sourceUrl": "https://license.kpc.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "PRACTICAL", "regStart": "2026-08-10T10:00", "regEnd": "2026-08-21T18:00", "examStart": "2026-09-12", "examEnd": "2026-09-12", "result": "2026-10-16"},
+        {"year": 2026, "round": 202610, "examType": "PRACTICAL", "regStart": "2026-09-07T10:00", "regEnd": "2026-09-18T18:00", "examStart": "2026-10-10", "examEnd": "2026-10-10", "result": "2026-11-13"}
+      ]
+    },
+    {
+      "name": "ITQ 정보기술자격(엑셀)",
+      "agency": "한국생산성본부",
+      "category": "사무-IT",
+      "sourceCode": "KPC-ITQ-XLS",
+      "sourceUrl": "https://license.kpc.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "PRACTICAL", "regStart": "2026-08-10T10:00", "regEnd": "2026-08-21T18:00", "examStart": "2026-09-12", "examEnd": "2026-09-12", "result": "2026-10-16"}
+      ]
+    },
+    {
+      "name": "GTQ 그래픽기술자격 1급",
+      "agency": "한국생산성본부",
+      "category": "IT-디자인",
+      "sourceCode": "KPC-GTQ1",
+      "sourceUrl": "https://license.kpc.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "PRACTICAL", "regStart": "2026-08-10T10:00", "regEnd": "2026-08-21T18:00", "examStart": "2026-09-12", "examEnd": "2026-09-12", "result": "2026-10-16"}
+      ]
+    },
+    {
+      "name": "MOS 마이크로소프트오피스 스페셜리스트",
+      "agency": "Microsoft·YBM",
+      "category": "사무-IT",
+      "sourceCode": "MOS",
+      "sourceUrl": "https://mos.co.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 202609, "examType": "PRACTICAL", "regStart": "2026-08-17T10:00", "regEnd": "2026-09-04T18:00", "examStart": "2026-09-19", "examEnd": "2026-09-19", "result": "2026-09-24"}
+      ]
+    },
+
+    {
+      "name": "ADsP 데이터분석 준전문가",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "DATAQ-ADSP",
+      "sourceUrl": "https://www.dataq.or.kr/",
+      "provenance": "scraped:2026-07-28",
+      "schedules": [
+        {"year": 2026, "round": 50, "examType": "WRITTEN", "regStart": "2026-07-06T10:00", "regEnd": "2026-07-10T18:00", "examStart": "2026-08-08", "examEnd": "2026-08-08", "result": "2026-08-28"},
+        {"year": 2026, "round": 51, "examType": "WRITTEN", "regStart": "2026-09-28T10:00", "regEnd": "2026-10-02T18:00", "examStart": "2026-10-31", "examEnd": "2026-10-31", "result": "2026-11-20"}
+      ]
+    },
+    {
+      "name": "ADP 데이터분석 전문가",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "DATAQ-ADP",
+      "sourceUrl": "https://www.dataq.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 34, "examType": "WRITTEN", "regStart": "2026-08-31T10:00", "regEnd": "2026-09-04T18:00", "examStart": "2026-10-10", "examEnd": "2026-10-10", "result": "2026-11-06"}
+      ]
+    },
+    {
+      "name": "SQLD SQL 개발자",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "DATAQ-SQLD",
+      "sourceUrl": "https://www.dataq.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 58, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-08-28T18:00", "examStart": "2026-09-26", "examEnd": "2026-09-26", "result": "2026-10-23"},
+        {"year": 2026, "round": 59, "examType": "WRITTEN", "regStart": "2026-10-19T10:00", "regEnd": "2026-10-23T18:00", "examStart": "2026-11-21", "examEnd": "2026-11-21", "result": "2026-12-18"}
+      ]
+    },
+    {
+      "name": "SQLP SQL 전문가",
+      "agency": "한국데이터산업진흥원",
+      "category": "IT-데이터",
+      "sourceCode": "DATAQ-SQLP",
+      "sourceUrl": "https://www.dataq.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 40, "examType": "WRITTEN", "regStart": "2026-08-31T10:00", "regEnd": "2026-09-04T18:00", "examStart": "2026-10-10", "examEnd": "2026-10-10", "result": "2026-11-06"}
+      ]
+    },
+    {
+      "name": "정보보안기사",
+      "agency": "한국방송통신전파진흥원",
+      "category": "IT-보안",
+      "sourceCode": "KCA-SEC",
+      "sourceUrl": "https://www.kca.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 3, "examType": "WRITTEN", "regStart": "2026-08-17T10:00", "regEnd": "2026-08-21T18:00", "examStart": "2026-09-19", "examEnd": "2026-09-19", "result": "2026-10-16"},
+        {"year": 2026, "round": 3, "examType": "PRACTICAL", "regStart": "2026-10-26T10:00", "regEnd": "2026-10-30T18:00", "examStart": "2026-11-21", "examEnd": "2026-11-21", "result": "2026-12-24"}
+      ]
+    },
+    {
+      "name": "리눅스마스터 2급",
+      "agency": "한국정보통신인력개발센터",
+      "category": "IT-보안",
+      "sourceCode": "LINUX-M2",
+      "sourceUrl": "https://www.ihd.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 3, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-09-11T18:00", "examStart": "2026-10-10", "examEnd": "2026-10-10", "result": "2026-11-06"}
+      ]
+    },
+    {
+      "name": "네트워크관리사 2급",
+      "agency": "한국정보통신자격협회",
+      "category": "IT-보안",
+      "sourceCode": "ICQA-NET2",
+      "sourceUrl": "https://www.icqa.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 4, "examType": "WRITTEN", "regStart": "2026-08-31T10:00", "regEnd": "2026-09-18T18:00", "examStart": "2026-10-17", "examEnd": "2026-10-17", "result": "2026-11-06"}
+      ]
+    },
+
+    {
+      "name": "투자자산운용사",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "KOFIA-IAM",
+      "sourceUrl": "https://license.kofia.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 3, "examType": "WRITTEN", "regStart": "2026-09-07T10:00", "regEnd": "2026-09-18T18:00", "examStart": "2026-11-08", "examEnd": "2026-11-08", "result": "2026-11-20"}
+      ]
+    },
+    {
+      "name": "펀드투자권유대행인",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "KOFIA-FUND",
+      "sourceUrl": "https://license.kofia.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 3, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-09-04T18:00", "examStart": "2026-10-11", "examEnd": "2026-10-11", "result": "2026-10-23"}
+      ]
+    },
+    {
+      "name": "증권투자권유대행인",
+      "agency": "금융투자협회",
+      "category": "금융",
+      "sourceCode": "KOFIA-SEC",
+      "sourceUrl": "https://license.kofia.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 3, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-09-04T18:00", "examStart": "2026-10-11", "examEnd": "2026-10-11", "result": "2026-10-23"}
+      ]
+    },
+    {
+      "name": "신용분석사",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "KBI-CREDIT",
+      "sourceUrl": "https://www.kbi.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 2, "examType": "WRITTEN", "regStart": "2026-09-14T10:00", "regEnd": "2026-09-25T18:00", "examStart": "2026-11-07", "examEnd": "2026-11-07", "result": "2026-12-04"}
+      ]
+    },
+    {
+      "name": "은행텔러",
+      "agency": "한국금융연수원",
+      "category": "금융",
+      "sourceCode": "KBI-TELLER",
+      "sourceUrl": "https://www.kbi.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 2, "examType": "WRITTEN", "regStart": "2026-09-14T10:00", "regEnd": "2026-09-25T18:00", "examStart": "2026-11-07", "examEnd": "2026-11-07", "result": "2026-12-04"}
+      ]
+    },
+    {
+      "name": "AFPK 재무설계사",
+      "agency": "한국FPSB",
+      "category": "금융",
+      "sourceCode": "FPSB-AFPK",
+      "sourceUrl": "https://www.fpsbkorea.org/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 3, "examType": "WRITTEN", "regStart": "2026-09-21T10:00", "regEnd": "2026-10-16T18:00", "examStart": "2026-11-21", "examEnd": "2026-11-21", "result": "2026-12-11"}
+      ]
+    },
+
+    {
+      "name": "전산세무 2급",
+      "agency": "한국세무사회",
+      "category": "회계-세무",
+      "sourceCode": "KACPTA-TAX2",
+      "sourceUrl": "https://license.kacpta.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 118, "examType": "PRACTICAL", "regStart": "2026-08-27T10:00", "regEnd": "2026-09-02T18:00", "examStart": "2026-10-04", "examEnd": "2026-10-04", "result": "2026-10-23"},
+        {"year": 2026, "round": 119, "examType": "PRACTICAL", "regStart": "2026-10-29T10:00", "regEnd": "2026-11-04T18:00", "examStart": "2026-12-06", "examEnd": "2026-12-06", "result": "2026-12-24"}
+      ]
+    },
+    {
+      "name": "전산회계 1급",
+      "agency": "한국세무사회",
+      "category": "회계-세무",
+      "sourceCode": "KACPTA-ACC1",
+      "sourceUrl": "https://license.kacpta.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 118, "examType": "PRACTICAL", "regStart": "2026-08-27T10:00", "regEnd": "2026-09-02T18:00", "examStart": "2026-10-04", "examEnd": "2026-10-04", "result": "2026-10-23"}
+      ]
+    },
+    {
+      "name": "재경관리사",
+      "agency": "삼일회계법인",
+      "category": "회계-세무",
+      "sourceCode": "SAMIL-FIN",
+      "sourceUrl": "https://www.samilexam.com/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 5, "examType": "WRITTEN", "regStart": "2026-08-31T10:00", "regEnd": "2026-09-18T18:00", "examStart": "2026-10-24", "examEnd": "2026-10-24", "result": "2026-11-06"}
+      ]
+    },
+    {
+      "name": "FAT 회계실무 1급",
+      "agency": "한국공인회계사회",
+      "category": "회계-세무",
+      "sourceCode": "AT-FAT1",
+      "sourceUrl": "https://at.kicpa.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 78, "examType": "PRACTICAL", "regStart": "2026-09-07T10:00", "regEnd": "2026-09-16T18:00", "examStart": "2026-10-17", "examEnd": "2026-10-17", "result": "2026-10-30"}
+      ]
+    },
+
+    {
+      "name": "TESAT 경제이해력검증시험",
+      "agency": "한국경제신문",
+      "category": "경제-경영",
+      "sourceCode": "TESAT",
+      "sourceUrl": "https://www.tesat.or.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 92, "examType": "WRITTEN", "regStart": "2026-08-17T10:00", "regEnd": "2026-09-08T18:00", "examStart": "2026-09-19", "examEnd": "2026-09-19", "result": "2026-09-25"},
+        {"year": 2026, "round": 93, "examType": "WRITTEN", "regStart": "2026-10-12T10:00", "regEnd": "2026-11-03T18:00", "examStart": "2026-11-14", "examEnd": "2026-11-14", "result": "2026-11-20"}
+      ]
+    },
+    {
+      "name": "매경TEST 경제경영이해력시험",
+      "agency": "매일경제신문",
+      "category": "경제-경영",
+      "sourceCode": "MK-TEST",
+      "sourceUrl": "https://exam.mk.co.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 88, "examType": "WRITTEN", "regStart": "2026-08-24T10:00", "regEnd": "2026-09-15T18:00", "examStart": "2026-09-26", "examEnd": "2026-09-26", "result": "2026-10-02"}
+      ]
+    },
+
+    {
+      "name": "유통관리사 2급",
+      "agency": "대한상공회의소",
+      "category": "유통-무역",
+      "sourceCode": "KORCHAM-DIST2",
+      "sourceUrl": "https://license.korcham.net/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 3, "examType": "WRITTEN", "regStart": "2026-09-24T10:00", "regEnd": "2026-09-30T18:00", "examStart": "2026-11-07", "examEnd": "2026-11-07", "result": "2026-12-04"}
+      ]
+    },
+    {
+      "name": "국제무역사 1급",
+      "agency": "한국무역협회",
+      "category": "유통-무역",
+      "sourceCode": "KITA-TRADE1",
+      "sourceUrl": "https://www.tradecampus.com/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 3, "examType": "WRITTEN", "regStart": "2026-09-07T10:00", "regEnd": "2026-09-25T18:00", "examStart": "2026-10-31", "examEnd": "2026-10-31", "result": "2026-11-20"}
+      ]
+    },
+
+    {
+      "name": "한자능력검정시험(2급)",
+      "agency": "한국어문회",
+      "category": "한자",
+      "sourceCode": "HANJA-2",
+      "sourceUrl": "https://www.hanja.re.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 4, "examType": "WRITTEN", "regStart": "2026-08-31T10:00", "regEnd": "2026-09-18T18:00", "examStart": "2026-11-21", "examEnd": "2026-11-21", "result": "2026-12-18"}
+      ]
+    },
+    {
+      "name": "한자능력검정시험(3급)",
+      "agency": "한국어문회",
+      "category": "한자",
+      "sourceCode": "HANJA-3",
+      "sourceUrl": "https://www.hanja.re.kr/",
+      "provenance": "approx",
+      "schedules": [
+        {"year": 2026, "round": 4, "examType": "WRITTEN", "regStart": "2026-08-31T10:00", "regEnd": "2026-09-18T18:00", "examStart": "2026-11-21", "examEnd": "2026-11-21", "result": "2026-12-18"}
+      ]
+    }
+  ]
+}

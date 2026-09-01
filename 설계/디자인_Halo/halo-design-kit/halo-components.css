@@ -1,0 +1,289 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Halo 기본 컴포넌트 — halo-tokens.css 를 먼저 불러온 뒤 이 파일을 쓴다.
+   프로젝트에 필요한 것만 골라 쓰고, 새 컴포넌트는 반드시 토큰만 조합해 만든다.
+
+   ⚠️ 이 파일에 하드코딩된 색이 거의 없다는 점을 지킬 것.
+      새로 추가할 때 #hex 를 쓰고 싶어지면 토큰이 하나 부족한 것이다 — 토큰을 먼저 늘려라.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 참고: 이 파일의 유일한 하드코딩 색은 그라디언트 위 글자의 `#fff` 다.
+   그라디언트 배경은 라이트·다크 모두 어두운 보라 계열이라 흰색이 항상 옳다 — 테마 종속이 아니다.
+   그 외 모든 색은 토큰(var(--...))으로만 참조한다. */
+
+/* ─────────────────────────────────────────────
+   ③ 헤더 — 유리(blur)를 쓰는 유일한 자리.
+   콘텐츠가 실제로 뒤로 지나가는 곳이라서만 정당하다.
+   떠 있는 알약 모양으로 만들어 페이지 상단과 분리한다.
+   ───────────────────────────────────────────── */
+.app-header {
+  position: sticky; top: 0; z-index: 30;
+  padding: 14px 20px 0;
+  background: none; border: none;   /* 헤더 자체는 투명 — 안쪽 컨테이너만 유리 */
+}
+.header-container {
+  max-width: 1360px; margin: 0 auto;
+  display: flex; align-items: center; gap: 14px;
+  padding: 9px 12px 9px 20px;
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  border: 1px solid var(--glass-edge);
+  border-radius: 999px;             /* 알약형 */
+  box-shadow: var(--sh);
+}
+.header-logo {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: 750; color: var(--text); letter-spacing: -.02em;
+}
+.header-logo:hover { text-decoration: none; }
+.hdr-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--muted); font-weight: 500;
+  background: var(--glass-chip);
+  border: none; padding: 5px 13px; border-radius: 999px;
+}
+
+/* ─────────────────────────────────────────────
+   레이아웃 — 사이드바 + 본문
+   ───────────────────────────────────────────── */
+.app-body {
+  display: flex; flex: 1; gap: 20px;
+  max-width: 1360px; width: 100%; margin: 0 auto; padding: 20px;
+}
+/* ① 사이드바도 "읽는 면" — 불투명 카드로 띄운다. 유리 금지 */
+.sidebar {
+  width: 250px; flex-shrink: 0;
+  background: var(--surface);
+  border: none; border-radius: var(--radius);
+  box-shadow: var(--sh);
+  padding: 16px 12px;
+  position: sticky; top: 84px; align-self: flex-start;
+  max-height: calc(100vh - 104px); overflow-y: auto;
+}
+.content-area { flex: 1; min-width: 0; }
+
+.side-heading {
+  font-size: 11px; font-weight: 700; color: var(--muted2);
+  text-transform: uppercase; letter-spacing: .1em; margin: 12px 10px 5px;
+}
+.side-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 10px; border-radius: var(--radius-sm); color: var(--muted);
+  font-size: 13.5px; margin-bottom: 1px;
+}
+.side-item:hover { background: var(--soft); text-decoration: none; }
+/* ② 활성 항목만 그라디언트 — 목록에서 "지금 여기" 하나만 빛난다 */
+.side-item.active {
+  background: var(--grad); color: #fff; font-weight: 600; box-shadow: var(--sh-acc);
+}
+
+/* ─────────────────────────────────────────────
+   ② 히어로 — 페이지에서 가장 화려한 단 하나의 블록.
+   한 페이지에 두 개 두지 말 것.
+   ───────────────────────────────────────────── */
+.hero {
+  border-radius: 26px; padding: 46px 40px; margin-bottom: 26px;
+  text-align: center; position: relative; overflow: hidden;
+  background: var(--grad-hero);
+  box-shadow: var(--sh-hero);
+  color: #fff;   /* 그라디언트 위 글자는 라이트·다크 공통으로 흰색 — 의도된 유일한 하드코딩 */
+}
+/* 광택(halo) — 이 디자인의 이름이 여기서 나왔다 */
+.hero::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(closest-side at 18% 12%, rgba(255, 255, 255, .32), transparent 70%),
+    radial-gradient(closest-side at 82% 88%, rgba(255, 255, 255, .18), transparent 70%);
+}
+.hero h1 { position: relative; font-size: 32px; font-weight: 800; letter-spacing: -.03em; margin: 0 0 10px; }
+.hero p { position: relative; margin: 0; opacity: .92; }
+
+/* ─────────────────────────────────────────────
+   ① + ④ 카드 — 읽는 면은 불투명, 윗변에만 1px 그라디언트 선
+   이 조합이 Halo 의 서명이다.
+   ───────────────────────────────────────────── */
+.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+.card, .panel, .kv-card {
+  position: relative; overflow: hidden;
+  background: var(--surface);
+  border: none;                    /* 테두리 대신 그림자 */
+  border-radius: var(--radius);
+  box-shadow: var(--sh);
+  color: var(--text);
+  transition: box-shadow .16s, transform .16s;
+}
+.card { display: flex; gap: 13px; padding: 18px; }
+
+/* ④ 윗변 1px 그라디언트 선 — 평소엔 거의 안 보이다가 hover 시 또렷해진다.
+   left/right 를 16px 씩 띄우는 게 핵심. 끝까지 채우면 촌스러워진다. */
+.card::before, .panel::before, .kv-card::before {
+  content: ""; position: absolute; left: 16px; right: 16px; top: 0; height: 2px;
+  border-radius: 0 0 3px 3px;
+  background: var(--grad);
+  opacity: .16;
+  transition: opacity .2s;
+}
+.card:hover { text-decoration: none; box-shadow: var(--sh-lg); transform: translateY(-3px); }
+.card:hover::before { opacity: .85; }
+
+/* ② 카드 안에서 유일하게 색이 있는 지점 = 아이콘 배지 */
+.card-icon {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--grad); color: #fff; box-shadow: var(--sh-acc);
+}
+.card-body h3 { margin: 0 0 3px; font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+.card-body p { margin: 0; font-size: 13px; color: var(--muted); }
+
+.panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 18px; border-bottom: 1px solid var(--border);
+  font-size: 12.5px; font-weight: 600; color: var(--muted2);
+}
+
+/* 페이지 제목 옆 큰 아이콘 배지 */
+.page-avatar {
+  width: 56px; height: 56px; flex: 0 0 56px; border-radius: 19px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--grad); color: #fff; box-shadow: var(--sh-acc);
+}
+.page-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 22px; }
+.page-header h1 { font-size: 25px; font-weight: 750; letter-spacing: -.025em; margin: 0 0 4px; }
+.page-header p { color: var(--muted); margin: 0; }
+
+/* ─────────────────────────────────────────────
+   버튼 — 전부 알약형(999px). 기본은 흰색, 주 버튼만 그라디언트.
+   이 대비가 살아야 "어디를 눌러야 하는지"가 한눈에 보인다.
+   ───────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  background: var(--surface); border: none; color: var(--muted);
+  padding: 8px 17px; border-radius: 999px;
+  font-size: 13.5px; font-weight: 600; font-family: inherit;
+  box-shadow: var(--sh);
+}
+.btn:hover { color: var(--point); text-decoration: none; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+/* ② 주 버튼 — 화면당 1~2개로 제한할 것 */
+.btn.primary { background: var(--grad); color: #fff; box-shadow: var(--sh-acc); }
+.btn.primary:hover { background: var(--grad-hot); color: #fff; }
+.btn.primary.lg { padding: 12px 26px; font-size: 15px; }
+.btn.ghost { background: none; box-shadow: none; color: var(--muted2); }
+
+/* 칩(토글·필터) — 선택된 것만 그라디언트 */
+.chip {
+  background: var(--surface); border: none; color: var(--muted);
+  border-radius: 999px; padding: 7px 16px;
+  font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+  box-shadow: var(--sh);
+}
+.chip:hover { color: var(--point); }
+.chip.on { background: var(--grad); color: #fff; box-shadow: var(--sh-acc); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+
+.toolbar { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin: 0 0 18px; }
+.toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+
+/* ─────────────────────────────────────────────
+   입력 — 테두리 없이 --soft 바탕. 포커스는 링으로.
+   ───────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+.field > span { font-size: 12.5px; font-weight: 600; color: var(--muted2); }
+
+.input, .area {
+  width: 100%; padding: 13px 17px; font-size: 14px;
+  border: none; border-radius: var(--radius-sm);
+  background: var(--soft); color: var(--text);
+  font-family: inherit; line-height: 1.7;
+}
+.area { resize: vertical; }
+.input:focus, .area:focus {
+  outline: none;
+  background: var(--point-soft);
+  box-shadow: 0 0 0 3px rgba(109, 94, 252, .18);   /* 포커스 링 */
+}
+.area.code, .input.mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+
+/* ─────────────────────────────────────────────
+   알림 — 기본은 흰 카드, 의미색은 은은한 배경만
+   ───────────────────────────────────────────── */
+.notice {
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  font-size: 14px; margin: 10px 0;
+  background: var(--surface); border: none; box-shadow: var(--sh); color: var(--muted);
+}
+.notice.info { background: var(--point-soft); color: var(--point-dark); box-shadow: none; }
+.notice.ok   { background: var(--ok-soft); color: var(--ok-text); box-shadow: none; }
+.notice.warn { background: color-mix(in srgb, var(--warn) 14%, transparent);
+               color: color-mix(in srgb, var(--warn) 82%, var(--text)); box-shadow: none; }
+.notice.error{ background: color-mix(in srgb, var(--err) 13%, transparent);
+               color: color-mix(in srgb, var(--err) 85%, var(--text)); box-shadow: none; }
+
+.tag {
+  font-size: 11px; background: var(--point-soft); color: var(--point);
+  padding: 1px 9px; border-radius: 999px;
+}
+.status-badge { display: inline-block; padding: 4px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 600; }
+.status-badge.ok { background: var(--ok-soft); color: var(--ok-text); }
+
+/* ─────────────────────────────────────────────
+   데이터 표시 — 표 / 키·값 목록
+   ───────────────────────────────────────────── */
+.table-wrap { border-radius: var(--radius); overflow: hidden; box-shadow: var(--sh); margin-bottom: 20px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: var(--surface); }
+.data-table th, .data-table td { padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+.data-table th {
+  background: var(--soft); color: var(--muted2); font-weight: 700;
+  font-size: 12px; position: sticky; top: 0; z-index: 1;
+}
+.data-table tr:last-child td { border-bottom: none; }
+
+.kv-row { display: flex; gap: 14px; padding: 11px 18px; border-bottom: 1px solid var(--border); }
+.kv-row:last-child { border-bottom: none; }
+.kv-label { flex: 0 0 150px; color: var(--muted2); font-size: 12.5px; font-weight: 600; }
+.kv-value { flex: 1; min-width: 0; word-break: break-all; }
+
+/* 상태 요약 바 — 알약 여러 개 */
+.statusbar { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 16px; font-size: 12.5px; color: var(--muted); }
+.statusbar span {
+  display: inline-flex; align-items: center;
+  background: var(--surface); border-radius: 999px; box-shadow: var(--sh); padding: 7px 15px;
+}
+.statusbar span b { color: var(--text); font-weight: 700; }
+
+/* 큰 숫자 요약 카드 — 여러 개 중 딱 하나만 .accent 를 준다(원칙 ②) */
+.count-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); margin-bottom: 20px; }
+.count-big {
+  position: relative; overflow: hidden;
+  background: var(--surface); border-radius: var(--radius); box-shadow: var(--sh);
+  padding: 18px 20px; display: flex; flex-direction: column; gap: 4px;
+}
+.count-big::before {
+  content: ""; position: absolute; left: 16px; right: 16px; top: 0; height: 2px;
+  border-radius: 0 0 3px 3px; background: var(--grad); opacity: .16;
+}
+.count-big .v { font-size: 25px; font-weight: 750; letter-spacing: -.03em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.count-big .l { font-size: 12.5px; color: var(--muted2); font-weight: 500; }
+.count-big.accent { background: var(--grad); box-shadow: var(--sh-acc); }
+.count-big.accent::before { display: none; }
+.count-big.accent .v { color: #fff; }
+.count-big.accent .l { color: rgba(255, 255, 255, .82); }
+
+/* ─────────────────────────────────────────────
+   반응형 — 사이드바는 모바일에서 드로어로
+   ───────────────────────────────────────────── */
+@media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .app-body { padding: 14px; gap: 0; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 40;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    transform: translateX(-100%); transition: transform .22s;
+    max-height: none;
+  }
+  .sidebar.open { transform: none; box-shadow: var(--sh-lg); }
+  .hero { padding: 32px 22px; border-radius: 22px; }
+  .hero h1 { font-size: 24px; }
+}

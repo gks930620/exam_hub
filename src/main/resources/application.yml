@@ -1,0 +1,206 @@
+dotenv:
+  enabled: true  # .env 파일 자동 로드 (QNET_API_KEY 등 로컬 시크릿 주입용)
+
+# 환경 무관 실행(코드컨벤션 §5): 기본=local, 운영은 SPRING_PROFILES_ACTIVE=prod 로만 가른다.
+# Railway 는 주입된 PORT 로 리슨해야 하고, 프록시 뒤 절대 URL 을 위해 forward-headers 를 신뢰한다.
+server:
+  # 로컬 기본 포트는 8081 로 고정한다(8080 은 다른 프로젝트가 자주 쓴다 — 사용자 지시 2026-08-06).
+  # 운영(Railway)은 주입된 PORT 를 그대로 따른다.
+  port: ${PORT:8081}
+  forward-headers-strategy: framework
+
+spring:
+  # 소셜 로그인 키는 저장소에 두지 않는다. 프로젝트 루트 oauth.yml 을 만들면 로그인이 켜지고,
+  # 없으면 로그인만 꺼진 채 나머지가 정상 동작한다(oauth.yml.example 참고).
+  config:
+    import: "optional:file:./oauth.yml"
+
+  # ── 소셜 로그인 provider (비밀값 아님 → 여기 둔다) ──
+  # 카카오는 스프링 내장 provider 가 없어서 이 URI 들을 누군가는 반드시 알려줘야 한다.
+  # 이걸 oauth.yml 에만 두면 그 파일이 .gitignore 라 **배포 이미지에는 없고**, 운영에서
+  # 키(client-id/secret)를 환경변수로 넣어도 provider 를 몰라 로그인이 안 뜬다.
+  # → 환경마다 설정을 고치지 않으려면(코드컨벤션 §5) 비밀 아닌 값은 여기, 비밀은 환경변수·oauth.yml.
+  # 구글은 스프링이 내장 provider 를 갖고 있어 아무것도 안 적어도 된다.
+  #
+  # registration(client-id/secret)은 여기 두지 않는다 — 빈 값이라도 적으면
+  # "Client id must not be empty" 로 기동이 깨져서, 키 없이 뜨는 성질을 잃는다.
+  security:
+    oauth2:
+      client:
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+  # 아무 프로파일도 지정하지 않으면 local(로컬 개발)로 뜬다. 운영은 prod 를 명시.
+  profiles:
+    default: local
+
+  # 페이징 상한(DoS 방어): ?size=1000000 같은 과대 요청을 막는다.
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 100
+
+  # 로컬은 인메모리 H2(MySQL 호환) 사용 → 로컬에 MySQL 없어도 실행됨. 배포는 prod 프로파일에서 MySQL.
+  # 모든 값은 환경변수 주입 가능(기본값은 로컬 개발용). 운영에서 이 기본값(H2)으로 뜨면 RailwayDeploymentValidator 가 fail-fast.
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:exam;MODE=MySQL;DB_CLOSE_DELAY=-1}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+
+  h2:
+    console:
+      enabled: true   # http://localhost:8080/h2-console (JDBC URL: jdbc:h2:mem:exam) — 운영은 prod 프로파일에서 off
+
+  jpa:
+    hibernate:
+      # 로컬 기본은 create(매 기동 스키마 재생성 + 데모 시드 재적재 = 재현성). 운영은 update.
+      # 데모 데이터는 SQL 시드가 아니라 ExamDataInitializer(@Profile("!prod"), 자바)가 적재한다.
+      ddl-auto: ${SPRING_JPA_DDL_AUTO:create}
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+    # data.sql 을 Hibernate 가 스키마를 만든 뒤에 실행한다.
+    # 이게 없으면 테이블이 없는 상태에서 INSERT 가 돌아 기동이 깨진다.
+    defer-datasource-initialization: true
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
+
+
+# Actuator 설정 (서버 상태 모니터링)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics  # 노출할 엔드포인트
+  endpoint:
+    health:
+      show-details: when_authorized  # 인증된 사용자만 상세 정보
+
+# Swagger 설정
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html  # Swagger UI 경로
+    tags-sorter: alpha      # 태그 알파벳 순 정렬
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+# ===== exam-hub 수집/알림 설정 =====
+# 개발: 큐넷 실 API 키 없음 → Mock 소스로 수집 파이프라인 동작(MockScheduleSource).
+qnet:
+  api:
+    # .env 의 QNET_API_ENABLED 로 켠다. 켜 두어도 기동 때는 수집하지 않는다 —
+    # 613콜이 나가서 재시작 두 번이면 일 한도(1,000)를 넘긴다. 실 수집은 05:00 스케줄러가 한다.
+    # 지금 당장 받아야 하면: --collect.on-startup=true
+    enabled: ${QNET_API_ENABLED:false}
+    key: ${QNET_API_KEY:}          # 공공데이터포털 서비스키(Encoding 키) — 발급 후 주입
+    base-url: https://apis.data.go.kr/B490007/qualExamSchd
+
+# 발송: 현재 LogNotificationSender(로그)로 검증. ⚠️ 웹 전용이라 실발송은 웹 푸시/이메일로 구현 예정
+# (모바일 FCM 제거함 — FcmNotificationSender·fcm 설정 삭제).
+
+# 시행처 HTML 스크래핑(어학시험). 기본 off — 켜면 기동 시 외부 사이트를 실제로 읽는다.
+#   ./gradlew bootRun --args="--scrape.enabled=true"
+# 조사 결과·유지보수 방법: 운영/04_어학_스크래퍼_정비.md
+scrape:
+  enabled: false
+
+# ===== 알림 발송 =====
+# 채널 우선순위: 알림톡 → 이메일 → 로그 (NotificationSenderChain).
+# 한국에서 알림은 결국 카톡이라 알림톡이 1순위. 번호가 없거나 카톡을 안 쓰면 이메일로 폴백한다.
+# ⚠️ notification 키는 여기 한 곳에만 둔다 — YAML 은 같은 키가 두 번 나오면 뒤엣것이 앞엣것을 통째로 덮는다.
+notification:
+
+  # ── 카카오 알림톡 (대행사: SOLAPI) ──
+  # 사업자등록 → 채널 개설 → 발신프로필 → 템플릿 사전심사가 끝나야 켤 수 있다.
+  # 절차와 심사 제출용 문구: 운영/01_카카오_설정.md
+  alimtalk:
+    enabled: ${ALIMTALK_ENABLED:false}
+    api-key: ${ALIMTALK_API_KEY:}
+    api-secret: ${ALIMTALK_API_SECRET:}
+    pf-id: ${ALIMTALK_PF_ID:}            # 발신프로필 키(어느 카카오톡 채널로 보낼지)
+    from: ${ALIMTALK_FROM:}              # 사전 등록된 발신번호
+    sms-fallback: ${ALIMTALK_SMS_FALLBACK:false}   # true 면 실패 시 SMS 대체발송(추가 과금)
+    template:                            # 심사 승인 후 받은 템플릿 코드를 넣는다
+      reg-open: ${ALIMTALK_TPL_REG_OPEN:}
+      reg-closing: ${ALIMTALK_TPL_REG_CLOSING:}
+      exam-soon: ${ALIMTALK_TPL_EXAM_SOON:}
+      changed: ${ALIMTALK_TPL_CHANGED:}
+
+  # ── 카카오톡 "나에게 보내기" (개발·테스트용) ──
+  # 사업자등록 없이 카톡 알림을 눈으로 확인하는 유일한 방법.
+  # 카카오 문서상 권한 없는 앱은 "앱 멤버"에게만 보낼 수 있어 본인·팀원 테스트 전용이다.
+  # 켜려면 oauth.yml 에 카카오 키가 있어야 하고, scope 에 talk_message 가 포함돼야 한다.
+  kakao-memo:
+    enabled: ${KAKAO_MEMO_ENABLED:false}
+
+  # ── 이메일 (알림톡 폴백) ──
+  # 값이 없으면 EmailNotificationSender 가 뜨지 않고 LogNotificationSender 가 남는다.
+  email:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:no-reply@exam-hub.local}
+    from-name: 모든시험한번에보기
+
+# ===== 인증 (설계 08) =====
+# 소셜 로그인 단독. 키가 없으면 OAuth2 로그인만 꺼지고, 시험 조회·커뮤니티 읽기는 그대로 동작한다.
+app:
+  jwt:
+    secret: ${JWT_SECRET_KEY:exam-hub-local-dev-secret-key-please-change-in-production}
+    validity-seconds: 86400          # 24시간. refresh 토큰은 범위 밖 — 만료되면 재로그인
+  # 알림 메시지 안의 링크 주소. 운영은 APP_PUBLIC_BASE_URL 하나만 넣으면 여기까지 따라온다 —
+  # 변수를 따로 기억해야 하면 잊어버리고, 그러면 배포 후 알림 메일 링크가 localhost 로 간다.
+  link-base: ${APP_LINK_BASE:${APP_PUBLIC_BASE_URL:${APP_BASE_URL:http://localhost:8081}}}
+  oauth:
+    redirect-uri: ${APP_OAUTH_REDIRECT_URI:/oauth/callback}   # 단일 서버라 기본은 같은 출처
+
+# ===== SMTP =====
+# 이메일 알림을 켤 때만 채운다. Gmail 은 앱 비밀번호, AWS SES 는 SMTP 자격증명.
+spring.mail:
+  host: ${MAIL_HOST:smtp.gmail.com}
+  port: ${MAIL_PORT:587}
+  username: ${MAIL_USERNAME:}
+  password: ${MAIL_PASSWORD:}
+  properties:
+    # 로컬 가짜 SMTP(인증 없음)로 발송 경로를 검증할 때 둘 다 false 로 내린다.
+    # Gmail·SES 는 기본값 그대로.
+    mail.smtp.auth: ${MAIL_SMTP_AUTH:true}
+    mail.smtp.starttls.enable: ${MAIL_SMTP_STARTTLS:true}
+    mail.smtp.connectiontimeout: 5000
+    mail.smtp.timeout: 5000
+    mail.smtp.writetimeout: 5000
+
+# ===== 매니저(운영자) 계정 =====
+# 가입 화면이 없다 — 서버를 띄우는 사람만 만들 수 있게 환경변수로만 만든다.
+# 둘 다 있어야 계정이 생기고, 비밀번호를 바꿔 재기동하면 갱신된다(분실 시 되찾는 유일한 길).
+# 로컬은 .env, 배포는 Railway 변수 — 이름이 같아 코드 변경 없이 양쪽에서 동작한다.
+manager:
+  username: ${MANAGER_USERNAME:}
+  password: ${MANAGER_PASSWORD:}
+
+# ===== SQL 시드 (data.sql) =====
+# data.sql 은 **H2(인메모리)일 때만** 실행된다(embedded 기본값). 운영 MySQL 에서는 안 돈다 —
+# 로컬 편의용 매니저 계정이 운영에 딸려 들어가면 안 되기 때문이다.
+# 실행 순서는 spring.jpa.defer-datasource-initialization=true 가 보장한다
+# (없으면 테이블이 만들어지기 전에 INSERT 가 돌아 기동이 깨진다).
+spring.sql:
+  init:
+    mode: ${SPRING_SQL_INIT_MODE:embedded}
+    encoding: UTF-8

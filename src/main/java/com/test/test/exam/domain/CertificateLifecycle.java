@@ -1,0 +1,46 @@
+package com.test.test.exam.domain;
+
+/**
+ * 시험이 지금도 시행되는가.
+ *
+ * <p><b>왜 지우지 않고 상태로 두는가</b>: 폐지된 시험을 DB 에서 삭제하면 그 시험이
+ * <b>있었다는 사실 자체가 사라진다.</b> "웹디자인기능사 찾는데 왜 없지?" 하는 사용자에게
+ * "웹디자인개발기능사로 이름이 바뀌었습니다"라고 답할 근거가 없어진다.
+ * 관심 등록해 둔 사람에게 왜 알림이 안 오는지도 설명할 수 없다.
+ *
+ * <p>그래서 목록·검색에서만 빼고 기록은 남긴다. 매니저 화면의 <b>시험 변천사</b>가 이걸 보여준다.
+ */
+public enum CertificateLifecycle {
+
+    /** 지금도 시행된다. 기본값 */
+    ACTIVE("시행 중"),
+
+    /** 이름이 바뀌었다. {@code supersededBy} 에 새 이름이 들어간다 */
+    RENAMED("이름 바뀜"),
+
+    /** 더 이상 시행되지 않는다 */
+    ABOLISHED("폐지"),
+
+    /**
+     * 폐지·개칭으로 <b>보이지만 확인이 안 된 것</b>.
+     * 큐넷 목록에 없다는 것만으로 폐지라 단정하면 안 된다 — 시행처가 큐넷이 아닐 수도 있다
+     * (컴퓨터활용능력은 대한상공회의소 시행이라 큐넷 목록에 없지만 멀쩡히 살아 있다).
+     * 매니저가 시행처 사이트를 보고 ACTIVE 나 ABOLISHED 로 확정해 준다.
+     */
+    UNVERIFIED("확인 필요");
+
+    private final String label;
+
+    CertificateLifecycle(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    /** 일반 사용자 화면(검색·목록)에 보여도 되는가. */
+    public boolean isVisibleToUsers() {
+        return this == ACTIVE || this == UNVERIFIED;
+    }
+}

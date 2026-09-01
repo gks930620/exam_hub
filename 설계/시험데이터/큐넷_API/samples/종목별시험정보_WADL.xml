@@ -1,0 +1,245 @@
+<application xmlns="http://wadl.dev.java.net/2009/02" xmlns:xs="http://www.w3.org/2001/XMLSchema"><grammars><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="unqualified">
+<xs:element name="InquiryApplicationFeeVO" type="inquiryApplicationFeeVO"/>
+<xs:element name="InquiryTestDates4CraftsmanVO" type="inquiryTestDates4CraftsmanVO"/>
+<xs:element name="InquiryTestDates4EngineerVO" type="inquiryTestDates4EngineerVO"/>
+<xs:element name="InquiryTestDates4JMVO" type="inquiryTestDates4JMVO"/>
+<xs:element name="InquiryTestDates4MasterCraftsmanVO" type="inquiryTestDates4MasterCraftsmanVO"/>
+<xs:element name="InquiryTestDates4ProfessionalEngineerVO" type="inquiryTestDates4ProfessionalEngineerVO"/>
+<xs:element name="header" nillable="true" type="xs:anyType"/>
+<xs:element name="response" nillable="true" type="xs:anyType"/>
+<xs:complexType name="inquiryTestDates4ProfessionalEngineerResponse">
+<xs:sequence>
+<xs:element minOccurs="0" ref="header"/>
+<xs:element minOccurs="0" name="body" type="inquiryTestDates4ProfessionalEngineerBody"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4ProfessionalEngineerHeader">
+<xs:sequence>
+<xs:element minOccurs="0" name="resultCode" type="xs:string"/>
+<xs:element minOccurs="0" name="resultMsg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4ProfessionalEngineerBody">
+<xs:sequence>
+<xs:element minOccurs="0" name="items">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="inquiryTestDates4ProfessionalEngineerVO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4ProfessionalEngineerVO">
+<xs:sequence>
+<xs:element minOccurs="0" name="description" type="xs:string"/>
+<xs:element minOccurs="0" name="docexamdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docsubmitentdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docsubmitstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregstartdt" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4MasterCraftsmanResponse">
+<xs:sequence>
+<xs:element minOccurs="0" ref="header"/>
+<xs:element minOccurs="0" name="body" type="inquiryTestDates4MasterCraftsmanBody"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4MasterCraftsmanHeader">
+<xs:sequence>
+<xs:element minOccurs="0" name="resultCode" type="xs:string"/>
+<xs:element minOccurs="0" name="resultMsg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4MasterCraftsmanBody">
+<xs:sequence>
+<xs:element minOccurs="0" name="items">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="inquiryTestDates4MasterCraftsmanVO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4MasterCraftsmanVO">
+<xs:sequence>
+<xs:element minOccurs="0" name="description" type="xs:string"/>
+<xs:element minOccurs="0" name="docexamdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docsubmitentdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docsubmitstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregstartdt" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4CraftsmanResponse">
+<xs:sequence>
+<xs:element minOccurs="0" ref="header"/>
+<xs:element minOccurs="0" name="body" type="inquiryTestDates4CraftsmanBody"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4CraftsmanHeader">
+<xs:sequence>
+<xs:element minOccurs="0" name="resultCode" type="xs:string"/>
+<xs:element minOccurs="0" name="resultMsg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4CraftsmanBody">
+<xs:sequence>
+<xs:element minOccurs="0" name="items">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="inquiryTestDates4CraftsmanVO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4CraftsmanVO">
+<xs:sequence>
+<xs:element minOccurs="0" name="description" type="xs:string"/>
+<xs:element minOccurs="0" name="docexamdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregstartdt" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4JMResponse">
+<xs:sequence>
+<xs:element minOccurs="0" ref="header"/>
+<xs:element minOccurs="0" name="body" type="inquiryTestDates4JMBody"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4JMHeader">
+<xs:sequence>
+<xs:element minOccurs="0" name="resultCode" type="xs:string"/>
+<xs:element minOccurs="0" name="resultMsg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4JMBody">
+<xs:sequence>
+<xs:element minOccurs="0" name="items">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="inquiryTestDates4JMVO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4JMVO">
+<xs:sequence>
+<xs:element minOccurs="0" name="docexamenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="docexamstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docsubmitenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="docsubmitstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="implplannm" type="xs:string"/>
+<xs:element minOccurs="0" name="jmfldnm" type="xs:string"/>
+<xs:element minOccurs="0" name="mdobligfldcd" type="xs:string"/>
+<xs:element minOccurs="0" name="mdobligfldnm" type="xs:string"/>
+<xs:element minOccurs="0" name="obligfldcd" type="xs:string"/>
+<xs:element minOccurs="0" name="obligfldnm" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracpassenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracpassstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregstartdt" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4EngineerResponse">
+<xs:sequence>
+<xs:element minOccurs="0" ref="header"/>
+<xs:element minOccurs="0" name="body" type="inquiryTestDates4EngineerBody"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4EngineerHeader">
+<xs:sequence>
+<xs:element minOccurs="0" name="resultCode" type="xs:string"/>
+<xs:element minOccurs="0" name="resultMsg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4EngineerBody">
+<xs:sequence>
+<xs:element minOccurs="0" name="items">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="inquiryTestDates4EngineerVO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryTestDates4EngineerVO">
+<xs:sequence>
+<xs:element minOccurs="0" name="description" type="xs:string"/>
+<xs:element minOccurs="0" name="docexamdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="docregstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docsubmitentdt" type="xs:string"/>
+<xs:element minOccurs="0" name="docsubmitstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracexamstartdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracpassdt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregenddt" type="xs:string"/>
+<xs:element minOccurs="0" name="pracregstartdt" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryApplicationFeeResponse">
+<xs:sequence>
+<xs:element minOccurs="0" ref="header"/>
+<xs:element minOccurs="0" name="body" type="inquiryApplicationFeeBody"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryApplicationFeeHeader">
+<xs:sequence>
+<xs:element minOccurs="0" name="resultCode" type="xs:string"/>
+<xs:element minOccurs="0" name="resultMsg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryApplicationFeeBody">
+<xs:sequence>
+<xs:element minOccurs="0" name="items">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="inquiryApplicationFeeVO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="inquiryApplicationFeeVO">
+<xs:sequence>
+<xs:element minOccurs="0" name="contents" type="xs:string"/>
+<xs:element minOccurs="0" name="infogb" type="xs:string"/>
+<xs:element minOccurs="0" name="jmfldnm" type="xs:string"/>
+<xs:element minOccurs="0" name="mdobligfldcd" type="xs:string"/>
+<xs:element minOccurs="0" name="mdobligfldnm" type="xs:string"/>
+<xs:element minOccurs="0" name="obligfldcd" type="xs:string"/>
+<xs:element minOccurs="0" name="obligfldnm" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+</grammars><resources base="http://165.213.107.55:10200/api/service/rest/InquiryTestInformationNTQSVC"><resource path="/"><resource path="getCList"><method name="GET"><response><representation mediaType="application/xml"/><representation mediaType="application/json"/></response></method></resource><resource path="getEList"><method name="GET"><response><representation mediaType="application/xml"/><representation mediaType="application/json"/></response></method></resource><resource path="getFeeList"><method name="GET"><request><param name="jmCd" style="query" type="xs:string"/></request><response><representation mediaType="application/xml"/><representation mediaType="application/json"/></response></method></resource><resource path="getJMList"><method name="GET"><request><param name="jmCd" style="query" type="xs:string"/></request><response><representation mediaType="application/xml"/><representation mediaType="application/json"/></response></method></resource><resource path="getMCList"><method name="GET"><response><representation mediaType="application/xml"/><representation mediaType="application/json"/></response></method></resource><resource path="getPEList"><method name="GET"><response><representation mediaType="application/xml"/><representation mediaType="application/json"/></response></method></resource></resource></resources></application>

@@ -1,0 +1,130 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Halo 디자인 토큰 — 이 파일만 있으면 색·그림자·둥글기가 전부 결정된다.
+   다른 프로젝트에 그대로 복사해 쓸 것. 값을 개별 컴포넌트에서 하드코딩하지 말고
+   반드시 var(--토큰) 으로만 참조한다. 그래야 다크 모드가 공짜로 따라온다.
+
+   핵심 원칙 "화려함을 한 곳에 모은다":
+     ① 읽는 면(카드·패널·본문)은 --surface 불투명. 그라디언트 금지.
+     ② 초점(주 버튼·활성 항목·아이콘 배지·히어로)에만 --grad.
+     ③ 유리(blur)는 헤더 하나만.
+     ④ 카드 윗변 1px 그라디언트 선.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── 강조색 — ②가 쓰는 것. 단색과 그라디언트 두 벌 ── */
+  --point: #6d5efc;          /* 링크·아이콘·포커스 */
+  --point-dark: #5a49f0;     /* --point-soft 위의 글자색 */
+  --point-soft: #eeecff;     /* 연한 강조 배경(태그·알림) */
+  --grad: linear-gradient(135deg, #6d5efc, #a78bfa);   /* 기본 그라디언트 */
+  --grad-hot: linear-gradient(135deg, #6d5efc, #f472b6); /* hover·강조 강화 */
+  /* 히어로 전용 3색 — 페이지에서 가장 화려한 단 한 블록 */
+  --grad-hero: linear-gradient(135deg, #6d5efc 0%, #8b5cf6 45%, #f472b6 100%);
+  --sh-hero: 0 20px 48px rgba(109, 94, 252, .34);
+
+  /* ── 면 — ①이 쓰는 것 ── */
+  --bg: #f8f7fd;             /* 페이지 배경 */
+  --surface: #ffffff;        /* 카드·패널·사이드바 (불투명!) */
+  --soft: #f5f4ff;           /* 입력창·표 헤더·비활성 바탕 */
+  --text: #2b2745;           /* 본문 */
+  --muted: #63608a;          /* 보조 텍스트·버튼 글자 */
+  --muted2: #9491b4;         /* 라벨·캡션 */
+  --border: #eeedfa;         /* 구분선 (테두리 대신 그림자를 쓰므로 최소한만) */
+
+  /* ── 의미색 ── */
+  --ok: #12c9a6;
+  --ok-soft: #e7faf5;
+  --ok-text: #0b8f76;
+  --warn: #f5a524;
+  --err: #f4586d;
+
+  /* ── ③ 헤더 유리 — color-mix 미지원 환경에서도 안 깨지도록 토큰으로 고정 ── */
+  --glass: rgba(255, 255, 255, .72);
+  --glass-edge: rgba(255, 255, 255, .9);
+  --glass-chip: rgba(255, 255, 255, .68);
+
+  /* ── 형태 ── */
+  --radius: 20px;            /* 카드·패널 */
+  --radius-sm: 13px;         /* 입력창·작은 요소 */
+  /* 버튼·칩·배지는 999px(알약형) — 토큰 없이 직접 쓴다 */
+
+  /* ── 그림자 (테두리 대신 이걸로 띄운다) ── */
+  --sh: 0 6px 22px rgba(76, 64, 150, .08), 0 1px 3px rgba(76, 64, 150, .05);
+  --sh-lg: 0 16px 42px rgba(76, 64, 150, .15);   /* hover 시 떠오름 */
+  --sh-acc: 0 8px 22px rgba(109, 94, 252, .32);  /* 그라디언트 요소 전용(색 있는 그림자) */
+
+  --code-bg: #f5f4ff;
+}
+
+/* ── 다크 모드 — 토큰만 덮어쓰면 전 화면이 따라온다 ──
+   J 의 원칙은 그대로: 면은 차분하게, 그라디언트는 초점에만.
+   주의: 다크에서 --surface 를 순수 검정으로 두지 말 것. 그림자가 안 보여 카드가 평평해진다. */
+:root[data-theme="dark"] {
+  --point: #8b7dff;
+  --point-dark: #7a6bfa;
+  --point-soft: #262041;
+  --grad: linear-gradient(135deg, #7a6bfa, #a78bfa);
+  --grad-hot: linear-gradient(135deg, #7a6bfa, #f472b6);
+
+  --bg: #14121f;
+  --surface: #1c1930;
+  --soft: #221e38;
+  --text: #e8e6f5;
+  --muted: #a5a0c4;
+  --muted2: #7a7599;
+  --border: #2c2844;
+
+  --ok: #2ee0bd;
+  --ok-soft: #10322c;
+  --ok-text: #4fe3c4;
+  --warn: #f7b955;
+  --err: #ff7a8c;
+
+  --glass: rgba(28, 25, 48, .74);
+  --glass-edge: rgba(255, 255, 255, .08);
+  --glass-chip: rgba(255, 255, 255, .07);
+
+  --grad-hero: linear-gradient(135deg, #7a6bfa 0%, #8b5cf6 45%, #f472b6 100%);
+  --sh-hero: 0 20px 48px rgba(0, 0, 0, .5);
+
+  /* 다크에서는 그림자를 진하게 — 밝은 그림자는 안 보인다 */
+  --sh: 0 6px 22px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .25);
+  --sh-lg: 0 16px 42px rgba(0, 0, 0, .45);
+  --sh-acc: 0 8px 22px rgba(122, 107, 250, .38);
+
+  --code-bg: #17142a;
+}
+
+/* ── 바탕 ── */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  /* 시스템 폰트 — 웹폰트를 받지 않아 첫 렌더가 빠르다. 한글 폰트를 뒤에 둔다 */
+  font-family: system-ui, -apple-system, "Segoe UI Variable", "Segoe UI",
+    "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-size: 14.5px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+
+  /* 배경 메시(오로라) — 위쪽에만 깔아 아래로 갈수록 차분해지게 한다.
+     이게 Halo 의 "공기"다. 빼면 밋밋해지고, 진하게 하면 본문이 안 읽힌다. */
+  background-image:
+    radial-gradient(680px 380px at 6% -8%, rgba(167, 139, 250, .5) 0%, transparent 62%),
+    radial-gradient(600px 340px at 96% -4%, rgba(244, 114, 182, .36) 0%, transparent 60%),
+    radial-gradient(700px 420px at 62% 104%, rgba(76, 184, 245, .26) 0%, transparent 62%);
+  background-attachment: fixed;
+}
+
+:root[data-theme="dark"] body {
+  /* 다크에서는 메시를 훨씬 약하게 — 안 그러면 탁해 보인다 */
+  background-image:
+    radial-gradient(680px 380px at 6% -8%, rgba(122, 107, 250, .22) 0%, transparent 62%),
+    radial-gradient(600px 340px at 96% -4%, rgba(244, 114, 182, .14) 0%, transparent 60%),
+    radial-gradient(700px 420px at 62% 104%, rgba(76, 184, 245, .12) 0%, transparent 62%);
+}
+
+a { color: var(--point); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: ui-monospace, Consolas, "D2Coding", monospace; }

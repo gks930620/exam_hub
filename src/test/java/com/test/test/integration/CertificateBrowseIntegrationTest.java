@@ -1,0 +1,136 @@
+package com.test.test.integration;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.nio.charset.StandardCharsets;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * 시험 전체 둘러보기 API 통합테스트.
+ *
+ * <p><b>왜 필요한가</b>: 지금까지는 일정(ExamSchedule)이 수집돼야 자격증(Certificate)이 생기는 구조라
+ * 일정을 못 구한 시험은 화면에 아예 나타나지 않았다. 마스터와 일정을 분리 적재하면
+ * "시험은 보이는데 일정 미정" 상태가 가능해지고, 사용자는 그 시험을 검색·관심등록할 수 있다.
+ *
+ * <p>계약: 목록/검색/상세는 <b>일정 유무와 무관하게</b> 동작한다. 일정이 없으면 {@code hasSchedule=false},
+ * 상세의 {@code nextEvent}는 null, {@code schedules}는 빈 배열이다.
+ */
+class CertificateBrowseIntegrationTest extends ApiIntegrationTestSupport {
+
+    // ===== 전체 둘러보기 =====
+
+    @Test
+    void browse_returns_paged_items() throws Exception {
+        mockMvc.perform(get("/api/certificates/browse").param("page", "0").param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.totalElements").isNumber())
+                .andExpect(jsonPath("$.totalPages").isNumber());
+    }
+
+    /** 검색어 없이도 전체 목록을 볼 수 있어야 한다 — "시험이 없다"고 느끼게 만들던 원인. */
+    @Test
+    void browse_without_any_param_returns_first_page() throws Exception {
+        mockMvc.perform(get("/api/certificates/browse"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].id").isNumber())
+                .andExpect(jsonPath("$.items[0].name").exists())
+                .andExpect(jsonPath("$.items[0].hasSchedule").exists());
+    }
+
+    @Test
+    void browse_filters_by_category() throws Exception {
+        MvcResult all = mockMvc.perform(get("/api/certificates/browse").param("size", "100"))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode items = objectMapper.readTree(all.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+        String category = null;
+        for (JsonNode it : items) {
+            if (!it.path("category").isNull() && !it.path("category").asText().isBlank()) {
+                category = it.path("category").asText();
+                break;
+            }
+        }
+        if (category == null) {
+            return; // 분류가 하나도 없으면 검증 생략(시드 구성에 따라)
+        }
+
+        MvcResult filtered = mockMvc.perform(get("/api/certificates/browse")
+                        .param("category", category).param("size", "100"))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode filteredItems = objectMapper.readTree(filtered.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+
+        if (filteredItems.size() == 0) {
+            throw new AssertionError("분류 필터 결과가 비었다: " + category);
+        }
+        for (JsonNode it : filteredItems) {
+            if (!category.equals(it.path("category").asText())) {
+                throw new AssertionError("다른 분류가 섞였다: " + it.path("category").asText());
+            }
+        }
+    }
+
+    @Test
+    void browse_with_query_narrows_result() throws Exception {
+        mockMvc.perform(get("/api/certificates/browse").param("query", "기사").param("size", "100"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items").isArray());
+    }
+
+    @Test
+    void browse_rejects_oversized_page() throws Exception {
+        mockMvc.perform(get("/api/certificates/browse").param("size", "5000"))
+                .andExpect(status().isBadRequest());
+    }
+
+    // ===== 분류 목록 =====
+
+    @Test
+    void categories_return_name_and_count() throws Exception {
+        mockMvc.perform(get("/api/certificates/categories"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items[0].name").exists())
+                .andExpect(jsonPath("$.items[0].count").isNumber());
+    }
+
+    // ===== 일정 없는 시험도 정상 취급 =====
+
+    /**
+     * 일정이 하나도 없는 시험이 목록에 존재하고, 상세도 200 으로 열려야 한다.
+     * (마스터 시드는 일정 없이 들어오므로 최소 한 건은 있어야 한다)
+     */
+    @Test
+    void certificate_without_schedule_is_listed_and_detail_opens() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/certificates/browse").param("size", "100"))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode items = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+
+        Long idWithoutSchedule = null;
+        for (JsonNode it : items) {
+            if (!it.path("hasSchedule").asBoolean(true)) {
+                idWithoutSchedule = it.path("id").asLong();
+                break;
+            }
+        }
+        if (idWithoutSchedule == null) {
+            throw new AssertionError("일정 없는 시험이 목록에 하나도 없다 — 마스터 시드가 적재되지 않았다");
+        }
+
+        mockMvc.perform(get("/api/certificates/{id}", idWithoutSchedule))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(idWithoutSchedule))
+                .andExpect(jsonPath("$.nextEvent").doesNotExist())
+                .andExpect(jsonPath("$.schedules").isArray())
+                .andExpect(jsonPath("$.schedules").isEmpty());
+    }
+}

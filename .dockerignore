@@ -1,0 +1,41 @@
+# Build artifacts
+build/
+!build/libs/*.jar
+.gradle/
+
+# IDE
+.idea/
+*.iml
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flutter app (별도 배포)
+doll_gacha_app/
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!설계/커리큘럼/아직 내용은없지만 추가하거나 고려해야할참고.md
+
+# Test files
+src/test/
+
+# Environment files (보안)
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
