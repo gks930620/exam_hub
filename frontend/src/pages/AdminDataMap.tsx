@@ -22,7 +22,8 @@ const MODE_TONE: Record<SourceMode, string> = {
 export default function AdminDataMap() {
   const [data, setData] = useState<DataMapResponse | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [open, setOpen] = useState<SourceMode | null>('MANUAL');
+  // 처음엔 전부 접는다 — 첫눈에 들어와야 하는 건 한 갈래의 세부가 아니라 '세 갈래가 있다'는 사실이다
+  const [open, setOpen] = useState<SourceMode | null>(null);
 
   useEffect(() => {
     examApi.adminDataMap()
