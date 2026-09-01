@@ -56,21 +56,28 @@ public class AdminOverviewController {
 
         LocalDate today = TimeUtil.today();
 
-        // 필터에 걸린 시험을 먼저 좁히고(이름·분류), 그 시험들의 일정만 한 번에 가져온다.
-        // 시험마다 일정을 조회하면 480번 쿼리가 나간다.
-        List<Certificate> candidates = certificateRepository.browse(
-                query == null ? "" : query.trim(),
-                category == null ? "" : category.trim(),
-                PageRequest.of(0, 2000)).getContent();
+        // 보이는 시험 전부를 한 번에 읽는다. 이름·분류 필터는 그 뒤 메모리에서 건다 —
+        // 탭에 붙는 개수(얼마나 남았나)는 검색과 무관하게 늘 같은 값이어야 하기 때문이다.
+        // 예전엔 필터로 좁힌 목록을 세서, 검색창에 뭘 치면 탭 숫자가 같이 움직였다.
+        List<Certificate> all = certificateRepository.browse("", "", PageRequest.of(0, 5000)).getContent();
 
+        // 시험마다 일정을 조회하면 800번 넘게 쿼리가 나간다 — 한 번에 가져와 묶는다.
         Map<Long, List<ExamSchedule>> byCert = examScheduleRepository
                 .findByCertificateIdInAndStatus(
-                        candidates.stream().map(Certificate::getId).toList(), ScheduleStatus.ACTIVE)
+                        all.stream().map(Certificate::getId).toList(), ScheduleStatus.ACTIVE)
                 .stream()
                 .collect(Collectors.groupingBy(s -> s.getCertificate().getId()));
 
-        List<Row> rows = candidates.stream()
+        List<Row> allRows = all.stream()
                 .map(c -> Row.of(c, byCert.getOrDefault(c.getId(), List.of()), today))
+                .toList();
+
+        String q = query == null ? "" : query.trim().toLowerCase();
+        String cat = category == null ? "" : category.trim();
+
+        List<Row> rows = allRows.stream()
+                .filter(r -> q.isEmpty() || r.certificateName().toLowerCase().contains(q))
+                .filter(r -> cat.isEmpty() || cat.equals(r.category()))
                 .filter(r -> status == null || status.isBlank() || r.status().equals(status))
                 // 급한 것 위로. 같은 상태면 이름순이라 매번 같은 순서로 보인다.
                 .sorted(Comparator.comparingInt((Row r) -> Status.valueOf(r.status()).urgency)
@@ -84,16 +91,17 @@ public class AdminOverviewController {
                 rows.subList(from, to),
                 rows.size(),
                 page,
-                summarize(candidates, byCert, today)));
+                summarize(allRows)));
     }
 
-    /** 상태별 개수 — 매니저가 "얼마나 남았나"를 먼저 본다. 필터를 걸어도 이 숫자는 안 변한다. */
-    private Map<String, Long> summarize(List<Certificate> all,
-                                        Map<Long, List<ExamSchedule>> byCert,
-                                        LocalDate today) {
-        return all.stream()
-                .map(c -> Row.of(c, byCert.getOrDefault(c.getId(), List.of()), today).status())
-                .collect(Collectors.groupingBy(s -> s, Collectors.counting()));
+    /**
+     * 상태별 개수 — 매니저가 "얼마나 남았나"를 먼저 본다.
+     * <b>검색·분류 필터를 걸어도 이 숫자는 안 변한다</b>(전체 기준). 남은 일의 크기라서,
+     * 화면을 좁힐 때마다 같이 줄면 얼마나 남았는지를 알 수 없다.
+     */
+    private Map<String, Long> summarize(List<Row> allRows) {
+        return allRows.stream()
+                .collect(Collectors.groupingBy(Row::status, Collectors.counting()));
     }
 
     /**

@@ -29,8 +29,10 @@ public class AdminDataMapController {
 
     @GetMapping
     public ResponseEntity<DataMapResponse> dataMap() {
-        long totalExams = certificateRepository.count();
-        long withSchedule = examScheduleRepository.countDistinctCertificateWithActiveSchedule();
+        // 화면에 보이는 시험만 센다 — 폐지·개칭까지 세면 "일정 없는 시험" 이 24 부풀어
+        // 일정 현황 화면(846종)과 숫자가 어긋난다.
+        long totalExams = certificateRepository.countVisible();
+        long withSchedule = certificateRepository.countVisibleWithSchedule();
 
         return ResponseEntity.ok(new DataMapResponse(
                 new Coverage(totalExams, withSchedule, totalExams - withSchedule),

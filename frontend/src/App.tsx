@@ -12,6 +12,10 @@ import CommunityPage from './pages/CommunityPage';
 import PostDetailPage from './pages/PostDetailPage';
 import PostEditorPage from './pages/PostEditorPage';
 import AdminPage from './pages/AdminPage';
+import AdminTodo from './pages/AdminTodo';
+import AdminWrite from './pages/AdminWrite';
+import AdminSources from './pages/AdminSources';
+import AdminLifecyclePage from './pages/AdminLifecyclePage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 import { useAuth } from './auth';
 import { applyTheme, isDark, readTheme, type ThemeSetting } from './theme';
@@ -125,7 +129,13 @@ export default function App() {
             <Route path="/community/write" element={<RequireAuth><PostEditorPage /></RequireAuth>} />
             <Route path="/community/posts/:id/edit" element={<RequireAuth><PostEditorPage /></RequireAuth>} />
             <Route path="/manager/login" element={<ManagerLoginPage />} />
-            <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>} />
+            {/* 운영 화면은 갈래마다 주소가 있다 — 한 페이지에 다 쌓으면 무엇을 보는지 알 수 없다 */}
+            <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>}>
+              <Route index element={<AdminTodo />} />
+              <Route path="write" element={<AdminWrite />} />
+              <Route path="sources" element={<AdminSources />} />
+              <Route path="lifecycle" element={<AdminLifecyclePage />} />
+            </Route>
 
             <Route path="*" element={
               <div className="state">

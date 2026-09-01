@@ -71,4 +71,20 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
              ORDER BY COUNT(c) DESC, c.category ASC
             """)
     List<Object[]> countByCategory();
+
+    /**
+     * <b>화면에 보이는</b> 시험 수. 폐지·개칭은 검색에서 빠지므로 여기서도 뺀다.
+     * 전체 수(count())를 쓰면 매니저 화면의 "등록된 시험"만 24 크게 나와 숫자가 안 맞는다.
+     */
+    @Query("SELECT COUNT(c) FROM Certificate c WHERE c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)")
+    long countVisible();
+
+    /** 그중 살아 있는 일정이 하나라도 있는 시험 수. 위와 같은 모집단이어야 뺄셈이 맞는다. */
+    @Query("""
+            SELECT COUNT(DISTINCT c.id) FROM Certificate c
+             WHERE c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
+               AND EXISTS (SELECT 1 FROM ExamSchedule s
+                            WHERE s.certificate = c AND s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE)
+            """)
+    long countVisibleWithSchedule();
 }
