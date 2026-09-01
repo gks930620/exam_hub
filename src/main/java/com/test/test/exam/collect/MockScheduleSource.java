@@ -21,6 +21,11 @@ public class MockScheduleSource implements ScheduleSource {
     private final DemoDataProvider demoDataProvider;
 
     @Override
+    public boolean usesNetwork() {
+        return false;   // 파일만 읽는다
+    }
+
+    @Override
     public String sourceId() {
         return "MOCK";
     }

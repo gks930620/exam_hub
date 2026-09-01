@@ -50,6 +50,29 @@ public class CollectService {
         }
     }
 
+    /**
+     * 파일 기반 소스만 수집 (기동할 때마다).
+     *
+     * <p>로컬은 인메모리 DB라 <b>재시작하면 일정이 전부 사라진다.</b> 그렇다고 기동마다 큐넷을
+     * 부를 수는 없어서(613콜) 예전엔 아무것도 안 했는데, 그러면 <b>공짜인 시드 파일까지</b>
+     * 같이 건너뛰어 "일정이 하나도 없는 화면"이 됐다. 파일은 돈이 안 드니 늘 읽는다.
+     */
+    public void collectWithoutNetwork() {
+        List<ScheduleSource> offline = sources.stream().filter(s -> !s.usesNetwork()).toList();
+        if (offline.isEmpty()) {
+            return;
+        }
+        log.info("[Collect] 파일 시드만 적재 — 네트워크 호출 없음 (소스 {}개)", offline.size());
+        for (ScheduleSource source : offline) {
+            try {
+                runSource(source, source.fetchAll());
+            } catch (Exception e) {
+                log.error("[Collect] source={} 시드 적재 실패 — 다른 소스는 계속합니다: {}",
+                        source.sourceId(), e.toString());
+            }
+        }
+    }
+
     /** 접수 임박 종목 재확인 (17:00 배치). 7일 이내 접수 시작 종목만. */
     public void collectImminent() {
         LocalDateTime now = TimeUtil.now();

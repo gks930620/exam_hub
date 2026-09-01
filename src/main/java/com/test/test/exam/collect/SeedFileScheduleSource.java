@@ -39,6 +39,11 @@ public class SeedFileScheduleSource implements ScheduleSource {
     private final ObjectMapper objectMapper;
 
     @Override
+    public boolean usesNetwork() {
+        return false;   // 파일만 읽는다
+    }
+
+    @Override
     public String sourceId() {
         return "SEED_NONQNET";
     }

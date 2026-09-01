@@ -105,8 +105,10 @@ public class ExamDataInitializer {
         //    (실제로 넘겨서 613콜이 전부 429 로 돌아온 적이 있다, 2026-08-10).
         //    실 수집은 05:00 스케줄러가 하고, 지금 당장 받아야 하면 아래 값을 켠다.
         if (!shouldCollectOnStartup()) {
-            log.info("[Seed] 기동 수집 생략 — 큐넷 호출 한도를 아끼기 위해서다. "
+            log.info("[Seed] 네트워크 수집 생략 — 큐넷 호출 한도를 아끼기 위해서다. "
                     + "지금 받으려면 --collect.on-startup=true (05:00 배치는 그대로 돈다)");
+            // 파일 시드는 공짜다. 이것까지 건너뛰면 재시작할 때마다 일정이 하나도 없는 화면이 된다.
+            collectService.collectWithoutNetwork();
             return;
         }
         // 수집은 외부 네트워크에 기대는 일이라 언제든 실패할 수 있다.

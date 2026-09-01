@@ -16,6 +16,17 @@ public interface ScheduleSource {
     List<CollectedSchedule> fetchAll();
 
     /**
+     * 이 소스가 <b>바깥 네트워크를 타는가</b>.
+     *
+     * <p>파일만 읽는 소스(시드·스냅샷)는 공짜라서 <b>기동할 때마다 돌려도 된다.</b>
+     * 반면 큐넷 API 는 종목당 1콜이라 613콜이고, 스크래퍼는 상대 사이트에 부담을 준다 —
+     * 그건 배치와 명시적 요청에만 맡긴다.
+     */
+    default boolean usesNetwork() {
+        return true;
+    }
+
+    /**
      * 접수 임박 종목만 재확인(17:00 배치용). 종목코드 필터.
      * 기본 구현은 fetchAll 후 필터 (소스가 부분 조회를 지원하면 오버라이드).
      */
