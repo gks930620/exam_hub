@@ -333,3 +333,6 @@
   font-size: var(--t-sm); letter-spacing: var(--label-tracking); color: var(--muted2);
   font-weight: var(--w-bold);
 }
+
+/* 분류 드롭다운은 검색칸 왼쪽, 같은 높이·같은 둥글기 */
+.search-row .k-select { flex: 0 0 200px; min-height: var(--touch); }

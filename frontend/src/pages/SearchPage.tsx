@@ -86,6 +86,17 @@ export default function SearchPage() {
         <h1>시험 {stats ? stats.totalExams.toLocaleString() : '846'}종, 접수 마감을 놓치지 않게</h1>
         <p>큐넷·국시원·어학까지 한곳에서 찾고, 등록해 두면 접수 시작·마감을 알려 드립니다.</p>
         <div className="search-row">
+          {/* 분류는 38개 — 칩으로 늘어놓으면 5줄이다. 고르는 건 드롭다운이 깔끔하다 */}
+          <select className="k-select" value={cat} onChange={(e) => setCat(e.target.value)} aria-label="분류">
+            <option value="">전체 분류</option>
+            {groupCategories(cats).map((g) => (
+              <optgroup key={g.label} label={g.label}>
+                {g.items.map((c) => (
+                  <option key={c.name} value={c.name}>{c.name} ({c.count})</option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
           <div className="searchbar">
             <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
             <input
@@ -96,13 +107,6 @@ export default function SearchPage() {
               aria-label="시험명 검색"
             />
           </div>
-          {/* 분류는 38개 — 칩으로 늘어놓으면 5줄이다. 고르는 건 드롭다운이 깔끔하다 */}
-          <select className="k-select" value={cat} onChange={(e) => setCat(e.target.value)} aria-label="분류">
-            <option value="">전체 분류</option>
-            {cats.map((c) => (
-              <option key={c.name} value={c.name}>{c.name} ({c.count})</option>
-            ))}
-          </select>
         </div>
       </section>
 
@@ -188,4 +192,22 @@ export default function SearchPage() {
       )}
     </>
   );
+}
+
+/**
+ * 분류 38개를 드롭다운에 그냥 쏟으면 개수 순으로 섞여 훑기 어렵다.
+ * 접두어(국가기술자격 / 어학 / IT …)로 묶고 그 안은 가나다순 — 묶음도 가나다순, 접두어 없는 것은 맨 뒤.
+ */
+function groupCategories(cats: CategoryItem[]): { label: string; items: CategoryItem[] }[] {
+  const groups = new Map<string, CategoryItem[]>();
+  for (const c of cats) {
+    const dash = c.name.indexOf('-');
+    const key = dash > 0 ? c.name.slice(0, dash) : '그 외';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(c);
+  }
+  const collator = new Intl.Collator('ko');
+  return [...groups.entries()]
+    .map(([label, items]) => ({ label, items: [...items].sort((a, b) => collator.compare(a.name, b.name)) }))
+    .sort((a, b) => (a.label === '그 외' ? 1 : b.label === '그 외' ? -1 : collator.compare(a.label, b.label)));
 }
