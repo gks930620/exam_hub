@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth, useRequireLogin } from '../auth';
-import type { CategoryItem, CertItem, StatsResponse } from '../api/types';
+import type { CategoryItem, CertItem } from '../api/types';
 import Icon from '../components/Icon';
 
 // 시험 찾기: 전체 목록을 기본으로 보여준다.
@@ -16,7 +16,6 @@ export default function SearchPage() {
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('');
   const [cats, setCats] = useState<CategoryItem[]>([]);
-  const [stats, setStats] = useState<StatsResponse | null>(null);
   const [items, setItems] = useState<CertItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
@@ -27,7 +26,6 @@ export default function SearchPage() {
 
   useEffect(() => {
     examApi.categories().then((r) => setCats(r.items)).catch(() => { /* 필터는 없어도 목록은 보여준다 */ });
-    examApi.stats().then(setStats).catch(() => { /* 지표는 없어도 목록은 보여준다 */ });
   }, []);
 
   // 검색어는 디바운스, 분류는 즉시. 둘 다 첫 페이지부터 다시.
@@ -83,7 +81,8 @@ export default function SearchPage() {
     <>
       {/* 킷 문법: 연보라 히어로 띠에 큰 제목 하나 + 할 일(검색). 데모의 첫 인상을 그대로 따른다 */}
       <section className="k-hero search-hero">
-        <h1>시험 {stats ? stats.totalExams.toLocaleString() : '846'}종, 접수 마감을 놓치지 않게</h1>
+        {/* 제목의 숫자는 검색·분류와 무관하게 늘 전체 — 분류 개수 합이 곧 전체다 */}
+        <h1>시험 {(cats.reduce((a, c) => a + c.count, 0) || 800).toLocaleString()}종, 접수 마감을 놓치지 않게</h1>
         <p>큐넷·국시원·어학까지 한곳에서 찾고, 등록해 두면 접수 시작·마감을 알려 드립니다.</p>
         <div className="search-row">
           {/* 분류는 38개 — 칩으로 늘어놓으면 5줄이다. 고르는 건 드롭다운이 깔끔하다 */}
@@ -109,27 +108,6 @@ export default function SearchPage() {
           </div>
         </div>
       </section>
-
-      {stats && (
-        <section className="k-section">
-          <h2>데이터 현황</h2>
-          {/* 지금은 "얻은 데이터 / 못 얻은 데이터" 둘만 본다. 접수 중 같은 지표는 익숙해지면(사용자 결정 2026-09-02) */}
-          <div className="k-stats">
-            <div className="k-stat">
-              <div className="k-stat__label">전체 시험</div>
-              <div className="k-stat__value">{stats.totalExams.toLocaleString()}</div>
-            </div>
-            <div className="k-stat k-stat--point">
-              <div className="k-stat__label">일정 확보</div>
-              <div className="k-stat__value">{stats.withSchedule.toLocaleString()}</div>
-            </div>
-            <div className="k-stat">
-              <div className="k-stat__label">일정 없음 <span className="k-dim">(상시 {stats.rolling.toLocaleString()} 포함)</span></div>
-              <div className="k-stat__value">{(stats.totalExams - stats.withSchedule).toLocaleString()}</div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {err && <div className="k-alert k-alert--err">{err}</div>}
 

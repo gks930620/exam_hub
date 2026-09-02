@@ -28,7 +28,6 @@ describe('SearchPage', () => {
       me: null, loading: false,
       login: vi.fn(), loginWithToken: vi.fn(), logout: vi.fn(), refresh: vi.fn(),
     });
-    vi.spyOn(examApi, 'stats').mockResolvedValue({ totalExams: 846, withSchedule: 656, registrationOpen: 12, openingWithin7Days: 5, rolling: 28 });
     vi.spyOn(examApi, 'categories').mockResolvedValue({
       items: [{ name: '국가기술자격-정보통신', count: 23 }, { name: '어학-영어', count: 13 }],
     });

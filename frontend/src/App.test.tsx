@@ -28,7 +28,6 @@ describe('App 골격', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     mockLoggedOut();
-    vi.spyOn(examApi, 'stats').mockResolvedValue({ totalExams: 846, withSchedule: 656, registrationOpen: 12, openingWithin7Days: 5, rolling: 28 });
     vi.spyOn(examApi, 'categories').mockResolvedValue({ items: [] });
     vi.spyOn(examApi, 'browse').mockResolvedValue({
       items: [], page: 0, size: 24, totalElements: 0, totalPages: 0,
