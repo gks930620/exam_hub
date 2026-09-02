@@ -342,3 +342,8 @@
 .my-hero p { word-break: keep-all; }
 .my-hero p strong { color: inherit; }
 .my-hero .hero-actions { justify-content: flex-start; margin-top: var(--sp-4); }
+
+/* ── 매니저: 일정 없는 이유 ── */
+.reason-row { margin-bottom: var(--sp-4); }
+.reason-row .k-segment button b { margin-left: 4px; opacity: .75; }
+.cover-breakdown { display: flex; gap: var(--sp-2); align-items: center; flex-wrap: wrap; margin-top: var(--sp-3); }

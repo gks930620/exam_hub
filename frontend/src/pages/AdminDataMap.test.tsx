@@ -25,7 +25,7 @@ describe('AdminDataMap', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.spyOn(examApi, 'adminDataMap').mockResolvedValue({
-      coverage: { totalExams: 818, withSchedule: 656, withoutSchedule: 162, rolling: 28 },
+      coverage: { totalExams: 818, withSchedule: 656, withoutSchedule: 162, rolling: 28, manualNeeded: 60, announcementPending: 47, crawlPlanned: 55 },
       sources: [row('MANUAL', '보건의료'), row('AUTO', '큐넷'), row('EXCLUDED', 'IT벤더')],
     });
   });

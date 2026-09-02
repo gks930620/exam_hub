@@ -33,10 +33,15 @@ export default function AdminTodo() {
           <div className="cover-bar" aria-hidden="true">
             <span style={{ width: `${pct ?? 0}%` }} />
           </div>
+          <div className="cover-breakdown">
+            <span className="k-badge k-badge--warn">수기 필수 {c.manualNeeded.toLocaleString()}</span>
+            <span className="k-badge">자동 · 공고 전 {c.announcementPending.toLocaleString()}</span>
+            <span className="k-badge k-badge--point">자동 · 크롤링 예정 {c.crawlPlanned.toLocaleString()}</span>
+            <span className="k-dim">상시 {c.rolling.toLocaleString()}종은 일정 대상 아님</span>
+          </div>
           <p className="fineprint" style={{ margin: '10px 0 0' }}>
-            일정이 없는 <b>{c.withoutSchedule.toLocaleString()}종</b>은 화면에 <b>일정 미정</b>으로 뜹니다.
-            검색·관심등록은 되지만 <b>D-day 와 알림은 못 갑니다</b> — 이 숫자를 줄이는 게 이 화면의 목적입니다.
-            {c.rolling > 0 && <> 상시·예약제 <b>{c.rolling.toLocaleString()}종</b>은 일정이라는 것이 없어 여기서 뺐습니다.</>}
+            일정 없는 {c.withoutSchedule.toLocaleString()}종 가운데 <b>사람이 넣어야 하는 건 수기 필수 {c.manualNeeded.toLocaleString()}종</b>뿐입니다.
+            나머지는 공고가 나거나 스크래퍼가 붙으면 자동으로 들어옵니다.
           </p>
         </div>
       )}

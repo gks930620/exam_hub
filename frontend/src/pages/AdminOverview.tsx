@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { examApi } from '../api/exams';
 import Pagination from '../components/Pagination';
-import type { OverviewResponse, OverviewRow, ScheduleStatusKind } from '../api/types';
+import type { NoScheduleReason, OverviewResponse, OverviewRow, ScheduleStatusKind } from '../api/types';
 import Icon from '../components/Icon';
 
 /**
@@ -14,6 +14,13 @@ import Icon from '../components/Icon';
  * <p>서버는 세부 상태를 그대로 주고, 여기서 둘로 묶는다('있음' = PAST,OPEN,UPCOMING).
  */
 const PAGE_SIZE = 30;
+
+/** 일정 없음 안의 이유 — 매니저의 진짜 할 일은 '수기 필수'뿐(설계/시험데이터/05_일정없음_분류) */
+const REASONS: { key: NoScheduleReason; label: string; hint: string; tone: string }[] = [
+  { key: 'MANUAL', label: '수기 필수', hint: 'JS 렌더링·차단·PDF 공고라 지금 도구로는 못 받습니다 — 여기만 사람이 넣습니다', tone: 'k-badge--warn' },
+  { key: 'ANNOUNCEMENT_PENDING', label: '자동 · 공고 전', hint: '큐넷 종목인데 2026 공고가 아직 없습니다. 나오면 새벽 배치가 받습니다 — 할 일 없음', tone: '' },
+  { key: 'CRAWL_PLANNED', label: '자동 · 크롤링 예정', hint: '시행처 사이트에 날짜가 보여 스크래퍼를 붙일 예정입니다 — 기다리면 됩니다', tone: 'k-badge--point' },
+];
 
 const TABS = [
   {
@@ -38,6 +45,8 @@ const TABS = [
 
 export default function AdminOverview({ onPick }: { onPick: (id: number, name: string) => void }) {
   const [tab, setTab] = useState<string>('NONE');
+  // 일정 없음 탭은 기본으로 '수기 필수'만 — 매니저가 143종을 전부 숙제로 안지 않게
+  const [reason, setReason] = useState<NoScheduleReason | ''>('MANUAL');
   const [q, setQ] = useState('');
   const [page, setPage] = useState(0);
   const [data, setData] = useState<OverviewResponse | null>(null);
@@ -47,13 +56,16 @@ export default function AdminOverview({ onPick }: { onPick: (id: number, name: s
   const load = useCallback(async () => {
     setLoading(true); setErr(null);
     try {
-      setData(await examApi.adminOverview({ status: tab, query: q.trim() || undefined, page }));
+      setData(await examApi.adminOverview({
+        status: tab, reason: tab === 'NONE' && reason ? reason : undefined,
+        query: q.trim() || undefined, page,
+      }));
     } catch (e) {
       setErr(e instanceof Error ? e.message : '불러오지 못했습니다.');
     } finally {
       setLoading(false);
     }
-  }, [tab, q, page]);
+  }, [tab, reason, q, page]);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -75,6 +87,23 @@ export default function AdminOverview({ onPick }: { onPick: (id: number, name: s
         ))}
       </div>
       {hint && <p className="fineprint" style={{ margin: '0 0 14px' }}>{hint}</p>}
+
+      {tab === 'NONE' && data && (
+        <div className="reason-row">
+          <div className="k-segment" role="group" aria-label="일정 없는 이유">
+            {REASONS.map((r) => (
+              <button key={r.key} aria-pressed={reason === r.key}
+                      onClick={() => { setReason(r.key); setPage(0); }}>
+                {r.label} <b>{data.reasonCounts[r.key] ?? 0}</b>
+              </button>
+            ))}
+            <button aria-pressed={reason === ''} onClick={() => { setReason(''); setPage(0); }}>전체</button>
+          </div>
+          <p className="fineprint" style={{ margin: '8px 0 0' }}>
+            {REASONS.find((r) => r.key === reason)?.hint ?? '이유와 무관하게 일정 없는 시험 전부'}
+          </p>
+        </div>
+      )}
 
       <div className="searchbar" style={{ marginBottom: 14 }}>
         <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
@@ -137,6 +166,8 @@ function OverviewRowView({ row, onPick }: { row: OverviewRow; onPick: (id: numbe
       <td>
         {row.status === 'ROLLING' ? (
           <span className="fineprint" style={{ margin: 0 }}>대상 아님</span>
+        ) : row.status === 'NONE' && row.reason !== 'MANUAL' ? (
+          <span className="k-dim" title="자동으로 들어올 것 — 손으로 넣으면 다음 수집 때 덮어써집니다">자동</span>
         ) : (
           <button className="k-btn k-btn--secondary" onClick={() => onPick(row.certificateId, row.certificateName)}>
             넣기

@@ -35,9 +35,27 @@ public class AdminDataMapController {
         long rolling = certificateRepository.countVisibleRolling();
         long totalExams = certificateRepository.countVisible() - rolling;
         long withSchedule = certificateRepository.countVisibleWithSchedule();
+        // 일정 없음을 이유별로 — 사람이 넣어야 하는 건 수기 필수뿐이다(설계/시험데이터/05_일정없음_분류)
+        java.util.List<com.test.test.exam.domain.Certificate> all = certificateRepository.findAll();
+        // "일정 있음" 은 살아 있는(ACTIVE) 일정 기준이어야 countVisibleWithSchedule 과 셈법이 같다
+        java.util.Set<Long> having = examScheduleRepository
+                .findByCertificateIdInAndStatus(all.stream().map(c -> c.getId()).toList(), com.test.test.exam.domain.ScheduleStatus.ACTIVE)
+                .stream().map(sch -> sch.getCertificate().getId()).collect(java.util.stream.Collectors.toSet());
+        long manual = 0, pending = 0, planned = 0;
+        for (com.test.test.exam.domain.Certificate c : all) {
+            if (!c.isVisibleToUsers() || c.isRollingAdmission() || having.contains(c.getId())) {
+                continue;
+            }
+            switch (NoScheduleReason.of(c)) {
+                case MANUAL -> manual++;
+                case ANNOUNCEMENT_PENDING -> pending++;
+                case CRAWL_PLANNED -> planned++;
+            }
+        }
 
         return ResponseEntity.ok(new DataMapResponse(
-                new Coverage(totalExams, withSchedule, totalExams - withSchedule, rolling),
+                new Coverage(totalExams, withSchedule, totalExams - withSchedule, rolling,
+                        manual, pending, planned),
                 DataSourceCatalog.entries().stream().map(SourceRow::of).toList()));
     }
 
@@ -46,7 +64,10 @@ public class AdminDataMapController {
      * 이 서비스는 "언제 접수하는지"를 알려주는 게 존재 이유라, 이름만 있는 시험은 반쪽이다.
      */
     public record Coverage(long totalExams, long withSchedule, long withoutSchedule,
-                           /** 상시·예약제 — 일정 대상 아님 */ long rolling) {
+                           /** 상시·예약제 — 일정 대상 아님 */ long rolling,
+                           /** 일정 없음 중 사람이 넣어야 하는 것 */ long manualNeeded,
+                           /** 일정 없음 중 큐넷 공고 전 — 자동 */ long announcementPending,
+                           /** 일정 없음 중 스크래퍼 붙일 예정 — 자동 */ long crawlPlanned) {
     }
 
     public record SourceRow(

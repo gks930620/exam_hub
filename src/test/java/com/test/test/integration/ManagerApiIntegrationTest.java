@@ -318,6 +318,66 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
                 "상시 표시가 공개 API 에 안 실렸다 — 화면이 '일정 미정'이라는 거짓말을 하게 된다");
     }
 
+    /**
+     * "일정 없음"은 한 덩어리가 아니다(설계/시험데이터/05_일정없음_분류). 매니저가 손댈 것은
+     * <b>수기 필수</b>뿐이고, 큐넷 공고 전·크롤링 예정은 자동으로 들어온다. 그 구분이 화면에
+     * 없으면 매니저는 143종을 전부 숙제로 안는다(사용자 지적 2026-09-02).
+     */
+    @Test
+    @DisplayName("일정 없는 시험마다 이유(수기/공고 전/크롤링 예정)가 붙는다")
+    void none_rows_carry_a_reason() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("status", "NONE").param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.reasonCounts").exists())
+                .andReturn();
+        JsonNode body = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        java.util.Set<String> allowed = java.util.Set.of("MANUAL", "ANNOUNCEMENT_PENDING", "CRAWL_PLANNED");
+        long qnetPending = 0;
+        for (JsonNode it : body.path("items")) {
+            String reason = it.path("reason").asText("");
+            assertTrue(allowed.contains(reason), "이유가 없거나 모르는 값: " + reason + " / " + it.path("certificateName").asText());
+            assertFalse(it.path("reasonLabel").asText("").isBlank(), "화면용 라벨이 비었다");
+            if ("ANNOUNCEMENT_PENDING".equals(reason)) qnetPending++;
+        }
+        // 이유별 합 = 일정 없음 전체 — 어긋나면 위 요약 숫자와 목록이 따로 논다
+        long sum = 0;
+        for (JsonNode n : body.path("reasonCounts")) sum += n.asLong();
+        assertEquals(body.path("totalElements").asLong(), sum, "이유별 합이 일정 없음 전체와 다르다");
+        assertTrue(qnetPending > 0, "큐넷 공고 전이 하나도 없다 — 분류가 죽었나?");
+    }
+
+    @Test
+    @DisplayName("수기 필수만 골라 본다 — 매니저의 진짜 할 일")
+    void none_rows_filter_by_reason() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("status", "NONE").param("reason", "MANUAL").param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode items = objectMapper.readTree(
+                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+        for (JsonNode it : items) {
+            assertEquals("MANUAL", it.path("reason").asText(), "수기 필터에 다른 이유가 섞였다");
+        }
+    }
+
+    /** 위 요약 막대도 같은 셈법이어야 한다 — 수기 + 공고 전 + 크롤링 예정 = 일정 없음. */
+    @Test
+    @DisplayName("데이터 지도의 채움률에도 이유별 개수가 있고 합이 맞는다")
+    void coverage_breaks_down_missing_by_reason() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/data-map")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode c = objectMapper.readTree(
+                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("coverage");
+        long without = c.path("withoutSchedule").asLong();
+        long sum = c.path("manualNeeded").asLong() + c.path("announcementPending").asLong() + c.path("crawlPlanned").asLong();
+        assertEquals(without, sum, "이유별 합이 일정 없음과 다르다");
+    }
+
     @Test
     @DisplayName("시험명으로 좁힌다")
     void overview_filters_by_name() throws Exception {

@@ -218,12 +218,18 @@ export interface DataSourceRow {
 }
 
 export interface DataMapResponse {
-  coverage: { totalExams: number; withSchedule: number; withoutSchedule: number; rolling: number };
+  coverage: {
+    totalExams: number; withSchedule: number; withoutSchedule: number; rolling: number;
+    /** 일정 없음의 이유별 — 수기 필수 / 큐넷 공고 전(자동) / 크롤링 예정(자동) */
+    manualNeeded: number; announcementPending: number; crawlPlanned: number;
+  };
   sources: DataSourceRow[];
 }
 
 /** 매니저 일정 현황 — 시험 하나의 상태 한 줄 */
 export type ScheduleStatusKind = 'NONE' | 'PAST' | 'OPEN' | 'UPCOMING' | 'ROLLING';
+/** 일정이 없는 이유 — 매니저가 손댈 것은 MANUAL 뿐 */
+export type NoScheduleReason = 'MANUAL' | 'ANNOUNCEMENT_PENDING' | 'CRAWL_PLANNED';
 
 export interface OverviewRow {
   certificateId: number;
@@ -232,6 +238,9 @@ export interface OverviewRow {
   agency: string | null;
   scheduleCount: number;
   status: ScheduleStatusKind;
+  /** 일정 없음일 때만 */
+  reason: NoScheduleReason | null;
+  reasonLabel: string | null;
   nextLabel: string | null;
   nextRegStartAt: string | null;
   nextRegEndAt: string | null;
@@ -246,6 +255,7 @@ export interface OverviewResponse {
   page: number;
   /** 상태별 개수 — 필터를 걸어도 안 변한다 */
   counts: Partial<Record<ScheduleStatusKind, number>>;
+  reasonCounts: Partial<Record<NoScheduleReason, number>>;
 }
 
 /** 시험 변천사 — 폐지·개칭된 시험 */

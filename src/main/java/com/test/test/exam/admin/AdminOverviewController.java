@@ -48,12 +48,14 @@ public class AdminOverviewController {
      *                  {@code PAST,OPEN,UPCOMING} 처럼 묶어서 온다.
      * @param query    시험명 부분일치
      * @param category 분류
+     * @param reason   일정 없음 안에서 이유로 좁힌다 — {@code MANUAL|ANNOUNCEMENT_PENDING|CRAWL_PLANNED}
      */
     @GetMapping
     public ResponseEntity<OverviewResponse> overview(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String reason,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size) {
 
@@ -85,6 +87,7 @@ public class AdminOverviewController {
                 .filter(r -> q.isEmpty() || r.certificateName().toLowerCase().contains(q))
                 .filter(r -> cat.isEmpty() || cat.equals(r.category()))
                 .filter(r -> wanted.isEmpty() || wanted.contains(r.status()))
+                .filter(r -> reason == null || reason.isBlank() || reason.equals(r.reason()))
                 // 급한 것 위로. 같은 상태면 이름순이라 매번 같은 순서로 보인다.
                 .sorted(Comparator.comparingInt((Row r) -> Status.valueOf(r.status()).urgency)
                         .thenComparing(Row::certificateName))
@@ -97,7 +100,8 @@ public class AdminOverviewController {
                 rows.subList(from, to),
                 rows.size(),
                 page,
-                summarize(allRows)));
+                summarize(allRows),
+                reasonCounts(allRows)));
     }
 
     /**
@@ -105,6 +109,13 @@ public class AdminOverviewController {
      * <b>검색·분류 필터를 걸어도 이 숫자는 안 변한다</b>(전체 기준). 남은 일의 크기라서,
      * 화면을 좁힐 때마다 같이 줄면 얼마나 남았는지를 알 수 없다.
      */
+    /** 일정 없음 안의 이유별 개수 — 매니저의 진짜 할 일(수기)이 몇 개인지. 필터와 무관하게 전체 기준. */
+    private Map<String, Long> reasonCounts(List<Row> allRows) {
+        return allRows.stream()
+                .filter(r -> r.reason() != null)
+                .collect(Collectors.groupingBy(Row::reason, Collectors.counting()));
+    }
+
     private Map<String, Long> summarize(List<Row> allRows) {
         return allRows.stream()
                 .collect(Collectors.groupingBy(Row::status, Collectors.counting()));
@@ -143,17 +154,21 @@ public class AdminOverviewController {
             String nextRegEndAt,
             String nextExamDate,
             /** 접수 마감까지 남은 날. 접수 중이 아니면 null */
-            Integer regDDay
+            Integer regDDay,
+            /** 일정이 없을 때만 — 왜 없는가({@link NoScheduleReason}). 나머지 상태는 null */
+            String reason,
+            String reasonLabel
     ) {
         static Row of(Certificate c, List<ExamSchedule> schedules, LocalDate today) {
             if (c.isRollingAdmission()) {
                 // 상시는 일정 유무와 무관하게 별도 상태다 — NONE 에 섞이면 영원히 못 채우는 숙제가 된다
                 return new Row(c.getId(), c.getName(), c.getCategory(), c.getAgency(),
-                        schedules.size(), Status.ROLLING.name(), null, null, null, null, null);
+                        schedules.size(), Status.ROLLING.name(), null, null, null, null, null, null, null);
             }
             if (schedules.isEmpty()) {
+                NoScheduleReason why = NoScheduleReason.of(c);
                 return new Row(c.getId(), c.getName(), c.getCategory(), c.getAgency(),
-                        0, Status.NONE.name(), null, null, null, null, null);
+                        0, Status.NONE.name(), null, null, null, null, null, why.name(), why.label());
             }
 
             // 앞으로 남은 것 중 가장 이른 것. 없으면 가장 최근에 지난 것을 보여준다
@@ -185,11 +200,12 @@ public class AdminOverviewController {
                     TimeUtil.format(next.getRegStartAt()),
                     TimeUtil.format(next.getRegEndAt()),
                     TimeUtil.format(next.getExamStartDate()),
-                    dDay);
+                    dDay, null, null);
         }
     }
 
     public record OverviewResponse(List<Row> items, int totalElements, int page,
-                                   Map<String, Long> counts) {
+                                   Map<String, Long> counts,
+                                   /** 일정 없음 안의 이유별 개수 */ Map<String, Long> reasonCounts) {
     }
 }
