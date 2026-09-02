@@ -11,6 +11,8 @@ export interface CertItem {
   favorited: boolean;
   /** false = 시험은 등록돼 있으나 일정이 아직 없음 (화면에 '일정 미정' 표기) */
   hasSchedule: boolean;
+  /** 상시·예약제 — '일정'이 없는 시험. '일정 미정'이 아니라 '상시시험'으로 보여준다 */
+  rolling: boolean;
 }
 
 export interface SearchResponse {
@@ -67,6 +69,8 @@ export interface DetailResponse {
   sourceUrl: string | null;
   collectedAt: string | null;
   favorited: boolean;
+  /** 상시·예약제 — 일정 표 대신 "원하는 날짜에 신청" 안내를 보여준다 */
+  rolling: boolean;
   nextEvent: EventDto | null;
   schedules: ScheduleDto[];
 }
@@ -214,12 +218,12 @@ export interface DataSourceRow {
 }
 
 export interface DataMapResponse {
-  coverage: { totalExams: number; withSchedule: number; withoutSchedule: number };
+  coverage: { totalExams: number; withSchedule: number; withoutSchedule: number; rolling: number };
   sources: DataSourceRow[];
 }
 
 /** 매니저 일정 현황 — 시험 하나의 상태 한 줄 */
-export type ScheduleStatusKind = 'NONE' | 'PAST' | 'OPEN' | 'UPCOMING';
+export type ScheduleStatusKind = 'NONE' | 'PAST' | 'OPEN' | 'UPCOMING' | 'ROLLING';
 
 export interface OverviewRow {
   certificateId: number;

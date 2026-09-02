@@ -15,7 +15,7 @@ import type { DetailResponse, MeResponse } from '../api/types';
 function detail(over: Partial<DetailResponse> = {}): DetailResponse {
   return {
     id: 2, name: '전기기사', category: '국가기술자격-전기전자', agency: '한국산업인력공단',
-    sourceUrl: null, collectedAt: null, favorited: false,
+    sourceUrl: null, collectedAt: null, favorited: false, rolling: false,
     nextEvent: null, schedules: [],
     ...over,
   };

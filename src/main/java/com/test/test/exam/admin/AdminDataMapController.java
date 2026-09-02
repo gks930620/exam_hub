@@ -31,11 +31,13 @@ public class AdminDataMapController {
     public ResponseEntity<DataMapResponse> dataMap() {
         // 화면에 보이는 시험만 센다 — 폐지·개칭까지 세면 "일정 없는 시험" 이 24 부풀어
         // 일정 현황 화면(846종)과 숫자가 어긋난다.
-        long totalExams = certificateRepository.countVisible();
+        // 상시·예약제는 "일정"이 존재하지 않아 채울 대상이 아니다 — 분모에서 빼고 따로 알린다.
+        long rolling = certificateRepository.countVisibleRolling();
+        long totalExams = certificateRepository.countVisible() - rolling;
         long withSchedule = certificateRepository.countVisibleWithSchedule();
 
         return ResponseEntity.ok(new DataMapResponse(
-                new Coverage(totalExams, withSchedule, totalExams - withSchedule),
+                new Coverage(totalExams, withSchedule, totalExams - withSchedule, rolling),
                 DataSourceCatalog.entries().stream().map(SourceRow::of).toList()));
     }
 
@@ -43,7 +45,8 @@ public class AdminDataMapController {
      * 적재 현황 한 줄. <b>일정이 없는 시험 수</b>가 곧 매니저가 할 일의 크기다 —
      * 이 서비스는 "언제 접수하는지"를 알려주는 게 존재 이유라, 이름만 있는 시험은 반쪽이다.
      */
-    public record Coverage(long totalExams, long withSchedule, long withoutSchedule) {
+    public record Coverage(long totalExams, long withSchedule, long withoutSchedule,
+                           /** 상시·예약제 — 일정 대상 아님 */ long rolling) {
     }
 
     public record SourceRow(

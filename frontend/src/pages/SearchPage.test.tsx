@@ -16,7 +16,7 @@ function item(over: Partial<Record<string, unknown>> = {}) {
     id: 1, name: '정보처리기사', slug: '정보처리기사',
     series: 'TECHNICIAN', seriesLabel: '기사',
     category: '국가기술자격-정보통신', agency: '한국산업인력공단',
-    favorited: false, hasSchedule: true,
+    favorited: false, hasSchedule: true, rolling: false,
     ...over,
   };
 }
@@ -104,5 +104,21 @@ describe('SearchPage', () => {
     fireEvent.click(screen.getByRole('button', { name: '관심 등록' }));
 
     expect(add).not.toHaveBeenCalled();
+  });
+
+  /** 상시시험에 "등록해 두면 알려드립니다"는 지키지 못할 약속이다 — 다른 말을 해야 한다. */
+  it('상시시험은 "일정 미정"이 아니라 "상시시험"으로 보여준다', async () => {
+    vi.spyOn(examApi, 'browse').mockResolvedValue({
+      items: [item({ name: 'CCNA', hasSchedule: false, rolling: true })],
+      page: 0, size: 24, totalElements: 1, totalPages: 1,
+    });
+
+    render(<MemoryRouter><SearchPage /></MemoryRouter>);
+    await waitFor(() => expect(screen.getByText('CCNA')).toBeTruthy());
+
+    expect(screen.getByText('상시시험')).toBeTruthy();
+    expect(screen.queryByText('일정 미정')).toBeNull();
+    // 카드 안의 설명만 본다 — 페이지 상단 안내문에도 '알려 드립니다'가 있다
+    expect(document.querySelector('.exam-card .when')?.textContent).toContain('원하는 날짜');
   });
 });

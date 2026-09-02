@@ -120,7 +120,8 @@ public class AdminOverviewController {
         NONE(0),      // 일정이 하나도 없다
         PAST(1),      // 있는 일정이 전부 지나갔다
         OPEN(2),      // 지금 접수 중
-        UPCOMING(3);  // 앞으로 있을 일정이 있다 — 할 일 없음
+        UPCOMING(3),  // 앞으로 있을 일정이 있다 — 할 일 없음
+        ROLLING(4);   // 상시·예약제 — "일정"이 존재하지 않는다. 할 일 아님(사용자 결정 2026-09-01)
 
         final int urgency;
 
@@ -145,6 +146,11 @@ public class AdminOverviewController {
             Integer regDDay
     ) {
         static Row of(Certificate c, List<ExamSchedule> schedules, LocalDate today) {
+            if (c.isRollingAdmission()) {
+                // 상시는 일정 유무와 무관하게 별도 상태다 — NONE 에 섞이면 영원히 못 채우는 숙제가 된다
+                return new Row(c.getId(), c.getName(), c.getCategory(), c.getAgency(),
+                        schedules.size(), Status.ROLLING.name(), null, null, null, null, null);
+            }
             if (schedules.isEmpty()) {
                 return new Row(c.getId(), c.getName(), c.getCategory(), c.getAgency(),
                         0, Status.NONE.name(), null, null, null, null, null);

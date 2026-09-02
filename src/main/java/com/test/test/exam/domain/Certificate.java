@@ -55,6 +55,30 @@ public class Certificate {
     @Builder.Default
     private CertificateLifecycle lifecycle = CertificateLifecycle.ACTIVE;
 
+    /**
+     * 상시·예약제 시험인가 (AWS·MOS·컴활·운전면허·TOEFL 등).
+     * 원하는 날짜에 신청하는 방식이라 <b>"일정"이라는 것이 존재하지 않는다</b> —
+     * 회차·접수마감·D-day 전부 해당 없음. 매니저 화면의 "일정 없음"에도 세지 않는다.
+     * (사용자 결정 2026-09-01: "상시예약제는 따로 다른 시험들과 구별되어야")
+     */
+    // DDL 기본값이 필수다 — 로컬 DB 는 update 라 기존 행이 있는 채로 컬럼이 추가되는데,
+    // 기본값 없는 NOT NULL 추가는 H2/MySQL 둘 다 거부한다(실제로 겪었다).
+    @Column(name = "rolling_admission", nullable = false, columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean rollingAdmission = false;
+
+    public boolean isRollingAdmission() {
+        return Boolean.TRUE.equals(rollingAdmission);
+    }
+
+    public void markRollingAdmission() {
+        this.rollingAdmission = true;
+    }
+
+    public void clearRollingAdmission() {
+        this.rollingAdmission = false;
+    }
+
     /** 이름이 바뀐 경우 새 이름. 사용자에게 "이걸 찾으시나요"를 보여주기 위한 것 */
     @Column(name = "superseded_by", length = 100)
     private String supersededBy;

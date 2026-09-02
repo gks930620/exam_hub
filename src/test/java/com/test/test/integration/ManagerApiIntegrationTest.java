@@ -278,6 +278,46 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
         }
     }
 
+    /**
+     * 상시·예약제(AWS·컴활·운전면허 등)는 "일정"이라는 것이 존재하지 않는다.
+     * NONE 에 섞이면 <b>영원히 못 채우는 숙제</b>가 되어 매니저가 "왜 아직 173이냐"고 묻게 된다
+     * (실제로 물었다, 2026-09-01). 별도 상태 ROLLING 으로 구별한다.
+     */
+    @Test
+    @DisplayName("상시·예약제는 '일정 없음'에 섞이지 않는다")
+    void rolling_exams_are_not_counted_as_none() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("status", "NONE")
+                        .param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode body = objectMapper.readTree(
+                res.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        for (JsonNode it : body.path("items")) {
+            assertNotEquals("AWS Certified Cloud Practitioner",
+                    it.path("certificateName").asText(), "상시 시험이 '일정 없음' 목록에 있다");
+        }
+        assertTrue(body.path("counts").path("ROLLING").asLong(0) >= 20,
+                "상시 표시가 안 붙었다 — RollingAdmissionInitializer 가 돌았나?");
+    }
+
+    @Test
+    @DisplayName("상시 시험은 사용자 응답에도 rolling 으로 표시된다")
+    void rolling_flag_reaches_public_api() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/certificates/browse")
+                        .param("query", "AWS Certified Cloud"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode items = objectMapper.readTree(
+                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+        assertTrue(items.size() > 0, "AWS 시험을 못 찾았다");
+        assertTrue(items.get(0).path("rolling").asBoolean(false),
+                "상시 표시가 공개 API 에 안 실렸다 — 화면이 '일정 미정'이라는 거짓말을 하게 된다");
+    }
+
     @Test
     @DisplayName("시험명으로 좁힌다")
     void overview_filters_by_name() throws Exception {

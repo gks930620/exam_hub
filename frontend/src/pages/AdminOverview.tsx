@@ -27,6 +27,12 @@ const TABS = [
     hint: '일정이 들어와 있는 시험. ‘지남’ 배지가 붙은 것은 다음 회차를 넣을 때가 된 것입니다',
     counts: ['PAST', 'OPEN', 'UPCOMING'] as readonly ScheduleStatusKind[],
   },
+  {
+    key: 'ROLLING',
+    label: '상시시험',
+    hint: 'AWS·컴활·운전면허처럼 원하는 날짜에 신청하는 시험 — "일정"이라는 것이 없어서 채울 것도 없습니다',
+    counts: ['ROLLING'] as readonly ScheduleStatusKind[],
+  },
 ] as const;
 
 export default function AdminOverview({ onPick }: { onPick: (id: number, name: string) => void }) {
@@ -128,9 +134,13 @@ function OverviewRowView({ row, onPick }: { row: OverviewRow; onPick: (id: numbe
       </td>
       <td style={{ fontSize: 13 }}>{row.nextExamDate ?? '—'}</td>
       <td>
-        <button className="btn" onClick={() => onPick(row.certificateId, row.certificateName)}>
-          넣기
-        </button>
+        {row.status === 'ROLLING' ? (
+          <span className="fineprint" style={{ margin: 0 }}>대상 아님</span>
+        ) : (
+          <button className="btn" onClick={() => onPick(row.certificateId, row.certificateName)}>
+            넣기
+          </button>
+        )}
       </td>
     </tr>
   );
@@ -138,6 +148,7 @@ function OverviewRowView({ row, onPick }: { row: OverviewRow; onPick: (id: numbe
 
 /** 세부 상태는 행에서만 — '지남'만 경고로 띄운다(다음 회차를 넣을 때가 됐다는 뜻). */
 function ScheduleBadge({ row }: { row: OverviewRow }) {
+  if (row.status === 'ROLLING') return <span className="badge">상시</span>;
   if (row.status === 'NONE') return <span className="badge todo">없음</span>;
   if (row.status === 'PAST') return <span className="badge todo">지남 · {row.scheduleCount}건</span>;
   return <span className="badge">{row.scheduleCount}건</span>;

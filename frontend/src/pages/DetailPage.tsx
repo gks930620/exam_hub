@@ -82,10 +82,18 @@ export default function DetailPage() {
       </div>
 
       {d.schedules.length === 0 ? (
-        <div className="state">
-          <span className="big">아직 일정이 확인되지 않았습니다</span>
-          시행처 공고가 나오면 채워집니다. 관심 등록해 두면 그때 알려 드립니다.
-        </div>
+        d.rolling ? (
+          <div className="state">
+            <span className="big">상시시험입니다</span>
+            원하는 날짜를 골라 신청하는 방식이라 정해진 회차·접수 마감이 없습니다.
+            시행처에서 바로 예약하세요.
+          </div>
+        ) : (
+          <div className="state">
+            <span className="big">아직 일정이 확인되지 않았습니다</span>
+            시행처 공고가 나오면 채워집니다. 관심 등록해 두면 그때 알려 드립니다.
+          </div>
+        )
       ) : (
         <div className="table-wrap">
           {d.schedules.some((s) => s.confirmed === false) && (

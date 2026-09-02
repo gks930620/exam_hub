@@ -149,7 +149,7 @@ public class CertificateService {
 
         return new CertificateDtos.DetailResponse(
                 cert.getId(), cert.getName(), cert.getCategory(), cert.getAgency(), sourceUrl, collectedAt,
-                favorited, CertificateDtos.EventDto.of(next), scheduleDtos);
+                favorited, cert.isRollingAdmission(), CertificateDtos.EventDto.of(next), scheduleDtos);
     }
 
     private List<CertificateDtos.Item> toItems(List<Certificate> certs, Long memberId) {

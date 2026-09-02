@@ -36,6 +36,7 @@ export default function AdminTodo() {
           <p className="fineprint" style={{ margin: '10px 0 0' }}>
             일정이 없는 <b>{c.withoutSchedule.toLocaleString()}종</b>은 화면에 <b>일정 미정</b>으로 뜹니다.
             검색·관심등록은 되지만 <b>D-day 와 알림은 못 갑니다</b> — 이 숫자를 줄이는 게 이 화면의 목적입니다.
+            {c.rolling > 0 && <> 상시·예약제 <b>{c.rolling.toLocaleString()}종</b>은 일정이라는 것이 없어 여기서 뺐습니다.</>}
           </p>
         </div>
       )}

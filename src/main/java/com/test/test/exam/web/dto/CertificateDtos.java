@@ -28,7 +28,9 @@ public final class CertificateDtos {
             String category,
             String agency,
             boolean favorited,
-            boolean hasSchedule
+            boolean hasSchedule,
+            /** 상시·예약제 — "일정"이 없는 시험. 화면은 '일정 미정' 대신 '상시시험'을 보여준다 */
+            boolean rolling
     ) {
         public static Item of(Certificate c, boolean favorited) {
             return of(c, favorited, true);
@@ -39,7 +41,7 @@ public final class CertificateDtos {
                     c.getId(), c.getName(), c.getSlug(),
                     c.getSeries().name(), c.getSeries().getLabel(),
                     c.getCategory(),
-                    c.getAgency(), favorited, hasSchedule);
+                    c.getAgency(), favorited, hasSchedule, c.isRollingAdmission());
         }
     }
 
@@ -72,6 +74,8 @@ public final class CertificateDtos {
             String sourceUrl,
             String collectedAt,
             boolean favorited,
+            /** 상시·예약제 — 일정 표 대신 "원하는 날짜에 신청" 안내를 보여준다 */
+            boolean rolling,
             EventDto nextEvent,
             List<ScheduleDto> schedules
     ) {
