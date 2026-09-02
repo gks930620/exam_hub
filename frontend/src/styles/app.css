@@ -336,3 +336,9 @@
 
 /* 분류 드롭다운은 검색칸 왼쪽, 같은 높이·같은 둥글기 */
 .search-row .k-select { flex: 0 0 200px; min-height: var(--touch); }
+
+/* ── 내 시험(홈) — 킷 데모 구조 ── */
+.my-hero h1 { word-break: keep-all; }
+.my-hero p { word-break: keep-all; }
+.my-hero p strong { color: inherit; }
+.my-hero .hero-actions { justify-content: flex-start; margin-top: var(--sp-4); }

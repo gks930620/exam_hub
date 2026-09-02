@@ -40,37 +40,54 @@ export default function HomePage() {
     );
   }
 
-  const [lead, ...rest] = data.items;
+  // 백엔드가 급한 순으로 준다 — 첫 항목이 히어로다. 지표는 서버를 더 부르지 않고 여기서 센다.
+  const lead = data.items[0];
+  const open = data.items.filter((c) => c.badge === 'REG_OPEN').length;
+  const thisWeek = data.items.filter((c) => c.dday >= 0 && c.dday <= 7).length;
 
   return (
     <>
-      <section className="k-hero hero">
-        <div className="hero-dday">
-          <span className="num">
-            {lead.dday >= 0 ? lead.dday : `+${-lead.dday}`}
-            <small>일</small>
-          </span>
-          <span className="what">
-            <strong>{lead.name}</strong>
-            <span>{lead.badgeLabel} · {lead.eventLabel} · {fmtAt(lead.eventAt)}</span>
-          </span>
-        </div>
+      {/* 킷 데모 구조: 히어로에 큰 제목 하나 + 가장 급한 일 + 행동 */}
+      <section className="k-hero my-hero">
+        <h1>{thisWeek > 0 ? `이번 주에 챙길 시험 ${thisWeek}개` : `등록한 시험 ${data.items.length}개`}</h1>
+        <p>
+          <strong>{lead.name}</strong> — {lead.eventLabel} {fmtAt(lead.eventAt)}
+          {lead.dday >= 0 ? ` (D-${lead.dday})` : ` (D+${-lead.dday})`}
+        </p>
         <div className="hero-actions">
-          <Link to={`/cert/${lead.certificateId}`} className="k-btn k-btn--secondary">일정 자세히 보기</Link>
+          <Link to={`/cert/${lead.certificateId}`} className="k-btn k-btn--primary">일정 자세히 보기</Link>
+          <Link to="/" className="k-btn k-btn--secondary">시험 더 찾기</Link>
         </div>
       </section>
 
-      {rest.length > 0 && (
-        <>
-          <div className="section-head">
-            <h2>등록한 다른 시험</h2>
-            <span className="more">{data.items.length}개</span>
+      <section className="k-section">
+        <h2>이번 주 지표</h2>
+        <div className="k-stats">
+          <div className="k-stat k-stat--point">
+            <div className="k-stat__label">지금 접수 중</div>
+            <div className="k-stat__value">{open}</div>
           </div>
-          <div className="card-grid">
-            {rest.map((c) => <ExamCard key={c.certificateId} card={c} />)}
+          <div className="k-stat">
+            <div className="k-stat__label">7일 안에 일정</div>
+            <div className="k-stat__value">{thisWeek}</div>
           </div>
-        </>
-      )}
+          <div className="k-stat">
+            <div className="k-stat__label">등록한 시험</div>
+            <div className="k-stat__value">{data.items.length}</div>
+          </div>
+          <div className="k-stat">
+            <div className="k-stat__label">가장 가까운 일정</div>
+            <div className="k-stat__value">{dday(lead.dday)}</div>
+          </div>
+        </div>
+      </section>
+
+      <div className="k-section list-head">
+        <h2>등록한 시험 <span className="more">{data.items.length}개</span></h2>
+      </div>
+      <div className="card-grid">
+        {data.items.map((c) => <ExamCard key={c.certificateId} card={c} />)}
+      </div>
 
       <p className="fineprint">
         본 서비스는 공공데이터·각 시행처 정보를 모은 참고용입니다. 최종 일정은 각 시행처에서 확인하세요.
