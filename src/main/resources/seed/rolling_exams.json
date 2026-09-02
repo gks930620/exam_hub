@@ -4,33 +4,180 @@
   "_criteria": "제외 기준은 '정기 회차 공고가 없는가'다. G-TELP 는 매월 정기시험을 공고하므로 여기 없다.",
   "_maintenance": "시행처가 정기시험으로 바꾸면 여기서 빼면 된다(기동 시 반영). 반대 전환도 같다.",
   "exams": [
-    { "sourceCode": "M0301", "name": "제1종 운전면허", "why": "면허시험장 상시 접수" },
-    { "sourceCode": "M0302", "name": "제2종 운전면허", "why": "면허시험장 상시 접수" },
-    { "sourceCode": "M0319", "name": "요양보호사", "why": "국시원 상시(기간제) 컴퓨터시험" },
-    { "sourceCode": "C011", "name": "컴퓨터활용능력1급", "why": "상공회의소 상시검정(2021~)" },
-    { "sourceCode": "KORCHAM-CA2", "name": "컴퓨터활용능력 2급", "why": "상동" },
-    { "sourceCode": "KORCHAM-WP", "name": "워드프로세서", "why": "상동" },
-    { "sourceCode": "MOS", "name": "MOS", "why": "상시 CBT" },
-    { "sourceCode": "M0387", "name": "MOS Word", "why": "상시 CBT" },
-    { "sourceCode": "M0388", "name": "MOS Excel", "why": "상시 CBT" },
-    { "sourceCode": "M0389", "name": "MOS PowerPoint", "why": "상시 CBT" },
-    { "sourceCode": "M0390", "name": "MOS Master", "why": "상시 CBT" },
-    { "sourceCode": "TOEFL", "name": "TOEFL iBT", "why": "연중 상시 — 원하는 날짜 예약" },
-    { "sourceCode": "IELTS", "name": "IELTS", "why": "상동" },
-    { "sourceCode": "OPIC", "name": "OPIc", "why": "상동" },
-    { "sourceCode": "M0393", "name": "AWS SAA", "why": "시험센터·온라인 상시 예약" },
-    { "sourceCode": "M0394", "name": "AWS Developer", "why": "상동" },
-    { "sourceCode": "M0395", "name": "AWS Cloud Practitioner", "why": "상동" },
-    { "sourceCode": "M0396", "name": "Azure Fundamentals", "why": "상동" },
-    { "sourceCode": "M0397", "name": "Azure Administrator", "why": "상동" },
-    { "sourceCode": "M0398", "name": "CCNA", "why": "상동" },
-    { "sourceCode": "M0399", "name": "CCNP", "why": "상동" },
-    { "sourceCode": "M0400", "name": "OCA", "why": "상동" },
-    { "sourceCode": "M0401", "name": "OCP", "why": "상동" },
-    { "sourceCode": "M0402", "name": "GCP ACE", "why": "상동" },
-    { "sourceCode": "M0403", "name": "CompTIA A+", "why": "상동" },
-    { "sourceCode": "M0404", "name": "CompTIA Network+", "why": "상동" },
-    { "sourceCode": "M0405", "name": "CompTIA Security+", "why": "상동" },
-    { "sourceCode": "M0406", "name": "PMP", "why": "상동" }
+    {
+      "sourceCode": "M0301",
+      "name": "제1종 운전면허",
+      "why": "면허시험장 상시 접수"
+    },
+    {
+      "sourceCode": "M0302",
+      "name": "제2종 운전면허",
+      "why": "면허시험장 상시 접수"
+    },
+    {
+      "sourceCode": "M0319",
+      "name": "요양보호사",
+      "why": "국시원 상시(기간제) 컴퓨터시험"
+    },
+    {
+      "sourceCode": "C011",
+      "name": "컴퓨터활용능력1급",
+      "why": "상공회의소 상시검정(2021~)"
+    },
+    {
+      "sourceCode": "KORCHAM-CA2",
+      "name": "컴퓨터활용능력 2급",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "KORCHAM-WP",
+      "name": "워드프로세서",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "MOS",
+      "name": "MOS",
+      "why": "상시 CBT"
+    },
+    {
+      "sourceCode": "M0387",
+      "name": "MOS Word",
+      "why": "상시 CBT"
+    },
+    {
+      "sourceCode": "M0388",
+      "name": "MOS Excel",
+      "why": "상시 CBT"
+    },
+    {
+      "sourceCode": "M0389",
+      "name": "MOS PowerPoint",
+      "why": "상시 CBT"
+    },
+    {
+      "sourceCode": "M0390",
+      "name": "MOS Master",
+      "why": "상시 CBT"
+    },
+    {
+      "sourceCode": "TOEFL",
+      "name": "TOEFL iBT",
+      "why": "연중 상시 — 원하는 날짜 예약"
+    },
+    {
+      "sourceCode": "IELTS",
+      "name": "IELTS",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "OPIC",
+      "name": "OPIc",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0393",
+      "name": "AWS SAA",
+      "why": "시험센터·온라인 상시 예약"
+    },
+    {
+      "sourceCode": "M0394",
+      "name": "AWS Developer",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0395",
+      "name": "AWS Cloud Practitioner",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0396",
+      "name": "Azure Fundamentals",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0397",
+      "name": "Azure Administrator",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0398",
+      "name": "CCNA",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0399",
+      "name": "CCNP",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0400",
+      "name": "OCA",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0401",
+      "name": "OCP",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0402",
+      "name": "GCP ACE",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0403",
+      "name": "CompTIA A+",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0404",
+      "name": "CompTIA Network+",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0405",
+      "name": "CompTIA Security+",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0406",
+      "name": "PMP",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0298",
+      "name": "버스운전자격",
+      "why": "TS교통안전공단 상시 CBT"
+    },
+    {
+      "sourceCode": "M0300",
+      "name": "택시운전자격",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0299",
+      "name": "화물운송종사자격",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0292",
+      "name": "소방안전관리자 특급",
+      "why": "소방안전원 강습 뒤 수시 시험 — 월 여러 회 상시 접수"
+    },
+    {
+      "sourceCode": "M0293",
+      "name": "소방안전관리자 1급",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0294",
+      "name": "소방안전관리자 2급",
+      "why": "상동"
+    },
+    {
+      "sourceCode": "M0295",
+      "name": "소방안전관리자 3급",
+      "why": "상동"
+    }
   ]
 }

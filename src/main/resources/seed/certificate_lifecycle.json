@@ -4,48 +4,144 @@
   "_확정근거": "네 곳(큐넷 613종 · 상의 · KCA · Kdata) 어디에도 없으면 ABOLISHED. 이름이 바뀐 것이 확인되면 RENAMED + supersededBy. 대체 종목이 마스터에 있는지도 확인했다 — 없으면 그 시험이 통째로 사라진다.",
   "generatedAt": "2026-08-27",
   "items": [
-    { "name": "웹디자인기능사", "lifecycle": "RENAMED", "supersededBy": "웹디자인개발기능사",
-      "note": "큐넷 종목목록에 '웹디자인개발기능사'로 등재. 같은 자격의 개칭." },
-    { "name": "컴퓨터그래픽스운용기능사", "lifecycle": "RENAMED", "supersededBy": "컴퓨터그래픽기능사",
-      "note": "큐넷에 '컴퓨터그래픽기능사'로 있다. 취준 수요가 있는 종목이라 숨긴 채 두면 안 된다." },
-    { "name": "항공기체정비기능사", "lifecycle": "RENAMED", "supersededBy": "항공기정비기능사",
-      "note": "큐넷 항공 계열은 항공기정비기능사로 통합돼 있다(항공기체정비는 없다)." },
-    { "name": "특수용접기능사", "lifecycle": "RENAMED", "supersededBy": "피복아크용접기능사",
-      "note": "용접 기능사가 용접방식별로 나뉘었다 — 피복아크·이산화탄소가스아크·가스텅스텐아크." },
-    { "name": "산업안전지도사", "lifecycle": "RENAMED", "supersededBy": "산업안전지도사(건설안전)",
-      "note": "큐넷은 분야별 4종(건설·기계·전기·화공)이다. 통합 종목은 없다." },
-
-    { "name": "조선기사", "lifecycle": "RENAMED", "supersededBy": "조선선체기사",
-      "note": "조선기사 등급이 조선선체기사·조선의장기사로 나뉘었다." },
-    { "name": "메카트로닉스기사", "lifecycle": "ABOLISHED", "supersededBy": "메카트로닉스산업기사",
-      "note": "큐넷에 산업기사·기능사만 있다. 기사 등급이 없다." },
-    { "name": "세라믹기사", "lifecycle": "ABOLISHED", "supersededBy": "세라믹기술사",
-      "note": "큐넷에 세라믹기술사만 있다." },
-    { "name": "표면처리기사", "lifecycle": "ABOLISHED", "supersededBy": "표면처리산업기사",
-      "note": "큐넷에 기술사·기능장·산업기사·기능사만 있다. 기사 등급이 없다." },
-    { "name": "식품기사", "lifecycle": "ABOLISHED", "supersededBy": "식품산업기사",
-      "note": "큐넷에 식품기술사·식품산업기사·식품안전기사가 있다. '식품기사'는 없다." },
-    { "name": "화공산업기사", "lifecycle": "ABOLISHED", "supersededBy": "화공기사",
-      "note": "큐넷에 화공기술사·화공안전기술사·화공기사만 있다." },
-    { "name": "철도토목산업기사", "lifecycle": "ABOLISHED", "supersededBy": "철도토목기사",
-      "note": "큐넷에 철도토목기사·철도토목기능사만 있다." },
-    { "name": "정보처리기능사", "lifecycle": "ABOLISHED", "supersededBy": "정보처리산업기사",
-      "note": "큐넷에 정보처리기사·산업기사만 있다. 기능사 등급이 없다." },
-
-    { "name": "양복기능사", "lifecycle": "ABOLISHED", "note": "큐넷·상의·KCA·Kdata 어디에도 없다." },
-    { "name": "양장기능사", "lifecycle": "ABOLISHED", "note": "큐넷·상의·KCA·Kdata 어디에도 없다." },
-    { "name": "자수기능사", "lifecycle": "ABOLISHED", "note": "큐넷·상의·KCA·Kdata 어디에도 없다." },
-    { "name": "도자기공예기능사", "lifecycle": "ABOLISHED", "note": "큐넷·상의·KCA·Kdata 어디에도 없다." },
-    { "name": "영사기능사", "lifecycle": "ABOLISHED", "note": "큐넷·상의·KCA·Kdata 어디에도 없다." },
-    { "name": "전자기기기능장", "lifecycle": "ABOLISHED", "note": "큐넷·상의·KCA·Kdata 어디에도 없다." },
-    { "name": "생산자동화산업기사", "lifecycle": "ABOLISHED", "note": "큐넷·상의·KCA·Kdata 어디에도 없다." },
-    { "name": "재료조직평가산업기사", "lifecycle": "ABOLISHED", "note": "큐넷·상의·KCA·Kdata 어디에도 없다." },
-
-    { "name": "전자계산기기사", "lifecycle": "ABOLISHED",
-      "note": "큐넷에 '전자계산기'가 하나도 없다. KCA(정보통신 계열 시행처)에도 없어 폐지로 본다." },
-    { "name": "전자계산기조직응용기사", "lifecycle": "ABOLISHED",
-      "note": "상동 — 큐넷·KCA 어디에도 없다." },
-    { "name": "전자계산기기능사", "lifecycle": "ABOLISHED",
-      "note": "상동 — 큐넷·KCA 어디에도 없다." }
+    {
+      "name": "웹디자인기능사",
+      "lifecycle": "RENAMED",
+      "supersededBy": "웹디자인개발기능사",
+      "note": "큐넷 종목목록에 '웹디자인개발기능사'로 등재. 같은 자격의 개칭."
+    },
+    {
+      "name": "컴퓨터그래픽스운용기능사",
+      "lifecycle": "RENAMED",
+      "supersededBy": "컴퓨터그래픽기능사",
+      "note": "큐넷에 '컴퓨터그래픽기능사'로 있다. 취준 수요가 있는 종목이라 숨긴 채 두면 안 된다."
+    },
+    {
+      "name": "항공기체정비기능사",
+      "lifecycle": "RENAMED",
+      "supersededBy": "항공기정비기능사",
+      "note": "큐넷 항공 계열은 항공기정비기능사로 통합돼 있다(항공기체정비는 없다)."
+    },
+    {
+      "name": "특수용접기능사",
+      "lifecycle": "RENAMED",
+      "supersededBy": "피복아크용접기능사",
+      "note": "용접 기능사가 용접방식별로 나뉘었다 — 피복아크·이산화탄소가스아크·가스텅스텐아크."
+    },
+    {
+      "name": "산업안전지도사",
+      "lifecycle": "RENAMED",
+      "supersededBy": "산업안전지도사(건설안전)",
+      "note": "큐넷은 분야별 4종(건설·기계·전기·화공)이다. 통합 종목은 없다."
+    },
+    {
+      "name": "조선기사",
+      "lifecycle": "RENAMED",
+      "supersededBy": "조선선체기사",
+      "note": "조선기사 등급이 조선선체기사·조선의장기사로 나뉘었다."
+    },
+    {
+      "name": "메카트로닉스기사",
+      "lifecycle": "ABOLISHED",
+      "supersededBy": "메카트로닉스산업기사",
+      "note": "큐넷에 산업기사·기능사만 있다. 기사 등급이 없다."
+    },
+    {
+      "name": "세라믹기사",
+      "lifecycle": "ABOLISHED",
+      "supersededBy": "세라믹기술사",
+      "note": "큐넷에 세라믹기술사만 있다."
+    },
+    {
+      "name": "표면처리기사",
+      "lifecycle": "ABOLISHED",
+      "supersededBy": "표면처리산업기사",
+      "note": "큐넷에 기술사·기능장·산업기사·기능사만 있다. 기사 등급이 없다."
+    },
+    {
+      "name": "식품기사",
+      "lifecycle": "ABOLISHED",
+      "supersededBy": "식품산업기사",
+      "note": "큐넷에 식품기술사·식품산업기사·식품안전기사가 있다. '식품기사'는 없다."
+    },
+    {
+      "name": "화공산업기사",
+      "lifecycle": "ABOLISHED",
+      "supersededBy": "화공기사",
+      "note": "큐넷에 화공기술사·화공안전기술사·화공기사만 있다."
+    },
+    {
+      "name": "철도토목산업기사",
+      "lifecycle": "ABOLISHED",
+      "supersededBy": "철도토목기사",
+      "note": "큐넷에 철도토목기사·철도토목기능사만 있다."
+    },
+    {
+      "name": "정보처리기능사",
+      "lifecycle": "ABOLISHED",
+      "supersededBy": "정보처리산업기사",
+      "note": "큐넷에 정보처리기사·산업기사만 있다. 기능사 등급이 없다."
+    },
+    {
+      "name": "양복기능사",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷·상의·KCA·Kdata 어디에도 없다."
+    },
+    {
+      "name": "양장기능사",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷·상의·KCA·Kdata 어디에도 없다."
+    },
+    {
+      "name": "자수기능사",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷·상의·KCA·Kdata 어디에도 없다."
+    },
+    {
+      "name": "도자기공예기능사",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷·상의·KCA·Kdata 어디에도 없다."
+    },
+    {
+      "name": "영사기능사",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷·상의·KCA·Kdata 어디에도 없다."
+    },
+    {
+      "name": "전자기기기능장",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷·상의·KCA·Kdata 어디에도 없다."
+    },
+    {
+      "name": "생산자동화산업기사",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷·상의·KCA·Kdata 어디에도 없다."
+    },
+    {
+      "name": "재료조직평가산업기사",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷·상의·KCA·Kdata 어디에도 없다."
+    },
+    {
+      "name": "전자계산기기사",
+      "lifecycle": "ABOLISHED",
+      "note": "큐넷에 '전자계산기'가 하나도 없다. KCA(정보통신 계열 시행처)에도 없어 폐지로 본다."
+    },
+    {
+      "name": "전자계산기조직응용기사",
+      "lifecycle": "ABOLISHED",
+      "note": "상동 — 큐넷·KCA 어디에도 없다."
+    },
+    {
+      "name": "전자계산기기능사",
+      "lifecycle": "ABOLISHED",
+      "note": "상동 — 큐넷·KCA 어디에도 없다."
+    },
+    {
+      "name": "SQL개발자(SQLD)",
+      "lifecycle": "RENAMED",
+      "supersededBy": "SQLD SQL 개발자",
+      "note": "같은 시험이 둘 있었다 — 데모 시드의 S001 과 Kdata 스크래퍼의 DATAQ-SQLD. 일정은 DATAQ-SQLD 쪽에 붙으므로 그쪽을 남기고 이 행은 개칭으로 숨긴다(2026-09-02)."
+    }
   ]
 }
