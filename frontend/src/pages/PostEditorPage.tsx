@@ -56,7 +56,7 @@ export default function PostEditorPage() {
     }
   }
 
-  if (loading) return <div className="state">불러오는 중…</div>;
+  if (loading) return <div className="k-empty state">불러오는 중…</div>;
 
   return (
     <>
@@ -67,9 +67,9 @@ export default function PostEditorPage() {
         </div>
       </div>
 
-      {err && <div className="notice error">{err}</div>}
+      {err && <div className="k-alert k-alert--err">{err}</div>}
 
-      <div className="panel" style={{ padding: 20 }}>
+      <div className="k-card" style={{ padding: 20 }}>
         {!editing && (
           <div className="field">
             <span>게시판</span>
@@ -77,7 +77,7 @@ export default function PostEditorPage() {
               {boards.map((b) => (
                 <button
                   key={b.code}
-                  className={`chip${b.code === boardCode ? ' on' : ''}`}
+                  className="k-chip" aria-pressed={b.code === boardCode}
                   onClick={() => setBoardCode(b.code)}
                   type="button"
                 >
@@ -90,21 +90,21 @@ export default function PostEditorPage() {
 
         <div className="field">
           <span>제목</span>
-          <input className="input" value={title} maxLength={200}
+          <input className="k-input" value={title} maxLength={200}
                  placeholder="제목을 입력하세요"
                  onChange={(e) => setTitle(e.target.value)} />
         </div>
 
         <div className="field">
           <span>내용</span>
-          <textarea className="area" rows={14} maxLength={10000}
+          <textarea className="k-textarea" rows={14} maxLength={10000}
                     placeholder="내용을 입력하세요"
                     value={content} onChange={(e) => setContent(e.target.value)} />
         </div>
 
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-          <button className="btn" onClick={() => navigate(-1)} type="button">취소</button>
-          <button className="btn primary" onClick={submit} disabled={busy} type="button">
+          <button className="k-btn k-btn--secondary" onClick={() => navigate(-1)} type="button">취소</button>
+          <button className="k-btn k-btn--primary" onClick={submit} disabled={busy} type="button">
             {busy ? '저장 중…' : editing ? '수정하기' : '등록하기'}
           </button>
         </div>

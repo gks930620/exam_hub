@@ -14,7 +14,7 @@ export default function AdminPage() {
 
   if (me && me.role !== 'ADMIN') {
     return (
-      <div className="state">
+      <div className="k-empty state">
         <span className="big">운영자 전용 화면입니다</span>
         이 계정에는 권한이 없습니다.
       </div>

@@ -53,25 +53,25 @@ export default function ManagerLoginPage() {
         </p>
 
         {configured === false && (
-          <div className="notice warn" style={{ marginBottom: 16 }}>
+          <div className="k-alert k-alert--warn" style={{ marginBottom: 16 }}>
             <b>매니저 계정이 아직 없습니다.</b> 서버의 <code>.env</code> 에
             <code> MANAGER_USERNAME</code> · <code>MANAGER_PASSWORD</code> 를 넣고 재기동하세요.
           </div>
         )}
-        {err && <div className="notice error" style={{ marginBottom: 16 }}>{err}</div>}
+        {err && <div className="k-alert k-alert--err" style={{ marginBottom: 16 }}>{err}</div>}
 
         <form onSubmit={submit}>
           <div className="field">
             <span>아이디</span>
-            <input className="input" value={username} autoComplete="username"
+            <input className="k-input" value={username} autoComplete="username"
                    onChange={(e) => setUsername(e.target.value)} />
           </div>
           <div className="field">
             <span>비밀번호</span>
-            <input className="input" type="password" value={password} autoComplete="current-password"
+            <input className="k-input" type="password" value={password} autoComplete="current-password"
                    onChange={(e) => setPassword(e.target.value)} />
           </div>
-          <button className="btn primary lg" type="submit" style={{ width: '100%' }}
+          <button className="k-btn k-btn--primary k-btn--lg" type="submit" style={{ width: '100%' }}
                   disabled={busy || !username.trim() || !password}>
             {busy ? '확인 중…' : '로그인'}
           </button>

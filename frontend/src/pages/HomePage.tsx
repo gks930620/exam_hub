@@ -15,8 +15,8 @@ export default function HomePage() {
     examApi.favorites().then(setData).catch((e: Error) => setErr(e.message));
   }, []);
 
-  if (err) return <div className="notice error">{err}</div>;
-  if (!data) return <div className="state">불러오는 중…</div>;
+  if (err) return <div className="k-alert k-alert--err">{err}</div>;
+  if (!data) return <div className="k-empty state">불러오는 중…</div>;
 
   if (data.items.length === 0) {
     return (
@@ -28,11 +28,11 @@ export default function HomePage() {
             <p>관심 시험을 등록하면 접수 시작·마감과 시험일을 챙겨 드립니다.</p>
           </div>
         </div>
-        <div className="state">
+        <div className="k-empty state">
           <span className="big">아직 등록한 시험이 없어요</span>
           시험을 등록하면 여기에 D-day가 표시됩니다.
           <div style={{ marginTop: 18 }}>
-            <Link to="/" className="btn primary lg">시험 찾으러 가기</Link>
+            <Link to="/" className="k-btn k-btn--primary k-btn--lg">시험 찾으러 가기</Link>
           </div>
         </div>
       </>
@@ -55,7 +55,7 @@ export default function HomePage() {
           </span>
         </div>
         <div className="hero-actions">
-          <Link to={`/cert/${lead.certificateId}`} className="btn">일정 자세히 보기</Link>
+          <Link to={`/cert/${lead.certificateId}`} className="k-btn k-btn--secondary">일정 자세히 보기</Link>
         </div>
       </section>
 
@@ -80,13 +80,13 @@ export default function HomePage() {
 
 function ExamCard({ card }: { card: FavoriteCard }) {
   return (
-    <Link to={`/cert/${card.certificateId}`} className="card exam-card">
+    <Link to={`/cert/${card.certificateId}`} className="k-card k-card--hover exam-card">
       <div className="top">
         <h3>{card.name}</h3>
         <span className={`dday${card.dday <= 7 ? ' soon' : ''}`}>{dday(card.dday)}</span>
       </div>
       <div className="foot">
-        <span className={`badge${card.badge === 'REG_OPEN' ? ' open' : ''}`}>{card.badgeLabel}</span>
+        <span className={`k-badge${card.badge === 'REG_OPEN' ? ' k-badge--ok' : ''}`}>{card.badgeLabel}</span>
         <span className="when">{card.eventLabel} · {card.eventAt}</span>
       </div>
     </Link>

@@ -1,339 +1,266 @@
 /* ═══════════════════════════════════════════════════════════════════
-   exam-hub 전용 컴포넌트 — Halo 위에 얹는 얇은 층.
+   exam-hub 전용 컴포넌트 — Lets 디자인 킷 위에 얹는 얇은 층.
 
-   halo-tokens.css → halo-components.css → 이 파일 순서로 불러온다.
-   규칙(가이드 §3-4): 여기에 #hex 를 쓰고 싶어지면 토큰이 부족한 것이다.
-   색·그림자·둥글기는 전부 var(--토큰) 으로만 참조한다 — 그래야 다크가 따라온다.
+   design_kits_lets/(base→components→tokens→extras) 다음에 로드된다(main.tsx).
+   규칙: 색·치수는 전부 킷의 var(--토큰) 만 쓴다. #hex 를 쓰고 싶어지면 토큰이
+   부족한 것이다 — 예외는 카카오 노랑 같은 남의 브랜드 색뿐.
+
+   Halo 로 되돌리려면: main.tsx 의 import 블록을 halo-* 로 바꾸고
+   git checkout design-halo -- frontend/src/styles/app.css
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ── 이 앱에서 더 필요한 토큰 ──
-   halo-tokens.css 는 키트 원본이라 손대지 않고, 부족한 것만 여기서 확장한다.
-   (색을 컴포넌트에 하드코딩하면 다크에서 그 부분만 깨진다 — 가이드 §3-4) */
-:root {
-  --line: #e9e6f7;   /* 옅은 구분선·입력 테두리. 키트에 없어서 참조만 되고 있었다 */
+/* ── 상단바 부속 ── */
+.hdr-tools { display: flex; align-items: center; gap: var(--sp-2); }
+.who {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-1);
+  border-radius: var(--r-pill);
+  background: var(--surface-alt); color: var(--text);
+  font-size: var(--t-sm); font-weight: var(--w-bold); text-decoration: none;
 }
-:root[data-theme="dark"] {
-  --line: #35304f;
+.who:hover { text-decoration: none; color: var(--point); }
+.who img { width: 26px; height: 26px; border-radius: var(--r-pill); object-fit: cover; }
+.avatar-fallback {
+  width: 26px; height: 26px; border-radius: var(--r-pill);
+  display: grid; place-items: center;
+  background: var(--point-soft); color: var(--point-text);
+  font-size: var(--t-xs); font-weight: var(--w-heavy);
+}
+@media (max-width: 768px) {
+  .only-desktop { display: none; }
+  /* 좁은 화면에서는 메뉴가 상단바 아래 줄로 내려가 가로 스크롤된다 */
+  .k-topnav.app-header { flex-wrap: wrap; row-gap: var(--sp-1); height: auto; padding-top: var(--sp-2); padding-bottom: var(--sp-2); }
+  .top-nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .top-nav::-webkit-scrollbar { display: none; }
 }
 
-/* ── 앱 골격 ── */
-.app-shell { display: flex; flex-direction: column; min-height: 100vh; }
-
-/* 헤더 우측 도구(테마 전환·계정) */
-.hdr-tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-.icon-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border: none; border-radius: 999px;
-  background: var(--glass-chip); color: var(--muted);
-  font-size: 15px; cursor: pointer; font-family: inherit; line-height: 1;
+/* ── 페이지 머리 ── */
+.page-header { display: flex; align-items: center; gap: var(--sp-4); margin: var(--sp-2) 0 var(--sp-6); }
+.page-header h1 { margin: 0; font-size: var(--t-xl); font-weight: var(--display-weight); letter-spacing: var(--display-tracking); }
+.page-header p { margin: 4px 0 0; color: var(--muted); font-size: var(--t-sm); }
+.page-avatar {
+  width: 46px; height: 46px; flex: none; border-radius: var(--r-lg);
+  display: grid; place-items: center; font-size: var(--t-lg);
+  background: var(--point-soft); color: var(--point-text);
 }
-.icon-btn:hover { color: var(--point); }
-.icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--point-soft); }
 
+/* 섹션 머리 — 제목 + 오른쪽 부가정보 */
+.section-head { display: flex; align-items: baseline; gap: var(--sp-3); margin: var(--sp-6) 0 var(--sp-3); }
+.section-head h2 { margin: 0; font-size: var(--t-lg); font-weight: var(--w-heavy); letter-spacing: var(--tracking-tight); }
+.section-head .more, .step-head .more { margin-left: auto; font-size: var(--t-sm); color: var(--muted2); }
 
-/* ── 페이지 공통 ── */
-.section-head {
-  display: flex; align-items: baseline; justify-content: space-between;
-  gap: 12px; flex-wrap: wrap; margin: 26px 0 12px;
+/* ── 검색 ── */
+.searchbar { position: relative; margin-bottom: var(--sp-4); }
+/* 검색칸은 패널 밖 맨 배경 위에 서는 일이 많다 — 테두리·바탕으로 확실히 띄운다 */
+.searchbar .k-input { padding-left: 44px; background: var(--surface); border-color: var(--border-strong); }
+.searchbar .ico {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  color: var(--muted2); font-size: var(--t-md); pointer-events: none;
 }
-.section-head h2 {
-  margin: 0; font-size: 11px; font-weight: 700; color: var(--muted2);
-  text-transform: uppercase; letter-spacing: .1em;
-}
-.section-head .more { font-size: 12.5px; color: var(--muted2); }
 
-.state {
-  background: var(--surface); border-radius: var(--radius); box-shadow: var(--sh);
-  padding: 44px 24px; text-align: center; color: var(--muted);
+/* ── 시험 카드 (검색 결과) ── */
+.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+@media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .card-grid { grid-template-columns: 1fr; } }
+.exam-card { display: flex; flex-direction: column; }
+.exam-card .top { display: flex; align-items: flex-start; gap: var(--sp-2); padding: var(--sp-4); }
+.exam-card .grow { flex: 1; min-width: 0; text-decoration: none; color: inherit; }
+.exam-card h3 { margin: 0 0 4px; font-size: var(--t-md); font-weight: var(--w-bold); }
+.exam-card .sub { margin: 0; font-size: var(--t-xs); color: var(--muted2); }
+.exam-card .star {
+  border: none; background: none; cursor: pointer;
+  font-size: var(--t-lg); color: var(--muted2); line-height: 1; padding: 2px;
 }
-.state .big { display: block; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-
-.fineprint { font-size: 12.5px; color: var(--muted2); line-height: 1.75; margin: 18px 2px 0; }
-
-/* ── 히어로 안의 D-day (홈·상세) ──
-   ② 히어로는 페이지당 하나뿐이므로 그라디언트 예산을 여기에 몰아 쓴다. */
-.hero-dday {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  gap: clamp(16px, 4vw, 40px); flex-wrap: wrap; text-align: left;
-}
-.hero-dday .num {
-  font-size: clamp(56px, 11vw, 92px); font-weight: 800; letter-spacing: -.055em;
-  line-height: .95; font-variant-numeric: tabular-nums;
-}
-.hero-dday .num small { font-size: .34em; font-weight: 700; letter-spacing: -.01em; margin-left: 4px; }
-.hero-dday .what { max-width: 34ch; }
-.hero-dday .what strong { display: block; font-size: 19px; font-weight: 750; letter-spacing: -.02em; }
-.hero-dday .what span { display: block; margin-top: 6px; opacity: .9; font-size: 13.5px; }
-.hero-actions { position: relative; margin-top: 22px; display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; }
-/* 히어로 위 버튼 — 그라디언트 위에 그라디언트를 얹지 않는다(원칙 ②) */
-.hero .btn { background: var(--glass-chip); color: #fff; box-shadow: none; }
-.hero .btn:hover { background: var(--glass-edge); color: #fff; }
-
-/* ── 시험 카드 (홈·검색·캘린더 공용) ── */
-.exam-card { display: block; padding: 17px 18px; }
-.exam-card .top { display: flex; align-items: flex-start; gap: 10px; }
-.exam-card h3 {
-  margin: 0; font-size: 15.5px; font-weight: 700; letter-spacing: -.015em;
-  color: var(--text); flex: 1; min-width: 0;
-}
-.exam-card .sub { margin: 4px 0 0; font-size: 12.5px; color: var(--muted2); }
-.exam-card .grow { flex: 1; min-width: 0; }
+.exam-card .star[data-on="true"], .exam-card .star:hover { color: var(--point); }
 .exam-card .foot {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 10px; margin-top: 13px; flex-wrap: wrap;
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  border-top: var(--bw) solid var(--border); background: var(--surface-alt);
+  border-radius: 0 0 var(--r-lg) var(--r-lg); margin-top: auto;
 }
-.exam-card .when { font-size: 12.5px; color: var(--muted); }
+.exam-card .when { font-size: var(--t-xs); color: var(--muted); }
 
-/* D-day 숫자 — 카드에서 눈이 가야 하는 곳. 색은 단색 강조(--point)로 두고
-   그라디언트는 히어로에만 남긴다(원칙 ②). */
+/* ── 상세: D-day 히어로 ── */
+.hero { margin-bottom: var(--sp-6); }
+.hero-dday { display: flex; align-items: center; gap: var(--sp-6); flex-wrap: wrap; }
+.hero-dday .num { font-size: var(--t-3xl); font-weight: var(--w-heavy); letter-spacing: var(--display-tracking); }
+.hero-dday .num small { font-size: var(--t-lg); font-weight: var(--w-bold); margin-left: 2px; }
+.hero-dday .what { display: flex; flex-direction: column; gap: 2px; }
+.hero-dday .what strong { font-size: var(--t-lg); }
+.hero-dday .what span { opacity: .85; font-size: var(--t-sm); }
+
+/* ── 표 부속 ── */
+.data-table td.round { font-weight: var(--w-bold); color: var(--text); white-space: nowrap; }
+.data-table .nowrap { white-space: nowrap; }
+.link-danger {
+  border: none; background: none; cursor: pointer; padding: 0;
+  color: var(--err-text); font-size: var(--t-sm); text-decoration: underline;
+}
+
+/* ── 빈 상태 안 제목 ── */
+.state .big { display: block; font-size: var(--t-lg); font-weight: var(--w-heavy); color: var(--text); margin-bottom: var(--sp-2); }
+
+/* ── 작은 활자 ── */
+.fineprint { font-size: var(--t-xs); color: var(--muted2); line-height: var(--lh); }
+.chip-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-4); }
+
+/* ── 로그인 ── */
+.login-wrap { max-width: 420px; margin: 6vh auto 0; }
+.login-card { display: flex; flex-direction: column; gap: var(--sp-2); }
+.social {
+  display: flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  width: 100%; min-height: var(--touch); border: none; border-radius: var(--r);
+  font-size: var(--t-md); font-weight: var(--w-bold); font-family: inherit; cursor: pointer;
+}
+/* 남의 브랜드 색 — 유일하게 허용되는 하드코딩(카카오 심볼 규정색) */
+.social.kakao { background: #fee500; color: #191600; }
+.social.google { background: var(--surface); color: var(--text); border: var(--bw) solid var(--border-strong); }
+.social:hover { filter: brightness(.97); }
+
+/* ── 매니저 입력 화면 ── */
+.pick-list { margin-top: var(--sp-2); display: flex; flex-direction: column; }
+.pick {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: var(--sp-2) var(--sp-3); border: none; background: none;
+  border-top: var(--bw) solid var(--border);
+  cursor: pointer; font-family: inherit; text-align: left; width: 100%;
+}
+.pick:hover { background: var(--surface-hover); }
+.pick b { font-size: var(--t-md); }
+.pick span { font-size: var(--t-xs); color: var(--muted2); }
+.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+.form-grid .wide { grid-column: 1 / -1; }
+@media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > span { font-size: var(--t-xs); font-weight: var(--w-bold); color: var(--muted); }
+
+/* ── 운영 화면 갈래 ── */
+.admin-nav { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin: 0 0 var(--sp-6); }
+.admin-nav-item {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4); border-radius: var(--r);
+  background: var(--surface); border: var(--bw) solid var(--border);
+  color: var(--muted); text-decoration: none;
+}
+.admin-nav-item:hover { text-decoration: none; color: var(--text); background: var(--surface-hover); }
+.admin-nav-item .ico { font-size: var(--t-md); }
+.admin-nav-item .txt { display: flex; flex-direction: column; line-height: var(--lh-tight); }
+.admin-nav-item .txt b { font-size: var(--t-sm); }
+.admin-nav-item .txt small { font-size: var(--t-xs); color: var(--muted2); }
+.admin-nav-item.active { background: var(--active-bg); border-color: var(--point); color: var(--point-text); }
+.admin-nav-item.active .txt small { color: var(--point-text); opacity: .75; }
+
+/* 얼마나 채워졌나 */
+.cover-strip { margin-bottom: var(--sp-6); }
+.cover-nums { display: flex; align-items: baseline; gap: var(--sp-1); flex-wrap: wrap; }
+.cover-nums b { font-size: var(--t-2xl); font-weight: var(--w-heavy); letter-spacing: var(--display-tracking); }
+.cover-nums span { color: var(--muted); font-size: var(--t-sm); }
+.cover-nums em { margin-left: auto; font-style: normal; font-weight: var(--w-bold); color: var(--point-text); font-size: var(--t-md); }
+.cover-bar { margin-top: var(--sp-3); height: 8px; border-radius: var(--r-pill); background: var(--surface-alt); overflow: hidden; }
+.cover-bar span { display: block; height: 100%; background: var(--point); border-radius: var(--r-pill); }
+
+/* 입력 화면의 1·2·3 */
+.step-head { display: flex; align-items: center; gap: var(--sp-2); margin: 0 0 var(--sp-3); }
+.step-head h2 { margin: 0; font-size: var(--t-lg); }
+.step-no {
+  display: grid; place-items: center;
+  width: 24px; height: 24px; border-radius: var(--r-pill);
+  background: var(--point); color: var(--on-point);
+  font-size: var(--t-sm); font-weight: var(--w-bold);
+}
+
+/* ── 페이지네이션 부속 (골격은 킷 .k-pager) ── */
+.page-gap { color: var(--muted2); padding: 0 2px; }
+.page-btn.active { font-weight: var(--w-heavy); }
+
+/* ── D-day 숫자 (카드) ── */
 .dday {
-  font-size: 20px; font-weight: 800; letter-spacing: -.03em;
+  font-size: 20px; font-weight: var(--w-heavy); letter-spacing: var(--tracking-tight);
   color: var(--point); font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .dday.soon { color: var(--err); }
 
-/* 상태 배지 — 접수중만 강조색, 나머지는 조용하게 */
-.badge {
-  display: inline-block; padding: 4px 12px; border-radius: 999px;
-  font-size: 12px; font-weight: 600; white-space: nowrap;
-  background: var(--soft); color: var(--muted);
-}
-.badge.open { background: var(--point-soft); color: var(--point-dark); }
-.badge.warn { background: var(--ok-soft); color: var(--ok-text); }
-
-/* 관심 등록 별 */
+/* 관심 등록 별 — 카드 밖(홈)에서도 쓴다 */
 .star {
   flex: none; border: none; background: none; cursor: pointer; padding: 2px;
-  font-size: 19px; line-height: 1; color: var(--muted2); font-family: inherit;
+  font-size: var(--t-lg); line-height: 1; color: var(--muted2); font-family: inherit;
 }
-.star[data-on="true"] { color: var(--warn); }
-.star:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--point-soft); border-radius: 999px; }
+.star[data-on="true"] { color: var(--point-2); }
+.star:focus-visible { outline: none; box-shadow: var(--sh-point); border-radius: var(--r-pill); }
 
-/* 분류 칩의 개수 — 칩 안에서 조용히 */
-.chip b { font-weight: 700; opacity: .55; margin-left: 2px; font-variant-numeric: tabular-nums; }
-.chip.on b { opacity: .75; }
+/* 칩 안 개수 */
+.k-chip .cnt { font-style: normal; color: var(--muted2); margin-left: 4px; font-size: var(--t-xs); }
 
-/* ── 검색 ── */
-.searchbar { position: relative; margin-bottom: 14px; }
-/* 검색칸은 패널 밖 맨 배경 위에 서는 일이 많다. 기본 입력 바탕(--soft)은 페이지 배경과
-   거의 같은 색이라 테두리 없는 입력창이 통째로 사라진다 — 카드처럼 띄운다. */
-.searchbar .input {
-  padding-left: 44px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  box-shadow: var(--sh);
+/* 히어로 (상세 D-day) */
+.hero { margin-bottom: var(--sp-6); }
+.hero-dday {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(16px, 4vw, 40px); flex-wrap: wrap; text-align: left;
 }
-.searchbar .ico {
-  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-  color: var(--muted2); font-size: 15px; pointer-events: none;
+.hero-dday .num {
+  font-size: clamp(48px, 9vw, 76px); font-weight: var(--w-heavy);
+  letter-spacing: var(--display-tracking); line-height: .95; font-variant-numeric: tabular-nums;
 }
-
-/* ── 상세: 연간 일정 표 ── */
-.data-table td.round { font-weight: 700; color: var(--text); white-space: nowrap; }
-.data-table .nowrap { white-space: nowrap; }
-.data-table td { color: var(--muted); font-variant-numeric: tabular-nums; }
+.hero-dday .num small { font-size: .34em; font-weight: var(--w-bold); margin-left: 4px; }
+.hero-dday .what { max-width: 34ch; }
+.hero-dday .what strong { display: block; font-size: var(--t-lg); font-weight: var(--w-bold); }
+.hero-dday .what span { display: block; margin-top: 6px; opacity: .9; font-size: var(--t-sm); }
+.hero-actions { margin-top: var(--sp-5); display: flex; gap: var(--sp-2); justify-content: center; flex-wrap: wrap; }
 
 /* ── 캘린더 ── */
-.month-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.month-bar strong { font-size: 19px; font-weight: 750; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
-
-.day-list { display: flex; flex-direction: column; gap: 10px; }
-.day-row { display: flex; gap: 16px; align-items: center; padding: 15px 18px; }
+.month-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+.month-bar strong { font-size: var(--t-lg); font-weight: var(--w-heavy); font-variant-numeric: tabular-nums; }
+.day-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+.day-row { display: flex; gap: var(--sp-4); align-items: center; }
 .day-row .date {
   flex: none; width: 52px; text-align: center; line-height: 1.1;
   font-variant-numeric: tabular-nums; color: var(--muted2);
 }
-.day-row .date b { display: block; font-size: 21px; font-weight: 750; letter-spacing: -.03em; color: var(--text); }
-.day-row .date span { font-size: 11.5px; }
+.day-row .date b { display: block; font-size: var(--t-xl); font-weight: var(--w-heavy); letter-spacing: var(--tracking-tight); color: var(--text); }
+.day-row .date span { font-size: var(--t-xs); }
 .day-row .body { flex: 1; min-width: 0; }
-.day-row .body h3 { margin: 0 0 4px; font-size: 14.5px; font-weight: 700; letter-spacing: -.01em; }
+.day-row .body h3 { margin: 0 0 4px; font-size: var(--t-sm); font-weight: var(--w-bold); }
 
-/* ── 설정: 스위치 ──
-   켜짐은 단색 --point. 그라디언트를 쓰면 화면당 3개가 되어 원칙 ② 를 깬다. */
+/* ── 설정: 스위치 ── */
 .switch-row {
-  display: flex; align-items: center; gap: 16px;
-  padding: 15px 18px; border-bottom: 1px solid var(--border);
-  width: 100%; background: none; border-left: none; border-right: none; border-top: none;
-  text-align: left; cursor: pointer; font-family: inherit; color: inherit;
+  display: flex; align-items: center; gap: var(--sp-4);
+  padding: var(--sp-4); border: none; border-bottom: var(--bw) solid var(--border);
+  width: 100%; background: none; text-align: left; cursor: pointer; font-family: inherit; color: inherit;
 }
 .switch-row:last-of-type { border-bottom: none; }
-.switch-row:hover { background: var(--soft); }
+.switch-row:hover { background: var(--surface-hover); }
 .switch-row:focus-visible { outline: none; background: var(--point-soft); }
 .switch-row .label { flex: 1; min-width: 0; }
-.switch-row .label b { display: block; font-size: 14.5px; font-weight: 700; letter-spacing: -.01em; }
-.switch-row .label span { display: block; margin-top: 3px; font-size: 12.5px; color: var(--muted2); }
-
+.switch-row .label b { display: block; font-size: var(--t-sm); font-weight: var(--w-bold); }
+.switch-row .label span { display: block; margin-top: 3px; font-size: var(--t-xs); color: var(--muted2); }
 .switch {
-  flex: none; width: 46px; height: 27px; border-radius: 999px;
-  background: var(--soft); position: relative; transition: background .16s;
+  flex: none; width: 46px; height: 27px; border-radius: var(--r-pill);
+  background: var(--surface-alt); border: var(--bw) solid var(--border-strong);
+  position: relative; transition: background var(--dur-fast);
 }
 .switch i {
-  position: absolute; top: 3px; left: 3px; width: 21px; height: 21px; border-radius: 50%;
-  background: var(--surface); box-shadow: var(--sh); transition: transform .16s;
+  position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; border-radius: var(--r-pill);
+  background: var(--surface); box-shadow: var(--sh-1); transition: transform var(--dur-fast);
 }
-.switch-row[aria-pressed="true"] .switch { background: var(--point); }
+.switch-row[aria-pressed="true"] .switch { background: var(--point); border-color: var(--point); }
 .switch-row[aria-pressed="true"] .switch i { transform: translateX(19px); }
 
-/* ── 반응형 ── */
-@media (max-width: 768px) {
-  .hero-dday { justify-content: flex-start; }
-  .day-row { gap: 12px; padding: 14px; }
-}
-
-/* ═══ 계정 · 커뮤니티 · 관리자 (설계 08) ═══
-   전부 halo-tokens 의 var(--...) 만 조합한다. 색 하드코딩 금지(다크가 그 부분만 깨진다). */
-
-/* ── 헤더의 로그인 상태 ── */
-.who {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 5px 13px 5px 5px; border-radius: 999px;
-  background: var(--glass-chip); color: var(--text);
-  font-size: 13px; font-weight: 600; text-decoration: none;
-}
-.who:hover { text-decoration: none; color: var(--point); }
-.who img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
-.avatar-fallback {
-  width: 26px; height: 26px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--grad); color: #fff; font-size: 12px; font-weight: 700;
-}
-@media (max-width: 768px) { .only-desktop { display: none; } }
-
-/* ── 로그인 화면 ── */
-.login-wrap { max-width: 420px; margin: 6vh auto 0; }
-.login-card { padding: 26px; display: flex; flex-direction: column; gap: 10px; }
-.social {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 14px 18px; border: none; border-radius: 999px;
-  font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
-  background: var(--soft); color: var(--text);
-}
-.social:hover { box-shadow: var(--sh); }
-.social:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--point-soft); }
-/* 카카오·구글은 브랜드 색이 정해져 있어 토큰으로 대체할 수 없다 — 의도된 예외 */
-.social.kakao { background: #fee500; color: #191600; }
-.social.google { background: var(--surface); box-shadow: var(--sh); }
-
-/* ── 커뮤니티 목록 ── */
-.post-list { display: flex; flex-direction: column; gap: 10px; }
-.post-row {
-  display: flex; align-items: center; gap: 16px; padding: 16px 20px;
-  text-decoration: none; color: inherit;
-}
+/* ── 커뮤니티 ── */
+.post-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+.post-row { display: flex; align-items: center; gap: var(--sp-4); text-decoration: none; color: inherit; }
 .post-main { flex: 1; min-width: 0; }
 .post-row h3 {
-  margin: 8px 0 5px; font-size: 15.5px; font-weight: 700; letter-spacing: -.015em;
+  margin: 8px 0 5px; font-size: var(--t-md); font-weight: var(--w-bold);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.post-row .cnt { font-style: normal; color: var(--point); font-size: 13px; margin-left: 6px; }
-.post-row .sub { margin: 0; font-size: 12.5px; color: var(--muted2); }
-.post-row .views { flex: none; font-size: 12px; color: var(--muted2); font-variant-numeric: tabular-nums; }
-
-/* ── 글 본문 ── */
-.post-body {
-  padding: 24px; font-size: 15px; line-height: 1.85;
-  white-space: pre-wrap; word-break: break-word;   /* 줄바꿈을 그대로 살린다 */
-}
-
-/* ── 댓글 ── */
-.comment-list { display: flex; flex-direction: column; gap: 10px; }
-.comment { padding: 15px 18px; }
-.comment .head { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
-.comment .head b { font-size: 13.5px; font-weight: 700; }
-.comment .head .when { font-size: 12px; color: var(--muted2); }
-.comment p { margin: 0; font-size: 14.5px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
-.comment-form { padding: 16px 18px; margin-top: 14px; }
-
-.link-danger {
-  margin-left: auto; border: none; background: none; cursor: pointer;
-  font: inherit; font-size: 12px; color: var(--err); padding: 2px 4px;
-}
-.link-danger:hover { text-decoration: underline; }
-.btn.danger { color: var(--err); }
-.btn.danger:hover { color: var(--err); box-shadow: var(--sh-lg); }
-
-/* ── 관리자 입력 폼 ── */
-.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; }
-.form-grid .wide { grid-column: 1 / -1; }
-@media (max-width: 760px) { .form-grid { grid-template-columns: 1fr; } }
-
-.pick-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
-.pick {
-  display: flex; flex-direction: column; gap: 3px; align-items: flex-start;
-  width: 100%; text-align: left; cursor: pointer; font: inherit;
-  border: none; border-radius: var(--radius-sm); background: var(--soft); padding: 11px 14px;
-}
-.pick:hover { background: var(--point-soft); }
-.pick b { font-size: 14px; font-weight: 700; }
-.pick span { font-size: 12px; color: var(--muted2); }
-
-/* 매니저가 손대야 하는 상태 — 기존 .badge.warn 은 초록(ok)이라 "괜찮다"로 읽힌다.
-   비어 있거나 지난 일정은 눈에 걸려야 해서 경고색 토큰을 따로 쓴다. */
-.badge.todo {
-  background: color-mix(in srgb, var(--warn) 16%, transparent);
-  color: var(--warn);
-}
-
-/* ── 운영 화면 ──
-   갈래를 주소로 나눴다(할 일 / 일정 넣기 / 수집 지도 / 변천사).
-   한 화면에 분류 체계가 여러 개 겹치면 어느 숫자가 무엇의 숫자인지 알 수 없다. */
-.admin-nav {
-  display: flex; gap: 8px; flex-wrap: wrap;
-  margin: 0 0 24px;
-}
-.admin-nav-item {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 10px 16px; border-radius: var(--radius-sm);
-  background: var(--surface); box-shadow: var(--sh);
-  color: var(--muted); text-decoration: none;
-}
-.admin-nav-item:hover { text-decoration: none; color: var(--text); }
-.admin-nav-item .ico { font-size: 16px; }
-.admin-nav-item .txt { display: flex; flex-direction: column; line-height: 1.3; }
-.admin-nav-item .txt b { font-size: 14px; font-weight: 700; }
-.admin-nav-item .txt small { font-size: 11.5px; color: var(--muted2); }
-/* 지금 보고 있는 갈래 하나만 빛난다 */
-.admin-nav-item.active {
-  background: var(--grad); color: #fff; box-shadow: var(--sh-acc);
-}
-.admin-nav-item.active .txt small { color: rgba(255, 255, 255, .82); }
-
-/* 얼마나 채워졌나 — 이 화면의 목적을 한 줄로 */
-.cover-strip { padding: 20px; margin-bottom: 24px; }
-.cover-nums { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
-.cover-nums b { font-size: 30px; font-weight: 780; letter-spacing: -.02em; }
-.cover-nums span { color: var(--muted); font-size: 14px; }
-.cover-nums em {
-  margin-left: auto; font-style: normal; font-weight: 700;
-  color: var(--point); font-size: 15px;
-}
-.cover-bar {
-  margin-top: 12px; height: 8px; border-radius: 999px;
-  background: var(--soft); overflow: hidden;
-}
-.cover-bar span { display: block; height: 100%; background: var(--grad); border-radius: 999px; }
-
-/* 입력 화면의 1·2·3 — 순서가 있는 일이라는 걸 번호로 보여준다 */
-.step-head { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
-.step-head h2 { margin: 0; font-size: 17px; }
-.step-head .more { margin-left: auto; font-size: 13px; color: var(--muted2); }
-.step-no {
-  display: grid; place-items: center;
-  width: 24px; height: 24px; border-radius: 50%;
-  background: var(--grad); color: #fff;
-  font-size: 13px; font-weight: 700;
-}
-
-/* ── 번호 페이징 ── */
-.pagination { display: flex; align-items: center; gap: 4px; }
-.page-btn {
-  min-width: 34px; height: 34px; padding: 0 8px;
-  border: none; border-radius: var(--radius-sm);
-  background: var(--surface); box-shadow: var(--sh);
-  color: var(--muted); font-size: 13.5px; font-weight: 600;
-  cursor: pointer; font-family: inherit;
-}
-.page-btn:hover:not(:disabled) { color: var(--text); }
-.page-btn:disabled { opacity: .4; cursor: default; }
-.page-btn.active { background: var(--grad); color: #fff; box-shadow: var(--sh-acc); }
-.page-gap { color: var(--muted2); padding: 0 2px; }
+.post-row .cnt { font-style: normal; color: var(--point); font-size: var(--t-sm); margin-left: 6px; }
+.post-row .sub { margin: 0; font-size: var(--t-xs); color: var(--muted2); }
+.post-row .views { flex: none; font-size: var(--t-xs); color: var(--muted2); font-variant-numeric: tabular-nums; }
+.panel-head { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+.post-body { font-size: var(--t-md); line-height: var(--lh-relaxed); white-space: pre-wrap; word-break: break-word; }
+.comment-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+.comment .head { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: 7px; }
+.comment .head b { font-size: var(--t-sm); font-weight: var(--w-bold); }
+.comment .head .when { font-size: var(--t-xs); color: var(--muted2); }
+.comment p { margin: 0; font-size: var(--t-sm); line-height: var(--lh); white-space: pre-wrap; word-break: break-word; }
+.comment-form { margin-top: var(--sp-3); }

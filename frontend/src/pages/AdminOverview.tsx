@@ -63,10 +63,10 @@ export default function AdminOverview({ onPick }: { onPick: (id: number, name: s
 
   return (
     <>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+      <div className="k-tabs" role="tablist" style={{ marginBottom: 12 }}>
         {TABS.map((t) => (
-          <button key={t.key}
-                  className={`btn ${tab === t.key ? 'primary' : ''}`}
+          <button key={t.key} role="tab"
+                  aria-selected={tab === t.key}
                   onClick={() => { setTab(t.key); setPage(0); }}>
             {t.label}
             {data && <span style={{ marginLeft: 6, opacity: 0.75 }}>{countOf(t.counts)}</span>}
@@ -77,15 +77,15 @@ export default function AdminOverview({ onPick }: { onPick: (id: number, name: s
 
       <div className="searchbar" style={{ marginBottom: 14 }}>
         <span className="ico" aria-hidden="true">⌕</span>
-        <input className="input" placeholder="시험명으로 좁히기"
+        <input className="k-input" placeholder="시험명으로 좁히기"
                value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} />
       </div>
 
-      {err && <div className="notice error">{err}</div>}
-      {loading && !data && <div className="state">불러오는 중…</div>}
+      {err && <div className="k-alert k-alert--err">{err}</div>}
+      {loading && !data && <div className="k-empty state">불러오는 중…</div>}
 
       {data && data.items.length === 0 && (
-        <div className="state">
+        <div className="k-empty state">
           <span className="big">해당하는 시험이 없습니다</span>
           {tab === 'NONE' && !q.trim() ? '일정 없는 시험을 다 채웠다는 뜻입니다.' : '검색어나 탭을 바꿔 보세요.'}
         </div>
@@ -93,8 +93,8 @@ export default function AdminOverview({ onPick }: { onPick: (id: number, name: s
 
       {data && data.items.length > 0 && (
         <>
-          <div className="panel" style={{ padding: 0, overflowX: 'auto' }}>
-            <table className="data-table">
+          <div className="k-card" style={{ padding: 0, overflowX: 'auto' }}>
+            <table className="k-table data-table">
               <thead>
                 <tr>
                   <th>시험</th><th>분류</th><th>일정</th><th>다음 일정</th>
@@ -137,7 +137,7 @@ function OverviewRowView({ row, onPick }: { row: OverviewRow; onPick: (id: numbe
         {row.status === 'ROLLING' ? (
           <span className="fineprint" style={{ margin: 0 }}>대상 아님</span>
         ) : (
-          <button className="btn" onClick={() => onPick(row.certificateId, row.certificateName)}>
+          <button className="k-btn k-btn--secondary" onClick={() => onPick(row.certificateId, row.certificateName)}>
             넣기
           </button>
         )}
@@ -148,8 +148,8 @@ function OverviewRowView({ row, onPick }: { row: OverviewRow; onPick: (id: numbe
 
 /** 세부 상태는 행에서만 — '지남'만 경고로 띄운다(다음 회차를 넣을 때가 됐다는 뜻). */
 function ScheduleBadge({ row }: { row: OverviewRow }) {
-  if (row.status === 'ROLLING') return <span className="badge">상시</span>;
-  if (row.status === 'NONE') return <span className="badge todo">없음</span>;
-  if (row.status === 'PAST') return <span className="badge todo">지남 · {row.scheduleCount}건</span>;
-  return <span className="badge">{row.scheduleCount}건</span>;
+  if (row.status === 'ROLLING') return <span className="k-badge">상시</span>;
+  if (row.status === 'NONE') return <span className="k-badge k-badge--warn">없음</span>;
+  if (row.status === 'PAST') return <span className="k-badge k-badge--warn">지남 · {row.scheduleCount}건</span>;
+  return <span className="k-badge">{row.scheduleCount}건</span>;
 }

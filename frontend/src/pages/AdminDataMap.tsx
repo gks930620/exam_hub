@@ -13,10 +13,10 @@ import type { DataMapResponse, DataSourceRow, SourceMode } from '../api/types';
 const MODE_ORDER: SourceMode[] = ['MANUAL', 'AUTO_PENDING', 'AUTO', 'EXCLUDED'];
 
 const MODE_TONE: Record<SourceMode, string> = {
-  MANUAL: 'warn',        // 내가 할 일
-  AUTO_PENDING: 'info',  // 곧 자동이 될 것
-  AUTO: 'ok',            // 손댈 필요 없음
-  EXCLUDED: 'muted',     // 넣지 않음
+  MANUAL: 'k-badge--warn',   // 내가 할 일
+  AUTO_PENDING: 'k-badge--point',   // 곧 자동이 될 것
+  AUTO: 'k-badge--ok',       // 손댈 필요 없음
+  EXCLUDED: '',              // 넣지 않음 — 기본(조용한) 배지
 };
 
 export default function AdminDataMap() {
@@ -31,8 +31,8 @@ export default function AdminDataMap() {
       .catch((e) => setErr(e instanceof Error ? e.message : '불러오지 못했습니다.'));
   }, []);
 
-  if (err) return <div className="notice error">{err}</div>;
-  if (!data) return <div className="state">데이터 지도를 불러오는 중…</div>;
+  if (err) return <div className="k-alert k-alert--err">{err}</div>;
+  if (!data) return <div className="k-empty state">데이터 지도를 불러오는 중…</div>;
 
   const { sources } = data;
   const grouped = MODE_ORDER.map((mode) => ({
@@ -44,16 +44,16 @@ export default function AdminDataMap() {
     <>
       {grouped.map(({ mode, rows }) => (
         <div key={mode} style={{ marginBottom: 18 }}>
-          <button className="btn" style={{ width: '100%', justifyContent: 'flex-start' }}
+          <button className="k-btn k-btn--secondary" style={{ width: '100%', justifyContent: 'flex-start' }}
                   onClick={() => setOpen(open === mode ? null : mode)}>
-            <span className={`badge ${MODE_TONE[mode]}`} style={{ marginRight: 10 }}>
+            <span className={`k-badge ${MODE_TONE[mode]}`} style={{ marginRight: 10 }}>
               {rows[0].modeLabel}
             </span>
             {rows.length}갈래 {open === mode ? '▾' : '▸'}
           </button>
 
           {open === mode && (
-            <div className="panel" style={{ padding: 18, marginTop: 10 }}>
+            <div className="k-card" style={{ padding: 18, marginTop: 10 }}>
               <p className="fineprint" style={{ margin: '0 0 16px' }}>{rows[0].modeGuide}</p>
               {rows.map((r) => <SourceCard key={r.group + r.exams} row={r} />)}
             </div>
@@ -66,13 +66,13 @@ export default function AdminDataMap() {
 
 function SourceCard({ row }: { row: DataSourceRow }) {
   return (
-    <div style={{ padding: '14px 0', borderTop: '1px solid var(--line)' }}>
+    <div style={{ padding: '14px 0', borderTop: '1px solid var(--border)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <div>
           <b>{row.group}</b>
           <span style={{ color: 'var(--muted2)', fontSize: 13 }}> · {row.exams}</span>
         </div>
-        <span className="chip">{row.frequency}</span>
+        <span className="k-chip">{row.frequency}</span>
       </div>
 
       <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 8, lineHeight: 1.8 }}>
@@ -82,7 +82,7 @@ function SourceCard({ row }: { row: DataSourceRow }) {
       </div>
 
       {row.mode !== 'EXCLUDED' && (
-        <a className="btn" href={row.sourceUrl} target="_blank" rel="noreferrer"
+        <a className="k-btn k-btn--secondary" href={row.sourceUrl} target="_blank" rel="noreferrer"
            style={{ marginTop: 10 }}>
           원본 사이트 열기 ↗
         </a>

@@ -25,7 +25,7 @@ export default function MePage() {
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  if (!me) return <div className="state">불러오는 중…</div>;
+  if (!me) return <div className="k-empty state">불러오는 중…</div>;
 
   async function run(fn: () => Promise<unknown>, ok: string) {
     setSaving(true); setMsg(null); setErr(null);
@@ -63,11 +63,11 @@ export default function MePage() {
         </div>
       </div>
 
-      {err && <div className="notice error">{err}</div>}
-      {msg && <div className="notice ok">{msg}</div>}
+      {err && <div className="k-alert k-alert--err">{err}</div>}
+      {msg && <div className="k-alert k-alert--ok">{msg}</div>}
 
       {/* 알림이 실제로 갈 수 있는 상태인지 한눈에 */}
-      <div className={`notice ${hasEmail ? 'info' : 'warn'}`}>
+      <div className={`k-alert${hasEmail ? '' : ' k-alert--warn'}`}>
         {hasEmail
           ? <>접수 시작·마감과 시험일 알림이 <b>{me.email}</b> 으로 갑니다.</>
           : <><b>알림을 받을 수 없는 상태입니다.</b> 아래에 이메일을 넣어 주세요.
@@ -75,57 +75,57 @@ export default function MePage() {
       </div>
 
       <div className="section-head"><h2>알림 받을 곳</h2></div>
-      <div className="panel" style={{ padding: 20 }}>
+      <div className="k-card" style={{ padding: 20 }}>
         <div className="field">
           <span>이메일 *</span>
-          <input className="input" type="email" value={email} placeholder="name@example.com"
+          <input className="k-input" type="email" value={email} placeholder="name@example.com"
                  onChange={(e) => setEmail(e.target.value)} />
         </div>
         <p className="fineprint" style={{ margin: '0 0 14px' }}>
           지금은 알림이 이메일로만 갑니다. 비우면 알림을 받을 수 없습니다.
         </p>
-        <button className="btn primary" onClick={() => run(() => examApi.changeEmail(email.trim()), '이메일을 저장했습니다.')}
+        <button className="k-btn k-btn--primary" onClick={() => run(() => examApi.changeEmail(email.trim()), '이메일을 저장했습니다.')}
                 disabled={saving}>
           {saving ? '저장 중…' : '이메일 저장'}
         </button>
 
         <div className="field" style={{ marginTop: 26 }}>
           <span>휴대폰번호 (지금은 안 씀)</span>
-          <input className="input" value={phone} inputMode="numeric" placeholder="010-1234-5678"
+          <input className="k-input" value={phone} inputMode="numeric" placeholder="010-1234-5678"
                  onChange={(e) => setPhone(formatPhone(e.target.value))} />
         </div>
         <p className="fineprint" style={{ margin: '0 0 14px' }}>
           카카오톡 알림(알림톡)을 붙일 때 쓰려고 미리 받아 둡니다. 지금은 발송하지 않습니다.
         </p>
-        <button className="btn" onClick={() => run(() => examApi.changePhone(phone.replace(/[^0-9]/g, '')), '번호를 저장했습니다.')}
+        <button className="k-btn k-btn--secondary" onClick={() => run(() => examApi.changePhone(phone.replace(/[^0-9]/g, '')), '번호를 저장했습니다.')}
                 disabled={saving}>
           번호 저장
         </button>
       </div>
 
       <div className="section-head"><h2>프로필</h2></div>
-      <div className="panel" style={{ padding: 20 }}>
+      <div className="k-card" style={{ padding: 20 }}>
         <div className="field">
           <span>닉네임 (커뮤니티 표시명)</span>
-          <input className="input" value={nickname} maxLength={30}
+          <input className="k-input" value={nickname} maxLength={30}
                  onChange={(e) => setNickname(e.target.value)} />
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn primary"
+          <button className="k-btn k-btn--primary"
                   onClick={() => run(() => examApi.changeNickname(nickname.trim()), '저장했습니다.')}
                   disabled={saving || !nickname.trim()}>
             저장
           </button>
-          <button className="btn" onClick={logout}>로그아웃</button>
+          <button className="k-btn k-btn--secondary" onClick={logout}>로그아웃</button>
         </div>
       </div>
 
       <div className="section-head"><h2>계정 삭제</h2></div>
-      <div className="panel" style={{ padding: 20 }}>
+      <div className="k-card" style={{ padding: 20 }}>
         <p className="fineprint" style={{ margin: '0 0 14px' }}>
           탈퇴하면 등록한 시험과 알림 설정이 사라집니다. 작성한 글·댓글은 남고 작성자만 가려집니다.
         </p>
-        <button className="btn danger" onClick={withdraw}>회원 탈퇴</button>
+        <button className="k-btn k-btn--danger" onClick={withdraw}>회원 탈퇴</button>
       </div>
     </>
   );

@@ -118,26 +118,26 @@ export default function AdminWrite() {
 
   return (
     <>
-      <div className="notice warn" style={{ marginBottom: 18 }}>
+      <div className="k-alert k-alert--warn" style={{ marginBottom: 18 }}>
         <b>자동으로 들어오는 시험은 손대지 마세요.</b> 다음 수집 때 덮어써져 헛일이 됩니다 —
         어느 쪽인지는 <Link to="/admin/sources">수집 지도</Link>에서 확인합니다.
       </div>
 
-      {err && <div className="notice error">{err}</div>}
-      {msg && <div className="notice ok">{msg}</div>}
+      {err && <div className="k-alert k-alert--err">{err}</div>}
+      {msg && <div className="k-alert k-alert--ok">{msg}</div>}
 
       <div className="step-head"><span className="step-no">1</span><h2>시험 고르기</h2></div>
-      <div className="panel" style={{ padding: 20 }}>
+      <div className="k-card" style={{ padding: 20 }}>
         {selected ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <b style={{ fontSize: 16 }}>{selected.name}</b>
-            <button className="btn" onClick={clear} type="button">다른 시험 고르기</button>
+            <button className="k-btn k-btn--secondary" onClick={clear} type="button">다른 시험 고르기</button>
           </div>
         ) : (
           <>
             <div className="searchbar" style={{ marginBottom: 0 }}>
               <span className="ico" aria-hidden="true">⌕</span>
-              <input className="input" placeholder="시험명 검색 (2자 이상)"
+              <input className="k-input" placeholder="시험명 검색 (2자 이상)"
                      value={q} onChange={(e) => setQ(e.target.value)} />
             </div>
             {results.length > 0 && (
@@ -166,10 +166,10 @@ export default function AdminWrite() {
             <span className="more">{rows.length}건</span>
           </div>
           {rows.length === 0 ? (
-            <div className="state">아직 등록된 일정이 없습니다.</div>
+            <div className="k-empty state">아직 등록된 일정이 없습니다.</div>
           ) : (
-            <div className="table-wrap">
-              <table className="data-table">
+            <div className="k-tablewrap">
+              <table className="k-table data-table">
                 <thead>
                   <tr><th>회차</th><th>접수</th><th>시험</th><th>발표</th><th>출처</th><th></th></tr>
                 </thead>
@@ -192,38 +192,38 @@ export default function AdminWrite() {
           <div className="step-head" style={{ marginTop: 30 }}>
             <span className="step-no">3</span><h2>넣기 / 고치기</h2>
           </div>
-          <div className="panel" style={{ padding: 20 }}>
+          <div className="k-card" style={{ padding: 20 }}>
             <p className="fineprint" style={{ margin: '0 0 16px' }}>
               같은 <b>연도·회차·구분</b>이 이미 있으면 덮어씁니다 — 일정이 바뀌었을 때 그대로 다시 넣으면 됩니다.
             </p>
 
             <div className="form-grid">
               <label className="field"><span>연도</span>
-                <input className="input" type="number" value={form.year} onChange={set('year')} /></label>
+                <input className="k-input" type="number" value={form.year} onChange={set('year')} /></label>
               <label className="field"><span>회차</span>
-                <input className="input" type="number" value={form.round} onChange={set('round')} /></label>
+                <input className="k-input" type="number" value={form.round} onChange={set('round')} /></label>
               <label className="field"><span>구분</span>
-                <select className="input" value={form.examType} onChange={set('examType')}>
+                <select className="k-select" value={form.examType} onChange={set('examType')}>
                   <option value="WRITTEN">필기 (구분 없으면 이것)</option>
                   <option value="PRACTICAL">실기</option>
                 </select></label>
 
               <label className="field"><span>접수 시작 (시각까지)</span>
-                <input className="input" type="datetime-local" value={form.regStartAt} onChange={set('regStartAt')} /></label>
+                <input className="k-input" type="datetime-local" value={form.regStartAt} onChange={set('regStartAt')} /></label>
               <label className="field"><span>접수 마감 (시각까지)</span>
-                <input className="input" type="datetime-local" value={form.regEndAt} onChange={set('regEndAt')} /></label>
+                <input className="k-input" type="datetime-local" value={form.regEndAt} onChange={set('regEndAt')} /></label>
               <label className="field"><span>시험일</span>
-                <input className="input" type="date" value={form.examStartDate} onChange={set('examStartDate')} /></label>
+                <input className="k-input" type="date" value={form.examStartDate} onChange={set('examStartDate')} /></label>
               <label className="field"><span>시험 종료일 (여러 날일 때만)</span>
-                <input className="input" type="date" value={form.examEndDate} onChange={set('examEndDate')} /></label>
+                <input className="k-input" type="date" value={form.examEndDate} onChange={set('examEndDate')} /></label>
               <label className="field"><span>발표일</span>
-                <input className="input" type="date" value={form.resultDate} onChange={set('resultDate')} /></label>
+                <input className="k-input" type="date" value={form.resultDate} onChange={set('resultDate')} /></label>
               <label className="field wide"><span>출처 URL (공고 주소)</span>
-                <input className="input" placeholder="https://..." value={form.sourceUrl} onChange={set('sourceUrl')} /></label>
+                <input className="k-input" placeholder="https://..." value={form.sourceUrl} onChange={set('sourceUrl')} /></label>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-              <button className="btn primary" onClick={save} disabled={busy} type="button">
+              <button className="k-btn k-btn--primary" onClick={save} disabled={busy} type="button">
                 {busy ? '저장 중…' : '저장'}
               </button>
             </div>

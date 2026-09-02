@@ -37,17 +37,17 @@ export default function CalendarPage() {
       </div>
 
       <div className="month-bar">
-        <button className="btn" onClick={() => move(-1)}>‹ 이전</button>
+        <button className="k-btn k-btn--secondary" onClick={() => move(-1)}>‹ 이전</button>
         <strong>{year}년 {month}월</strong>
-        <button className="btn" onClick={() => move(1)}>다음 ›</button>
+        <button className="k-btn k-btn--secondary" onClick={() => move(1)}>다음 ›</button>
       </div>
 
-      {err && <div className="notice error">{err}</div>}
+      {err && <div className="k-alert k-alert--err">{err}</div>}
 
       {events === null ? (
-        <div className="state">불러오는 중…</div>
+        <div className="k-empty state">불러오는 중…</div>
       ) : events.length === 0 ? (
-        <div className="state">
+        <div className="k-empty state">
           <span className="big">이 달 일정이 없습니다</span>
           다른 달로 이동하거나 관심 시험을 더 등록해 보세요.
         </div>
@@ -59,14 +59,14 @@ export default function CalendarPage() {
           </div>
           <div className="day-list">
             {events.map((e, i) => (
-              <Link to={`/cert/${e.certificateId}`} className="card day-row" key={`${e.date}-${i}`}>
+              <Link to={`/cert/${e.certificateId}`} className="k-card day-row" key={`${e.date}-${i}`}>
                 <span className="date">
                   <b>{Number(e.date.slice(8, 10))}</b>
                   <span>{WEEKDAY[new Date(e.date).getDay()]}</span>
                 </span>
                 <span className="body">
                   <h3>{e.name}</h3>
-                  <span className="badge">{e.label}</span>
+                  <span className="k-badge">{e.label}</span>
                 </span>
               </Link>
             ))}

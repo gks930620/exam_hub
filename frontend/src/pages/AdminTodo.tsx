@@ -24,7 +24,7 @@ export default function AdminTodo() {
   return (
     <>
       {c && (
-        <div className="panel cover-strip">
+        <div className="k-card cover-strip">
           <div className="cover-nums">
             <b>{c.withSchedule.toLocaleString()}</b>
             <span> / {c.totalExams.toLocaleString()}종에 일정이 있습니다</span>

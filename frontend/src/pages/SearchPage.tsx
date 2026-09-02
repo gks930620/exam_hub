@@ -89,7 +89,7 @@ export default function SearchPage() {
       <div className="searchbar">
         <span className="ico" aria-hidden="true">⌕</span>
         <input
-          className="input"
+          className="k-input"
           placeholder="시험명 검색 (예: 정보처리기사, 토익, 한국사)"
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -99,13 +99,13 @@ export default function SearchPage() {
 
       {cats.length > 0 && (
         <div className="chip-row">
-          <button className={`chip${cat === '' ? ' on' : ''}`} onClick={() => setCat('')}>
+          <button className="k-chip" aria-pressed={cat === ''} onClick={() => setCat('')}>
             전체 <b>{cats.reduce((a, c) => a + c.count, 0)}</b>
           </button>
           {cats.map((c) => (
             <button
               key={c.name}
-              className={`chip${c.name === cat ? ' on' : ''}`}
+              className="k-chip" aria-pressed={c.name === cat}
               onClick={() => setCat(c.name === cat ? '' : c.name)}
             >
               {c.name} <b>{c.count}</b>
@@ -114,7 +114,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {err && <div className="notice error">{err}</div>}
+      {err && <div className="k-alert k-alert--err">{err}</div>}
 
       <div className="section-head">
         <h2>{q.trim() ? `‘${q.trim()}’ 검색 결과` : cat || '전체 시험'}</h2>
@@ -122,14 +122,14 @@ export default function SearchPage() {
       </div>
 
       {items.length === 0 && !loading ? (
-        <div className="state">
+        <div className="k-empty state">
           <span className="big">결과가 없습니다</span>
           다른 이름이나 분류로 찾아보세요.
         </div>
       ) : (
         <div className="card-grid">
           {items.map((c) => (
-            <div className="card exam-card" key={c.id}>
+            <div className="k-card k-card--hover exam-card" key={c.id}>
               <div className="top">
                 <Link to={`/cert/${c.id}`} className="grow">
                   <h3>{c.name}</h3>
@@ -147,12 +147,12 @@ export default function SearchPage() {
               </div>
               {c.rolling ? (
                 <div className="foot">
-                  <span className="badge">상시시험</span>
+                  <span className="k-badge">상시시험</span>
                   <span className="when">원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다</span>
                 </div>
               ) : !c.hasSchedule && (
                 <div className="foot">
-                  <span className="badge">일정 미정</span>
+                  <span className="k-badge">일정 미정</span>
                   <span className="when">등록해 두면 일정이 확인되는 대로 알려 드립니다</span>
                 </div>
               )}
@@ -161,11 +161,11 @@ export default function SearchPage() {
         </div>
       )}
 
-      {loading && <div className="state">불러오는 중…</div>}
+      {loading && <div className="k-empty state">불러오는 중…</div>}
 
       {hasMore && !loading && (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
-          <button className="btn primary" onClick={() => load(page + 1, true)}>
+          <button className="k-btn k-btn--primary" onClick={() => load(page + 1, true)}>
             더 보기 ({items.length.toLocaleString()} / {total.toLocaleString()})
           </button>
         </div>

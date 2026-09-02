@@ -33,7 +33,7 @@ export default function LoginPage() {
     return () => { alive = false; };
   }, []);
 
-  if (loading || !asked) return <div className="state">불러오는 중…</div>;
+  if (loading || !asked) return <div className="k-empty state">불러오는 중…</div>;
   if (me) return <Navigate to="/" replace />;
 
   const usable = available === null ? ALL : ALL.filter((p) => available.includes(p.id));
@@ -51,9 +51,9 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="panel login-card">
+      <div className="k-card login-card">
         {usable.length === 0 ? (
-          <p className="notice warn">
+          <p className="k-alert k-alert--warn">
             지금은 로그인을 쓸 수 없습니다. 소셜 로그인 키가 설정되지 않았습니다.
             <br />시험 검색과 커뮤니티 읽기는 그대로 이용하실 수 있습니다.
           </p>

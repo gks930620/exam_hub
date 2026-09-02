@@ -25,7 +25,7 @@ export default function Pagination({ page, totalPages, onChange }: {
   });
 
   return (
-    <nav className="pagination" aria-label="쪽 이동">
+    <nav className="k-pager pagination" aria-label="쪽 이동">
       <button className="page-btn arrow" disabled={page === 0}
               onClick={() => onChange(page - 1)} aria-label="이전 쪽">‹</button>
       {items.map((it, i) =>

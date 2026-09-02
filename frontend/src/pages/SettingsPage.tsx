@@ -51,12 +51,12 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {loadError && <div className="notice error">설정을 불러오지 못했습니다: {loadError}</div>}
-      {!s && !loadError && <div className="state">불러오는 중…</div>}
+      {loadError && <div className="k-alert k-alert--err">설정을 불러오지 못했습니다: {loadError}</div>}
+      {!s && !loadError && <div className="k-empty state">불러오는 중…</div>}
 
       {s && (
         <>
-          <div className="panel">
+          <div className="k-card">
             <div className="panel-head">
               <span>수신 항목</span>
               <span>{saving ? '저장 중…' : msg}</span>

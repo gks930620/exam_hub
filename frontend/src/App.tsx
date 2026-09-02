@@ -26,11 +26,11 @@ import Avatar from './components/Avatar';
 // 홈(/)은 '시험 찾기'다. 처음 온 사람이 가장 먼저 할 일이 그것이고, 비로그인도 볼 수 있다.
 // 예전엔 홈이 '내 시험'이라 로그인부터 요구했는데, 아직 관심 시험이 없는 사람에게는 빈 화면이었다.
 const NAV = [
-  { to: '/', label: '시험 찾기', icon: '⌕', end: true },
-  { to: '/my', label: '내 시험', icon: '◎', end: false },
-  { to: '/calendar', label: '캘린더', icon: '▤', end: false },
-  { to: '/community', label: '커뮤니티', icon: '💬', end: false },
-  { to: '/settings', label: '알림 설정', icon: '⚙', end: false },
+  { to: '/', label: '시험 찾기', end: true },
+  { to: '/my', label: '내 시험', end: false },
+  { to: '/calendar', label: '캘린더', end: false },
+  { to: '/community', label: '커뮤니티', end: false },
+  { to: '/settings', label: '알림 설정', end: false },
 ];
 
 /** 로그인이 필요한 화면 — 비로그인이면 로그인으로 보내고, 돌아올 곳을 기억한다. */
@@ -40,11 +40,11 @@ const NAV = [
  */
 function RequireAdmin({ children }: { children: ReactNode }) {
   const { me, loading } = useAuth();
-  if (loading) return <div className="state">불러오는 중…</div>;
+  if (loading) return <div className="k-empty state">불러오는 중…</div>;
   if (!me) return <Navigate to="/manager/login" replace />;
   if (me.role !== 'ADMIN') {
     return (
-      <div className="state">
+      <div className="k-empty state">
         <span className="big">매니저만 볼 수 있는 화면입니다</span>
         운영자 계정으로 로그인해야 합니다. <a href="/manager/login">매니저 로그인</a>
       </div>
@@ -56,7 +56,7 @@ function RequireAdmin({ children }: { children: ReactNode }) {
 function RequireAuth({ children }: { children: ReactNode }) {
   const { me, loading } = useAuth();
   const location = useLocation();
-  if (loading) return <div className="state">불러오는 중…</div>;
+  if (loading) return <div className="k-empty state">불러오는 중…</div>;
   if (!me) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   return <>{children}</>;
 }
@@ -70,27 +70,24 @@ export default function App() {
   const dark = isDark(theme);
 
   return (
-    <div className="app-shell">
-      <header className="app-header">
-        <div className="header-container">
-          <NavLink to="/" className="header-logo">모든시험한번에보기</NavLink>
+    <div className="k-shell">
+      <header className="k-topnav app-header">
+        <NavLink to="/" className="k-topnav__logo">모든시험한번에보기</NavLink>
 
-          <nav className="top-nav" aria-label="주요 화면">
-            {NAV.map((n) => (
-              <NavLink key={n.to} to={n.to} end={n.end}
-                className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
-                <span aria-hidden="true">{n.icon}</span>{n.label}
-              </NavLink>
-            ))}
-            {me?.role === 'ADMIN' && (
-              <NavLink to="/admin"
-                className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
-                <span aria-hidden="true">✎</span>수기 일정 입력
-              </NavLink>
-            )}
-          </nav>
-          <div className="hdr-tools">
-            <button className="icon-btn"
+        {/* 활성 표시는 aria-current — NavLink 가 자동으로 붙여 주고, 킷이 그걸로 밑줄을 긋는다 */}
+        <nav className="top-nav" aria-label="주요 화면">
+          {NAV.map((n) => (
+            <NavLink key={n.to} to={n.to} end={n.end} className="nav-item">
+              {n.label}
+            </NavLink>
+          ))}
+          {me?.role === 'ADMIN' && (
+            <NavLink to="/admin" className="nav-item">수기 일정 입력</NavLink>
+          )}
+        </nav>
+        <span className="k-spacer" />
+        <div className="hdr-tools">
+            <button className="k-btn k-btn--ghost k-btn--icon icon-btn"
                     onClick={() => setTheme(dark ? 'light' : 'dark')}
                     aria-label={dark ? '라이트 모드로 전환' : '다크 모드로 전환'}
                     title={dark ? '라이트 모드로 전환' : '다크 모드로 전환'}>
@@ -102,14 +99,12 @@ export default function App() {
                 <span className="only-desktop">{me.nickname}</span>
               </NavLink>
             ) : (
-              <NavLink to="/login" className="btn primary">로그인</NavLink>
+              <NavLink to="/login" className="k-btn k-btn--primary k-btn--sm">로그인</NavLink>
             )}
           </div>
-        </div>
       </header>
 
-      <div className="app-body">
-        <main className="content-area">
+      <main className="k-main">
           <Routes>
             {/* 공개 */}
             <Route path="/" element={<SearchPage />} />
@@ -138,14 +133,13 @@ export default function App() {
             </Route>
 
             <Route path="*" element={
-              <div className="state">
+              <div className="k-empty state">
                 <span className="big">페이지를 찾을 수 없습니다</span>
                 주소를 확인하거나 위 메뉴에서 이동하세요.
               </div>
             } />
           </Routes>
-        </main>
-      </div>
+      </main>
     </div>
   );
 }

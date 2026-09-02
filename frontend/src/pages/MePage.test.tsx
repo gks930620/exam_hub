@@ -31,7 +31,7 @@ function mockMe(over: Partial<MeResponse> = {}) {
 describe('MePage — 알림 수신 상태', () => {
   /** 수신 상태 안내는 .notice 한 곳에만 뜬다 — 그 박스만 골라 본다. */
   function noticeText(): string {
-    return document.querySelector('.notice.info, .notice.warn')?.textContent ?? '';
+    return document.querySelector('.k-alert')?.textContent ?? '';
   }
 
   it('이메일이 있으면 그 주소로 간다고 알려준다', () => {

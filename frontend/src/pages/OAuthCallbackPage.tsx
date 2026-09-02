@@ -23,16 +23,16 @@ export default function OAuthCallbackPage() {
 
   if (failed) {
     return (
-      <div className="state">
+      <div className="k-empty state">
         <span className="big">로그인을 마치지 못했습니다</span>
         토큰을 받지 못했습니다. 다시 시도해 주세요.
         <div style={{ marginTop: 18 }}>
-          <button className="btn primary" onClick={() => navigate('/login', { replace: true })}>
+          <button className="k-btn k-btn--primary" onClick={() => navigate('/login', { replace: true })}>
             로그인으로 돌아가기
           </button>
         </div>
       </div>
     );
   }
-  return <div className="state">로그인 중…</div>;
+  return <div className="k-empty state">로그인 중…</div>;
 }
