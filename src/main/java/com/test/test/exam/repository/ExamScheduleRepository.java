@@ -48,6 +48,25 @@ public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long
             @Param("to") java.time.LocalDateTime to);
 
     List<ExamSchedule> findByExamStartDateBetween(LocalDate from, LocalDate to);
+
+    /** 지금 접수 중인 시험 수 — 첫 화면 지표. 폐지·개칭은 뺀다. */
+    @Query("""
+            SELECT COUNT(DISTINCT s.certificate.id) FROM ExamSchedule s
+            WHERE s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+              AND s.regStartAt <= :now AND s.regEndAt >= :now
+              AND s.certificate.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
+            """)
+    long countCertificatesWithOpenRegistration(@Param("now") java.time.LocalDateTime now);
+
+    /** 접수가 곧 시작되는 시험 수 — 첫 화면 지표. */
+    @Query("""
+            SELECT COUNT(DISTINCT s.certificate.id) FROM ExamSchedule s
+            WHERE s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+              AND s.regStartAt > :from AND s.regStartAt <= :to
+              AND s.certificate.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
+            """)
+    long countCertificatesWithRegistrationOpening(@Param("from") java.time.LocalDateTime from,
+                                                  @Param("to") java.time.LocalDateTime to);
     /** 일정이 하나라도 살아 있는 시험의 수 — 매니저 화면의 "얼마나 채워졌나". */
     @Query("SELECT COUNT(DISTINCT s.certificate.id) FROM ExamSchedule s WHERE s.status = 'ACTIVE'")
     long countDistinctCertificateWithActiveSchedule();

@@ -22,6 +22,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 class CertificateBrowseIntegrationTest extends ApiIntegrationTestSupport {
 
+    // ===== 첫 화면 지표 =====
+
+    /**
+     * 시험 찾기 첫 화면의 지표 타일(킷 .k-stats). 전체 시험 / 일정 있는 시험 / 지금 접수 중 /
+     * 7일 안에 접수 시작. 비로그인도 본다. 숫자는 서로 모순되면 안 된다 — 일정 있는 시험이
+     * 전체보다 많거나, 접수 중이 일정 있는 시험보다 많으면 화면이 거짓말을 한다.
+     */
+    @Test
+    void stats_are_public_and_consistent() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/certificates/stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalExams").isNumber())
+                .andExpect(jsonPath("$.withSchedule").isNumber())
+                .andExpect(jsonPath("$.registrationOpen").isNumber())
+                .andExpect(jsonPath("$.openingWithin7Days").isNumber())
+                .andReturn();
+        JsonNode j = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        long total = j.path("totalExams").asLong(), with = j.path("withSchedule").asLong();
+        org.junit.jupiter.api.Assertions.assertTrue(total > 0, "시험이 하나도 없다");
+        org.junit.jupiter.api.Assertions.assertTrue(with <= total, "일정 있는 시험이 전체보다 많다");
+        org.junit.jupiter.api.Assertions.assertTrue(j.path("registrationOpen").asLong() <= with, "접수 중이 일정 있는 시험보다 많다");
+    }
+
     // ===== 전체 둘러보기 =====
 
     @Test

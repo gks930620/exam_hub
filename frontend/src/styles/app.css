@@ -294,16 +294,9 @@
    사용자 기준은 "깔끔". 요소를 세우되 덧칠은 하지 않는다 — 면 채움 대신 선, 문장 대신 배지 하나,
    장식 대신 여백. 전부 킷 토큰이고 원칙 1(흰 바탕 + 1px 선)·2(강조는 인디고 하나)를 그대로 따른다. */
 
-/* 카테고리 칩 — 5줄로 늘어지던 것을 한 줄 가로 스크롤로. 킷 기본 모양(흰 알약 + 진한 선), 고르면 인디고 채움 */
-.chip-row {
-  display: flex; gap: var(--sp-2); flex-wrap: nowrap; overflow-x: auto;
-  padding-bottom: var(--sp-1); margin-bottom: var(--sp-5);
-  scrollbar-width: thin; -webkit-overflow-scrolling: touch;
-}
-.chip-row .k-chip { flex: none; }
-.chip-row .k-chip b { color: var(--muted2); font-weight: var(--w-medium); }
+/* 칩 줄은 없앴다(드롭다운으로). 남은 .chip-row 는 커뮤니티 게시판 필터용 — 줄바꿈, 스크롤 없음 */
+.chip-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-5); }
 .chip-row .k-chip[aria-pressed="true"] { background: var(--point); border-color: var(--point); color: var(--on-point); }
-.chip-row .k-chip[aria-pressed="true"] b { color: var(--on-point); opacity: .8; }
 
 /* 목록 카드 — 진한 선 하나로 경계. 면 채움 없음 */
 .exam-card, .post-row, .day-row, .comment { border-color: var(--border-strong); }
@@ -326,3 +319,17 @@
 
 /* 페이지 아이콘 타일 — 연보라 면 위 인디고 아이콘. 화면에 하나뿐인 색 면 */
 .page-avatar { background: var(--point-soft); color: var(--point); border: none; }
+
+/* ── 시험 찾기 첫 화면 — 킷 데모(히어로 + 지표 타일 + 라벨 섹션)의 구조 그대로 ── */
+.search-hero h1 { max-width: 22ch; word-break: keep-all; }
+.search-hero p { word-break: keep-all; }
+.search-row { display: flex; gap: var(--sp-2); align-items: center; flex-wrap: wrap; }
+.search-row .searchbar { flex: 1 1 360px; margin: 0; }
+.search-row .k-select { flex: 0 0 220px; width: auto; }
+.search-row .k-input, .search-row .k-select { background: var(--surface); }
+.list-head { margin-bottom: var(--sp-3); }
+.list-head h2 .more { margin-left: var(--sp-2); font-weight: var(--w-medium); }
+.section-head h2 {
+  font-size: var(--t-sm); letter-spacing: var(--label-tracking); color: var(--muted2);
+  font-weight: var(--w-bold);
+}

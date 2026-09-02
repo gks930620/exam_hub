@@ -3,7 +3,7 @@ import type {
   SearchResponse, DetailResponse, FavoriteListResponse,
   NotifySettings, CalendarResponse, BrowseResponse, CategoryResponse,
   MeResponse, BoardItem, PostListResponse, PostDetail, CommentItem, AdminScheduleRow,
-  ManagerLoginResponse, DataMapResponse, OverviewResponse, LifecycleResponse,
+  ManagerLoginResponse, DataMapResponse, OverviewResponse, LifecycleResponse, StatsResponse,
 } from './types';
 
 export const examApi = {
@@ -21,6 +21,8 @@ export const examApi = {
   },
 
   categories: () => api.get<CategoryResponse>('/api/certificates/categories'),
+
+  stats: () => api.get<StatsResponse>('/api/certificates/stats'),
 
   popular: () => api.get<SearchResponse>('/api/certificates/popular'),
 

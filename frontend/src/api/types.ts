@@ -264,3 +264,11 @@ export interface LifecycleResponse {
   /** 확인이 필요한 건수 — "큐넷에 없다"만으로 폐지라 단정할 수 없다 */
   needsCheck: number;
 }
+
+/** GET /api/certificates/stats — 첫 화면 지표 타일 */
+export interface StatsResponse {
+  totalExams: number;
+  withSchedule: number;
+  registrationOpen: number;
+  openingWithin7Days: number;
+}

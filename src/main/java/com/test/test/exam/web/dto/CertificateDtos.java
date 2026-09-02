@@ -58,6 +58,17 @@ public final class CertificateDtos {
     ) {
     }
 
+    /** GET /api/certificates/stats — 첫 화면 지표 타일. 비로그인도 본다 */
+    public record StatsResponse(
+            long totalExams,
+            long withSchedule,
+            /** 지금 접수 중 */
+            long registrationOpen,
+            /** 7일 안에 접수 시작 */
+            long openingWithin7Days
+    ) {
+    }
+
     /** GET /api/certificates/categories — 필터용 분류 목록 */
     public record CategoryItem(String name, long count) {
     }

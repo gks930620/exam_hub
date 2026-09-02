@@ -42,6 +42,11 @@ public class CertificateController {
     }
 
     /** 분류 목록(+종목 수) — 시험 찾기 화면의 필터 칩. */
+    @GetMapping("/stats")
+    public ResponseEntity<CertificateDtos.StatsResponse> stats() {
+        return ResponseEntity.ok(certificateService.stats());
+    }
+
     @GetMapping("/categories")
     public ResponseEntity<CertificateDtos.CategoryResponse> categories() {
         return ResponseEntity.ok(certificateService.categories());

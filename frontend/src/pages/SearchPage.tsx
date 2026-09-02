@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth, useRequireLogin } from '../auth';
-import type { CategoryItem, CertItem } from '../api/types';
+import type { CategoryItem, CertItem, StatsResponse } from '../api/types';
 import Icon from '../components/Icon';
 
 // 시험 찾기: 전체 목록을 기본으로 보여준다.
@@ -16,6 +16,7 @@ export default function SearchPage() {
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('');
   const [cats, setCats] = useState<CategoryItem[]>([]);
+  const [stats, setStats] = useState<StatsResponse | null>(null);
   const [items, setItems] = useState<CertItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
@@ -26,6 +27,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     examApi.categories().then((r) => setCats(r.items)).catch(() => { /* 필터는 없어도 목록은 보여준다 */ });
+    examApi.stats().then(setStats).catch(() => { /* 지표는 없어도 목록은 보여준다 */ });
   }, []);
 
   // 검색어는 디바운스, 분류는 즉시. 둘 다 첫 페이지부터 다시.
@@ -79,47 +81,59 @@ export default function SearchPage() {
 
   return (
     <>
-      <div className="page-header">
-        <div className="page-avatar" aria-hidden="true"><Icon name="search" size={22} /></div>
-        <div>
-          <h1>시험 찾기</h1>
-          <p>등록해 두면 접수 시작·마감과 시험일을 알려 드립니다.</p>
+      {/* 킷 문법: 연보라 히어로 띠에 큰 제목 하나 + 할 일(검색). 데모의 첫 인상을 그대로 따른다 */}
+      <section className="k-hero search-hero">
+        <h1>시험 {stats ? stats.totalExams.toLocaleString() : '846'}종, 접수 마감을 놓치지 않게</h1>
+        <p>큐넷·국시원·어학까지 한곳에서 찾고, 등록해 두면 접수 시작·마감을 알려 드립니다.</p>
+        <div className="search-row">
+          <div className="searchbar">
+            <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
+            <input
+              className="k-input"
+              placeholder="시험명 검색 (예: 정보처리기사, 토익, 한국사)"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              aria-label="시험명 검색"
+            />
+          </div>
+          {/* 분류는 38개 — 칩으로 늘어놓으면 5줄이다. 고르는 건 드롭다운이 깔끔하다 */}
+          <select className="k-select" value={cat} onChange={(e) => setCat(e.target.value)} aria-label="분류">
+            <option value="">전체 분류</option>
+            {cats.map((c) => (
+              <option key={c.name} value={c.name}>{c.name} ({c.count})</option>
+            ))}
+          </select>
         </div>
-      </div>
+      </section>
 
-      <div className="searchbar">
-        <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
-        <input
-          className="k-input"
-          placeholder="시험명 검색 (예: 정보처리기사, 토익, 한국사)"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          aria-label="시험명 검색"
-        />
-      </div>
-
-      {cats.length > 0 && (
-        <div className="chip-row">
-          <button className="k-chip" aria-pressed={cat === ''} onClick={() => setCat('')}>
-            전체 <b>{cats.reduce((a, c) => a + c.count, 0)}</b>
-          </button>
-          {cats.map((c) => (
-            <button
-              key={c.name}
-              className="k-chip" aria-pressed={c.name === cat}
-              onClick={() => setCat(c.name === cat ? '' : c.name)}
-            >
-              {c.name} <b>{c.count}</b>
-            </button>
-          ))}
-        </div>
+      {stats && (
+        <section className="k-section">
+          <h2>지금 상황</h2>
+          <div className="k-stats">
+            <div className="k-stat k-stat--point">
+              <div className="k-stat__label">지금 접수 중</div>
+              <div className="k-stat__value">{stats.registrationOpen.toLocaleString()}</div>
+            </div>
+            <div className="k-stat">
+              <div className="k-stat__label">7일 안에 접수 시작</div>
+              <div className="k-stat__value">{stats.openingWithin7Days.toLocaleString()}</div>
+            </div>
+            <div className="k-stat">
+              <div className="k-stat__label">일정 있는 시험</div>
+              <div className="k-stat__value">{stats.withSchedule.toLocaleString()}</div>
+            </div>
+            <div className="k-stat">
+              <div className="k-stat__label">전체 시험</div>
+              <div className="k-stat__value">{stats.totalExams.toLocaleString()}</div>
+            </div>
+          </div>
+        </section>
       )}
 
       {err && <div className="k-alert k-alert--err">{err}</div>}
 
-      <div className="section-head">
-        <h2>{q.trim() ? `‘${q.trim()}’ 검색 결과` : cat || '전체 시험'}</h2>
-        <span className="more">{total.toLocaleString()}개</span>
+      <div className="k-section list-head">
+        <h2>{q.trim() ? `‘${q.trim()}’ 검색 결과` : cat || '전체 시험'} <span className="more">{total.toLocaleString()}개</span></h2>
       </div>
 
       {items.length === 0 && !loading ? (

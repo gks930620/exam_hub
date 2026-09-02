@@ -28,6 +28,7 @@ describe('SearchPage', () => {
       me: null, loading: false,
       login: vi.fn(), loginWithToken: vi.fn(), logout: vi.fn(), refresh: vi.fn(),
     });
+    vi.spyOn(examApi, 'stats').mockResolvedValue({ totalExams: 846, withSchedule: 656, registrationOpen: 12, openingWithin7Days: 5 });
     vi.spyOn(examApi, 'categories').mockResolvedValue({
       items: [{ name: '국가기술자격-정보통신', count: 23 }, { name: '어학-영어', count: 13 }],
     });
@@ -70,7 +71,8 @@ describe('SearchPage', () => {
     expect(screen.queryByText('일정 미정')).not.toBeInTheDocument();
   });
 
-  it('분류 칩을 개수와 함께 보여준다', async () => {
+  /** 분류 38개를 칩으로 늘어놓으면 5줄이라 드롭다운으로 바꿨다(2026-09-02). 개수는 옵션에 붙는다. */
+  it('분류를 개수와 함께 드롭다운으로 보여준다', async () => {
     vi.spyOn(examApi, 'browse').mockResolvedValue({
       items: [item()], page: 0, size: 24, totalElements: 1, totalPages: 1,
     });
@@ -78,7 +80,7 @@ describe('SearchPage', () => {
     render(<MemoryRouter><SearchPage /></MemoryRouter>);
 
     await waitFor(() => {
-      expect(screen.getByText('어학-영어')).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: '어학-영어 (13)' })).toBeInTheDocument();
     });
   });
 

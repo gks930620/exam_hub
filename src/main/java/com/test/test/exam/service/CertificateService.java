@@ -37,6 +37,16 @@ public class CertificateService {
     private final CertificateRepository certificateRepository;
     private final ExamScheduleRepository examScheduleRepository;
     private final UserFavoriteRepository userFavoriteRepository;
+
+    /** 첫 화면 지표 — 킷의 지표 타일에 들어간다. 상시·예약제는 일정이 없으니 자연히 안 세진다. */
+    public CertificateDtos.StatsResponse stats() {
+        java.time.LocalDateTime now = com.test.test.exam.common.TimeUtil.now();
+        return new CertificateDtos.StatsResponse(
+                certificateRepository.countVisible(),
+                certificateRepository.countVisibleWithSchedule(),
+                examScheduleRepository.countCertificatesWithOpenRegistration(now),
+                examScheduleRepository.countCertificatesWithRegistrationOpening(now, now.plusDays(7)));
+    }
     private final DdayService ddayService;
 
     /** 자격증명 부분 일치 검색. query 2자 미만이면 400. */
