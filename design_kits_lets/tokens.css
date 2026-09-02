@@ -1,0 +1,192 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Lets — 디자인 토큰
+   "밝고 반듯한 서비스 화면"
+
+   ⚠ 자동 생성 파일이다. 고치려면 kits/design_kits_lets/tokens.json 을 고치고
+     node tools/build.mjs 를 다시 돌린다.
+
+   로드 순서:  base.css → components.css → mobile.css → 이 파일 → extras.css
+   컴포넌트는 이 토큰만 참조한다. 색을 하드코딩하면 다크 모드가 깨진다.
+   지원 모드: light + dark
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light;
+
+  /* 치수 · 타이포 · 모션 — 모드와 무관 */
+  --r-sm: 8px;
+  --r: 10px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+  --bw: 1px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --nav-h: 62px;
+  --sidebar-w: 210px;
+  --content-max: 1200px;
+  --tab-h: 62px;
+  --touch: 46px;
+  --font: Pretendard, "Pretendard Variable", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --font-display: var(--font);
+  --font-mono: ui-monospace, Consolas, "D2Coding", monospace;
+  --t-xs: 12px;
+  --t-sm: 13.5px;
+  --t-md: 15px;
+  --t-lg: 17px;
+  --t-xl: 22px;
+  --t-2xl: 30px;
+  --t-3xl: 42px;
+  --w-normal: 400;
+  --w-medium: 500;
+  --w-bold: 700;
+  --w-heavy: 800;
+  --lh-tight: 1.35;
+  --lh: 1.65;
+  --lh-relaxed: 1.8;
+  --tracking-tight: -.03em;
+  --tracking-wide: .04em;
+  --display-tracking: -.035em;
+  --display-weight: 800;
+  --btn-transform: none;
+  --btn-weight: 700;
+  --btn-tracking: 0;
+  --label-transform: none;
+  --label-tracking: .01em;
+  --dur-fast: 130ms;
+  --dur: 190ms;
+  --ease: cubic-bezier(.25, .8, .35, 1);
+
+  /* 색 · 그림자 · 표현 (light) */
+  --bg: #ffffff;
+  --bg-sunken: #f2f3fb;
+  --surface: #ffffff;
+  --surface-alt: #f5f6fa;
+  --surface-hover: #eef0f9;
+  --text: #191b23;
+  --muted: #5f6473;
+  --muted2: #9aa0ae;
+  --point: #4b56e8;
+  --point-hover: #3b45d4;
+  --point-soft: #eceefd;
+  --point-text: #3b45d4;
+  --on-point: #ffffff;
+  --point-2: #f26a21;
+  --border: #e8e9f0;
+  --border-strong: #d4d6e3;
+  --ok: #1f8f4e;
+  --ok-soft: #e3f5ea;
+  --ok-text: #177040;
+  --warn: #b8710e;
+  --warn-soft: #fdf0dd;
+  --warn-text: #96590a;
+  --err: #dc3a3a;
+  --err-soft: #fdeaea;
+  --err-text: #b32424;
+  --overlay: rgba(25, 27, 35, .5);
+  --focus: #4b56e8;
+  --sh-1: 0 1px 2px rgba(30, 34, 70, .05);
+  --sh-2: 0 4px 14px rgba(30, 34, 70, .08);
+  --sh-3: 0 12px 32px rgba(30, 34, 70, .15);
+  --sh-point: 0 0 0 3px var(--point-soft);
+  --page-bg-image: none;
+  --header-bg: var(--surface);
+  --header-blur: none;
+  --card-bg: var(--surface);
+  --card-shadow: none;
+  --card-hover-shadow: var(--sh-2);
+  --card-accent: none;
+  --btn-bg: var(--point);
+  --btn-fg: var(--on-point);
+  --btn-hover-bg: var(--point-hover);
+  --btn-shadow: none;
+  --btn-press: translateY(1px);
+  --input-bg: var(--surface-alt);
+  --active-bg: var(--point-soft);
+  --active-fg: var(--point-text);
+  --hero-bg: #f0f2fd;
+  --hero-fg: var(--text);
+}
+
+/* 명시적 다크 — <html data-theme="dark"> */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #14162b;
+  --bg-sunken: #0f1122;
+  --surface: #1c1f38;
+  --surface-alt: #242844;
+  --surface-hover: #2d3252;
+  --text: #eceefa;
+  --muted: #a3a8c4;
+  --muted2: #767c9c;
+  --point: #7b84ff;
+  --point-hover: #949bff;
+  --point-soft: rgba(123, 132, 255, .18);
+  --point-text: #9aa1ff;
+  --on-point: #12142a;
+  --point-2: #ff8a4c;
+  --border: #2c3152;
+  --border-strong: #3d4370;
+  --ok: #4ecb84;
+  --ok-soft: rgba(78, 203, 132, .16);
+  --ok-text: #6fd89c;
+  --warn: #e8a94a;
+  --warn-soft: rgba(232, 169, 74, .16);
+  --warn-text: #f0bd72;
+  --err: #f2686a;
+  --err-soft: rgba(242, 104, 106, .16);
+  --err-text: #f68c8e;
+  --overlay: rgba(0, 0, 0, .6);
+  --focus: #7b84ff;
+  --sh-1: 0 1px 2px rgba(0, 0, 0, .3);
+  --sh-2: 0 4px 14px rgba(0, 0, 0, .35);
+  --sh-3: 0 12px 32px rgba(0, 0, 0, .5);
+  --sh-point: 0 0 0 3px var(--point-soft);
+  --hero-bg: #222a63;
+  --hero-fg: #f4f5ff;
+}
+
+/* OS 설정 추종 — data-theme 을 지정하지 않았을 때만 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #14162b;
+    --bg-sunken: #0f1122;
+    --surface: #1c1f38;
+    --surface-alt: #242844;
+    --surface-hover: #2d3252;
+    --text: #eceefa;
+    --muted: #a3a8c4;
+    --muted2: #767c9c;
+    --point: #7b84ff;
+    --point-hover: #949bff;
+    --point-soft: rgba(123, 132, 255, .18);
+    --point-text: #9aa1ff;
+    --on-point: #12142a;
+    --point-2: #ff8a4c;
+    --border: #2c3152;
+    --border-strong: #3d4370;
+    --ok: #4ecb84;
+    --ok-soft: rgba(78, 203, 132, .16);
+    --ok-text: #6fd89c;
+    --warn: #e8a94a;
+    --warn-soft: rgba(232, 169, 74, .16);
+    --warn-text: #f0bd72;
+    --err: #f2686a;
+    --err-soft: rgba(242, 104, 106, .16);
+    --err-text: #f68c8e;
+    --overlay: rgba(0, 0, 0, .6);
+    --focus: #7b84ff;
+    --sh-1: 0 1px 2px rgba(0, 0, 0, .3);
+    --sh-2: 0 4px 14px rgba(0, 0, 0, .35);
+    --sh-3: 0 12px 32px rgba(0, 0, 0, .5);
+    --sh-point: 0 0 0 3px var(--point-soft);
+    --hero-bg: #222a63;
+    --hero-fg: #f4f5ff;
+  }
+}

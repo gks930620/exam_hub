@@ -1,0 +1,28 @@
+/* Lets 전용 표현 — 토큰으로 표현되지 않는 것만. components.css 다음에 로드.
+   ① 아이콘은 원형 아바타가 아니라 연회색 라운드 스퀘어 타일
+   ② 활성 네비는 글자 폭만큼 짧고 굵은 먹색 밑줄
+   ③ 카드는 hover 에 살짝 떠오른다 (그림자를 평소엔 안 쓰는 킷이라 hover 가 유일한 신호)
+   ④ 알약 배지 = 오렌지 신규 표시. 이 킷에서 --point-2 가 유일하게 나오는 자리다 */
+
+.k-avatar, .k-item__icon, .k-row__rank {
+  border-radius: var(--r-lg);
+  background: var(--surface-alt);
+  color: var(--point);
+}
+
+.k-topnav a[aria-current="page"] {
+  border-bottom-width: 3px;
+  border-bottom-color: var(--text);
+}
+
+.k-card, .k-row, .k-stat {
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+}
+.k-card--hover:hover, .k-row:hover { transform: translateY(-2px); }
+
+.k-badge--pill {
+  background: var(--point-2);
+  color: #fff;
+  letter-spacing: 0;
+}

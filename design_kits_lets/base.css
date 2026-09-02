@@ -1,0 +1,101 @@
+/* ═══ base.css — 킷 저장소 core/base.css 의 복사본 ═══
+   ⚠ 여기서 고치지 말 것. 이 파일은 모든 킷이 공유하는 원본의 사본이다.
+     원본(core/base.css)을 고치고 node tools/build.mjs 를 돌린다.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   core/base.css — 리셋 + 문서 기본값. 모든 킷이 공유한다.
+
+   로드 순서:  base.css → components.css → kits/<id>/tokens.css → (extras.css)
+   ※ tokens.css 를 뒤에 둬도 되는 이유: 여기 규칙은 전부 var(--토큰) 참조라
+     선언 순서가 아니라 변수 값이 결과를 정한다. 순서에 안전하다.
+
+   이 파일에는 색·크기 리터럴이 없다. 하나라도 생기면 킷 교체가 깨진다.
+   ═══════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image: var(--page-bg-image, none);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--t-md);
+  line-height: var(--lh);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  line-height: var(--lh-tight);
+}
+h1 { font-size: var(--t-2xl); }
+h2 { font-size: var(--t-xl); }
+h3 { font-size: var(--t-lg); }
+h4, h5, h6 { font-size: var(--t-md); }
+
+p { margin: 0 0 var(--sp-3); }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--point); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp { font-family: var(--font-mono); font-size: .92em; }
+pre {
+  background: var(--surface-alt); border: var(--bw) solid var(--border);
+  border-radius: var(--r); padding: var(--sp-4); overflow: auto; margin: 0;
+}
+
+hr, .k-hr {
+  border: 0; border-top: var(--bw) solid var(--border);
+  margin: var(--sp-5) 0;
+}
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+
+/* 폼 요소는 폰트를 상속하지 않는다 — 반드시 명시 */
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* 포커스 링 — 마우스 클릭에는 안 뜨고 키보드에만 뜬다 */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection { background: var(--point-soft); color: var(--point-text); }
+
+/* 스크롤바 — 다크 킷에서 흰 스크롤바가 튀는 것을 막는다 */
+* { scrollbar-color: var(--border-strong) transparent; scrollbar-width: thin; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong); border-radius: var(--r-pill);
+  border: 3px solid transparent; background-clip: content-box;
+}
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* 다크에서 날짜·시간 입력의 달력 아이콘이 안 보이는 문제 */
+:root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+:root[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
+:root[data-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(.75); }
+
+/* 화면에는 안 보이고 스크린리더만 읽는 텍스트 */
+.k-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* 움직임 최소화 설정을 켠 사용자 존중 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+}

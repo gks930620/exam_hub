@@ -1,0 +1,955 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Lets 디자인 킷 — 한 파일 번들
+   "밝고 반듯한 서비스 화면"
+
+   이 파일 하나만 로드해도 킷 전체가 동작한다:
+     <link rel="stylesheet" href="design_kits_lets/design-kit.css">
+
+   합친 순서: base.css → components.css → mobile.css → tokens.css → extras.css
+   ⚠ 자동 생성. 고치려면 킷 저장소에서 고치고 다시 뽑는다.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ══════ base.css ══════ */
+/* ═══════════════════════════════════════════════════════════════════
+   core/base.css — 리셋 + 문서 기본값. 모든 킷이 공유한다.
+
+   로드 순서:  base.css → components.css → kits/<id>/tokens.css → (extras.css)
+   ※ tokens.css 를 뒤에 둬도 되는 이유: 여기 규칙은 전부 var(--토큰) 참조라
+     선언 순서가 아니라 변수 값이 결과를 정한다. 순서에 안전하다.
+
+   이 파일에는 색·크기 리터럴이 없다. 하나라도 생기면 킷 교체가 깨진다.
+   ═══════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image: var(--page-bg-image, none);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--t-md);
+  line-height: var(--lh);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  line-height: var(--lh-tight);
+}
+h1 { font-size: var(--t-2xl); }
+h2 { font-size: var(--t-xl); }
+h3 { font-size: var(--t-lg); }
+h4, h5, h6 { font-size: var(--t-md); }
+
+p { margin: 0 0 var(--sp-3); }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--point); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp { font-family: var(--font-mono); font-size: .92em; }
+pre {
+  background: var(--surface-alt); border: var(--bw) solid var(--border);
+  border-radius: var(--r); padding: var(--sp-4); overflow: auto; margin: 0;
+}
+
+hr, .k-hr {
+  border: 0; border-top: var(--bw) solid var(--border);
+  margin: var(--sp-5) 0;
+}
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+
+/* 폼 요소는 폰트를 상속하지 않는다 — 반드시 명시 */
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* 포커스 링 — 마우스 클릭에는 안 뜨고 키보드에만 뜬다 */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection { background: var(--point-soft); color: var(--point-text); }
+
+/* 스크롤바 — 다크 킷에서 흰 스크롤바가 튀는 것을 막는다 */
+* { scrollbar-color: var(--border-strong) transparent; scrollbar-width: thin; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong); border-radius: var(--r-pill);
+  border: 3px solid transparent; background-clip: content-box;
+}
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* 다크에서 날짜·시간 입력의 달력 아이콘이 안 보이는 문제 */
+:root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+:root[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
+:root[data-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(.75); }
+
+/* 화면에는 안 보이고 스크린리더만 읽는 텍스트 */
+.k-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* 움직임 최소화 설정을 켠 사용자 존중 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+}
+
+
+/* ══════ components.css ══════ */
+/* ═══════════════════════════════════════════════════════════════════
+   core/components.css — 모든 킷이 공유하는 컴포넌트. 접두사는 .k-
+
+   ★ 이 파일은 킷마다 다시 쓰지 않는다. 디자인 교체 = tokens.css 교체.
+   ★ 여기에는 색·크기 리터럴이 없다. 전부 var(--토큰) 참조다.
+     새 규칙을 추가할 때도 같다 — '#' 이나 'px' 리터럴이 보이면 잘못 가고 있는 것이다.
+     (예외: 0, 1px 이하의 헤어라인, 정렬용 100%/auto 같은 구조값)
+
+   컴포넌트 목록은 core/CONTRACT.md 에 정리돼 있다. AI 에게는 그 문서를 읽힌다.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 셸 ───────────────────────────────────────────────────────────── */
+
+.k-shell { min-height: 100vh; display: flex; flex-direction: column; }
+.k-shell--sidebar { flex-direction: row; align-items: stretch; }
+
+.k-topnav {
+  display: flex; align-items: center; gap: var(--sp-5);
+  height: var(--nav-h); padding: 0 var(--sp-6);
+  background: var(--header-bg);
+  -webkit-backdrop-filter: var(--header-blur); backdrop-filter: var(--header-blur);
+  border-bottom: var(--bw) solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.k-topnav__logo {
+  font-family: var(--font-display); font-weight: var(--w-heavy);
+  font-size: var(--t-lg); color: var(--point);
+  letter-spacing: var(--display-tracking); text-decoration: none; white-space: nowrap;
+}
+.k-topnav__logo:hover { text-decoration: none; }
+.k-topnav nav { display: flex; align-items: center; gap: var(--sp-5); }
+.k-topnav a:not(.k-topnav__logo):not(.k-btn) {
+  font-size: var(--t-md); font-weight: var(--w-bold);
+  color: var(--muted); text-decoration: none; white-space: nowrap;
+  padding: var(--sp-1) 0; border-bottom: 2px solid transparent;
+}
+.k-topnav a:not(.k-topnav__logo):not(.k-btn):hover { color: var(--text); text-decoration: none; }
+.k-topnav a[aria-current="page"] { color: var(--text); border-bottom-color: var(--point); }
+
+.k-sidebar {
+  width: var(--sidebar-w); flex: none;
+  background: var(--surface); border-right: var(--bw) solid var(--border);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; padding: var(--sp-5) 0 var(--sp-4);
+}
+.k-sidebar__logo {
+  font-family: var(--font-display); font-weight: var(--w-heavy); font-size: var(--t-lg);
+  color: var(--point); padding: 0 var(--sp-4) var(--sp-4);
+  letter-spacing: var(--display-tracking);
+}
+.k-sidebar__section {
+  font-size: var(--t-xs); letter-spacing: var(--label-tracking);
+  text-transform: var(--label-transform);
+  color: var(--muted2); font-weight: var(--w-bold);
+  padding: var(--sp-4) var(--sp-4) var(--sp-1);
+}
+.k-sidebar__nav { flex: 1; overflow-y: auto; }
+.k-sidebar a {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4); border-left: 3px solid transparent;
+  color: var(--muted); text-decoration: none; font-size: var(--t-md);
+  transition: background var(--dur-fast) var(--ease);
+}
+.k-sidebar a:hover { background: var(--surface-hover); color: var(--text); text-decoration: none; }
+.k-sidebar a[aria-current="page"] {
+  background: var(--active-bg); border-left-color: var(--point);
+  color: var(--active-fg); font-weight: var(--w-bold);
+}
+
+.k-main {
+  flex: 1; width: 100%; max-width: var(--content-max);
+  margin: 0 auto; padding: var(--sp-6);
+}
+.k-shell--sidebar .k-main { margin: 0; max-width: none; min-width: 0; }
+
+.k-page-title { margin: 0 0 var(--sp-2); font-size: var(--t-xl); }
+.k-page-desc { margin: 0 0 var(--sp-5); color: var(--muted); max-width: 70ch; }
+
+.k-footer {
+  border-top: var(--bw) solid var(--border); background: var(--surface);
+  padding: var(--sp-5) var(--sp-6); font-size: var(--t-sm); color: var(--muted2);
+}
+
+.k-toolbar {
+  display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap;
+  margin-bottom: var(--sp-4);
+}
+
+/* ── 히어로 ───────────────────────────────────────────────────────── */
+
+.k-hero {
+  position: relative; overflow: hidden;
+  background: var(--hero-bg); color: var(--hero-fg);
+  border: var(--bw) solid var(--border);
+  border-radius: var(--r-lg); padding: var(--sp-10) var(--sp-8);
+  margin-bottom: var(--sp-6);
+}
+.k-hero h1 { font-size: var(--t-3xl); color: inherit; margin: 0 0 var(--sp-3); }
+.k-hero p { color: inherit; opacity: .88; margin: 0 0 var(--sp-5); max-width: 56ch; }
+.k-hero > * { position: relative; }
+
+/* ── 버튼 ─────────────────────────────────────────────────────────── */
+
+.k-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2);
+  min-height: var(--touch);
+  border: var(--bw) solid transparent; border-radius: var(--r);
+  padding: var(--sp-2) var(--sp-5);
+  font-family: inherit; font-size: var(--t-md);
+  font-weight: var(--btn-weight); text-transform: var(--btn-transform);
+  letter-spacing: var(--btn-tracking);
+  cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease),
+              transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.k-btn:hover { text-decoration: none; }
+
+.k-btn--primary {
+  background: var(--btn-bg); color: var(--btn-fg);
+  /* 주 버튼에 테두리를 두르는 킷(Brutal)은 extras.css 에서 border-color 를 되살린다 */
+  border-color: transparent; box-shadow: var(--btn-shadow);
+}
+.k-btn--primary:hover:not(:disabled) { background: var(--btn-hover-bg); }
+.k-btn--primary:active:not(:disabled) { transform: var(--btn-press); box-shadow: none; }
+
+.k-btn--secondary {
+  background: var(--surface); border-color: var(--border-strong); color: var(--text);
+  box-shadow: var(--sh-1);
+}
+.k-btn--secondary:hover:not(:disabled) { background: var(--surface-hover); }
+.k-btn--secondary:active:not(:disabled) { transform: var(--btn-press); box-shadow: none; }
+
+.k-btn--ghost { background: transparent; color: var(--muted); }
+.k-btn--ghost:hover:not(:disabled) { background: var(--surface-hover); color: var(--text); }
+
+.k-btn--danger { background: transparent; border-color: var(--err); color: var(--err); }
+.k-btn--danger:hover:not(:disabled) { background: var(--err-soft); }
+
+.k-btn:disabled, .k-btn[aria-disabled="true"] {
+  background: var(--surface-hover); border-color: var(--border);
+  color: var(--muted2); cursor: not-allowed; box-shadow: none; transform: none;
+}
+
+.k-btn--sm { min-height: 0; padding: var(--sp-1) var(--sp-3); font-size: var(--t-sm); border-radius: var(--r-sm); }
+.k-btn--lg { padding: var(--sp-3) var(--sp-6); font-size: var(--t-lg); }
+.k-btn--block { display: flex; width: 100%; }
+.k-btn--icon { padding: var(--sp-2); aspect-ratio: 1; }
+
+/* ── 입력 ─────────────────────────────────────────────────────────── */
+
+.k-field { margin-bottom: var(--sp-4); }
+.k-label {
+  display: block; margin-bottom: var(--sp-1);
+  font-size: var(--t-sm); font-weight: var(--w-bold); color: var(--text);
+}
+.k-help { margin: var(--sp-1) 0 0; font-size: var(--t-xs); color: var(--muted); }
+.k-help--err { color: var(--err-text); }
+
+.k-input, .k-select, .k-textarea {
+  width: 100%; min-height: var(--touch);
+  background: var(--input-bg); color: var(--text);
+  border: var(--bw) solid var(--border-strong); border-radius: var(--r);
+  padding: var(--sp-2) var(--sp-3);
+  font-family: inherit; font-size: var(--t-md);
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.k-input::placeholder, .k-textarea::placeholder { color: var(--muted2); }
+.k-input:focus, .k-select:focus, .k-textarea:focus {
+  outline: none; border-color: var(--point); box-shadow: var(--sh-point);
+}
+.k-input[aria-invalid="true"], .k-textarea[aria-invalid="true"] { border-color: var(--err); }
+.k-input:disabled, .k-select:disabled, .k-textarea:disabled {
+  background: var(--bg-sunken); color: var(--muted2); cursor: not-allowed;
+}
+.k-textarea { min-height: calc(var(--sp-10) * 2.4); resize: vertical; line-height: var(--lh); }
+
+.k-checkbox, .k-radio { accent-color: var(--point); width: var(--sp-4); height: var(--sp-4); }
+.k-check-row { display: flex; align-items: center; gap: var(--sp-2); cursor: pointer; }
+
+.k-switch {
+  appearance: none; -webkit-appearance: none; position: relative; cursor: pointer;
+  width: calc(var(--sp-10) - var(--sp-1)); height: var(--sp-5);
+  background: var(--border-strong); border-radius: var(--r-pill);
+  transition: background var(--dur) var(--ease);
+}
+.k-switch::after {
+  content: ""; position: absolute; top: 2px; left: 2px;
+  width: calc(var(--sp-5) - 4px); height: calc(var(--sp-5) - 4px);
+  background: var(--surface); border-radius: var(--r-pill);
+  transition: transform var(--dur) var(--ease);
+}
+.k-switch:checked { background: var(--point); }
+.k-switch:checked::after { transform: translateX(calc(var(--sp-10) - var(--sp-5) - var(--sp-1))); }
+
+.k-inputgroup { display: flex; gap: var(--sp-2); align-items: center; }
+.k-inputgroup .k-input { flex: 1; }
+
+/* ── 칩 · 배지 ────────────────────────────────────────────────────── */
+
+.k-chip {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  background: var(--surface); border: var(--bw) solid var(--border-strong); color: var(--text);
+  border-radius: var(--r-pill); padding: var(--sp-1) var(--sp-3);
+  font-family: inherit; font-size: var(--t-sm); font-weight: var(--w-medium);
+  cursor: pointer; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease);
+}
+.k-chip:hover { background: var(--surface-hover); }
+.k-chip[aria-pressed="true"], .k-chip.is-on {
+  background: var(--active-bg); border-color: var(--point);
+  color: var(--active-fg); font-weight: var(--w-bold);
+}
+
+.k-badge {
+  display: inline-flex; align-items: center; gap: var(--sp-1);
+  border-radius: var(--r-sm); padding: 2px var(--sp-2);
+  font-size: var(--t-xs); font-weight: var(--w-heavy); line-height: 1.6;
+  background: var(--surface-alt); color: var(--muted);
+  text-transform: var(--label-transform); letter-spacing: var(--label-tracking);
+}
+.k-badge--point { background: var(--point-soft); color: var(--point-text); }
+.k-badge--ok { background: var(--ok-soft); color: var(--ok-text); }
+.k-badge--warn { background: var(--warn-soft); color: var(--warn-text); }
+.k-badge--err { background: var(--err-soft); color: var(--err-text); }
+.k-badge--pill { border-radius: var(--r-pill); padding: 2px var(--sp-3); }
+
+.k-dot { width: var(--sp-2); height: var(--sp-2); border-radius: var(--r-pill); background: var(--muted2); flex: none; }
+.k-dot--ok { background: var(--ok); }
+.k-dot--warn { background: var(--warn); }
+.k-dot--err { background: var(--err); }
+
+.k-avatar {
+  width: var(--sp-8); height: var(--sp-8); flex: none;
+  border-radius: var(--r-pill); background: var(--point-soft); color: var(--point-text);
+  display: grid; place-items: center; font-weight: var(--w-heavy); font-size: var(--t-sm);
+}
+
+/* ── 카드 ─────────────────────────────────────────────────────────── */
+
+.k-card {
+  position: relative;
+  background: var(--card-bg); border: var(--bw) solid var(--border);
+  border-radius: var(--r-lg); padding: var(--sp-5);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+/* 카드 윗변 장식선 — 킷이 --card-accent 를 none 이 아닌 값으로 주면 나타난다 */
+.k-card::before {
+  content: ""; position: absolute; inset: 0 0 auto; height: 2px;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--card-accent); pointer-events: none;
+}
+.k-card--hover:hover { box-shadow: var(--card-hover-shadow); border-color: var(--border-strong); }
+.k-card--flush { padding: 0; overflow: hidden; }
+.k-card__head {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-5); border-bottom: var(--bw) solid var(--border);
+  font-size: var(--t-sm); font-weight: var(--w-bold);
+}
+.k-card__body { padding: var(--sp-5); }
+.k-card__foot {
+  padding: var(--sp-3) var(--sp-5); border-top: var(--bw) solid var(--border);
+  font-size: var(--t-sm); color: var(--muted);
+}
+
+/* ── 목록 행 ──────────────────────────────────────────────────────── */
+
+.k-rows { display: flex; flex-direction: column; gap: var(--sp-2); }
+.k-row {
+  display: flex; align-items: center; gap: var(--sp-4);
+  background: var(--card-bg); border: var(--bw) solid var(--border);
+  border-radius: var(--r-lg); padding: var(--sp-3) var(--sp-4);
+  box-shadow: var(--card-shadow);
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.k-row:hover { border-color: var(--border-strong); }
+.k-row__rank {
+  width: var(--sp-6); height: var(--sp-6); flex: none; border-radius: var(--r-sm);
+  background: var(--point-soft); color: var(--point-text);
+  font-weight: var(--w-heavy); font-size: var(--t-sm);
+  display: grid; place-items: center;
+}
+.k-row__main { flex: 1; min-width: 0; }
+.k-row__title { font-weight: var(--w-bold); }
+.k-row__sub { font-size: var(--t-sm); color: var(--muted); }
+
+/* ── 표 ───────────────────────────────────────────────────────────── */
+
+.k-tablewrap { overflow-x: auto; }
+.k-table { width: 100%; border-collapse: collapse; font-size: var(--t-md); }
+.k-table th {
+  text-align: left; white-space: nowrap;
+  font-size: var(--t-xs); letter-spacing: var(--label-tracking);
+  text-transform: var(--label-transform);
+  color: var(--muted); font-weight: var(--w-bold);
+  padding: var(--sp-2) var(--sp-4); border-bottom: var(--bw) solid var(--border-strong);
+}
+.k-table td { padding: var(--sp-3) var(--sp-4); border-bottom: var(--bw) solid var(--border); }
+.k-table tbody tr:last-child td { border-bottom: 0; }
+.k-table tbody tr:hover { background: var(--surface-hover); }
+.k-num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+
+/* ── 알림 ─────────────────────────────────────────────────────────── */
+
+.k-alert {
+  display: flex; gap: var(--sp-3); align-items: flex-start;
+  border: var(--bw) solid var(--border); border-radius: var(--r);
+  padding: var(--sp-3) var(--sp-4); font-size: var(--t-sm);
+  background: var(--surface-alt); color: var(--muted);
+}
+.k-alert--ok { background: var(--ok-soft); color: var(--ok-text); border-color: transparent; }
+.k-alert--warn { background: var(--warn-soft); color: var(--warn-text); border-color: transparent; }
+.k-alert--err { background: var(--err-soft); color: var(--err-text); border-color: transparent; }
+.k-alert strong { color: inherit; }
+
+/* ── 탭 · 세그먼트 · 페이저 ───────────────────────────────────────── */
+
+.k-tabs { display: flex; gap: var(--sp-1); border-bottom: var(--bw) solid var(--border); margin-bottom: var(--sp-4); }
+.k-tabs button {
+  background: none; border: 0; border-bottom: 2px solid transparent;
+  padding: var(--sp-2) var(--sp-4); font-family: inherit; font-size: var(--t-md);
+  font-weight: var(--w-bold); color: var(--muted); cursor: pointer; white-space: nowrap;
+}
+.k-tabs button:hover { color: var(--text); }
+.k-tabs button[aria-selected="true"] { color: var(--point); border-bottom-color: var(--point); }
+
+.k-segment {
+  display: inline-flex; border: var(--bw) solid var(--border-strong);
+  border-radius: var(--r); overflow: hidden;
+}
+.k-segment button {
+  background: var(--surface); border: 0; padding: var(--sp-2) var(--sp-4);
+  font-family: inherit; font-size: var(--t-sm); font-weight: var(--w-medium);
+  color: var(--muted); cursor: pointer;
+}
+.k-segment button + button { border-left: var(--bw) solid var(--border); }
+.k-segment button[aria-pressed="true"] {
+  background: var(--active-bg); color: var(--active-fg); font-weight: var(--w-bold);
+}
+
+.k-pager { display: flex; gap: var(--sp-1); align-items: center; justify-content: center; margin-top: var(--sp-5); }
+.k-pager a, .k-pager button {
+  min-width: var(--touch); min-height: var(--touch);
+  display: inline-grid; place-items: center;
+  border: var(--bw) solid var(--border); border-radius: var(--r-sm);
+  background: var(--surface); color: var(--muted); font-size: var(--t-sm);
+  font-weight: var(--w-bold); cursor: pointer; text-decoration: none;
+}
+.k-pager a:hover, .k-pager button:hover { background: var(--surface-hover); text-decoration: none; }
+.k-pager [aria-current="page"] { background: var(--active-bg); color: var(--active-fg); border-color: var(--point); }
+
+/* ── 통계 · 진행 ──────────────────────────────────────────────────── */
+
+.k-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--sp-3); }
+.k-stat {
+  background: var(--card-bg); border: var(--bw) solid var(--border);
+  border-radius: var(--r-lg); padding: var(--sp-4); box-shadow: var(--card-shadow);
+}
+.k-stat__label {
+  font-size: var(--t-xs); letter-spacing: var(--label-tracking);
+  text-transform: var(--label-transform); color: var(--muted); font-weight: var(--w-bold);
+}
+.k-stat__value {
+  display: block; margin-top: var(--sp-1);
+  font-family: var(--font-display); font-size: var(--t-2xl); font-weight: var(--w-heavy);
+  letter-spacing: var(--display-tracking); line-height: var(--lh-tight);
+  font-variant-numeric: tabular-nums;
+}
+.k-stat--point .k-stat__value { color: var(--point); }
+.k-stat__delta { font-size: var(--t-sm); font-weight: var(--w-bold); }
+.k-stat__delta--up { color: var(--ok); }
+.k-stat__delta--down { color: var(--err); }
+
+.k-bar { height: var(--sp-2); background: var(--surface-alt); border-radius: var(--r-pill); overflow: hidden; }
+.k-bar > span { display: block; height: 100%; background: var(--point); border-radius: inherit; }
+
+/* ── 빈 상태 · 스켈레톤 ───────────────────────────────────────────── */
+
+.k-empty {
+  text-align: center; padding: var(--sp-10) var(--sp-5); color: var(--muted);
+  border: var(--bw) dashed var(--border-strong); border-radius: var(--r-lg);
+}
+.k-empty h3 { margin-bottom: var(--sp-2); color: var(--text); }
+
+.k-skeleton {
+  background: var(--surface-alt); border-radius: var(--r-sm);
+  height: var(--sp-4); animation: k-pulse 1.4s ease-in-out infinite;
+}
+@keyframes k-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+
+/* ── 모달 ─────────────────────────────────────────────────────────── */
+
+.k-backdrop {
+  position: fixed; inset: 0; z-index: 200; background: var(--overlay);
+  display: grid; place-items: center; padding: var(--sp-4);
+}
+.k-modal {
+  width: 100%; max-width: 520px;
+  background: var(--surface); border: var(--bw) solid var(--border);
+  border-radius: var(--r-lg); box-shadow: var(--sh-3); overflow: hidden;
+}
+.k-modal__head {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5); border-bottom: var(--bw) solid var(--border);
+}
+.k-modal__head h3 { flex: 1; }
+.k-modal__body { padding: var(--sp-5); }
+.k-modal__foot {
+  display: flex; gap: var(--sp-2); justify-content: flex-end;
+  padding: var(--sp-4) var(--sp-5); border-top: var(--bw) solid var(--border);
+  background: var(--surface-alt);
+}
+
+/* ── 레이아웃 유틸 ────────────────────────────────────────────────── */
+
+.k-flex { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+.k-stack { display: flex; flex-direction: column; gap: var(--sp-3); }
+.k-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-4); }
+.k-grid--2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.k-spacer { margin-left: auto; }
+.k-muted { color: var(--muted); }
+.k-dim { color: var(--muted2); }
+.k-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.k-section { margin-bottom: var(--sp-8); }
+.k-section > h2 {
+  font-size: var(--t-sm); letter-spacing: var(--label-tracking);
+  text-transform: var(--label-transform); color: var(--muted2);
+  margin: 0 0 var(--sp-3); font-weight: var(--w-bold);
+}
+
+/* ── 반응형 ───────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .k-shell--sidebar { flex-direction: column; }
+  .k-sidebar {
+    width: 100%; height: auto; position: sticky; top: 0; z-index: 100;
+    border-right: 0; border-bottom: var(--bw) solid var(--border); padding: 0;
+  }
+  .k-sidebar__logo, .k-sidebar__section { display: none; }
+  .k-sidebar__nav { display: flex; overflow-x: auto; }
+  .k-sidebar a { border-left: 0; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .k-sidebar a[aria-current="page"] { border-left: 0; border-bottom-color: var(--point); }
+  .k-topnav { gap: var(--sp-4); padding: 0 var(--sp-4); overflow-x: auto; }
+  .k-main { padding: var(--sp-4); }
+  .k-hero { padding: var(--sp-6) var(--sp-5); }
+  .k-hero h1 { font-size: var(--t-2xl); }
+}
+
+
+/* ══════ mobile.css ══════ */
+/* ═══════════════════════════════════════════════════════════════════
+   core/mobile.css — 모바일(앱형) 셸. base.css + components.css 다음에 로드.
+
+   웹 컴포넌트(.k-btn·.k-card…)는 그대로 쓰고, 여기서는 **앱 골격**만 더한다.
+   - 상단 앱바 / 하단 탭바 / 리스트 / 바텀시트 / FAB
+   - 터치 타깃은 전부 var(--touch) 이상 (기본 44px+)
+   - Flutter 로 옮길 때: 앱바→AppBar, 탭바→NavigationBar, 시트→showModalBottomSheet
+
+   이 파일도 색·크기 리터럴을 쓰지 않는다.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.k-app {
+  display: flex; flex-direction: column;
+  min-height: 100vh; min-height: 100dvh;
+  background-color: var(--bg); background-image: var(--page-bg-image, none);
+}
+
+/* ── 상단 앱바 ────────────────────────────────────────────────────── */
+
+.k-appbar {
+  display: flex; align-items: center; gap: var(--sp-3);
+  min-height: var(--nav-h); padding: var(--sp-2) var(--sp-4);
+  background: var(--header-bg);
+  -webkit-backdrop-filter: var(--header-blur); backdrop-filter: var(--header-blur);
+  border-bottom: var(--bw) solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.k-appbar__back {
+  width: var(--touch); height: var(--touch); margin-left: calc(var(--sp-2) * -1);
+  display: grid; place-items: center; flex: none;
+  background: none; border: 0; color: var(--text); font-size: var(--t-lg); cursor: pointer;
+}
+.k-appbar__title {
+  flex: 1; min-width: 0; margin: 0;
+  font-family: var(--font-display); font-size: var(--t-lg); font-weight: var(--w-heavy);
+  letter-spacing: var(--display-tracking);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.k-appbar__title--brand { color: var(--point); }
+.k-appbar__action {
+  width: var(--touch); height: var(--touch); flex: none;
+  display: grid; place-items: center;
+  background: none; border: 0; color: var(--muted); font-size: var(--t-lg); cursor: pointer;
+  border-radius: var(--r-sm);
+}
+.k-appbar__action:hover { background: var(--surface-hover); color: var(--text); }
+
+/* 큰 제목(스크롤 상단) — iOS Large Title 류 */
+.k-app-hero {
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+  background: var(--hero-bg); color: var(--hero-fg);
+}
+.k-app-hero h1 { font-size: var(--t-2xl); color: inherit; margin: 0 0 var(--sp-1); }
+.k-app-hero p { color: inherit; opacity: .85; font-size: var(--t-sm); margin: 0; }
+
+/* ── 본문 ─────────────────────────────────────────────────────────── */
+
+.k-app-main {
+  flex: 1; padding: var(--sp-4);
+  /* 하단 탭바에 가리지 않게 여백을 준다 */
+  padding-bottom: calc(var(--tab-h) + var(--sp-6));
+}
+.k-app-main--flush { padding-left: 0; padding-right: 0; }
+
+.k-searchbar {
+  display: flex; align-items: center; gap: var(--sp-2);
+  background: var(--input-bg); border: var(--bw) solid var(--border-strong);
+  border-radius: var(--r-pill); padding: var(--sp-2) var(--sp-4);
+  min-height: var(--touch); margin-bottom: var(--sp-4);
+  color: var(--muted2); font-size: var(--t-md);
+}
+.k-searchbar input {
+  flex: 1; background: none; border: 0; outline: none; color: var(--text); min-width: 0;
+}
+
+/* 가로 스크롤 칩 줄 — 모바일 필터의 기본형 */
+.k-chiprow {
+  display: flex; gap: var(--sp-2); overflow-x: auto;
+  padding-bottom: var(--sp-2); margin-bottom: var(--sp-4);
+  scrollbar-width: none;
+}
+.k-chiprow::-webkit-scrollbar { display: none; }
+.k-chiprow .k-chip { flex: none; min-height: var(--sp-8); }
+
+/* ── 리스트 ───────────────────────────────────────────────────────── */
+
+.k-list {
+  background: var(--card-bg); border: var(--bw) solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--card-shadow);
+}
+.k-list--plain { background: none; border: 0; border-radius: 0; box-shadow: none; }
+
+.k-item {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%; min-height: var(--touch);
+  padding: var(--sp-3) var(--sp-4);
+  background: none; border: 0; border-bottom: var(--bw) solid var(--border);
+  color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer;
+}
+.k-item:last-child { border-bottom: 0; }
+.k-item:active { background: var(--surface-hover); }
+.k-item:hover { text-decoration: none; }
+.k-item__icon {
+  width: var(--sp-8); height: var(--sp-8); flex: none;
+  display: grid; place-items: center; border-radius: var(--r-sm);
+  background: var(--point-soft); color: var(--point-text);
+}
+.k-item__main { flex: 1; min-width: 0; }
+.k-item__title { font-weight: var(--w-bold); }
+.k-item__sub {
+  font-size: var(--t-sm); color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.k-item__meta { font-size: var(--t-sm); color: var(--muted2); flex: none; }
+.k-item__chevron { color: var(--muted2); flex: none; }
+
+/* ── 하단 탭바 ────────────────────────────────────────────────────── */
+
+.k-tabbar {
+  position: sticky; bottom: 0; z-index: 100;
+  display: flex; align-items: stretch;
+  height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--header-bg);
+  -webkit-backdrop-filter: var(--header-blur); backdrop-filter: var(--header-blur);
+  border-top: var(--bw) solid var(--border);
+}
+.k-tabbar a, .k-tabbar button {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; background: none; border: 0; cursor: pointer; text-decoration: none;
+  color: var(--muted2); font-size: var(--t-xs); font-weight: var(--w-bold);
+}
+.k-tabbar a:hover { text-decoration: none; }
+.k-tabbar__icon { font-size: var(--t-lg); line-height: 1; }
+.k-tabbar [aria-current="page"] { color: var(--point); }
+
+/* ── FAB ──────────────────────────────────────────────────────────── */
+
+.k-fab {
+  position: absolute; right: var(--sp-4); bottom: calc(var(--tab-h) + var(--sp-4));
+  width: calc(var(--touch) + var(--sp-3)); height: calc(var(--touch) + var(--sp-3));
+  display: grid; place-items: center;
+  border: var(--bw) solid transparent; border-radius: var(--r-pill);
+  background: var(--btn-bg); color: var(--btn-fg); box-shadow: var(--btn-shadow), var(--sh-3);
+  font-size: var(--t-xl); cursor: pointer; z-index: 90;
+}
+.k-fab:active { transform: var(--btn-press); }
+
+/* ── 바텀시트 ─────────────────────────────────────────────────────── */
+
+.k-sheet {
+  position: absolute; inset: auto 0 0; z-index: 210;
+  background: var(--surface); border-top: var(--bw) solid var(--border);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  padding: var(--sp-3) var(--sp-4) var(--sp-6);
+  box-shadow: var(--sh-3);
+}
+.k-sheet__grip {
+  width: var(--sp-10); height: var(--sp-1); margin: 0 auto var(--sp-4);
+  background: var(--border-strong); border-radius: var(--r-pill);
+}
+
+/* ── 앱 셸 안에서 카드 폭 보정 ────────────────────────────────────── */
+
+.k-app .k-stats { grid-template-columns: repeat(2, 1fr); }
+.k-app .k-grid { grid-template-columns: 1fr; }
+.k-app .k-hero { border-radius: var(--r-lg); padding: var(--sp-6) var(--sp-5); }
+.k-app .k-hero h1 { font-size: var(--t-2xl); }
+
+
+/* ══════ tokens.css ══════ */
+/* ═══════════════════════════════════════════════════════════════════
+   Lets — 디자인 토큰
+   "밝고 반듯한 서비스 화면"
+
+   ⚠ 자동 생성 파일이다. 고치려면 kits/design_kits_lets/tokens.json 을 고치고
+     node tools/build.mjs 를 다시 돌린다.
+
+   로드 순서:  base.css → components.css → mobile.css → 이 파일 → extras.css
+   컴포넌트는 이 토큰만 참조한다. 색을 하드코딩하면 다크 모드가 깨진다.
+   지원 모드: light + dark
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light;
+
+  /* 치수 · 타이포 · 모션 — 모드와 무관 */
+  --r-sm: 8px;
+  --r: 10px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+  --bw: 1px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --nav-h: 62px;
+  --sidebar-w: 210px;
+  --content-max: 1200px;
+  --tab-h: 62px;
+  --touch: 46px;
+  --font: Pretendard, "Pretendard Variable", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --font-display: var(--font);
+  --font-mono: ui-monospace, Consolas, "D2Coding", monospace;
+  --t-xs: 12px;
+  --t-sm: 13.5px;
+  --t-md: 15px;
+  --t-lg: 17px;
+  --t-xl: 22px;
+  --t-2xl: 30px;
+  --t-3xl: 42px;
+  --w-normal: 400;
+  --w-medium: 500;
+  --w-bold: 700;
+  --w-heavy: 800;
+  --lh-tight: 1.35;
+  --lh: 1.65;
+  --lh-relaxed: 1.8;
+  --tracking-tight: -.03em;
+  --tracking-wide: .04em;
+  --display-tracking: -.035em;
+  --display-weight: 800;
+  --btn-transform: none;
+  --btn-weight: 700;
+  --btn-tracking: 0;
+  --label-transform: none;
+  --label-tracking: .01em;
+  --dur-fast: 130ms;
+  --dur: 190ms;
+  --ease: cubic-bezier(.25, .8, .35, 1);
+
+  /* 색 · 그림자 · 표현 (light) */
+  --bg: #ffffff;
+  --bg-sunken: #f2f3fb;
+  --surface: #ffffff;
+  --surface-alt: #f5f6fa;
+  --surface-hover: #eef0f9;
+  --text: #191b23;
+  --muted: #5f6473;
+  --muted2: #9aa0ae;
+  --point: #4b56e8;
+  --point-hover: #3b45d4;
+  --point-soft: #eceefd;
+  --point-text: #3b45d4;
+  --on-point: #ffffff;
+  --point-2: #f26a21;
+  --border: #e8e9f0;
+  --border-strong: #d4d6e3;
+  --ok: #1f8f4e;
+  --ok-soft: #e3f5ea;
+  --ok-text: #177040;
+  --warn: #b8710e;
+  --warn-soft: #fdf0dd;
+  --warn-text: #96590a;
+  --err: #dc3a3a;
+  --err-soft: #fdeaea;
+  --err-text: #b32424;
+  --overlay: rgba(25, 27, 35, .5);
+  --focus: #4b56e8;
+  --sh-1: 0 1px 2px rgba(30, 34, 70, .05);
+  --sh-2: 0 4px 14px rgba(30, 34, 70, .08);
+  --sh-3: 0 12px 32px rgba(30, 34, 70, .15);
+  --sh-point: 0 0 0 3px var(--point-soft);
+  --page-bg-image: none;
+  --header-bg: var(--surface);
+  --header-blur: none;
+  --card-bg: var(--surface);
+  --card-shadow: none;
+  --card-hover-shadow: var(--sh-2);
+  --card-accent: none;
+  --btn-bg: var(--point);
+  --btn-fg: var(--on-point);
+  --btn-hover-bg: var(--point-hover);
+  --btn-shadow: none;
+  --btn-press: translateY(1px);
+  --input-bg: var(--surface-alt);
+  --active-bg: var(--point-soft);
+  --active-fg: var(--point-text);
+  --hero-bg: #f0f2fd;
+  --hero-fg: var(--text);
+}
+
+/* 명시적 다크 — <html data-theme="dark"> */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #14162b;
+  --bg-sunken: #0f1122;
+  --surface: #1c1f38;
+  --surface-alt: #242844;
+  --surface-hover: #2d3252;
+  --text: #eceefa;
+  --muted: #a3a8c4;
+  --muted2: #767c9c;
+  --point: #7b84ff;
+  --point-hover: #949bff;
+  --point-soft: rgba(123, 132, 255, .18);
+  --point-text: #9aa1ff;
+  --on-point: #12142a;
+  --point-2: #ff8a4c;
+  --border: #2c3152;
+  --border-strong: #3d4370;
+  --ok: #4ecb84;
+  --ok-soft: rgba(78, 203, 132, .16);
+  --ok-text: #6fd89c;
+  --warn: #e8a94a;
+  --warn-soft: rgba(232, 169, 74, .16);
+  --warn-text: #f0bd72;
+  --err: #f2686a;
+  --err-soft: rgba(242, 104, 106, .16);
+  --err-text: #f68c8e;
+  --overlay: rgba(0, 0, 0, .6);
+  --focus: #7b84ff;
+  --sh-1: 0 1px 2px rgba(0, 0, 0, .3);
+  --sh-2: 0 4px 14px rgba(0, 0, 0, .35);
+  --sh-3: 0 12px 32px rgba(0, 0, 0, .5);
+  --sh-point: 0 0 0 3px var(--point-soft);
+  --hero-bg: #222a63;
+  --hero-fg: #f4f5ff;
+}
+
+/* OS 설정 추종 — data-theme 을 지정하지 않았을 때만 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #14162b;
+    --bg-sunken: #0f1122;
+    --surface: #1c1f38;
+    --surface-alt: #242844;
+    --surface-hover: #2d3252;
+    --text: #eceefa;
+    --muted: #a3a8c4;
+    --muted2: #767c9c;
+    --point: #7b84ff;
+    --point-hover: #949bff;
+    --point-soft: rgba(123, 132, 255, .18);
+    --point-text: #9aa1ff;
+    --on-point: #12142a;
+    --point-2: #ff8a4c;
+    --border: #2c3152;
+    --border-strong: #3d4370;
+    --ok: #4ecb84;
+    --ok-soft: rgba(78, 203, 132, .16);
+    --ok-text: #6fd89c;
+    --warn: #e8a94a;
+    --warn-soft: rgba(232, 169, 74, .16);
+    --warn-text: #f0bd72;
+    --err: #f2686a;
+    --err-soft: rgba(242, 104, 106, .16);
+    --err-text: #f68c8e;
+    --overlay: rgba(0, 0, 0, .6);
+    --focus: #7b84ff;
+    --sh-1: 0 1px 2px rgba(0, 0, 0, .3);
+    --sh-2: 0 4px 14px rgba(0, 0, 0, .35);
+    --sh-3: 0 12px 32px rgba(0, 0, 0, .5);
+    --sh-point: 0 0 0 3px var(--point-soft);
+    --hero-bg: #222a63;
+    --hero-fg: #f4f5ff;
+  }
+}
+
+
+/* ══════ extras.css ══════ */
+/* Lets 전용 표현 — 토큰으로 표현되지 않는 것만. components.css 다음에 로드.
+   ① 아이콘은 원형 아바타가 아니라 연회색 라운드 스퀘어 타일
+   ② 활성 네비는 글자 폭만큼 짧고 굵은 먹색 밑줄
+   ③ 카드는 hover 에 살짝 떠오른다 (그림자를 평소엔 안 쓰는 킷이라 hover 가 유일한 신호)
+   ④ 알약 배지 = 오렌지 신규 표시. 이 킷에서 --point-2 가 유일하게 나오는 자리다 */
+
+.k-avatar, .k-item__icon, .k-row__rank {
+  border-radius: var(--r-lg);
+  background: var(--surface-alt);
+  color: var(--point);
+}
+
+.k-topnav a[aria-current="page"] {
+  border-bottom-width: 3px;
+  border-bottom-color: var(--text);
+}
+
+.k-card, .k-row, .k-stat {
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease),
+              border-color var(--dur) var(--ease);
+}
+.k-card--hover:hover, .k-row:hover { transform: translateY(-2px); }
+
+.k-badge--pill {
+  background: var(--point-2);
+  color: #fff;
+  letter-spacing: 0;
+}

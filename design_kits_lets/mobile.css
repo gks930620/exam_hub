@@ -1,0 +1,173 @@
+/* ═══ mobile.css — 킷 저장소 core/mobile.css 의 복사본 ═══
+   ⚠ 여기서 고치지 말 것. 이 파일은 모든 킷이 공유하는 원본의 사본이다.
+     원본(core/mobile.css)을 고치고 node tools/build.mjs 를 돌린다.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   core/mobile.css — 모바일(앱형) 셸. base.css + components.css 다음에 로드.
+
+   웹 컴포넌트(.k-btn·.k-card…)는 그대로 쓰고, 여기서는 **앱 골격**만 더한다.
+   - 상단 앱바 / 하단 탭바 / 리스트 / 바텀시트 / FAB
+   - 터치 타깃은 전부 var(--touch) 이상 (기본 44px+)
+   - Flutter 로 옮길 때: 앱바→AppBar, 탭바→NavigationBar, 시트→showModalBottomSheet
+
+   이 파일도 색·크기 리터럴을 쓰지 않는다.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.k-app {
+  display: flex; flex-direction: column;
+  min-height: 100vh; min-height: 100dvh;
+  background-color: var(--bg); background-image: var(--page-bg-image, none);
+}
+
+/* ── 상단 앱바 ────────────────────────────────────────────────────── */
+
+.k-appbar {
+  display: flex; align-items: center; gap: var(--sp-3);
+  min-height: var(--nav-h); padding: var(--sp-2) var(--sp-4);
+  background: var(--header-bg);
+  -webkit-backdrop-filter: var(--header-blur); backdrop-filter: var(--header-blur);
+  border-bottom: var(--bw) solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.k-appbar__back {
+  width: var(--touch); height: var(--touch); margin-left: calc(var(--sp-2) * -1);
+  display: grid; place-items: center; flex: none;
+  background: none; border: 0; color: var(--text); font-size: var(--t-lg); cursor: pointer;
+}
+.k-appbar__title {
+  flex: 1; min-width: 0; margin: 0;
+  font-family: var(--font-display); font-size: var(--t-lg); font-weight: var(--w-heavy);
+  letter-spacing: var(--display-tracking);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.k-appbar__title--brand { color: var(--point); }
+.k-appbar__action {
+  width: var(--touch); height: var(--touch); flex: none;
+  display: grid; place-items: center;
+  background: none; border: 0; color: var(--muted); font-size: var(--t-lg); cursor: pointer;
+  border-radius: var(--r-sm);
+}
+.k-appbar__action:hover { background: var(--surface-hover); color: var(--text); }
+
+/* 큰 제목(스크롤 상단) — iOS Large Title 류 */
+.k-app-hero {
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+  background: var(--hero-bg); color: var(--hero-fg);
+}
+.k-app-hero h1 { font-size: var(--t-2xl); color: inherit; margin: 0 0 var(--sp-1); }
+.k-app-hero p { color: inherit; opacity: .85; font-size: var(--t-sm); margin: 0; }
+
+/* ── 본문 ─────────────────────────────────────────────────────────── */
+
+.k-app-main {
+  flex: 1; padding: var(--sp-4);
+  /* 하단 탭바에 가리지 않게 여백을 준다 */
+  padding-bottom: calc(var(--tab-h) + var(--sp-6));
+}
+.k-app-main--flush { padding-left: 0; padding-right: 0; }
+
+.k-searchbar {
+  display: flex; align-items: center; gap: var(--sp-2);
+  background: var(--input-bg); border: var(--bw) solid var(--border-strong);
+  border-radius: var(--r-pill); padding: var(--sp-2) var(--sp-4);
+  min-height: var(--touch); margin-bottom: var(--sp-4);
+  color: var(--muted2); font-size: var(--t-md);
+}
+.k-searchbar input {
+  flex: 1; background: none; border: 0; outline: none; color: var(--text); min-width: 0;
+}
+
+/* 가로 스크롤 칩 줄 — 모바일 필터의 기본형 */
+.k-chiprow {
+  display: flex; gap: var(--sp-2); overflow-x: auto;
+  padding-bottom: var(--sp-2); margin-bottom: var(--sp-4);
+  scrollbar-width: none;
+}
+.k-chiprow::-webkit-scrollbar { display: none; }
+.k-chiprow .k-chip { flex: none; min-height: var(--sp-8); }
+
+/* ── 리스트 ───────────────────────────────────────────────────────── */
+
+.k-list {
+  background: var(--card-bg); border: var(--bw) solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--card-shadow);
+}
+.k-list--plain { background: none; border: 0; border-radius: 0; box-shadow: none; }
+
+.k-item {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%; min-height: var(--touch);
+  padding: var(--sp-3) var(--sp-4);
+  background: none; border: 0; border-bottom: var(--bw) solid var(--border);
+  color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer;
+}
+.k-item:last-child { border-bottom: 0; }
+.k-item:active { background: var(--surface-hover); }
+.k-item:hover { text-decoration: none; }
+.k-item__icon {
+  width: var(--sp-8); height: var(--sp-8); flex: none;
+  display: grid; place-items: center; border-radius: var(--r-sm);
+  background: var(--point-soft); color: var(--point-text);
+}
+.k-item__main { flex: 1; min-width: 0; }
+.k-item__title { font-weight: var(--w-bold); }
+.k-item__sub {
+  font-size: var(--t-sm); color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.k-item__meta { font-size: var(--t-sm); color: var(--muted2); flex: none; }
+.k-item__chevron { color: var(--muted2); flex: none; }
+
+/* ── 하단 탭바 ────────────────────────────────────────────────────── */
+
+.k-tabbar {
+  position: sticky; bottom: 0; z-index: 100;
+  display: flex; align-items: stretch;
+  height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--header-bg);
+  -webkit-backdrop-filter: var(--header-blur); backdrop-filter: var(--header-blur);
+  border-top: var(--bw) solid var(--border);
+}
+.k-tabbar a, .k-tabbar button {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; background: none; border: 0; cursor: pointer; text-decoration: none;
+  color: var(--muted2); font-size: var(--t-xs); font-weight: var(--w-bold);
+}
+.k-tabbar a:hover { text-decoration: none; }
+.k-tabbar__icon { font-size: var(--t-lg); line-height: 1; }
+.k-tabbar [aria-current="page"] { color: var(--point); }
+
+/* ── FAB ──────────────────────────────────────────────────────────── */
+
+.k-fab {
+  position: absolute; right: var(--sp-4); bottom: calc(var(--tab-h) + var(--sp-4));
+  width: calc(var(--touch) + var(--sp-3)); height: calc(var(--touch) + var(--sp-3));
+  display: grid; place-items: center;
+  border: var(--bw) solid transparent; border-radius: var(--r-pill);
+  background: var(--btn-bg); color: var(--btn-fg); box-shadow: var(--btn-shadow), var(--sh-3);
+  font-size: var(--t-xl); cursor: pointer; z-index: 90;
+}
+.k-fab:active { transform: var(--btn-press); }
+
+/* ── 바텀시트 ─────────────────────────────────────────────────────── */
+
+.k-sheet {
+  position: absolute; inset: auto 0 0; z-index: 210;
+  background: var(--surface); border-top: var(--bw) solid var(--border);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  padding: var(--sp-3) var(--sp-4) var(--sp-6);
+  box-shadow: var(--sh-3);
+}
+.k-sheet__grip {
+  width: var(--sp-10); height: var(--sp-1); margin: 0 auto var(--sp-4);
+  background: var(--border-strong); border-radius: var(--r-pill);
+}
+
+/* ── 앱 셸 안에서 카드 폭 보정 ────────────────────────────────────── */
+
+.k-app .k-stats { grid-template-columns: repeat(2, 1fr); }
+.k-app .k-grid { grid-template-columns: 1fr; }
+.k-app .k-hero { border-radius: var(--r-lg); padding: var(--sp-6) var(--sp-5); }
+.k-app .k-hero h1 { font-size: var(--t-2xl); }
