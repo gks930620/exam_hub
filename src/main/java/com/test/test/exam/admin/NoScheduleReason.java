@@ -44,6 +44,11 @@ public enum NoScheduleReason {
             return ANNOUNCEMENT_PENDING;   // 큐넷 종목코드(jmCd)는 숫자 4자리
         }
         String agency = c.getAgency();
+        // 공단 시행인데 4자리 코드가 아니면 전문자격(경비지도사·관광통역안내사 등) — 기술자격 API 밖이라
+        // 큐넷 전문자격 게시판을 긁어야 한다. 05 문서 C 표 1번.
+        if (agency != null && agency.contains("한국산업인력공단")) {
+            return CRAWL_PLANNED;
+        }
         if (agency != null && CRAWL_PLANNED_AGENCIES.stream().anyMatch(agency::contains)) {
             return CRAWL_PLANNED;
         }
