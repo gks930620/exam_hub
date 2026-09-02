@@ -112,23 +112,20 @@ export default function SearchPage() {
 
       {stats && (
         <section className="k-section">
-          <h2>지금 상황</h2>
+          <h2>데이터 현황</h2>
+          {/* 지금은 "얻은 데이터 / 못 얻은 데이터" 둘만 본다. 접수 중 같은 지표는 익숙해지면(사용자 결정 2026-09-02) */}
           <div className="k-stats">
-            <div className="k-stat k-stat--point">
-              <div className="k-stat__label">지금 접수 중</div>
-              <div className="k-stat__value">{stats.registrationOpen.toLocaleString()}</div>
-            </div>
-            <div className="k-stat">
-              <div className="k-stat__label">7일 안에 접수 시작</div>
-              <div className="k-stat__value">{stats.openingWithin7Days.toLocaleString()}</div>
-            </div>
-            <div className="k-stat">
-              <div className="k-stat__label">일정 있는 시험</div>
-              <div className="k-stat__value">{stats.withSchedule.toLocaleString()}</div>
-            </div>
             <div className="k-stat">
               <div className="k-stat__label">전체 시험</div>
               <div className="k-stat__value">{stats.totalExams.toLocaleString()}</div>
+            </div>
+            <div className="k-stat k-stat--point">
+              <div className="k-stat__label">일정 확보</div>
+              <div className="k-stat__value">{stats.withSchedule.toLocaleString()}</div>
+            </div>
+            <div className="k-stat">
+              <div className="k-stat__label">일정 없음 <span className="k-dim">(상시 {stats.rolling.toLocaleString()} 포함)</span></div>
+              <div className="k-stat__value">{(stats.totalExams - stats.withSchedule).toLocaleString()}</div>
             </div>
           </div>
         </section>

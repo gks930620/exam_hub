@@ -65,7 +65,9 @@ public final class CertificateDtos {
             /** 지금 접수 중 */
             long registrationOpen,
             /** 7일 안에 접수 시작 */
-            long openingWithin7Days
+            long openingWithin7Days,
+            /** 상시·예약제 — "못 얻은 데이터" 안에 포함돼 있다. 화면이 "상시 N 포함"으로 푼다 */
+            long rolling
     ) {
     }
 

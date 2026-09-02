@@ -42,14 +42,13 @@ export default function HomePage() {
 
   // 백엔드가 급한 순으로 준다 — 첫 항목이 히어로다. 지표는 서버를 더 부르지 않고 여기서 센다.
   const lead = data.items[0];
-  const open = data.items.filter((c) => c.badge === 'REG_OPEN').length;
-  const thisWeek = data.items.filter((c) => c.dday >= 0 && c.dday <= 7).length;
+  // 접수 중·이번 주 같은 지표는 뺐다 — 지금은 헷갈린다(사용자 결정 2026-09-02). 익숙해지면 다시.
 
   return (
     <>
       {/* 킷 데모 구조: 히어로에 큰 제목 하나 + 가장 급한 일 + 행동 */}
       <section className="k-hero my-hero">
-        <h1>{thisWeek > 0 ? `이번 주에 챙길 시험 ${thisWeek}개` : `등록한 시험 ${data.items.length}개`}</h1>
+        <h1>{`등록한 시험 ${data.items.length}개`}</h1>
         <p>
           <strong>{lead.name}</strong> — {lead.eventLabel} {fmtAt(lead.eventAt)}
           {lead.dday >= 0 ? ` (D-${lead.dday})` : ` (D+${-lead.dday})`}
@@ -61,21 +60,13 @@ export default function HomePage() {
       </section>
 
       <section className="k-section">
-        <h2>이번 주 지표</h2>
+        <h2>내 시험 현황</h2>
         <div className="k-stats">
-          <div className="k-stat k-stat--point">
-            <div className="k-stat__label">지금 접수 중</div>
-            <div className="k-stat__value">{open}</div>
-          </div>
-          <div className="k-stat">
-            <div className="k-stat__label">7일 안에 일정</div>
-            <div className="k-stat__value">{thisWeek}</div>
-          </div>
           <div className="k-stat">
             <div className="k-stat__label">등록한 시험</div>
             <div className="k-stat__value">{data.items.length}</div>
           </div>
-          <div className="k-stat">
+          <div className="k-stat k-stat--point">
             <div className="k-stat__label">가장 가까운 일정</div>
             <div className="k-stat__value">{dday(lead.dday)}</div>
           </div>

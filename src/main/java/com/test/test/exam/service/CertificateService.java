@@ -45,7 +45,8 @@ public class CertificateService {
                 certificateRepository.countVisible(),
                 certificateRepository.countVisibleWithSchedule(),
                 examScheduleRepository.countCertificatesWithOpenRegistration(now),
-                examScheduleRepository.countCertificatesWithRegistrationOpening(now, now.plusDays(7)));
+                examScheduleRepository.countCertificatesWithRegistrationOpening(now, now.plusDays(7)),
+                certificateRepository.countVisibleRolling());
     }
     private final DdayService ddayService;
 

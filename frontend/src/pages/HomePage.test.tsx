@@ -8,8 +8,8 @@ import type { FavoriteCard } from '../api/types';
 /**
  * 내 시험(홈) — 킷 데모 구조: 히어로(가장 급한 것 하나) → 이번 주 지표 타일 → 등록한 시험 카드.
  *
- * <p>지표는 서버를 더 부르지 않고 관심 목록에서 센다 — 접수 중 = 배지 REG_OPEN,
- * 이번 주 = D-day 0~7. 숫자가 화면과 어긋나면 사용자가 "왜 3개라는데 카드는 2개냐"고 묻게 된다.
+ * <p>지표는 서버를 더 부르지 않고 관심 목록에서 센다. 숫자가 화면과 어긋나면 사용자가
+ * "왜 3개라는데 카드는 2개냐"고 묻게 된다. 접수 중·이번 주 지표는 뺐다(익숙해지면 다시).
  */
 function card(over: Partial<FavoriteCard>): FavoriteCard {
   return {
@@ -22,7 +22,7 @@ function card(over: Partial<FavoriteCard>): FavoriteCard {
 describe('HomePage — 내 시험', () => {
   beforeEach(() => vi.restoreAllMocks());
 
-  it('가장 급한 시험이 히어로에, 이번 주 개수가 제목에 들어간다', async () => {
+  it('가장 급한 시험이 히어로에, 등록한 개수가 제목에 들어간다', async () => {
     vi.spyOn(examApi, 'favorites').mockResolvedValue({
       items: [
         card({ certificateId: 1, name: '정보처리기사', dday: 2, badge: 'REG_OPEN', badgeLabel: '접수 중' }),
@@ -34,7 +34,7 @@ describe('HomePage — 내 시험', () => {
     render(<MemoryRouter><HomePage /></MemoryRouter>);
 
     await waitFor(() => expect(screen.getByRole('heading', { level: 1 })).toBeTruthy());
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('2개');
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('3개');
     // 히어로 안에 가장 급한 시험 이름
     expect(document.querySelector('.k-hero')?.textContent).toContain('정보처리기사');
   });
@@ -52,8 +52,8 @@ describe('HomePage — 내 시험', () => {
     await waitFor(() => expect(document.querySelector('.k-stats')).toBeTruthy());
 
     const values = Array.from(document.querySelectorAll('.k-stat__value')).map((el) => el.textContent);
-    // 접수 중 1 · 이번 주 2 · 등록 3 · 가장 가까운 D-2
-    expect(values).toEqual(['1', '2', '3', 'D-2']);
+    // 등록 3 · 가장 가까운 D-2 — 접수 중·이번 주는 뺐다(헷갈린다는 사용자 결정, 익숙해지면 다시)
+    expect(values).toEqual(['3', 'D-2']);
   });
 
   it('등록한 시험이 전부 카드로 나온다 (히어로에 올라간 것 포함)', async () => {

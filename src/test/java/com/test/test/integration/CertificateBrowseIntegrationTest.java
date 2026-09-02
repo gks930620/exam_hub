@@ -43,6 +43,8 @@ class CertificateBrowseIntegrationTest extends ApiIntegrationTestSupport {
         org.junit.jupiter.api.Assertions.assertTrue(total > 0, "시험이 하나도 없다");
         org.junit.jupiter.api.Assertions.assertTrue(with <= total, "일정 있는 시험이 전체보다 많다");
         org.junit.jupiter.api.Assertions.assertTrue(j.path("registrationOpen").asLong() <= with, "접수 중이 일정 있는 시험보다 많다");
+        // 상시는 일정이 없으니 "못 얻은 데이터"(전체 - 일정 있음) 안에 들어 있어야 한다
+        org.junit.jupiter.api.Assertions.assertTrue(j.path("rolling").asLong() <= total - with, "상시가 일정 없는 시험보다 많다");
     }
 
     // ===== 전체 둘러보기 =====

@@ -271,4 +271,6 @@ export interface StatsResponse {
   withSchedule: number;
   registrationOpen: number;
   openingWithin7Days: number;
+  /** 상시·예약제 — 일정 없음 안에 포함 */
+  rolling: number;
 }
