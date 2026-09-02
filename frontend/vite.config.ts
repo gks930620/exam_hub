@@ -14,6 +14,8 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       port: 5173,
+      // 디자인 킷이 프런트 루트 밖(프로젝트 루트)에 있다 — 개발 서버가 거기까지 읽게 허용
+      fs: { allow: ['..'] },
       proxy: {
         '/api': { target, changeOrigin: true },
       },

@@ -154,9 +154,13 @@ product-planner(사용자 흐름·인수 조건) → designer(화면 정의서)
 | `02_외부키_발급` | 큐넷·구글·메일 키가 필요할 때 |
 | `03_일정_직접입력` | **매니저 매뉴얼** — 운영자가 시험 일정을 손으로 넣는 법 |
 
-- **디자인: Halo** — 원칙은 `설계/디자인_Halo/halo-design-kit/HALO-디자인-가이드.md`.
-  **단일 출처는 `frontend/src/styles/halo-tokens.css` 의 `:root` 토큰** — 새 컴포넌트는 토큰만 조합하고 색을 하드코딩하지 않는다.
-  앱 전용 컴포넌트는 `frontend/src/styles/app.css`. 다크 모드는 `<html data-theme>` 방식(`frontend/src/theme.ts`)
+- **디자인: Lets 킷** (2026-09-02 Halo 에서 교체) — 폴더는 **프로젝트 루트 `design_kits_lets/` 하나만** 둔다(킷 문서가 정한 위치).
+  `frontend/src/main.tsx` 가 `../../design_kits_lets/` 에서 base→components→tokens→extras 순으로 읽는다(vite `fs.allow`).
+  마크업은 킷 계약 `.k-*` 만 쓰고, 앱 고유 요소는 `frontend/src/styles/app.css` 에 **킷 토큰만으로** 쓴다(#hex 금지, 카카오 노랑 예외).
+  원칙(사용법.md): ① 흰 바탕 + 1px 선 ② 강조는 인디고 하나, 오렌지는 '새로 생긴 것'에만 ③ 긴 흰 화면은 --hero-bg 띠로 끊는다.
+  **바탕색을 바꾸지 않는다** — 한 번 연보라로 칠했다가 되돌렸다(사용자 지적). 아이콘은 이모지 대신 `components/Icon.tsx` SVG.
+  다크 모드는 `<html data-theme>` 방식(`frontend/src/theme.ts`) — 킷 계약과 같다.
+  **Halo 로 복구**: 태그 `design-halo`, `frontend/src/styles/halo-*.css` 는 지우지 않았다. main.tsx import 만 바꾸면 된다.
 
 ## 이 프로젝트의 규칙
 
