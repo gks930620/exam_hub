@@ -43,7 +43,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="hero">
+      <section className="k-hero hero">
         <div className="hero-dday">
           <span className="num">
             {lead.dday >= 0 ? lead.dday : `+${-lead.dday}`}

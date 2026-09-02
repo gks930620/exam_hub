@@ -62,7 +62,7 @@ export default function DetailPage() {
       )}
 
       {d.nextEvent && (
-        <section className="hero">
+        <section className="k-hero hero">
           <div className="hero-dday">
             <span className="num">
               {d.nextEvent.dday >= 0 ? d.nextEvent.dday : `+${-d.nextEvent.dday}`}

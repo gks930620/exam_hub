@@ -26,11 +26,12 @@
   background: var(--point-soft); color: var(--point-text);
   font-size: var(--t-xs); font-weight: var(--w-heavy);
 }
+.top-nav { display: flex; align-items: center; gap: var(--sp-5); min-width: 0; }
 @media (max-width: 768px) {
   .only-desktop { display: none; }
   /* 좁은 화면에서는 메뉴가 상단바 아래 줄로 내려가 가로 스크롤된다 */
   .k-topnav.app-header { flex-wrap: wrap; row-gap: var(--sp-1); height: auto; padding-top: var(--sp-2); padding-bottom: var(--sp-2); }
-  .top-nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .top-nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; gap: var(--sp-4); }
   .top-nav::-webkit-scrollbar { display: none; }
 }
 
@@ -42,6 +43,7 @@
   width: 46px; height: 46px; flex: none; border-radius: var(--r-lg);
   display: grid; place-items: center; font-size: var(--t-lg);
   background: var(--point-soft); color: var(--point-text);
+  border: var(--bw) solid var(--border);
 }
 
 /* 섹션 머리 — 제목 + 오른쪽 부가정보 */
@@ -80,8 +82,10 @@
 }
 .exam-card .when { font-size: var(--t-xs); color: var(--muted); }
 
-/* ── 상세: D-day 히어로 ── */
-.hero { margin-bottom: var(--sp-6); }
+/* ── 상세: D-day 히어로 — 골격은 킷 .k-hero (hero-bg/fg 토큰이 대비 담당) ── */
+.hero { text-align: center; }
+.hero .num { color: var(--point-text); }
+[data-theme="dark"] .hero .num { color: inherit; }
 .hero-dday { display: flex; align-items: center; gap: var(--sp-6); flex-wrap: wrap; }
 .hero-dday .num { font-size: var(--t-3xl); font-weight: var(--w-heavy); letter-spacing: var(--display-tracking); }
 .hero-dday .num small { font-size: var(--t-lg); font-weight: var(--w-bold); margin-left: 2px; }
