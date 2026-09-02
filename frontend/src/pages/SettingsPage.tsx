@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { examApi } from '../api/exams';
 import type { NotifySettings } from '../api/types';
+import Icon from '../components/Icon';
 
 // 알림 설정: 이벤트 유형별 on/off.
 // 서버에 저장된 현재값을 먼저 읽어 초기값으로 쓴다(예전엔 무조건 전체 ON 으로 시작해 실제 상태를 잘못 보여줬다).
@@ -44,7 +45,7 @@ export default function SettingsPage() {
   return (
     <>
       <div className="page-header">
-        <div className="page-avatar" aria-hidden="true">⚙</div>
+        <div className="page-avatar" aria-hidden="true"><Icon name="settings" size={22} /></div>
         <div>
           <h1>알림 설정</h1>
           <p>받고 싶은 알림만 켜 두세요. 이 브라우저에만 저장됩니다.</p>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth } from '../auth';
+import Icon from '../components/Icon';
 
 // 내 정보 — 닉네임, 알림 받을 곳(이메일·휴대폰), 탈퇴.
 //
@@ -56,7 +57,7 @@ export default function MePage() {
   return (
     <>
       <div className="page-header">
-        <div className="page-avatar" aria-hidden="true">👤</div>
+        <div className="page-avatar" aria-hidden="true"><Icon name="user" size={22} /></div>
         <div>
           <h1>내 정보</h1>
           <p>{me.provider === 'KAKAO' ? '카카오' : '구글'} 계정으로 로그인했습니다.</p>

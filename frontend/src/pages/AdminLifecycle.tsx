@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { examApi } from '../api/exams';
 import type { LifecycleResponse } from '../api/types';
+import Icon from '../components/Icon';
 
 /**
  * 시험 변천사 — 폐지·개칭된 시험이 어디로 갔나.
@@ -34,7 +35,7 @@ export default function AdminLifecycle() {
         {data.needsCheck > 0 && (
           <span className="k-badge k-badge--warn" style={{ marginLeft: 10 }}>확인 필요 {data.needsCheck}</span>
         )}
-        <span style={{ marginLeft: 'auto' }}>{open ? '▾' : '▸'}</span>
+        <span style={{ marginLeft: 'auto' }}><Icon name={open ? 'chevronDown' : 'chevronRight'} size={16} /></span>
       </button>
 
       {open && (

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import type { AdminScheduleRow, CertItem } from '../api/types';
+import Icon from '../components/Icon';
 
 // 운영자 수기 일정 입력 (설계 07 §4-2 2단계).
 // 공무원·JLPT·DELE 처럼 연 1~2회짜리는 스크래퍼보다 사람이 넣는 게 싸다.
@@ -136,7 +137,7 @@ export default function AdminWrite() {
         ) : (
           <>
             <div className="searchbar" style={{ marginBottom: 0 }}>
-              <span className="ico" aria-hidden="true">⌕</span>
+              <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
               <input className="k-input" placeholder="시험명 검색 (2자 이상)"
                      value={q} onChange={(e) => setQ(e.target.value)} />
             </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { examApi } from '../api/exams';
 import type { DataMapResponse, DataSourceRow, SourceMode } from '../api/types';
+import Icon from '../components/Icon';
 
 /**
  * 데이터 지도 — <b>무엇이 자동으로 들어오고, 무엇을 내가 넣어야 하나.</b>
@@ -49,7 +50,7 @@ export default function AdminDataMap() {
             <span className={`k-badge ${MODE_TONE[mode]}`} style={{ marginRight: 10 }}>
               {rows[0].modeLabel}
             </span>
-            {rows.length}갈래 {open === mode ? '▾' : '▸'}
+            {rows.length}갈래 <Icon name={open === mode ? 'chevronDown' : 'chevronRight'} size={16} />
           </button>
 
           {open === mode && (
@@ -84,7 +85,7 @@ function SourceCard({ row }: { row: DataSourceRow }) {
       {row.mode !== 'EXCLUDED' && (
         <a className="k-btn k-btn--secondary" href={row.sourceUrl} target="_blank" rel="noreferrer"
            style={{ marginTop: 10 }}>
-          원본 사이트 열기 ↗
+          원본 사이트 열기 <Icon name="external" size={16} />
         </a>
       )}
     </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth } from '../auth';
 import type { BoardItem, PostSummary } from '../api/types';
+import Icon from '../components/Icon';
 
 // 커뮤니티 글 목록 — 읽기는 누구나, 쓰기는 로그인(설계 08).
 export default function CommunityPage() {
@@ -56,7 +57,7 @@ export default function CommunityPage() {
   return (
     <>
       <div className="page-header">
-        <div className="page-avatar" aria-hidden="true">💬</div>
+        <div className="page-avatar" aria-hidden="true"><Icon name="chat" size={22} /></div>
         <div>
           <h1>커뮤니티</h1>
           <p>같은 시험을 준비하는 사람들과 이야기하세요.</p>

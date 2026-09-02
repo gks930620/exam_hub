@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth';
 import { api } from '../api/client';
+import Icon from '../components/Icon';
 
 // 로그인 — 소셜 단독(카카오·구글). 자체 계정은 만들지 않는다(설계 08).
 //
@@ -10,8 +11,8 @@ import { api } from '../api/client';
 // 이 서비스의 정상 상태라(구글은 Client Secret 대기 중) 그대로 두면 반드시 밟는다.
 
 const ALL = [
-  { id: 'kakao', icon: '💬', label: '카카오로 시작하기' },
-  { id: 'google', icon: 'G', label: '구글로 시작하기' },
+  { id: 'kakao', icon: <Icon name="chat" size={18} />, label: '카카오로 시작하기' },
+  { id: 'google', icon: <b>G</b>, label: '구글로 시작하기' },
 ] as const;
 
 export default function LoginPage() {

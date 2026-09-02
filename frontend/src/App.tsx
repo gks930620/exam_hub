@@ -20,6 +20,7 @@ import ManagerLoginPage from './pages/ManagerLoginPage';
 import { useAuth } from './auth';
 import { applyTheme, isDark, readTheme, type ThemeSetting } from './theme';
 import Avatar from './components/Avatar';
+import Icon from './components/Icon';
 
 // Halo 골격: 유리 헤더(원칙 ③ — 유리는 여기 한 곳만) + 본문. 메뉴는 헤더 안에 있다.
 //
@@ -91,7 +92,7 @@ export default function App() {
                     onClick={() => setTheme(dark ? 'light' : 'dark')}
                     aria-label={dark ? '라이트 모드로 전환' : '다크 모드로 전환'}
                     title={dark ? '라이트 모드로 전환' : '다크 모드로 전환'}>
-              {dark ? '☀' : '☾'}
+              <Icon name={dark ? 'sun' : 'moon'} size={18} />
             </button>
             {loading ? null : me ? (
               <NavLink to="/me" className="who">

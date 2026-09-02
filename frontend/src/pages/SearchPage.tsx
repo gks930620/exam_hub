@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth, useRequireLogin } from '../auth';
 import type { CategoryItem, CertItem } from '../api/types';
+import Icon from '../components/Icon';
 
 // 시험 찾기: 전체 목록을 기본으로 보여준다.
 // 예전에는 인기 10종만 노출해서 "시험이 없다"고 느껴졌다 — 이제 분류 필터 + 더보기로 전체를 훑는다.
@@ -79,7 +80,7 @@ export default function SearchPage() {
   return (
     <>
       <div className="page-header">
-        <div className="page-avatar" aria-hidden="true">⌕</div>
+        <div className="page-avatar" aria-hidden="true"><Icon name="search" size={22} /></div>
         <div>
           <h1>시험 찾기</h1>
           <p>등록해 두면 접수 시작·마감과 시험일을 알려 드립니다.</p>
@@ -87,7 +88,7 @@ export default function SearchPage() {
       </div>
 
       <div className="searchbar">
-        <span className="ico" aria-hidden="true">⌕</span>
+        <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
         <input
           className="k-input"
           placeholder="시험명 검색 (예: 정보처리기사, 토익, 한국사)"
@@ -142,7 +143,7 @@ export default function SearchPage() {
                   aria-label={c.favorited ? '관심 해제' : '관심 등록'}
                   aria-pressed={c.favorited}
                 >
-                  {c.favorited ? '★' : '☆'}
+                  <Icon name="star" size={20} filled={c.favorited} />
                 </button>
               </div>
               {c.rolling ? (

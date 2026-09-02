@@ -83,8 +83,9 @@
 .exam-card .when { font-size: var(--t-xs); color: var(--muted); }
 
 /* ── 상세: D-day 히어로 — 골격은 킷 .k-hero (hero-bg/fg 토큰이 대비 담당) ── */
-.hero { text-align: center; }
-.hero .num { color: var(--point-text); }
+.hero { text-align: center; background: var(--surface); }
+.hero .num { color: var(--point); }
+[data-theme="dark"] .hero { background: var(--hero-bg); }
 [data-theme="dark"] .hero .num { color: inherit; }
 .hero-dday { display: flex; align-items: center; gap: var(--sp-6); flex-wrap: wrap; }
 .hero-dday .num { font-size: var(--t-3xl); font-weight: var(--w-heavy); letter-spacing: var(--display-tracking); }
@@ -268,3 +269,27 @@
 .comment .head .when { font-size: var(--t-xs); color: var(--muted2); }
 .comment p { margin: 0; font-size: var(--t-sm); line-height: var(--lh); white-space: pre-wrap; word-break: break-word; }
 .comment-form { margin-top: var(--sp-3); }
+
+/* ── Lets 문법 맞추기 (2026-09-02, 스크린샷 보고 고침) ──
+   ① 페이지 바탕을 연보라 면(--bg-sunken)으로. 흰 카드·흰 상단바가 그 위에 떠서 구분된다 —
+      "흰 바탕에 흰 요소" 가 사라진다. 킷 사용법의 "연보라 면으로 섹션을 끊는다" 가 이것.
+   ② 아이콘은 이모지가 아니라 SVG(currentColor). 타일(page-avatar)은 킷 extras ① 문법 —
+      연회색 라운드 스퀘어 + 강조색 아이콘. */
+body { background-color: var(--bg-sunken); }
+.k-topnav { border-bottom: var(--bw) solid var(--border); }
+
+.page-avatar { background: var(--surface); color: var(--point); border-color: var(--border); }
+.page-avatar svg { display: block; }
+.searchbar .ico { display: flex; }
+.icon-btn { color: var(--muted); }
+.icon-btn:hover { color: var(--text); }
+.k-btn svg, .admin-nav-item .ico svg, .k-chip svg { display: block; }
+
+/* 별 — 켜지면 오렌지(--point-2). 이 킷에서 오렌지가 나오는 몇 안 되는 자리다 */
+.star { display: inline-grid; place-items: center; color: var(--muted2); }
+.star[data-on="true"] { color: var(--point-2); }
+.star:hover { color: var(--point-2); }
+.exam-card .star[data-on="true"], .exam-card .star:hover { color: var(--point-2); }
+
+/* 상단바 계정 칩 안 아바타 크기 */
+.who .avatar-fallback, .who img { width: 24px; height: 24px; }

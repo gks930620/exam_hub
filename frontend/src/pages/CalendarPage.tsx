@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import type { CalendarEvent } from '../api/types';
+import Icon from '../components/Icon';
 
 const WEEKDAY = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -29,7 +30,7 @@ export default function CalendarPage() {
   return (
     <>
       <div className="page-header">
-        <div className="page-avatar" aria-hidden="true">▤</div>
+        <div className="page-avatar" aria-hidden="true"><Icon name="calendar" size={22} /></div>
         <div>
           <h1>캘린더</h1>
           <p>등록한 시험의 접수·시험·발표 일정입니다.</p>

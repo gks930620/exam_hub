@@ -1,3 +1,4 @@
+import Icon from './Icon';
 /**
  * 번호 페이징. "이전/다음"만으로는 몇십 쪽을 오갈 수 없다 — 지금 몇 쪽인지도,
  * 멀리 건너뛸 방법도 없기 때문이다(사용자 지적).
@@ -27,7 +28,7 @@ export default function Pagination({ page, totalPages, onChange }: {
   return (
     <nav className="k-pager pagination" aria-label="쪽 이동">
       <button className="page-btn arrow" disabled={page === 0}
-              onClick={() => onChange(page - 1)} aria-label="이전 쪽">‹</button>
+              onClick={() => onChange(page - 1)} aria-label="이전 쪽"><Icon name="chevronLeft" size={16} /></button>
       {items.map((it, i) =>
         it === 'gap'
           ? <span key={`gap-${i}`} className="page-gap" aria-hidden="true">…</span>
@@ -40,7 +41,7 @@ export default function Pagination({ page, totalPages, onChange }: {
             </button>
           ))}
       <button className="page-btn arrow" disabled={page >= totalPages - 1}
-              onClick={() => onChange(page + 1)} aria-label="다음 쪽">›</button>
+              onClick={() => onChange(page + 1)} aria-label="다음 쪽"><Icon name="chevronRight" size={16} /></button>
     </nav>
   );
 }

@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../auth';
 import AdminNav from './AdminNav';
+import Icon from '../components/Icon';
 
 /**
  * 운영 화면의 껍데기 — 제목과 갈래만 두고, 내용은 각 주소가 채운다.
@@ -24,7 +25,7 @@ export default function AdminPage() {
   return (
     <>
       <div className="page-header">
-        <div className="page-avatar" aria-hidden="true">✎</div>
+        <div className="page-avatar" aria-hidden="true"><Icon name="pencil" size={22} /></div>
         <div>
           <h1>운영 화면</h1>
           <p>시험 일정을 확인하고, 자동으로 안 들어오는 것을 직접 넣습니다.</p>

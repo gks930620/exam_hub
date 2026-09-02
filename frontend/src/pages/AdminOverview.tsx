@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { examApi } from '../api/exams';
 import Pagination from '../components/Pagination';
 import type { OverviewResponse, OverviewRow, ScheduleStatusKind } from '../api/types';
+import Icon from '../components/Icon';
 
 /**
  * 시험 일정 현황 — 기준은 <b>일정이 있냐 없냐</b> 딱 둘이다.
@@ -76,7 +77,7 @@ export default function AdminOverview({ onPick }: { onPick: (id: number, name: s
       {hint && <p className="fineprint" style={{ margin: '0 0 14px' }}>{hint}</p>}
 
       <div className="searchbar" style={{ marginBottom: 14 }}>
-        <span className="ico" aria-hidden="true">⌕</span>
+        <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
         <input className="k-input" placeholder="시험명으로 좁히기"
                value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }} />
       </div>

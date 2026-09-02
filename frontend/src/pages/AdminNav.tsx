@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import Icon from '../components/Icon';
 
 /**
  * 운영 화면의 갈래.
@@ -10,10 +11,10 @@ import { NavLink } from 'react-router-dom';
  * <p>그래서 주소로 나눴다. 한 번에 한 가지만 본다.
  */
 const ITEMS = [
-  { to: '/admin', end: true, icon: '◎', label: '할 일', hint: '무엇을 채워야 하나' },
-  { to: '/admin/write', end: false, icon: '✎', label: '일정 넣기', hint: '직접 입력' },
-  { to: '/admin/sources', end: false, icon: '⇅', label: '수집 지도', hint: '뭐가 자동인가' },
-  { to: '/admin/lifecycle', end: false, icon: '⌛', label: '변천사', hint: '폐지·개칭' },
+  { to: '/admin', end: true, icon: 'list', label: '할 일', hint: '무엇을 채워야 하나' },
+  { to: '/admin/write', end: false, icon: 'pencil', label: '일정 넣기', hint: '직접 입력' },
+  { to: '/admin/sources', end: false, icon: 'layers', label: '수집 지도', hint: '뭐가 자동인가' },
+  { to: '/admin/lifecycle', end: false, icon: 'clock', label: '변천사', hint: '폐지·개칭' },
 ];
 
 export default function AdminNav() {
@@ -22,7 +23,7 @@ export default function AdminNav() {
       {ITEMS.map((it) => (
         <NavLink key={it.to} to={it.to} end={it.end}
                  className={({ isActive }) => `admin-nav-item${isActive ? ' active' : ''}`}>
-          <span className="ico" aria-hidden="true">{it.icon}</span>
+          <span className="ico" aria-hidden="true"><Icon name={it.icon} size={18} /></span>
           <span className="txt">
             <b>{it.label}</b>
             <small>{it.hint}</small>

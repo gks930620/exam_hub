@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth, useRequireLogin } from '../auth';
 import type { DetailResponse } from '../api/types';
+import Icon from '../components/Icon';
 
 const TYPE_LABEL: Record<string, string> = { WRITTEN: '필기', PRACTICAL: '실기' };
 
@@ -48,7 +49,8 @@ export default function DetailPage() {
         <div style={{ marginLeft: 'auto' }}>
           <button className={`k-btn ${d.favorited ? 'k-btn--secondary' : 'k-btn--primary'}`} onClick={toggle}
                   aria-pressed={me ? d.favorited : undefined}>
-            {!me ? '☆ 로그인하고 등록' : d.favorited ? '★ 등록됨' : '☆ 관심 등록'}
+            <Icon name="star" size={18} filled={!!me && d.favorited} />
+            {!me ? '로그인하고 등록' : d.favorited ? '등록됨' : '관심 등록'}
           </button>
         </div>
       </div>
@@ -70,7 +72,7 @@ export default function DetailPage() {
             </span>
             <span className="what">
               <strong>{d.nextEvent.label}</strong>
-              <span>{d.nextEvent.at}</span>
+              <span>{fmt(d.nextEvent.at)}</span>
             </span>
           </div>
         </section>

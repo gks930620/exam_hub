@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import type { FavoriteCard, FavoriteListResponse } from '../api/types';
+import Icon from '../components/Icon';
 
 // 홈: 내가 등록한 시험의 D-day. 백엔드가 배지 우선순위(접수중 → 접수 예정 → 시험 예정)로
 // 정렬해 주므로 첫 카드가 가장 급한 건이다 → 그 하나만 히어로로 올린다(Halo 원칙 ②).
@@ -22,7 +23,7 @@ export default function HomePage() {
     return (
       <>
         <div className="page-header">
-          <div className="page-avatar" aria-hidden="true">◎</div>
+          <div className="page-avatar" aria-hidden="true"><Icon name="bookmark" size={22} /></div>
           <div>
             <h1>내 시험</h1>
             <p>관심 시험을 등록하면 접수 시작·마감과 시험일을 챙겨 드립니다.</p>
@@ -51,7 +52,7 @@ export default function HomePage() {
           </span>
           <span className="what">
             <strong>{lead.name}</strong>
-            <span>{lead.badgeLabel} · {lead.eventLabel} · {lead.eventAt}</span>
+            <span>{lead.badgeLabel} · {lead.eventLabel} · {fmtAt(lead.eventAt)}</span>
           </span>
         </div>
         <div className="hero-actions">
@@ -87,8 +88,13 @@ function ExamCard({ card }: { card: FavoriteCard }) {
       </div>
       <div className="foot">
         <span className={`k-badge${card.badge === 'REG_OPEN' ? ' k-badge--ok' : ''}`}>{card.badgeLabel}</span>
-        <span className="when">{card.eventLabel} · {card.eventAt}</span>
+        <span className="when">{card.eventLabel} · {fmtAt(card.eventAt)}</span>
       </div>
     </Link>
   );
+}
+
+/** 2026-09-21T10:00 → 2026-09-21 10:00 — ISO 의 T 는 사람이 읽는 표기가 아니다 */
+function fmtAt(iso: string): string {
+  return iso.replace("T", " ").slice(0, 16);
 }
