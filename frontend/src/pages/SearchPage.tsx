@@ -146,24 +146,17 @@ export default function SearchPage() {
                   <Icon name="star" size={20} filled={c.favorited} />
                 </button>
               </div>
-              {/* 카드마다 상태 띠를 둔다 — 색 있는 배지가 있어야 흰 상자로 안 보인다 */}
+              {/* 상태는 배지 하나로 — 문장을 846번 반복하면 화면이 지저분해진다 */}
               <div className="foot">
-                {c.rolling ? (
-                  <>
-                    <span className="k-badge">상시시험</span>
-                    <span className="when">원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다</span>
-                  </>
-                ) : c.hasSchedule ? (
-                  <>
-                    <span className="k-badge k-badge--ok">일정 있음</span>
-                    <span className="when">등록하면 접수 시작·마감을 알려 드립니다</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="k-badge k-badge--warn">일정 미정</span>
-                    <span className="when">등록해 두면 일정이 확인되는 대로 알려 드립니다</span>
-                  </>
-                )}
+                {c.rolling
+                  ? <>
+                      <span className="k-badge">상시시험</span>
+                      {/* 상시만 한 줄 설명 — 28종뿐이고, 왜 일정이 없는지는 알려줘야 한다 */}
+                      <span className="when">원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다</span>
+                    </>
+                  : c.hasSchedule
+                    ? <span className="k-badge k-badge--ok">일정 있음</span>
+                    : <span className="k-badge k-badge--warn">일정 미정</span>}
               </div>
             </div>
           ))}
