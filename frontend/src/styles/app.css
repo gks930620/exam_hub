@@ -9,6 +9,13 @@
 /* ── 이 앱에서 더 필요한 토큰 ──
    halo-tokens.css 는 키트 원본이라 손대지 않고, 부족한 것만 여기서 확장한다.
    (색을 컴포넌트에 하드코딩하면 다크에서 그 부분만 깨진다 — 가이드 §3-4) */
+:root {
+  --line: #e9e6f7;   /* 옅은 구분선·입력 테두리. 키트에 없어서 참조만 되고 있었다 */
+}
+:root[data-theme="dark"] {
+  --line: #35304f;
+}
+
 /* ── 앱 골격 ── */
 .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -108,7 +115,14 @@
 
 /* ── 검색 ── */
 .searchbar { position: relative; margin-bottom: 14px; }
-.searchbar .input { padding-left: 44px; }
+/* 검색칸은 패널 밖 맨 배경 위에 서는 일이 많다. 기본 입력 바탕(--soft)은 페이지 배경과
+   거의 같은 색이라 테두리 없는 입력창이 통째로 사라진다 — 카드처럼 띄운다. */
+.searchbar .input {
+  padding-left: 44px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh);
+}
 .searchbar .ico {
   position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
   color: var(--muted2); font-size: 15px; pointer-events: none;
