@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import * as auth from '../auth';
 import { api } from '../api/client';
@@ -69,5 +69,29 @@ describe('LoginPage — 쓸 수 있는 제공자만 보여준다', () => {
 
     await waitFor(() => expect(screen.getByText(/카카오로 시작하기/)).toBeTruthy());
     expect(screen.getByText(/구글로 시작하기/)).toBeTruthy();
+  });
+
+  /**
+   * 토큰이 만료돼 로그인으로 튕겼다가 다른 탭에서 로그인을 마친 경우처럼, 이미 로그인된 채
+   * 돌아갈 곳(from)을 들고 오면 홈이 아니라 <b>그곳</b>으로 보낸다.
+   */
+  it('이미 로그인돼 있고 돌아갈 곳이 있으면 그리로 보낸다', async () => {
+    vi.spyOn(auth, 'useAuth').mockReturnValue({
+      me: { id: 1, nickname: '테스터', email: null, profileImage: null, phoneNumber: null, provider: 'KAKAO', role: 'USER' },
+      loading: false, login: vi.fn(), loginWithToken: vi.fn(), logout: vi.fn(), refresh: vi.fn(),
+    });
+    mockProviders(['kakao']);
+
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/login', state: { from: '/settings?tab=1' } }]}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/settings" element={<div>알림 설정 화면</div>} />
+          <Route path="/" element={<div>홈 화면</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('알림 설정 화면')).toBeTruthy();
   });
 });

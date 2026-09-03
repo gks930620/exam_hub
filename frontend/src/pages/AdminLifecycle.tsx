@@ -21,8 +21,8 @@ export default function AdminLifecycle() {
       .catch((e) => setErr(e instanceof Error ? e.message : '불러오지 못했습니다.'));
   }, []);
 
-  if (err) return <div className="k-alert k-alert--err">{err}</div>;
-  if (!data) return <div className="k-empty state">불러오는 중…</div>;
+  if (err) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
+  if (!data) return <div className="k-empty state" role="status">불러오는 중…</div>;
   if (data.items.length === 0) {
     return <p className="fineprint" style={{ margin: 0 }}>폐지·개칭된 시험이 없습니다.</p>;
   }
@@ -41,17 +41,19 @@ export default function AdminLifecycle() {
       {open && (
         <div className="k-card" style={{ padding: 18, marginTop: 10 }}>
           <p className="fineprint" style={{ margin: '0 0 14px' }}>
-            이 시험들은 <b>검색·목록에서 빠져 있습니다</b>(오지 않을 접수를 기다리게 두지 않으려고).
+            폐지·개칭이 확정된 시험은 <b>검색·목록에서 빠져 있습니다</b>(오지 않을 접수를 기다리게 두지 않으려고).
             기록은 여기 남아 있어서 "왜 없어졌는지" 답할 수 있습니다.
           </p>
           <div className="k-alert k-alert--warn" style={{ marginBottom: 16 }}>
-            <b>확인 필요</b>가 붙은 것은 <b>큐넷 목록에 없다는 것만</b> 확인된 상태입니다.
-            시행처가 큐넷이 아니라서 없는 것일 수도 있습니다 —
-            컴퓨터활용능력은 대한상공회의소 시행이라 큐넷에 없지만 멀쩡히 살아 있습니다.
-            시행처 사이트를 보고 판단해 주세요.
+            <span>
+              <b>확인 필요</b>가 붙은 것은 <b>큐넷 목록에 없다는 것만</b> 확인된 상태라 <b>아직 검색에 나옵니다</b>.
+              시행처가 큐넷이 아니라서 없는 것일 수도 있습니다 —
+              컴퓨터활용능력은 대한상공회의소 시행이라 큐넷에 없지만 멀쩡히 살아 있습니다.
+              시행처 사이트를 보고 판단해 주세요.
+            </span>
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
+          <div className="k-tablewrap">
             <table className="k-table data-table">
               <thead>
                 <tr><th>시험</th><th>상태</th><th>지금은</th><th>근거</th></tr>

@@ -4,12 +4,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.test.test.exam.admin.DataSourceCatalog;
 import com.test.test.exam.collect.CollectedSchedule;
 import com.test.test.exam.collect.DiffService;
+import com.test.test.exam.common.TimeUtil;
+import com.test.test.exam.domain.Certificate;
+import com.test.test.exam.domain.ExamSchedule;
 import com.test.test.exam.domain.ExamType;
+import com.test.test.exam.domain.NotificationEventType;
+import com.test.test.exam.domain.NotificationSchedule;
+import com.test.test.exam.domain.NotificationScheduleStatus;
 import com.test.test.exam.domain.ScheduleProvenance;
+import com.test.test.exam.domain.ScheduleStatus;
 import com.test.test.exam.domain.Series;
 import com.test.test.exam.domain.AuthProvider;
 import com.test.test.exam.domain.Member;
+import com.test.test.exam.notification.NotificationContentFactory;
+import com.test.test.exam.notification.NotificationMessage;
+import com.test.test.exam.repository.CertificateRepository;
+import com.test.test.exam.repository.ExamScheduleRepository;
 import com.test.test.exam.repository.MemberRepository;
+import com.test.test.exam.repository.NotificationScheduleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,12 +35,14 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -252,12 +266,12 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     @DisplayName("할 일에는 행동이 붙고 행동별 합이 맞는다")
     void todo_rows_carry_actions() throws Exception {
         MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("bucket", "TODO").param("size", "2000")
+                        .param("bucket", "TODO").param("size", "100")
                         .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
                 .andExpect(status().isOk())
                 .andReturn();
         JsonNode body = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8));
-        java.util.Set<String> allowed = java.util.Set.of("FIRST_INPUT", "NEXT_ROUND", "VERIFY", "CHECK_SOURCE");
+        java.util.Set<String> allowed = java.util.Set.of("FIRST_INPUT", "REVIEW_MOVE", "NEXT_ROUND", "VERIFY", "CHECK_SOURCE");
         assertTrue(body.path("items").size() > 0, "할 일이 하나도 없다 — 마스터에 수기 시험이 없나?");
         for (JsonNode it : body.path("items")) {
             assertEquals("TODO", it.path("bucket").asText());
@@ -274,7 +288,7 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     @DisplayName("수기 대상 + 일정 없음 = 첫 일정 입력")
     void manual_without_schedule_is_first_input() throws Exception {
         MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("bucket", "TODO").param("action", "FIRST_INPUT").param("size", "2000")
+                        .param("bucket", "TODO").param("action", "FIRST_INPUT").param("size", "100")
                         .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -292,7 +306,7 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     @DisplayName("대기에는 행동이 없고 기다리는 이유가 있다")
     void waiting_rows_are_automatic() throws Exception {
         MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("bucket", "WAITING").param("size", "2000")
+                        .param("bucket", "WAITING").param("size", "100")
                         .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -311,7 +325,7 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     @DisplayName("정상은 앞으로의 일정을 갖는다")
     void ok_rows_have_upcoming_event() throws Exception {
         MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("bucket", "OK").param("size", "2000")
+                        .param("bucket", "OK").param("size", "100")
                         .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -327,7 +341,7 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     @DisplayName("상시는 할 일에 없고 상시 탭에 있다")
     void rolling_is_its_own_bucket() throws Exception {
         MvcResult todo = mockMvc.perform(get("/api/admin/overview")
-                        .param("bucket", "TODO").param("size", "2000")
+                        .param("bucket", "TODO").param("query", "AWS Certified Cloud").param("size", "100")
                         .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
                 .andExpect(status().isOk()).andReturn();
         for (JsonNode it : objectMapper.readTree(todo.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items")) {
@@ -357,12 +371,13 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
         long certId = target.path("certificateId").asLong();
         String name = target.path("certificateName").asText();
 
-        // 날짜 없이 연도·회차·구분만 저장
-        mockMvc.perform(post("/api/admin/schedules")
-                        .header(HttpHeaders.AUTHORIZATION, token)
-                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
-                        .content("{\"certificateId\":" + certId + ",\"year\":2099,\"round\":1,\"examType\":\"WRITTEN\"}"))
-                .andExpect(status().is2xxSuccessful());
+        // 날짜 없이 연도·회차·구분만 있는 행 — 수기 입력 API 는 이제 이런 행을 거절하므로(날짜 최소 1개)
+        // 수집이 만들어 둔 상황을 저장소로 흉내 낸다
+        examScheduleRepository.save(ExamSchedule.builder()
+                .certificate(certificateRepository.findById(certId).orElseThrow())
+                .year(2099).round(1).examType(ExamType.WRITTEN)
+                .provenance(ScheduleProvenance.SCRAPED)
+                .build());
 
         MvcResult after = mockMvc.perform(get("/api/admin/overview")
                         .param("bucket", "TODO").param("query", name).param("size", "50")
@@ -672,5 +687,403 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
         mockMvc.perform(get("/api/manager/available"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.configured").value(true));
+    }
+
+    // ═════════════════════════════════════════════════════════════════════
+    // 아래는 2026-09-03 결함 수정분 — 로그인 시도 제한 · 입력 검증 · 취소/변경 알림 ·
+    // 수집이 수기 행을 건드리지 않는 것 · '자동'의 근거
+    // ═════════════════════════════════════════════════════════════════════
+
+    @Autowired
+    private CertificateRepository certificateRepository;
+
+    @Autowired
+    private ExamScheduleRepository examScheduleRepository;
+
+    @Autowired
+    private NotificationScheduleRepository notificationScheduleRepository;
+
+    @Autowired
+    private NotificationContentFactory contentFactory;
+
+    private Certificate newCertificate(String name, String agency, String codePrefix) {
+        return newCertificate(name, agency, codePrefix, Series.ETC);
+    }
+
+    private Certificate newCertificate(String name, String agency, String codePrefix, Series series) {
+        String unique = UUID.randomUUID().toString().substring(0, 6);
+        return certificateRepository.save(Certificate.builder()
+                .name(name + unique).slug(name + "-" + unique)
+                .series(series).agency(agency).category("테스트")
+                .sourceCode(codePrefix == null ? null : codePrefix + "-" + unique)
+                .build());
+    }
+
+    private String upsertBody(long certId, int year, int round, String examStart) {
+        return "{\"certificateId\":%d,\"year\":%d,\"round\":%d,\"examType\":\"WRITTEN\",\"examStartDate\":\"%s\"}"
+                .formatted(certId, year, round, examStart);
+    }
+
+    private long upsert(String token, String body) throws Exception {
+        MvcResult res = mockMvc.perform(post("/api/admin/schedules")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated()).andReturn();
+        return objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("id").asLong();
+    }
+
+    private void expectUpsert400(String token, String body) throws Exception {
+        mockMvc.perform(post("/api/admin/schedules")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+    private JsonNode overviewRow(String token, Certificate cert) throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("query", cert.getName()).param("size", "50")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk()).andReturn();
+        for (JsonNode it : objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items")) {
+            if (it.path("certificateId").asLong() == cert.getId()) {
+                return it;
+            }
+        }
+        throw new AssertionError("현황에 시험이 없다: " + cert.getName());
+    }
+
+    private List<NotificationSchedule> notificationsOf(long scheduleId) {
+        return notificationScheduleRepository.findByExamSchedule(
+                examScheduleRepository.findById(scheduleId).orElseThrow());
+    }
+
+    private boolean hasPendingChangeAlert(long scheduleId) {
+        return notificationsOf(scheduleId).stream().anyMatch(n ->
+                n.getEventType() == NotificationEventType.SCHEDULE_CHANGED
+                        && n.getStatus() == NotificationScheduleStatus.PENDING);
+    }
+
+    private CollectedSchedule collected(Certificate cert, Series series, int year, int round,
+                                        LocalDate examStart, ScheduleProvenance provenance) {
+        return new CollectedSchedule(cert.getSourceCode(), cert.getName(), series, cert.getAgency(), cert.getCategory(),
+                year, round, ExamType.WRITTEN, null, null, examStart, examStart, null,
+                "https://example.test/", provenance);
+    }
+
+    // ===== 로그인 시도 제한 =====
+    //
+    // 운영 계정은 하나뿐이고 아이디가 뻔하다. 비밀번호 대입을 무한정 받아주면 안 된다.
+
+    private void failLogin(String username) throws Exception {
+        mockMvc.perform(post("/api/manager/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginBody(username, "틀린비밀번호")))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("같은 아이디로 5회 넘게 틀리면 429 — 기존 에러 JSON 형식 그대로")
+    void login_is_locked_after_five_failures() throws Exception {
+        String username = "locked-" + UUID.randomUUID().toString().substring(0, 8);
+        for (int i = 0; i < 5; i++) {
+            failLogin(username);
+        }
+        mockMvc.perform(post("/api/manager/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginBody(username, "틀린비밀번호")))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value("TOO_MANY_ATTEMPTS"))
+                .andExpect(jsonPath("$.message").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("로그인에 성공하면 실패 횟수가 초기화된다")
+    void successful_login_resets_failure_counter() throws Exception {
+        String username = "reset-" + UUID.randomUUID().toString().substring(0, 8);
+        memberRepositoryForManager.save(Member.manager(username, passwordEncoder.encode(PASSWORD), "리셋" + username));
+
+        for (int i = 0; i < 4; i++) {
+            failLogin(username);
+        }
+        mockMvc.perform(post("/api/manager/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginBody(username, PASSWORD)))
+                .andExpect(status().isOk());
+
+        // 초기화됐으니 다시 5회까지는 401 이다 (초기화가 안 됐으면 두 번째부터 429)
+        for (int i = 0; i < 5; i++) {
+            failLogin(username);
+        }
+        mockMvc.perform(post("/api/manager/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginBody(username, PASSWORD)))
+                .andExpect(status().isTooManyRequests());
+    }
+
+    // ===== 수기 입력 검증 =====
+
+    @Test
+    @DisplayName("회차 0 · 연도 범위 밖 · 날짜 없음 · 날짜 순서 위반은 400")
+    void upsert_rejects_invalid_input() throws Exception {
+        long certId = anyCertificateId();
+        String token = bearer(newAdmin());
+        String head = "{\"certificateId\":" + certId + ",\"examType\":\"WRITTEN\",";
+
+        expectUpsert400(token, head + "\"year\":2027,\"round\":0,\"examStartDate\":\"2027-03-01\"}");
+        expectUpsert400(token, head + "\"year\":1999,\"round\":1,\"examStartDate\":\"1999-03-01\"}");
+        expectUpsert400(token, head + "\"year\":2101,\"round\":1,\"examStartDate\":\"2101-03-01\"}");
+        expectUpsert400(token, head + "\"year\":2027,\"round\":1}");   // 날짜가 하나도 없다
+        expectUpsert400(token, head + "\"year\":2027,\"round\":1,"
+                + "\"regEndAt\":\"2027-03-02T18:00\",\"examStartDate\":\"2027-03-01\"}");   // 마감이 시험 다음날
+        expectUpsert400(token, head + "\"year\":2027,\"round\":1,"
+                + "\"examStartDate\":\"2027-03-01\",\"examEndDate\":\"2027-03-03\",\"resultDate\":\"2027-03-02\"}");   // 발표가 종료 전
+        expectUpsert400(token, head + "\"year\":2027,\"round\":1,"
+                + "\"examStartDate\":\"2027-03-05\",\"examEndDate\":\"2027-03-03\"}");   // 시작이 종료 뒤
+        expectUpsert400(token, head + "\"year\":2027,\"round\":1,"
+                + "\"regStartAt\":\"2027-01-10T10:00\",\"regEndAt\":\"2027-01-05T18:00\"}");   // 접수 시작이 마감 뒤
+    }
+
+    @Test
+    @DisplayName("접수 마감일과 시험일이 같은 날인 것은 허용된다 (당일 접수)")
+    void upsert_allows_registration_closing_on_exam_day() throws Exception {
+        long certId = anyCertificateId();
+        upsert(bearer(newAdmin()), "{\"certificateId\":" + certId + ",\"year\":2028,\"round\":7,\"examType\":\"WRITTEN\","
+                + "\"regStartAt\":\"2028-02-01T10:00\",\"regEndAt\":\"2028-03-01T18:00\","
+                + "\"examStartDate\":\"2028-03-01\",\"examEndDate\":\"2028-03-01\",\"resultDate\":\"2028-03-01\"}");
+    }
+
+    @Test
+    @DisplayName("현황의 page 음수·size 0·size 100 초과는 400")
+    void overview_rejects_bad_paging() throws Exception {
+        String token = bearer(newAdmin());
+        mockMvc.perform(get("/api/admin/overview").param("page", "-1").header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/admin/overview").param("size", "0").header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/admin/overview").param("size", "101").header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/api/admin/overview").param("size", "100").header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk());
+    }
+
+    // ===== 일정 이동 확인 (PENDING_REVIEW) =====
+    //
+    // 수집이 30일 넘게 이동한 회차를 보류하면 사용자에게도 매니저에게도 안 보였다 — 영원히 보류.
+
+    @Test
+    @DisplayName("보류(PENDING_REVIEW) 회차가 있으면 '일정 이동 확인' 할 일이 되고, 매니저 목록에 status 와 함께 보인다")
+    void pending_review_round_becomes_review_move_action() throws Exception {
+        String token = bearer(newAdmin());
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("이동보류", "국사편찬위원회", "REVIEW");
+        ExamSchedule pending = examScheduleRepository.save(ExamSchedule.builder()
+                .certificate(cert).year(today.getYear()).round(1).examType(ExamType.WRITTEN)
+                .examStartDate(today.plusDays(40)).status(ScheduleStatus.PENDING_REVIEW)
+                .provenance(ScheduleProvenance.SCRAPED).build());
+
+        JsonNode row = overviewRow(token, cert);
+        assertEquals("TODO", row.path("bucket").asText(), row.toString());
+        assertEquals("REVIEW_MOVE", row.path("action").asText());
+        assertEquals("일정 이동 확인", row.path("actionLabel").asText());
+
+        MvcResult list = mockMvc.perform(get("/api/admin/schedules")
+                        .param("certificateId", String.valueOf(cert.getId()))
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode rows = objectMapper.readTree(list.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        assertEquals(1, rows.size(), "보류 회차가 매니저 목록에 안 보인다 — 확인할 방법이 없다");
+        assertEquals("PENDING_REVIEW", rows.get(0).path("status").asText());
+
+        // 매니저가 확인하고 저장하면 ACTIVE 로 돌아오고 할 일에서 빠진다
+        mockMvc.perform(post("/api/admin/schedules")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(upsertBody(cert.getId(), today.getYear(), 1, today.plusDays(40).toString())))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(pending.getId()))
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+        assertNotEquals("REVIEW_MOVE", overviewRow(token, cert).path("action").asText(""));
+        // 사용자에게 알리지 못했던 이동이 확정됐으니 변경 알림이 나간다
+        assertTrue(hasPendingChangeAlert(pending.getId()), "보류에서 확정됐는데 변경 알림이 없다");
+    }
+
+    // ===== 취소 → 알림 =====
+
+    @Test
+    @DisplayName("회차를 취소하면 대기 중 알림은 취소되고, 관심 등록자에게 취소 안내 1건이 즉시 예약된다")
+    void cancel_cancels_pending_alerts_and_schedules_cancel_notice() throws Exception {
+        String token = bearer(newAdmin());
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("취소시험", "국사편찬위원회", "CANCEL");
+        long scheduleId = upsert(token, ("{\"certificateId\":%d,\"year\":%d,\"round\":1,\"examType\":\"WRITTEN\","
+                + "\"regStartAt\":\"%sT09:00\",\"regEndAt\":\"%sT18:00\",\"examStartDate\":\"%s\"}")
+                .formatted(cert.getId(), today.getYear(), today.plusDays(10), today.plusDays(20), today.plusDays(40)));
+        assertTrue(notificationsOf(scheduleId).stream().anyMatch(n ->
+                        n.getStatus() == NotificationScheduleStatus.PENDING
+                                && n.getEventType() != NotificationEventType.SCHEDULE_CHANGED),
+                "미래 일정인데 대기 알림이 없다");
+
+        mockMvc.perform(delete("/api/admin/schedules/{id}", scheduleId)
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isNoContent());
+
+        List<NotificationSchedule> after = notificationsOf(scheduleId);
+        assertTrue(after.stream().anyMatch(n -> n.getEventType() == NotificationEventType.SCHEDULE_CHANGED),
+                "취소 안내가 예약되지 않았다");
+        for (NotificationSchedule n : after) {
+            if (n.getEventType() == NotificationEventType.SCHEDULE_CHANGED) {
+                assertEquals(NotificationScheduleStatus.PENDING, n.getStatus(), "취소 안내가 대기 상태가 아니다");
+                assertFalse(n.getSendAt().isAfter(TimeUtil.now()), "취소 안내가 즉시 나가지 않는다");
+            } else {
+                assertEquals(NotificationScheduleStatus.CANCELED, n.getStatus(),
+                        "취소된 회차의 알림이 살아 있다: " + n.getEventType());
+            }
+        }
+
+        ExamSchedule canceled = examScheduleRepository.findById(scheduleId).orElseThrow();
+        assertEquals(ScheduleStatus.CANCELED, canceled.getStatus());
+        NotificationMessage msg = contentFactory.build(
+                new NotificationContentFactory.NotificationSchedule_Ref(canceled, NotificationEventType.SCHEDULE_CHANGED));
+        assertTrue(msg.title().contains("취소"), "취소인데 문구가 '변경'이라고만 한다: " + msg.title());
+        assertEquals("/cert/" + cert.getId(), msg.data().get("route"), "알림 링크가 옛 주소다");
+    }
+
+    // ===== 수기 저장의 변경 알림 =====
+
+    @Test
+    @DisplayName("새 회차를 넣는 것은 '변경'이 아니다 — 날짜가 실제로 바뀔 때만 변경 알림")
+    void manual_upsert_raises_change_alert_only_when_dates_change() throws Exception {
+        String token = bearer(newAdmin());
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("변경알림", "국사편찬위원회", "CHANGE");
+        int year = today.getYear();
+
+        long id = upsert(token, upsertBody(cert.getId(), year, 1, today.plusDays(30).toString()));
+        assertFalse(hasPendingChangeAlert(id), "신규 회차인데 변경 알림이 나간다");
+
+        assertEquals(id, upsert(token, upsertBody(cert.getId(), year, 1, today.plusDays(30).toString())));
+        assertFalse(hasPendingChangeAlert(id), "같은 값을 다시 저장했는데 변경 알림이 나간다");
+
+        upsert(token, upsertBody(cert.getId(), year, 1, today.plusDays(31).toString()));
+        assertTrue(hasPendingChangeAlert(id), "시험일이 바뀌었는데 변경 알림이 없다");
+    }
+
+    // ===== 수집이 수기·취소 행을 건드리지 않는다 =====
+    //
+    // 매니저가 공고를 보고 넣은 값을 배치가 시드·추정치로 덮으면 사람이 한 일이 매일 새벽 사라진다.
+
+    @Test
+    @DisplayName("매니저가 넣은 행은 수집이 덮어쓰지 않는다")
+    void collection_does_not_overwrite_manual_row() throws Exception {
+        String token = bearer(newAdmin());
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("수기보호", "국사편찬위원회", "MANUAL");
+        int year = today.getYear();
+        long id = upsert(token, upsertBody(cert.getId(), year, 1, today.plusDays(30).toString()));
+
+        DiffService.Outcome outcome = diffService.upsert(
+                collected(cert, Series.ETC, year, 1, today.plusDays(45), ScheduleProvenance.API));
+
+        assertEquals(DiffService.DiffType.UNCHANGED, outcome.type(), "수기 행을 수집이 건드렸다");
+        ExamSchedule row = examScheduleRepository.findById(id).orElseThrow();
+        assertEquals(today.plusDays(30), row.getExamStartDate(), "매니저가 넣은 시험일이 덮어써졌다");
+        assertEquals(ScheduleProvenance.MANUAL, row.getProvenance());
+        mockMvc.perform(get("/api/admin/schedules")
+                        .param("certificateId", String.valueOf(cert.getId()))
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].examStartDate").value(today.plusDays(30).toString()));
+    }
+
+    @Test
+    @DisplayName("취소한 회차는 수집이 되살리지 않는다")
+    void collection_does_not_revive_canceled_row() throws Exception {
+        String token = bearer(newAdmin());
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("취소보호", "국사편찬위원회", "REVIVE");
+        int year = today.getYear();
+        long id = upsert(token, upsertBody(cert.getId(), year, 1, today.plusDays(30).toString()));
+        mockMvc.perform(delete("/api/admin/schedules/{id}", id).header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isNoContent());
+
+        DiffService.Outcome outcome = diffService.upsert(
+                collected(cert, Series.ETC, year, 1, today.plusDays(45), ScheduleProvenance.API));
+
+        assertEquals(DiffService.DiffType.UNCHANGED, outcome.type());
+        ExamSchedule row = examScheduleRepository.findById(id).orElseThrow();
+        assertEquals(ScheduleStatus.CANCELED, row.getStatus(), "취소한 회차가 수집으로 부활했다");
+        assertEquals(today.plusDays(30), row.getExamStartDate());
+    }
+
+    @Test
+    @DisplayName("추정치는 확정된 값(API·스크래핑)을 덮지 않는다 — 출처 서열")
+    void approx_does_not_overwrite_confirmed_row() {
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("서열", "한국산업인력공단", "RANK");
+        int year = today.getYear();
+
+        DiffService.Outcome first = diffService.upsert(
+                collected(cert, Series.ETC, year, 1, today.plusDays(30), ScheduleProvenance.API));
+        assertEquals(DiffService.DiffType.NEW, first.type());
+        long id = first.schedule().getId();
+
+        DiffService.Outcome approx = diffService.upsert(
+                collected(cert, Series.ETC, year, 1, today.plusDays(45), ScheduleProvenance.APPROX));
+        assertEquals(DiffService.DiffType.UNCHANGED, approx.type(), "추정치가 API 값을 덮었다");
+        ExamSchedule row = examScheduleRepository.findById(id).orElseThrow();
+        assertEquals(today.plusDays(30), row.getExamStartDate());
+        assertEquals(ScheduleProvenance.API, row.getProvenance(), "출처가 추정으로 강등됐다");
+
+        // 확정된 값끼리는 나중 것이 이긴다
+        DiffService.Outcome scraped = diffService.upsert(
+                collected(cert, Series.ETC, year, 1, today.plusDays(50), ScheduleProvenance.SCRAPED));
+        assertEquals(DiffService.DiffType.UPDATED, scraped.type());
+        assertEquals(today.plusDays(50), examScheduleRepository.findById(id).orElseThrow().getExamStartDate());
+    }
+
+    @Test
+    @DisplayName("수집 레코드의 계열이 '기타'면 기존 계열을 지우지 않는다 — 스냅샷·시드가 673종을 기타로 만들던 것")
+    void collection_keeps_series_when_record_says_etc() {
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("계열보호", "한국산업인력공단", "SERIES", Series.TECHNICIAN);
+        int year = today.getYear();
+
+        diffService.upsert(collected(cert, Series.ETC, year, 1, today.plusDays(30), ScheduleProvenance.API));
+        assertEquals(Series.TECHNICIAN, certificateRepository.findById(cert.getId()).orElseThrow().getSeries(),
+                "수집 레코드의 '기타'가 기존 계열을 지웠다");
+
+        diffService.upsert(collected(cert, Series.INDUSTRIAL, year, 2, today.plusDays(60), ScheduleProvenance.API));
+        assertEquals(Series.INDUSTRIAL, certificateRepository.findById(cert.getId()).orElseThrow().getSeries(),
+                "구체적인 계열은 반영돼야 한다");
+    }
+
+    // ===== '자동'의 근거는 살아 있는 소스다 =====
+    //
+    // 행의 출처(provenance)가 scraped 라는 것은 "언젠가 누가 긁었다"일 뿐이다. 정적 시드의 scraped 행을 근거로
+    // '자동'이라 하면, 아무도 안 긁는 시험이 매니저 화면에서 자동으로 보여 영원히 손을 안 댄다.
+
+    @Test
+    @DisplayName("정적 시드의 scraped 행은 '자동'의 근거가 못 된다 — 살아 있는 소스가 그 기관을 맡아야 자동이다")
+    void static_scraped_row_does_not_make_exam_automatic() throws Exception {
+        String token = bearer(newAdmin());
+        LocalDate today = TimeUtil.today();
+
+        Certificate history = newCertificate("한국사검정", "국사편찬위원회", "HIST");   // 수기 대상 기관
+        diffService.upsert(collected(history, Series.ETC, today.getYear(), 1, today.plusDays(30), ScheduleProvenance.SCRAPED));
+        assertEquals("MANUAL", overviewRow(token, history).path("source").asText(),
+                "시드의 scraped 표시만 보고 자동이라 한다");
+
+        // 스크래퍼 코드는 있지만 이 테스트 설정에선 떠 있지 않다 → 크롤링 예정이지 자동은 아니다
+        Certificate kdata = newCertificate("데이터자격", "한국데이터산업진흥원", "KDATA");
+        diffService.upsert(collected(kdata, Series.ETC, today.getYear(), 1, today.plusDays(30), ScheduleProvenance.SCRAPED));
+        assertEquals("CRAWL_PLANNED", overviewRow(token, kdata).path("source").asText());
+    }
+
+    @Test
+    @DisplayName("큐넷 4자리 종목코드는 여전히 자동이다")
+    void qnet_code_is_automatic() throws Exception {
+        Certificate cert = certificateRepository.findBySlug("정보처리기사").orElseThrow();
+        assertEquals("AUTO", overviewRow(bearer(newAdmin()), cert).path("source").asText());
     }
 }

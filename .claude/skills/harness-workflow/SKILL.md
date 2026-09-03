@@ -3,6 +3,9 @@ name: harness-workflow
 description: 이 프로젝트의 에이전트 팀(planner/builder/reviewer/researcher)을 굴리는 오케스트레이션 방법. 작업이 조금이라도 복잡해서 "기획→구현→검토"로 나누는 게 나을 때, 또는 서브에이전트에게 일을 위임할 때 참고한다.
 ---
 
+> ⚠️ **폐기 예정(2026-09-03)** — 이 스킬은 이 프로젝트의 팀 구성과 맞지 않는다. `planner/reviewer/researcher` 에이전트는 없다(`.claude/agents/` 에는 product-planner·designer·senior-dev·backend-dev·frontend-dev·qa·devops·builder 뿐).
+> 파이프라인은 `.claude/CLAUDE.md` 의 "일하는 흐름"(product-planner → senior-dev → backend-dev ∥ frontend-dev → senior-dev 리뷰 → qa → devops)을 따른다.
+
 # 하네스 오케스트레이션 가이드
 
 메인 세션(지휘자)이 서브에이전트를 어떻게 부리는지에 대한 규칙이다.

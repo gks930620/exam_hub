@@ -7,7 +7,7 @@
 | DB | 개발 H2(MODE=PostgreSQL) · 운영 PostgreSQL(Railway) · Spring Data JPA `ddl-auto=update` |
 | 시간 규칙 | 모든 시각 컬럼 KST 기준(`TimeUtil` 경유), `TIMESTAMP` 저장 |
 
-> **⚠️ 구현 현행화 노트 (2026-07-24)**: 실제 구현은 개발 H2(**MODE=MySQL**, ddl-auto=create) · 운영 **MySQL**(Railway, ddl-auto=update). `exam_schedule.year`는 H2 예약어 회피로 컬럼명 **`exam_year`**로 매핑(엔티티 속성명은 `year` 유지).
+> **⚠️ 구현 현행화 노트 (2026-07-24)**: 실제 구현은 개발 H2(**MODE=MySQL**, ddl-auto=update, 파일 H2 `.localdb/`) · 운영 **MySQL**(Railway, ddl-auto=update). `exam_schedule.year`는 H2 예약어 회피로 컬럼명 **`exam_year`**로 매핑(엔티티 속성명은 `year` 유지).
 
 ---
 

@@ -3,7 +3,9 @@ package com.test.test.exam.collect;
 import com.test.test.exam.common.TimeUtil;
 import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.domain.ExamSchedule;
+import com.test.test.exam.domain.ScheduleProvenance;
 import com.test.test.exam.domain.ScheduleStatus;
+import com.test.test.exam.domain.Series;
 import com.test.test.exam.repository.CertificateRepository;
 import com.test.test.exam.repository.ExamScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,16 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
  * 수집 diff·검증 (DR-03, DR-04). 자연 키 매칭 upsert + source_hash 비교 + 날짜 무결성/이상치 판정.
  * 조회 서비스와 분리해 수집 로직만 담당한다.
+ *
+ * <p><b>수집이 건드리지 않는 행</b>(2026-09-03):
+ * <ul>
+ *   <li>매니저가 넣은 행(MANUAL) — 공고를 보고 넣은 값을 시드·추정치가 매일 새벽 덮으면 사람이 한 일이 사라진다.</li>
+ *   <li>취소한 행(CANCELED) — 시행처가 취소 공지를 냈는데 수집이 되살리면 사용자가 없는 시험을 기다린다.</li>
+ *   <li>확정된 값(API·SCRAPED) 위에 추정치(APPROX) — 출처 서열. 추정이 확정을 덮을 수는 없다.</li>
+ * </ul>
  */
 @Slf4j
 @Service
@@ -37,10 +46,14 @@ public class DiffService {
 
     public enum DiffType {NEW, UPDATED, UNCHANGED, SKIPPED, PENDING_REVIEW}
 
-    /** upsert 결과. schedule 은 SKIPPED 시 null. changed=알림 재계산이 필요한 실질 변경(접수/시험일). */
+    /** upsert 결과. schedule 은 SKIPPED 시 null. changed=알림 재계산이 필요한 실질 변경(접수/시험/발표일). */
     public record Outcome(DiffType type, ExamSchedule schedule, boolean changed) {
         static Outcome skipped() {
             return new Outcome(DiffType.SKIPPED, null, false);
+        }
+
+        static Outcome unchanged(ExamSchedule schedule) {
+            return new Outcome(DiffType.UNCHANGED, schedule, false);
         }
     }
 
@@ -54,11 +67,12 @@ public class DiffService {
             log.warn("[Diff] 필수 필드 누락 → 스킵: {}", rec);
             return Outcome.skipped();
         }
-        // (a) 수집 원본 자체의 날짜 무결성 위반 → 스킵
-        if (!isDateOrderValid(rec.regStartAt(), rec.regEndAt(),
-                rec.examStartDate(), rec.examEndDate(), rec.resultDate())) {
-            log.warn("[Diff] 날짜 순서 무결성 위반 → 스킵: {} {}회 {}",
-                    rec.certificateName(), rec.round(), rec.examType());
+        // (a) 수집 원본 자체의 날짜 무결성 위반 → 스킵 (규칙은 도메인이 갖는다 — 수기 입력과 동일)
+        String violation = ExamSchedule.dateOrderViolation(rec.regStartAt(), rec.regEndAt(),
+                rec.examStartDate(), rec.examEndDate(), rec.resultDate());
+        if (violation != null) {
+            log.warn("[Diff] 날짜 순서 무결성 위반({}) → 스킵: {} {}회 {}",
+                    violation, rec.certificateName(), rec.round(), rec.examType());
             return Outcome.skipped();
         }
 
@@ -85,16 +99,36 @@ public class DiffService {
             return new Outcome(DiffType.NEW, saved, true);
         }
 
+        // 사람이 넣었거나 취소한 행은 수집이 건드리지 않는다 — 해시 비교보다 먼저 봐야 출처·시각도 안 바뀐다
+        if (existing.getProvenance() == ScheduleProvenance.MANUAL) {
+            log.debug("[Diff] 매니저 입력 행 — 수집이 건드리지 않음: {} {}년 {}회 {}",
+                    rec.certificateName(), rec.year(), rec.round(), rec.examType());
+            return Outcome.unchanged(existing);
+        }
+        if (existing.getStatus() == ScheduleStatus.CANCELED) {
+            log.debug("[Diff] 취소된 회차 — 수집이 되살리지 않음: {} {}년 {}회 {}",
+                    rec.certificateName(), rec.year(), rec.round(), rec.examType());
+            return Outcome.unchanged(existing);
+        }
+        // 출처 서열: 확정된 값 위에 추정치를 얹지 않는다
+        if (rec.provenance() == ScheduleProvenance.APPROX
+                && existing.getProvenance() != null && existing.getProvenance().isConfirmed()) {
+            log.debug("[Diff] 확정({}) 위에 추정치 — 덮지 않음: {} {}년 {}회 {}",
+                    existing.getProvenance(), rec.certificateName(), rec.year(), rec.round(), rec.examType());
+            return Outcome.unchanged(existing);
+        }
+
         // 해시 동일 → 변경 없음 (수집 확인 시각만 갱신)
         if (newHash.equals(existing.getSourceHash())) {
             existing.touchCollectedAt(now);
             existing.changeProvenance(rec.provenance());
-            return new Outcome(DiffType.UNCHANGED, existing, false);
+            return Outcome.unchanged(existing);
         }
 
         // (b) 급격한 이동 → PENDING_REVIEW (수집 데이터는 반영하되 노출/알림 보류)
         boolean bigMove = isBigMove(existing, rec);
-        boolean scheduleChanged = isScheduleChanged(existing, rec);
+        boolean scheduleChanged = existing.hasDifferentDates(rec.regStartAt(), rec.regEndAt(),
+                rec.examStartDate(), rec.examEndDate(), rec.resultDate());
 
         existing.changeProvenance(rec.provenance());
         existing.applyFrom(rec.regStartAt(), rec.regEndAt(),
@@ -115,12 +149,14 @@ public class DiffService {
     private Certificate ensureCertificate(CollectedSchedule rec) {
         return certificateRepository.findBySourceCode(rec.sourceCode())
                 .map(c -> {
-                    // 마스터 메타가 바뀌었으면 반영
+                    // 마스터 메타가 바뀌었으면 반영. 단 계열 '기타'는 "모른다"는 뜻이라 기존 계열을 지우지 않는다 —
+                    // 스냅샷·시드는 계열을 안 담아 ETC 로 오는데, 그걸 그대로 쓰면 673종이 기타가 된다(실측).
+                    Series series = rec.series() == null || rec.series() == Series.ETC ? c.getSeries() : rec.series();
                     if (!c.getName().equals(rec.certificateName())
-                            || c.getSeries() != rec.series()
+                            || c.getSeries() != series
                             || !c.getAgency().equals(rec.agency())
-                            || !java.util.Objects.equals(c.getCategory(), rec.category())) {
-                        c.updateMeta(rec.certificateName(), rec.series(), rec.agency(), rec.category());
+                            || !Objects.equals(c.getCategory(), rec.category())) {
+                        c.updateMeta(rec.certificateName(), series, rec.agency(), rec.category());
                         certificateRepository.save(c);
                     }
                     return c;
@@ -173,20 +209,6 @@ public class DiffService {
         return base + "-" + i;
     }
 
-    /** 접수시작 ≤ 접수마감 < 시험시작 ≤ 시험종료 < 발표 (null 필드는 검사 생략) */
-    boolean isDateOrderValid(LocalDateTime regStart, LocalDateTime regEnd,
-                             LocalDate examStart, LocalDate examEnd, LocalDate result) {
-        // 접수시작 ≤ 접수마감
-        if (regStart != null && regEnd != null && regStart.isAfter(regEnd)) return false;
-        // 접수마감 < 시험시작
-        if (regEnd != null && examStart != null && !regEnd.toLocalDate().isBefore(examStart)) return false;
-        // 시험시작 ≤ 시험종료
-        if (examStart != null && examEnd != null && examStart.isAfter(examEnd)) return false;
-        // 시험종료 < 발표
-        if (examEnd != null && result != null && !examEnd.isBefore(result)) return false;
-        return true;
-    }
-
     private boolean isBigMove(ExamSchedule existing, CollectedSchedule rec) {
         if (existing.getRegStartAt() != null && rec.regStartAt() != null) {
             if (Math.abs(ChronoUnit.DAYS.between(
@@ -199,13 +221,6 @@ public class DiffService {
                     existing.getExamStartDate(), rec.examStartDate())) >= PENDING_REVIEW_MOVE_DAYS;
         }
         return false;
-    }
-
-    /** 접수기간/시험일 변경 여부 (SCHEDULE_CHANGED 알림 트리거 판정) */
-    private boolean isScheduleChanged(ExamSchedule existing, CollectedSchedule rec) {
-        return !java.util.Objects.equals(existing.getRegStartAt(), rec.regStartAt())
-                || !java.util.Objects.equals(existing.getRegEndAt(), rec.regEndAt())
-                || !java.util.Objects.equals(existing.getExamStartDate(), rec.examStartDate());
     }
 
     private String hash(CollectedSchedule rec) {

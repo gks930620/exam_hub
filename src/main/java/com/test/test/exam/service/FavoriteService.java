@@ -1,5 +1,6 @@
 package com.test.test.exam.service;
 
+import com.test.test.common.exception.BusinessRuleException;
 import com.test.test.common.exception.DuplicateResourceException;
 import com.test.test.common.exception.EntityNotFoundException;
 import com.test.test.exam.common.TimeUtil;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 관심 자격증 등록/해제, 홈 D-day 카드, 월간 캘린더 (설계 05 §2-3, §2-4, §2-7).
+ * 관심 시험 등록/해제, 홈 D-day 카드, 월간 캘린더 (설계 05 §2-3, §2-4, §2-7).
  */
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class FavoriteService {
     private final ExamScheduleRepository examScheduleRepository;
     private final DdayService ddayService;
 
-    /** 홈: 관심 자격증별 D-day 카드 (정렬: 접수중 → 접수 예정 → 시험 예정, 접수중은 마감 임박순). */
+    /** 홈: 관심 시험별 D-day 카드 (정렬: 접수 중 → 진행 중 → 접수 예정 → 시험 예정, 같은 급은 임박순, 이벤트 없음은 뒤). */
     @Transactional(readOnly = true)
     public FavoriteDtos.ListResponse getFavorites(Member user) {
         List<UserFavorite> favorites = favoriteRepository.findByMemberOrderByCreatedAtAsc(user);
@@ -41,20 +42,31 @@ public class FavoriteService {
                 .map(f -> toCard(f.getCertificate()))
                 .sorted(Comparator
                         .comparingInt((FavoriteDtos.Card c) -> badgePriority(c.badge()))
-                        .thenComparingLong(FavoriteDtos.Card::dday))
+                        .thenComparing(FavoriteDtos.Card::dday, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
 
         return new FavoriteDtos.ListResponse(cards);
     }
 
+    /**
+     * 카드 한 장. 판정은 시험 찾기 카드와 같은 {@link DdayService#summarize}.
+     * 폐지·개칭으로 숨긴 시험은 카드를 <b>남기되</b>(사라지면 해제할 길이 없다) 이유를 붙이고 D-day 는 주지 않는다.
+     */
     private FavoriteDtos.Card toCard(Certificate cert) {
-        List<ExamSchedule> schedules = examScheduleRepository
-                .findByCertificateIdAndStatusOrderByExamStartDateAsc(cert.getId(), ScheduleStatus.ACTIVE);
-        NextEvent e = ddayService.computeNextEvent(schedules);
+        String hiddenReason = cert.hiddenReason();
+        DdayService.ScheduleSummary summary = hiddenReason != null
+                ? new DdayService.ScheduleSummary(DdayService.ScheduleState.NONE, NextEvent.none(), false, null)
+                : ddayService.summarize(cert, examScheduleRepository
+                        .findByCertificateIdAndStatusOrderByExamStartDateAsc(cert.getId(), ScheduleStatus.ACTIVE));
+        NextEvent e = summary.next();
         return new FavoriteDtos.Card(
                 cert.getId(), cert.getName(),
                 e.badge().name(), e.badge().getLabel(),
-                e.label(), TimeUtil.format(e.at()), e.dday());
+                e.label(), TimeUtil.format(e.at()),
+                e.isPresent() ? e.dday() : null,
+                summary.state().name(),
+                TimeUtil.format(summary.lastExamDate()),
+                hiddenReason);
     }
 
     private int badgePriority(String badgeName) {
@@ -66,17 +78,20 @@ public class FavoriteService {
     }
 
     /**
-     * 관심 등록. 중복 등록은 409.
+     * 관심 등록. 중복 등록은 409, 폐지·개칭된 시험은 400 — 오지 않을 접수를 기다리게 두면 안 된다.
      * <p>개수 제한은 <b>없다</b> — 유료화를 하지 않기로 해서 무료 3개 제한(구 {@code Plan})을 없앴다.
      * 시험을 여러 개 준비하는 사람이 정상이고, 그걸 막을 이유가 없다.
      */
     @Transactional
     public FavoriteDtos.CreateResponse addFavorite(Member user, Long certificateId) {
         Certificate cert = certificateRepository.findById(certificateId)
-                .orElseThrow(() -> new EntityNotFoundException("자격증을 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("시험을 찾을 수 없습니다."));
 
+        if (!cert.isVisibleToUsers()) {
+            throw new BusinessRuleException("관심 등록할 수 없는 시험입니다 — " + cert.hiddenReason());
+        }
         if (favoriteRepository.existsByMemberIdAndCertificateId(user.getId(), certificateId)) {
-            throw DuplicateResourceException.alreadyExists("이미 관심 등록된 자격증입니다.");
+            throw DuplicateResourceException.alreadyExists("이미 관심 등록된 시험입니다.");
         }
 
         favoriteRepository.save(UserFavorite.builder()
@@ -101,18 +116,21 @@ public class FavoriteService {
         });
     }
 
-    /** 월간 캘린더: 관심 자격증의 접수 시작/마감/시험 이벤트 (설계 05 §2-7). */
+    /** 월간 캘린더: 관심 시험의 접수 시작/마감/시험 이벤트 (설계 05 §2-7). 숨긴 시험(폐지·개칭)은 뺀다. */
     @Transactional(readOnly = true)
     public MeDtos.CalendarResponse calendar(Member user, int year, int month) {
-        List<Long> certIds = favoriteRepository.findCertificateIdsByMemberId(user.getId());
-        if (certIds.isEmpty()) {
+        List<Long> favoriteIds = favoriteRepository.findCertificateIdsByMemberId(user.getId());
+        if (favoriteIds.isEmpty()) {
+            return new MeDtos.CalendarResponse(List.of());
+        }
+        Map<Long, String> nameById = certificateRepository.findAllById(favoriteIds).stream()
+                .filter(Certificate::isVisibleToUsers)
+                .collect(Collectors.toMap(Certificate::getId, Certificate::getName));
+        if (nameById.isEmpty()) {
             return new MeDtos.CalendarResponse(List.of());
         }
         List<ExamSchedule> schedules = examScheduleRepository
-                .findByCertificateIdInAndStatus(certIds, ScheduleStatus.ACTIVE);
-
-        Map<Long, String> nameById = certificateRepository.findAllById(certIds).stream()
-                .collect(Collectors.toMap(Certificate::getId, Certificate::getName));
+                .findByCertificateIdInAndStatus(List.copyOf(nameById.keySet()), ScheduleStatus.ACTIVE);
 
         LocalDate monthStart = LocalDate.of(year, month, 1);
         LocalDate monthEnd = monthStart.withDayOfMonth(monthStart.lengthOfMonth());

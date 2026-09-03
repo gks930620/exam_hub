@@ -77,6 +77,11 @@ public class KuksiwonScheduleSource extends AbstractHtmlScheduleSource {
         return "KUKSIWON_WEB";
     }
 
+    @Override
+    public java.util.Set<String> coveredAgencies() {
+        return java.util.Set.of(AGENCY);
+    }
+
     /** 안 쓴다 — 직종마다 페이지가 따로라 {@link #fetchAll()} 이 직접 돈다. */
     @Override
     protected String pageUrl() {

@@ -4,6 +4,15 @@
 const BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '';
 const TOKEN_KEY = 'exam-hub.token';
 
+/**
+ * 토큰이 죽었을 때(401) window 에 띄우는 이벤트. AuthProvider 가 듣고 me 를 비워
+ * 화면 전체가 비로그인으로 바뀐다 — 예전엔 헤더에 닉네임이 남은 채 빨간 줄만 떴다.
+ */
+export const UNAUTHENTICATED_EVENT = 'exam-hub:unauthenticated';
+
+/** 여기의 401 은 "비밀번호가 틀렸다"지 "네 토큰이 죽었다"가 아니다 — 멀쩡한 세션을 끊으면 안 된다. */
+const LOGIN_PATHS = ['/api/manager/login'];
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -45,6 +54,10 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   const data = text ? JSON.parse(text) : undefined;
   if (!res.ok) {
     const msg = (data && (data.message as string)) || `요청 실패 (${res.status})`;
+    if (res.status === 401 && !LOGIN_PATHS.some((p) => path.startsWith(p))) {
+      clearToken();
+      window.dispatchEvent(new Event(UNAUTHENTICATED_EVENT));
+    }
     throw new ApiError(res.status, msg);
   }
   return data as T;

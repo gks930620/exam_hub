@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import Icon from '../components/Icon';
+import Icon, { type IconName } from '../components/Icon';
 
 /**
  * 운영 화면의 갈래.
@@ -10,7 +10,7 @@ import Icon from '../components/Icon';
  *
  * <p>그래서 주소로 나눴다. 한 번에 한 가지만 본다.
  */
-const ITEMS = [
+const ITEMS: { to: string; end: boolean; icon: IconName; label: string; hint: string }[] = [
   { to: '/admin', end: true, icon: 'list', label: '할 일', hint: '무엇을 채워야 하나' },
   { to: '/admin/sources', end: false, icon: 'layers', label: '수집 지도', hint: '뭐가 자동인가' },
   { to: '/admin/lifecycle', end: false, icon: 'clock', label: '변천사', hint: '폐지·개칭' },

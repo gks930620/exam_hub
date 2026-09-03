@@ -1,11 +1,24 @@
 package com.test.test.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.test.test.exam.domain.Certificate;
+import com.test.test.exam.domain.ExamSchedule;
+import com.test.test.exam.domain.ExamType;
+import com.test.test.exam.domain.ScheduleProvenance;
+import com.test.test.exam.domain.Series;
+import com.test.test.exam.repository.CertificateRepository;
+import com.test.test.exam.repository.ExamScheduleRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,6 +58,50 @@ class CertificateBrowseIntegrationTest extends ApiIntegrationTestSupport {
         org.junit.jupiter.api.Assertions.assertTrue(j.path("registrationOpen").asLong() <= with, "접수 중이 일정 있는 시험보다 많다");
         // 상시는 일정이 없으니 "못 얻은 데이터"(전체 - 일정 있음) 안에 들어 있어야 한다
         org.junit.jupiter.api.Assertions.assertTrue(j.path("rolling").asLong() <= total - with, "상시가 일정 없는 시험보다 많다");
+
+        // 첫 화면과 매니저 데이터 지도는 같은 숫자를 말해야 한다 — 셈법이 둘이면 어느 한쪽은 거짓말이다
+        JsonNode coverage = objectMapper.readTree(mockMvc.perform(get("/api/admin/data-map")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk()).andReturn()
+                .getResponse().getContentAsString(StandardCharsets.UTF_8)).path("coverage");
+        assertEquals(coverage.path("withSchedule").asLong(), with,
+                "첫 화면의 '일정 있는 시험'과 데이터 지도의 withSchedule 이 다르다");
+    }
+
+    @Autowired
+    private CertificateRepository certificateRepository;
+
+    @Autowired
+    private ExamScheduleRepository examScheduleRepository;
+
+    private long statsWithSchedule() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/certificates/stats"))
+                .andExpect(status().isOk()).andReturn();
+        return objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8))
+                .path("withSchedule").asLong();
+    }
+
+    /** 연도·회차만 넣고 날짜가 없는 행은 일정이 아니다 — 매니저 화면과 사용자 카드가 이미 그렇게 센다. */
+    @Test
+    @DisplayName("첫 화면 지표의 '일정 있는 시험'은 날짜 있는 회차 기준이다")
+    void stats_with_schedule_ignores_undated_rows() throws Exception {
+        long before = statsWithSchedule();
+        String unique = UUID.randomUUID().toString().substring(0, 8);
+        Certificate cert = certificateRepository.save(Certificate.builder()
+                .name("지표시험 " + unique).slug("지표시험-" + unique)
+                .series(Series.ETC).agency("테스트시행처").category("테스트")
+                .build());
+
+        examScheduleRepository.save(ExamSchedule.builder()
+                .certificate(cert).year(2099).round(1).examType(ExamType.WRITTEN)
+                .provenance(ScheduleProvenance.MANUAL).build());
+        assertEquals(before, statsWithSchedule(), "날짜 없는 회차가 '일정 있음'으로 세어졌다");
+
+        examScheduleRepository.save(ExamSchedule.builder()
+                .certificate(cert).year(2099).round(2).examType(ExamType.WRITTEN)
+                .examStartDate(LocalDate.of(2099, 3, 1))
+                .provenance(ScheduleProvenance.MANUAL).build());
+        assertEquals(before + 1, statsWithSchedule(), "날짜 있는 회차를 넣었는데 지표가 안 는다");
     }
 
     // ===== 카드의 일정 상태 =====

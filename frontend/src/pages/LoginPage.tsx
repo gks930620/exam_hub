@@ -34,8 +34,10 @@ export default function LoginPage() {
     return () => { alive = false; };
   }, []);
 
-  if (loading || !asked) return <div className="k-empty state">불러오는 중…</div>;
-  if (me) return <Navigate to="/" replace />;
+  if (loading || !asked) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  // 토큰이 만료돼 튕겼다가 다른 탭에서 로그인을 마친 경우처럼, 이미 로그인된 채 돌아갈 곳을
+  // 들고 왔으면 홈이 아니라 그곳으로
+  if (me) return <Navigate to={from ?? '/'} replace />;
 
   const usable = available === null ? ALL : ALL.filter((p) => available.includes(p.id));
 

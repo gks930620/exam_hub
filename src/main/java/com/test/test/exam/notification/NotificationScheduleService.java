@@ -5,7 +5,6 @@ import com.test.test.exam.domain.ExamSchedule;
 import com.test.test.exam.domain.NotificationEventType;
 import com.test.test.exam.domain.NotificationSchedule;
 import com.test.test.exam.domain.NotificationScheduleStatus;
-import com.test.test.exam.domain.ScheduleStatus;
 import com.test.test.exam.repository.NotificationScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +26,23 @@ public class NotificationScheduleService {
 
     /**
      * 회차 일정 1건의 알림 예약 재계산.
-     * @param scheduleChanged 접수/시험일이 실제 변경되었는지 → SCHEDULE_CHANGED 발송 트리거
+     *
+     * @param scheduleChanged 접수/시험일이 실제 변경되었는지 → SCHEDULE_CHANGED 발송 트리거.
+     *                        ACTIVE 가 아닌 회차(취소·보류)에 true 를 주면 "취소/연기" 안내 한 건이 즉시 예약된다 —
+     *                        대기 알림만 조용히 지우면 접수해 둔 사용자는 취소를 모른다.
      */
     @Transactional
     public void recalc(ExamSchedule s, boolean scheduleChanged) {
         // ACTIVE 가 아니면(취소/보류/완료) 대기 예약을 취소
-        if (s.getStatus() != ScheduleStatus.ACTIVE) {
+        if (!s.isActive()) {
             repository.findByExamSchedule(s).forEach(ns -> {
                 if (ns.getStatus() == NotificationScheduleStatus.PENDING) {
                     ns.cancel();
                 }
             });
+            if (scheduleChanged) {
+                upsertChangeAlert(s, TimeUtil.now());
+            }
             return;
         }
 

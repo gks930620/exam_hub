@@ -144,4 +144,21 @@ public class Certificate {
     public boolean isVisibleToUsers() {
         return lifecycle == null || lifecycle.isVisibleToUsers();
     }
+
+    /**
+     * 사용자 화면에서 숨긴 이유 — 관심 목록에 남은 카드가 "왜 D-day 가 없는지" 답할 수 있게.
+     * 개칭이면 새 이름을 안내한다. 보이는 시험이면 null.
+     */
+    public String hiddenReason() {
+        if (isVisibleToUsers()) {
+            return null;
+        }
+        if (lifecycle == CertificateLifecycle.RENAMED && supersededBy != null && !supersededBy.isBlank()) {
+            return "'" + supersededBy + "'(으)로 이름이 바뀌었습니다. 새 이름으로 다시 등록해 주세요.";
+        }
+        if (lifecycle == CertificateLifecycle.ABOLISHED) {
+            return "폐지된 시험입니다. 더 이상 일정이 없습니다.";
+        }
+        return lifecycle.getLabel();
+    }
 }

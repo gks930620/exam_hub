@@ -40,12 +40,20 @@ class ScheduleSourceNetworkTest {
 
         assertTrue(unspecified.usesNetwork(),
                 "기본이 '파일'이면 새 소스가 기동마다 바깥을 두드리게 된다");
+        // 나머지 기본값도 안전한 쪽: 배치에서 돈다 / 종목 지정 조회는 안 된다 / 아무 기관도 맡지 않는다
+        assertFalse(unspecified.startupOnly());
+        assertFalse(unspecified.supportsPartialFetch(),
+                "기본이 '부분 조회 가능'이면 재수집 한 번에 스크래퍼가 전량을 긁는다");
+        assertTrue(unspecified.coveredAgencies().isEmpty(),
+                "기본이 '기관을 맡는다'면 매니저 화면이 근거 없이 자동이라 한다");
+        assertTrue(unspecified.priority() > ScheduleSource.PRIORITY_FILE
+                && unspecified.priority() < ScheduleSource.PRIORITY_API);
     }
 
     @Test
     @DisplayName("일정 스냅샷은 파일만 읽는다")
     void snapshot_is_offline() {
-        assertFalse(new SnapshotScheduleSource(new ObjectMapper()).usesNetwork());
+        assertFalse(new SnapshotScheduleSource(new ObjectMapper(), null).usesNetwork());
     }
 
     @Test

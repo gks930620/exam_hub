@@ -5,12 +5,15 @@ import com.test.test.common.exception.DuplicateResourceException;
 import com.test.test.common.exception.EntityNotFoundException;
 import com.test.test.exam.domain.AuthProvider;
 import com.test.test.exam.domain.Member;
+import com.test.test.exam.domain.UserFavorite;
 import com.test.test.exam.repository.MemberRepository;
+import com.test.test.exam.repository.UserFavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,6 +28,7 @@ public class MemberService {
     private static final int NICKNAME_MAX = 30;
 
     private final MemberRepository memberRepository;
+    private final UserFavoriteRepository userFavoriteRepository;
 
     /** 로그인한 사용자 조회. 탈퇴 계정은 없는 것으로 취급한다. */
     @Transactional(readOnly = true)
@@ -118,10 +122,18 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    /**
+     * 탈퇴. 관심 등록도 지운다 — 탈퇴자에게 알림이 가면 안 되고, 시험의 관심 수가 부풀면 인기순이 왜곡된다.
+     * 글·댓글은 남는다(작성자 표기만 "탈퇴한 사용자").
+     */
     @Transactional
     public void withdraw(Member member) {
+        List<UserFavorite> favorites = userFavoriteRepository.findByMemberOrderByCreatedAtAsc(member);
+        favorites.forEach(f -> f.getCertificate().decrementFavorite());
+        userFavoriteRepository.deleteAll(favorites);
+
         member.withdraw();
         memberRepository.save(member);
-        log.info("[Member] 탈퇴 id={}", member.getId());
+        log.info("[Member] 탈퇴 id={} (관심 {}건 해제)", member.getId(), favorites.size());
     }
 }

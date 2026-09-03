@@ -113,18 +113,23 @@ springdoc:
 # 개발: 큐넷 실 API 키 없음 → Mock 소스로 수집 파이프라인 동작(MockScheduleSource).
 qnet:
   api:
-    # .env 의 QNET_API_ENABLED 로 켠다. 켜 두어도 기동 때는 수집하지 않는다 —
+    # .env 의 QNET_API_ENABLED 로 켠다. 켜 두어도 기동 때는 수집하지 않는다(collect.on-startup 기본 false) —
     # 613콜이 나가서 재시작 두 번이면 일 한도(1,000)를 넘긴다. 실 수집은 05:00 스케줄러가 한다.
-    # 지금 당장 받아야 하면: --collect.on-startup=true
     enabled: ${QNET_API_ENABLED:false}
     key: ${QNET_API_KEY:}          # 공공데이터포털 서비스키(Encoding 키) — 발급 후 주입
     base-url: https://apis.data.go.kr/B490007/qualExamSchd
 
-# 발송: 현재 LogNotificationSender(로그)로 검증. ⚠️ 웹 전용이라 실발송은 웹 푸시/이메일로 구현 예정
-# (모바일 FCM 제거함 — FcmNotificationSender·fcm 설정 삭제).
+# 기동 시 네트워크 수집(큐넷 613콜 + 스크래퍼 8곳)을 돌릴지. 기본 false — 파일 시드(스냅샷·비큐넷·데모)만 읽는다.
+# 예전엔 "큐넷이 꺼져 있으면 돌린다"였는데, .env 없는 새 환경에서 첫 기동에 시행처 8곳을 실호출했다.
+# 지금 당장 받아야 하면: ./gradlew bootRun --args="--collect.on-startup=true"
+collect:
+  on-startup: ${COLLECT_ON_STARTUP:false}
 
-# 시행처 HTML 스크래핑(어학·KCA·상의·Kdata). 기본 on — 05:00 전량 배치에서 API 와 같이 돈다.
-# 기동 때는 안 돈다(usesNetwork — 파일 시드만 읽는다). 사이트가 깨져 소음이 나면 false 로 끈다.
+# 발송: NotificationSenderChain 이 알림톡 → 카카오 메모 → 이메일 → 로그 순으로 시도한다.
+# 실발송 채널이 안 켜진 로컬은 결과적으로 LogNotificationSender(로그)만 돈다. 운영은 MAIL_ENABLED=true 로 이메일 실발송.
+
+# 시행처 HTML 스크래핑(상의·KCA·Kdata·TOEIC·TEPS·JLPT·TOPIK·국시원). 기본 on — 운영에서도 05:00 전량 배치에서 API 와 같이 돈다.
+# 기동 때는 안 돈다(collect.on-startup 이 false 면 파일 시드만 읽는다). 사이트가 깨져 소음이 나면 false 로 끈다.
 # 사이트별 실측·수리법: 설계/시험데이터/03_스크래퍼_정비.md
 scrape:
   enabled: ${SCRAPE_ENABLED:true}

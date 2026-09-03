@@ -142,6 +142,12 @@
       "lifecycle": "RENAMED",
       "supersededBy": "SQLD SQL 개발자",
       "note": "같은 시험이 둘 있었다 — 데모 시드의 S001 과 Kdata 스크래퍼의 DATAQ-SQLD. 일정은 DATAQ-SQLD 쪽에 붙으므로 그쪽을 남기고 이 행은 개칭으로 숨긴다(2026-09-02)."
+    },
+    {
+      "name": "청소년상담사",
+      "lifecycle": "RENAMED",
+      "supersededBy": "1급 청소년상담사",
+      "note": "총칭 행(exam_master M0276). 큐넷은 1·2·3급(9753·9754·9755)으로 나뉘어 총칭엔 일정이 영원히 안 붙는다 — 검색에서 빼고 급수 행으로 안내(2026-09-03)."
     }
   ]
 }

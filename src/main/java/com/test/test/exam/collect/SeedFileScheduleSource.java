@@ -43,6 +43,12 @@ public class SeedFileScheduleSource implements ScheduleSource {
         return false;   // 파일만 읽는다
     }
 
+    /** 시드는 가장 먼저 쓴다 — 스크래퍼·API 실데이터가 뒤에 와서 덮도록. */
+    @Override
+    public int priority() {
+        return PRIORITY_FILE;
+    }
+
     @Override
     public String sourceId() {
         return "SEED_NONQNET";

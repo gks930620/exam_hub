@@ -94,8 +94,11 @@ public class CertificateMasterInitializer {
                 if (already != null) {
                     // 데모/수집 시드가 만든 종목은 분류가 성기다(예: "국가기술자격").
                     // 마스터가 더 구체적인 분류를 알고 있으면 그걸로 맞춘다 — 필터가 쪼개져 보이지 않게.
-                    if (e.category() != null && !e.category().equals(already.getCategory())) {
-                        already.updateMeta(already.getName(), already.getSeries(), already.getAgency(), e.category());
+                    // 계열도 같다: 스냅샷·비큐넷 시드는 계열을 모르고 '기타'로 만드는데, 마스터가 아는 값이 있으면 되돌린다.
+                    String category = e.category() != null ? e.category() : already.getCategory();
+                    Series series = already.getSeries() == Series.ETC ? parseSeries(e.series()) : already.getSeries();
+                    if (!java.util.Objects.equals(category, already.getCategory()) || series != already.getSeries()) {
+                        already.updateMeta(already.getName(), series, already.getAgency(), category);
                         recategorized++;
                     }
                     // 종목코드를 붙여 둔다. 이게 있어야 일정 연동이 이름 매칭 없이 된다.

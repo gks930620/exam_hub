@@ -1,64 +1,94 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
-import { fmtAt } from '../lib/format';
+import { scheduleStateOf } from '../lib/status';
 import { useAuth, useRequireLogin } from '../auth';
-import type { CategoryItem, CertItem } from '../api/types';
+import type { BrowseResponse, CategoryItem, CertItem } from '../api/types';
 import Icon from '../components/Icon';
+import Pagination from '../components/Pagination';
+import CardStatus from '../components/CardStatus';
 
-// 시험 찾기: 전체 목록을 기본으로 보여준다.
-// 예전에는 인기 10종만 노출해서 "시험이 없다"고 느껴졌다 — 이제 분류 필터 + 더보기로 전체를 훑는다.
-// 일정이 아직 없는 시험도 함께 나온다(hasSchedule=false → '일정 미정'). 등록해 두면 일정이 붙을 때 알림이 간다.
-const PAGE_SIZE = 24;
+// 시험 찾기: 전체 목록을 기본으로 보여준다. 일정이 아직 없는 시험도 함께 나온다('일정 미정').
+//
+// 검색어·분류·쪽은 URL(q·cat·page)에 산다 — 상세를 보고 돌아와도, 링크를 공유해도 같은 화면이다.
+// 한 쪽 48개(서버 상한 100) + 번호 페이징. 24개씩 "더 보기"를 35번 누르던 것을 바꿨다.
+const PAGE_SIZE = 48;
+const DEBOUNCE_MS = 300;
+
+type Patch = { q?: string | null; cat?: string | null; page?: number | null };
 
 export default function SearchPage() {
   const { me } = useAuth();
   const requireLogin = useRequireLogin();
-  const [q, setQ] = useState('');
-  const [cat, setCat] = useState('');
+  const [params, setParams] = useSearchParams();
+  const q = (params.get('q') ?? '').trim();
+  const cat = params.get('cat') ?? '';
+  // 주소는 사람이 보는 것이라 1부터, 서버는 0부터
+  const page = Math.max(0, (Number(params.get('page')) || 1) - 1);
+
+  const [input, setInput] = useState(q);
   const [cats, setCats] = useState<CategoryItem[]>([]);
-  const [items, setItems] = useState<CertItem[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [catsFailed, setCatsFailed] = useState(false);
+  const [data, setData] = useState<BrowseResponse | null>(null);
+  // 히어로의 "시험 N종"은 전체 개수다 — 조건 없이 조회했을 때만 알 수 있다
+  const [grandTotal, setGrandTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
-  const timer = useRef<number>();
+  const seq = useRef(0);
+  const debounce = useRef<number>();
+  const listTop = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    examApi.categories().then((r) => setCats(r.items)).catch(() => { /* 필터는 없어도 목록은 보여준다 */ });
+    examApi.categories().then((r) => setCats(r.items)).catch(() => setCatsFailed(true));
   }, []);
 
-  // 검색어는 디바운스, 분류는 즉시. 둘 다 첫 페이지부터 다시.
-  useEffect(() => {
-    window.clearTimeout(timer.current);
-    const run = () => load(0, false);
-    if (q.trim()) {
-      timer.current = window.setTimeout(run, 300);
-      return () => window.clearTimeout(timer.current);
-    }
-    run();
-  }, [q, cat]);
+  // 뒤로가기 등으로 주소가 바뀌면 입력칸을 맞춘다
+  useEffect(() => { setInput(q); }, [q]);
+  useEffect(() => () => window.clearTimeout(debounce.current), []);
 
-  async function load(next: number, append: boolean) {
+  useEffect(() => {
+    // 요청은 순서대로 돌아오지 않는다 — 먼저 보낸 느린 응답이 나중에 와서 새 결과를 덮으면 안 된다
+    const my = ++seq.current;
     setLoading(true);
-    try {
-      const r = await examApi.browse({
-        query: q.trim() || undefined,
-        category: cat || undefined,
-        page: next,
-        size: PAGE_SIZE,
-      });
-      setItems((prev) => (append ? [...prev, ...r.items] : r.items));
-      setTotal(r.totalElements);
-      setTotalPages(r.totalPages);
-      setPage(r.page);
-      setErr(null);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : '목록을 불러오지 못했습니다.');
-    } finally {
-      setLoading(false);
-    }
+    examApi.browse({ query: q || undefined, category: cat || undefined, page, size: PAGE_SIZE })
+      .then((r) => {
+        if (my !== seq.current) return;
+        setData(r);
+        setErr(null);
+        if (!q && !cat) setGrandTotal(r.totalElements);
+      })
+      .catch((e: unknown) => {
+        if (my !== seq.current) return;
+        setErr(e instanceof Error ? e.message : '목록을 불러오지 못했습니다.');
+      })
+      .finally(() => { if (my === seq.current) setLoading(false); });
+  }, [q, cat, page]);
+
+  function update(patch: Patch, replace = false) {
+    setParams((prev) => {
+      const next = new URLSearchParams(prev);
+      for (const [k, v] of Object.entries(patch)) {
+        if (v == null || v === '') next.delete(k);
+        else next.set(k, String(v));
+      }
+      return next;
+    }, { replace });
+  }
+
+  // 검색어는 디바운스해서 주소에 쓴다(글자마다 뒤로가기 기록이 쌓이지 않게 replace). 지우면 바로.
+  function onInput(value: string) {
+    setInput(value);
+    window.clearTimeout(debounce.current);
+    const next = value.trim();
+    debounce.current = window.setTimeout(
+      () => update({ q: next || null, page: null }, true),
+      next ? DEBOUNCE_MS : 0,
+    );
+  }
+
+  function goPage(p: number) {
+    update({ page: p === 0 ? null : p + 1 });
+    listTop.current?.scrollIntoView?.({ block: 'start' });
   }
 
   async function toggle(c: CertItem) {
@@ -69,25 +99,31 @@ export default function SearchPage() {
     try {
       if (c.favorited) await examApi.removeFavorite(c.id);
       else await examApi.addFavorite(c.id);
-      setItems((prev) => prev.map((x) => (x.id === c.id ? { ...x, favorited: !x.favorited } : x)));
+      setData((prev) => prev && ({
+        ...prev, items: prev.items.map((x) => (x.id === c.id ? { ...x, favorited: !x.favorited } : x)),
+      }));
       setErr(null);
     } catch (e) {
       setErr(e instanceof Error ? e.message : '관심 등록에 실패했습니다.');
     }
   }
 
-  const hasMore = page + 1 < totalPages;
+  const total = data?.totalElements ?? 0;
 
   return (
     <>
-      {/* 킷 문법: 연보라 히어로 띠에 큰 제목 하나 + 할 일(검색). 데모의 첫 인상을 그대로 따른다 */}
+      {/* 킷 문법: 히어로 띠에 큰 제목 하나 + 할 일(검색). 숫자는 목록 API 가 준 전체 개수 — 지어내지 않는다 */}
       <section className="k-hero search-hero">
-        {/* 제목의 숫자는 검색·분류와 무관하게 늘 전체 — 분류 개수 합이 곧 전체다 */}
-        <h1>시험 {(cats.reduce((a, c) => a + c.count, 0) || 800).toLocaleString()}종, 접수 마감을 놓치지 않게</h1>
+        <h1>
+          {grandTotal != null
+            ? `시험 ${grandTotal.toLocaleString()}종, 접수 마감을 놓치지 않게`
+            : '시험 일정, 접수 마감을 놓치지 않게'}
+        </h1>
         <p>큐넷·국시원·어학까지 한곳에서 찾고, 등록해 두면 접수 시작·마감을 알려 드립니다.</p>
         <div className="search-row">
           {/* 분류는 38개 — 칩으로 늘어놓으면 5줄이다. 고르는 건 드롭다운이 깔끔하다 */}
-          <select className="k-select" value={cat} onChange={(e) => setCat(e.target.value)} aria-label="분류">
+          <select className="k-select" value={cat}
+                  onChange={(e) => update({ cat: e.target.value || null, page: null })} aria-label="분류">
             <option value="">전체 분류</option>
             {groupCategories(cats).map((g) => (
               <optgroup key={g.label} label={g.label}>
@@ -102,28 +138,39 @@ export default function SearchPage() {
             <input
               className="k-input"
               placeholder="시험명 검색 (예: 정보처리기사, 토익, 한국사)"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
+              value={input}
+              onChange={(e) => onInput(e.target.value)}
               aria-label="시험명 검색"
             />
           </div>
+          {/* 분류 조회가 죽어도 목록은 나온다 — 대신 드롭다운이 왜 비었는지는 말해 준다 */}
+          {catsFailed && (
+            <span className="k-help k-help--err" role="alert">분류를 불러오지 못했습니다 — 검색은 됩니다</span>
+          )}
         </div>
       </section>
 
-      {err && <div className="k-alert k-alert--err">{err}</div>}
+      {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
 
-      <div className="k-section list-head">
-        <h2>{q.trim() ? `‘${q.trim()}’ 검색 결과` : cat || '전체 시험'} <span className="more">{total.toLocaleString()}개</span></h2>
+      <div className="k-section list-head" ref={listTop}>
+        <h2>{q ? `‘${q}’ 검색 결과` : cat || '전체 시험'} <span className="more">{total.toLocaleString()}개</span></h2>
       </div>
 
-      {items.length === 0 && !loading ? (
+      {loading && (!data || data.items.length === 0) && (
+        <div className="k-empty state" role="status">불러오는 중…</div>
+      )}
+
+      {!loading && data && data.items.length === 0 && (
         <div className="k-empty state">
           <span className="big">결과가 없습니다</span>
           다른 이름이나 분류로 찾아보세요.
         </div>
-      ) : (
-        <div className="card-grid">
-          {items.map((c) => (
+      )}
+
+      {data && data.items.length > 0 && (
+        // 다시 불러오는 동안 목록은 남고 흐려진다 — 자리가 흔들리면 어디를 보고 있었는지 잃는다
+        <div className="card-grid" aria-busy={loading}>
+          {data.items.map((c) => (
             <div className="k-card k-card--hover exam-card" key={c.id}>
               <div className="top">
                 <Link to={`/cert/${c.id}`} className="grow">
@@ -141,19 +188,18 @@ export default function SearchPage() {
                 </button>
               </div>
               {/* 상태는 배지 하나로 — 문장을 846번 반복하면 화면이 지저분해진다 */}
-              <div className="foot"><CardStatus c={c} /></div>
+              <div className="foot">
+                <CardStatus state={scheduleStateOf(c)} badge={c.nextBadge} label={c.nextLabel} at={c.nextAt}
+                            dday={c.nextDday} lastExamDate={c.lastExamDate} inlineDday />
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {loading && <div className="k-empty state">불러오는 중…</div>}
-
-      {hasMore && !loading && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
-          <button className="k-btn k-btn--primary" onClick={() => load(page + 1, true)}>
-            더 보기 ({items.length.toLocaleString()} / {total.toLocaleString()})
-          </button>
+      {data && (
+        <div className="pager-row">
+          <Pagination page={page} totalPages={data.totalPages} onChange={goPage} />
         </div>
       )}
     </>
@@ -176,42 +222,4 @@ function groupCategories(cats: CategoryItem[]): { label: string; items: Category
   return [...groups.entries()]
     .map(([label, items]) => ({ label, items: [...items].sort((a, b) => collator.compare(a.name, b.name)) }))
     .sort((a, b) => (a.label === '그 외' ? 1 : b.label === '그 외' ? -1 : collator.compare(a.label, b.label)));
-}
-
-/**
- * 카드 하단 상태 — "일정 있음/없음"이 아니라 <b>지금 무엇이 다가오나</b>.
- * 남은 일정이 전부 지난 시험은 '다음 회차 미정'이다. 지난 날짜를 멀쩡한 일정처럼 보여주면
- * 사용자가 그 날짜를 믿는다.
- */
-function CardStatus({ c }: { c: CertItem }) {
-  const state = c.scheduleState ?? (c.rolling ? 'ROLLING' : c.hasSchedule ? 'UPCOMING' : 'NONE');
-  if (state === 'ROLLING') {
-    return (
-      <>
-        <span className="k-badge">상시시험</span>
-        <span className="when">원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다</span>
-      </>
-    );
-  }
-  if (state === 'UPCOMING') {
-    const open = c.nextBadge === 'REG_OPEN';
-    return (
-      <>
-        <span className={`k-badge ${open ? 'k-badge--ok' : 'k-badge--point'}`}>
-          {open ? '접수 중' : c.nextBadge === 'REG_UPCOMING' ? '접수 예정' : '시험 예정'}
-          {c.nextDday != null && <> · D-{c.nextDday}</>}
-        </span>
-        {c.nextLabel && <span className="when">{c.nextLabel} {fmtAt(c.nextAt)}</span>}
-      </>
-    );
-  }
-  if (state === 'PAST_ONLY') {
-    return (
-      <>
-        <span className="k-badge k-badge--warn">다음 회차 미정</span>
-        {c.lastExamDate && <span className="when">마지막 시험 {c.lastExamDate}</span>}
-      </>
-    );
-  }
-  return <span className="k-badge k-badge--warn">일정 미정</span>;
 }

@@ -4,7 +4,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { examApi } from './api/exams';
-import { clearToken, setToken } from './api/client';
+import { clearToken, setToken, UNAUTHENTICATED_EVENT } from './api/client';
 import type { MeResponse } from './api/types';
 
 interface AuthState {
@@ -39,6 +39,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  // 요청 중 401 — 클라이언트가 죽은 토큰을 지우고 이 이벤트를 띄운다. 여기서 듣고 화면 전체를
+  // 비로그인으로 바꾼다(RequireAuth 가 로그인으로 보내고, 헤더의 닉네임이 사라진다).
+  useEffect(() => {
+    const onUnauthenticated = () => setMe(null);
+    window.addEventListener(UNAUTHENTICATED_EVENT, onUnauthenticated);
+    return () => window.removeEventListener(UNAUTHENTICATED_EVENT, onUnauthenticated);
+  }, []);
 
   const login = useCallback((provider: 'kakao' | 'google', returnTo?: string) => {
     // 돌아온 뒤 원래 있던 곳으로 보내기 위해 저장.

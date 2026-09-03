@@ -1,5 +1,7 @@
 package com.test.test.exam.admin;
 
+import com.test.test.common.exception.BusinessRuleException;
+import com.test.test.exam.collect.ScheduleSource;
 import com.test.test.exam.common.TimeUtil;
 import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.domain.ExamSchedule;
@@ -20,8 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -29,13 +33,17 @@ import java.util.stream.Collectors;
  *
  * <p><b>"일정 있음/없음"으로는 부족했다.</b> 수기로 넣는 시험은 회차가 지나면 다음 회차를 넣어야
  * 하는데 "일정 있음"으로 분류되어 매니저가 알 길이 없었다(사용자 지적 2026-09-02). 그래서 시험마다
- * <b>행동</b>을 판정한다 — 첫 일정 입력 / 다음 회차 입력 / 시행처 확인 / 수집 점검. 행동이 없는
- * 시험은 기다리면 되는 것(대기), 앞으로 일정이 있는 것(정상), 상시(대상 아님)로 나뉜다.
+ * <b>행동</b>을 판정한다 — 첫 일정 입력 / 일정 이동 확인 / 다음 회차 입력 / 시행처 확인 / 수집 점검.
+ * 행동이 없는 시험은 기다리면 되는 것(대기), 앞으로 일정이 있는 것(정상), 상시(대상 아님)로 나뉜다.
  *
- * <p>판정에 쓰는 사실: 이 시험이 <b>어디서 오나</b>(source — 큐넷 API·스크래퍼가 덮는가, 사람이 넣는가),
+ * <p>판정에 쓰는 사실: 이 시험이 <b>어디서 오나</b>(source — 살아 있는 소스가 그 기관을 맡는가, 사람이 넣는가),
  * <b>일정이 얼마나 신선한가</b>(freshness — 앞으로 남은 게 있나, 다 지났나, 없나),
- * <b>확인이 필요한가</b>(APPROX 추정치가 걸려 있나). 다음 이벤트 계산은 사용자 화면과 같은
+ * <b>확인이 필요한가</b>(APPROX 추정치·PENDING_REVIEW 보류가 걸려 있나). 다음 이벤트 계산은 사용자 화면과 같은
  * {@link DdayService} 를 쓴다 — 매니저와 사용자가 다른 셈법을 보면 안 된다.
+ *
+ * <p><b>"자동"의 근거는 살아 있는 소스다</b>(2026-09-03). 행의 출처(provenance)가 scraped 라는 것은 "언젠가 누가
+ * 긁었다"일 뿐이라, 정적 시드의 scraped 행을 근거로 삼으면 아무도 안 긁는 시험이 자동으로 보인다. 지금 떠 있는
+ * {@link ScheduleSource} 들이 {@link ScheduleSource#coveredAgencies()} 로 밝힌 기관, 또는 큐넷 4자리 종목코드만 자동이다.
  */
 @RestController
 @RequestMapping("/api/admin/overview")
@@ -50,13 +58,20 @@ public class AdminOverviewController {
      */
     static final int STALE_AUTO_DAYS = 365;
 
+    /** 한 쪽의 상한 — 과대 요청 방어. 전체가 필요하면 쪽을 넘긴다(개수는 bucketCounts 가 준다). */
+    static final int MAX_PAGE_SIZE = 100;
+
+    /** 판정에 넣는 회차 상태 — 보류는 "확인할 일"이 되어야 하므로 같이 읽는다. */
+    private static final List<ScheduleStatus> JUDGED = List.of(ScheduleStatus.ACTIVE, ScheduleStatus.PENDING_REVIEW);
+
     private final CertificateRepository certificateRepository;
     private final ExamScheduleRepository examScheduleRepository;
     private final DdayService ddayService;
+    private final List<ScheduleSource> sources;
 
     /**
      * @param bucket   {@code TODO|WAITING|OK|ROLLING} — 비우면 전체
-     * @param action   TODO 안에서 행동으로 좁힌다 — {@code FIRST_INPUT|NEXT_ROUND|VERIFY|CHECK_SOURCE}
+     * @param action   TODO 안에서 행동으로 좁힌다 — {@code FIRST_INPUT|REVIEW_MOVE|NEXT_ROUND|VERIFY|CHECK_SOURCE}
      * @param query    시험명 부분일치
      * @param category 분류
      */
@@ -69,19 +84,27 @@ public class AdminOverviewController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size) {
 
+        if (page < 0) {
+            throw new BusinessRuleException("page 는 0 이상이어야 합니다.");
+        }
+        if (size < 1 || size > MAX_PAGE_SIZE) {
+            throw new BusinessRuleException("size 는 1~" + MAX_PAGE_SIZE + " 사이여야 합니다.");
+        }
+
         LocalDate today = TimeUtil.today();
+        Set<String> covered = liveCoverage();
 
         // 보이는 시험 전부를 한 번에 읽고, 필터는 메모리에서 건다 —
         // 탭·행동의 개수는 검색과 무관하게 늘 같은 값이어야 한다(남은 일의 크기).
         List<Certificate> all = certificateRepository.browse("", "", PageRequest.of(0, 5000)).getContent();
         Map<Long, List<ExamSchedule>> byCert = examScheduleRepository
-                .findByCertificateIdInAndStatus(
-                        all.stream().map(Certificate::getId).toList(), ScheduleStatus.ACTIVE)
+                .findByCertificateIdInAndStatusIn(
+                        all.stream().map(Certificate::getId).toList(), JUDGED)
                 .stream()
                 .collect(Collectors.groupingBy(s -> s.getCertificate().getId()));
 
         List<Row> allRows = all.stream()
-                .map(c -> judge(c, byCert.getOrDefault(c.getId(), List.of()), today))
+                .map(c -> judge(c, byCert.getOrDefault(c.getId(), List.of()), today, covered))
                 .toList();
 
         String q = query == null ? "" : query.trim().toLowerCase();
@@ -105,6 +128,15 @@ public class AdminOverviewController {
                 count(allRows.stream().filter(r -> r.waitingReason() != null).toList(), Row::waitingReason)));
     }
 
+    /** 지금 떠 있는 소스들이 맡는 기관의 합집합. */
+    private Set<String> liveCoverage() {
+        Set<String> covered = new LinkedHashSet<>();
+        for (ScheduleSource s : sources) {
+            covered.addAll(s.coveredAgencies());
+        }
+        return covered;
+    }
+
     private static Map<String, Long> count(List<Row> rows, java.util.function.Function<Row, String> key) {
         return rows.stream().collect(Collectors.groupingBy(key, Collectors.counting()));
     }
@@ -121,9 +153,11 @@ public class AdminOverviewController {
     /** 매니저가 지금 해야 하는 일 */
     enum Action {
         FIRST_INPUT("첫 일정 입력", 0),
-        NEXT_ROUND("다음 회차 입력", 1),
-        VERIFY("시행처 확인", 2),
-        CHECK_SOURCE("회차 끊김 확인", 3);
+        /** 수집이 30일 넘게 이동한 회차를 보류했다 — 매니저가 확인해 저장하면 풀린다 */
+        REVIEW_MOVE("일정 이동 확인", 1),
+        NEXT_ROUND("다음 회차 입력", 2),
+        VERIFY("시행처 확인", 3),
+        CHECK_SOURCE("회차 끊김 확인", 4);
         final String label;
         final int order;
         Action(String label, int order) { this.label = label; this.order = order; }
@@ -138,16 +172,20 @@ public class AdminOverviewController {
         Waiting(String label) { this.label = label; }
     }
 
-    private Row judge(Certificate c, List<ExamSchedule> schedules, LocalDate today) {
+    private Row judge(Certificate c, List<ExamSchedule> schedules, LocalDate today, Set<String> covered) {
         boolean rolling = c.isRollingAdmission();
         boolean qnet = c.getSourceCode() != null && c.getSourceCode().matches("[0-9]{4}");
-        boolean fedByMachine = schedules.stream()
-                .anyMatch(s -> s.getProvenance() == ScheduleProvenance.API || s.getProvenance() == ScheduleProvenance.SCRAPED);
+        // "자동"의 근거 = 살아 있는 소스가 그 기관을 담당하고, 실제로 그 소스가 넣은 행(API·SCRAPED)이 있다.
+        // 기관만 보면 느슨하다 — JLPT 스크래퍼의 JEES 가 같은 기관의 BJT 까지 자동으로 만들고, 상의 스크래퍼가
+        // 안 긁는 무역영어가 "공고 전"이 됐다(실측 2026-09-03, 31종). 행만 보면 정적 시드의 scraped 에 속는다.
+        boolean hasMachineRows = schedules.stream().anyMatch(s ->
+                s.getProvenance() == ScheduleProvenance.API || s.getProvenance() == ScheduleProvenance.SCRAPED);
+        boolean fedByMachine = qnet || (AgencyMatcher.matches(c.getAgency(), covered) && hasMachineRows);
 
         Source source;
         if (rolling) {
             source = Source.ROLLING;
-        } else if (qnet || fedByMachine) {
+        } else if (fedByMachine) {
             source = Source.AUTO;
         } else {
             source = switch (NoScheduleReason.of(c)) {
@@ -157,8 +195,15 @@ public class AdminOverviewController {
             };
         }
 
-        // 날짜가 하나도 없는 회차(연도·회차만 넣고 잊은 것)는 일정으로 치지 않는다 — 사용자에게 아무것도 못 알려 준다
-        List<ExamSchedule> dated = schedules.stream().filter(ExamSchedule::hasAnyDate).toList();
+        // 보류 회차 중 아직 안 지난 것만 사람의 확인이 필요하다 — 지난 회차의 보류(TOPIK 104·105회)는 아무도 안 본다
+        boolean hasPendingReview = schedules.stream().anyMatch(s -> s.getStatus() == ScheduleStatus.PENDING_REVIEW
+                && s.hasAnyDate() && !s.latestKnownDate().isBefore(today));
+        // 날짜가 하나도 없는 회차(연도·회차만 넣고 잊은 것)는 일정으로 치지 않는다 — 사용자에게 아무것도 못 알려 준다.
+        // 보류 회차도 사용자에게 안 보이므로 신선도에는 안 넣는다.
+        List<ExamSchedule> dated = schedules.stream()
+                .filter(ExamSchedule::isActive)
+                .filter(ExamSchedule::hasAnyDate)
+                .toList();
         NextEvent next = ddayService.computeNextEvent(dated);
         // 추정치 경고는 아직 안 지난 회차에만 — 지난 추정치는 아무도 안 본다
         boolean needsReview = dated.stream().anyMatch(s -> s.getProvenance() == ScheduleProvenance.APPROX
@@ -177,6 +222,9 @@ public class AdminOverviewController {
         Waiting waiting = null;
         if (source == Source.ROLLING) {
             // 상시는 판정 대상이 아니다 — 추정치가 걸려 있어도 "시행처 확인"을 시키지 않는다(실측: 6종이 새어 들어왔다)
+        } else if (hasPendingReview) {
+            // 보류는 사용자에게도 안 보이고 알림도 안 간다 — 매니저가 풀어 주기 전엔 영원히 그대로다
+            act = Action.REVIEW_MOVE;
         } else if (source == Source.MANUAL && freshness.equals("NONE")) {
             act = Action.FIRST_INPUT;
         } else if (source == Source.MANUAL && freshness.equals("PAST_ONLY")) {
@@ -234,6 +282,7 @@ public class AdminOverviewController {
             String certificateName,
             String category,
             String agency,
+            /** 판정에 넣은 회차 수(ACTIVE + PENDING_REVIEW) */
             int scheduleCount,
             /** AUTO | CRAWL_PLANNED | MANUAL | ROLLING */
             String source,
@@ -241,7 +290,7 @@ public class AdminOverviewController {
             /** NONE | PAST_ONLY | UPCOMING */
             String freshness,
             boolean needsReview,
-            /** 할 일. 없으면 null — FIRST_INPUT | NEXT_ROUND | VERIFY | CHECK_SOURCE */
+            /** 할 일. 없으면 null — FIRST_INPUT | REVIEW_MOVE | NEXT_ROUND | VERIFY | CHECK_SOURCE */
             String action,
             String actionLabel,
             /** 할 일은 아니고 기다리면 되는 이유. 없으면 null */

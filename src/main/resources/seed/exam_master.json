@@ -1,6 +1,6 @@
 {
   "_comment": "시험 마스터 시드 — \"어떤 시험이 존재하는가\"만 담는다. 일정(ExamSchedule)은 여기 없다. 일정이 없어도 검색·목록·상세·관심등록이 되어야 하므로 마스터를 먼저 적재한다. 일정은 큐넷 API/스크래퍼/수기입력이 나중에 채운다. 출처 목록: 설계/설계문서/09_시험_전수목록.md",
-  "_prod": "CertificateMasterInitializer 가 @Profile(\"!prod\") 로 읽는다. 운영은 실 수집 소스가 대체한다.",
+  "_prod": "운영에서도 적재된다 — CertificateMasterInitializer 에 @Profile 이 없다. 실 수집 소스(큐넷 API·스크래퍼)는 여기 만든 시험에 일정만 채운다.",
   "generatedAt": "2026-08-06",
   "count": 478,
   "exams": [
@@ -15,18 +15,18 @@
     {
       "name": "정보보안기사",
       "series": "TECHNICIAN",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0002",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "빅데이터분석기사",
       "series": "TECHNICIAN",
-      "agency": "한국산업인력공단",
+      "agency": "한국데이터산업진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0003",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.dataq.or.kr/"
     },
     {
       "name": "전자계산기기사",
@@ -47,34 +47,34 @@
     {
       "name": "정보통신기사",
       "series": "TECHNICIAN",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0006",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "무선설비기사",
       "series": "TECHNICIAN",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0007",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "방송통신기사",
       "series": "TECHNICIAN",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0008",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "전파전자통신기사",
       "series": "TECHNICIAN",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0009",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "정보처리산업기사",
@@ -87,10 +87,10 @@
     {
       "name": "정보보안산업기사",
       "series": "INDUSTRIAL",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0011",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "사무자동화산업기사",
@@ -103,34 +103,34 @@
     {
       "name": "정보통신산업기사",
       "series": "INDUSTRIAL",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0013",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "무선설비산업기사",
       "series": "INDUSTRIAL",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0014",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "방송통신산업기사",
       "series": "INDUSTRIAL",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0015",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "전파전자통신산업기사",
       "series": "INDUSTRIAL",
-      "agency": "한국산업인력공단",
+      "agency": "한국방송통신전파진흥원",
       "category": "국가기술자격-정보통신",
       "sourceCode": "M0016",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://www.cq.or.kr/"
     },
     {
       "name": "정보처리기능사",
@@ -191,26 +191,26 @@
     {
       "name": "컴퓨터활용능력 1급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0024",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "컴퓨터활용능력 2급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0025",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "워드프로세서",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0026",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "전산회계운용사 1급",
@@ -295,74 +295,74 @@
     {
       "name": "한글속기 1급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0037",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "한글속기 2급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0038",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "한글속기 3급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0039",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "전자상거래관리사 1급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0040",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "전자상거래관리사 2급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0041",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "전자상거래운용사",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0042",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "유통관리사 1급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0043",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "유통관리사 2급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0044",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "유통관리사 3급",
       "series": "SERVICE",
-      "agency": "한국산업인력공단",
+      "agency": "대한상공회의소",
       "category": "국가기술자격-경영사무",
       "sourceCode": "M0045",
-      "sourceUrl": "https://www.q-net.or.kr/"
+      "sourceUrl": "https://license.korcham.net/"
     },
     {
       "name": "텔레마케팅관리사",
@@ -3560,7 +3560,7 @@
       "name": "상공회의소한자 1급",
       "series": "ETC",
       "agency": "대한상공회의소",
-      "category": "유통-무역",
+      "category": "한자",
       "sourceCode": "M0445",
       "sourceUrl": "https://license.korcham.net/"
     },
@@ -3568,7 +3568,7 @@
       "name": "상공회의소한자 2급",
       "series": "ETC",
       "agency": "대한상공회의소",
-      "category": "유통-무역",
+      "category": "한자",
       "sourceCode": "M0446",
       "sourceUrl": "https://license.korcham.net/"
     },
@@ -3828,5 +3828,6 @@
       "sourceCode": "M0478",
       "sourceUrl": "https://www.kbca.or.kr/"
     }
-  ]
+  ],
+  "_agency_fix": "2026-09-03: 상의·KCA·Kdata 가 시행하는 21종의 시행처가 한국산업인력공단으로 잘못 적혀 있던 것을 정정(판정 로직이 시행처로 자동/수기를 가른다)."
 }

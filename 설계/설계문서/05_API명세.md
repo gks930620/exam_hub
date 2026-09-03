@@ -1,5 +1,13 @@
 # 05. API 설계서 — exam-hub
 
+> ## 🚩 구현 현행화 노트 (2026-09-03)
+> 이 문서는 v1.0(앱 + SSR) 시절 계약이다. **아래 본문은 폐기로 읽을 것.** 현행 계약은 코드와 `08_계정과_커뮤니티.md` 가 기준이다.
+> - 인증: `X-Device-Id` 는 **폐기**(2026-08-07) → 소셜 로그인 + `Authorization: Bearer` JWT. 매니저는 `POST /api/manager/login`.
+> - `PUT /api/me/fcm-token` 없음(앱 미개발). 알림은 이메일.
+> - `/cert/{slug}` SSR·sitemap 없음(CSR 전용, SEO 보류). 상세는 `GET /api/certificates/{id}`.
+> - 매니저: `/api/admin/overview`(할 일·대기·정상·상시), `/api/admin/schedules`(수기 입력·취소), `/api/admin/data-map`(수집 지도).
+
+
 | 항목 | 내용 |
 |---|---|
 | 문서 버전 | v1.0 |

@@ -3,12 +3,18 @@ import { useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { fmtAt as fmt } from '../lib/format';
 import { useAuth, useRequireLogin } from '../auth';
-import type { DetailResponse } from '../api/types';
+import type { DetailResponse, ScheduleStatus } from '../api/types';
 import Icon from '../components/Icon';
 
 const TYPE_LABEL: Record<string, string> = { WRITTEN: '필기', PRACTICAL: '실기' };
 
-// 자격증 상세: 다음 이벤트를 히어로로(페이지당 하나) + 연간 회차 표 + 관심 토글.
+/** 회차 상태 배지 — 원문(CANCELED)을 그대로 내지 않는다. ACTIVE·DONE 은 배지가 없다. */
+const STATUS_BADGE: Partial<Record<ScheduleStatus, { label: string; tone: string }>> = {
+  CANCELED: { label: '취소됨', tone: 'k-badge--err' },
+  PENDING_REVIEW: { label: '확인 중', tone: 'k-badge--warn' },
+};
+
+// 시험 상세: 다음 이벤트를 히어로로(페이지당 하나) + 연간 회차 표 + 관심 토글.
 export default function DetailPage() {
   const { id } = useParams();
   const { me } = useAuth();
@@ -37,17 +43,22 @@ export default function DetailPage() {
     }
   }
 
-  if (err && !d) return <div className="k-alert k-alert--err">{err}</div>;
-  if (!d) return <div className="k-empty state">불러오는 중…</div>;
+  if (err && !d) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
+  if (!d) return <div className="k-empty state" role="status">불러오는 중…</div>;
+
+  // "다음 회차 미정"은 살아 있는 회차가 전부 지났을 때다 — 취소된 회차만 있으면 "지났다"가 아니라 "없다"
+  const active = d.schedules.filter((s) => s.status === 'ACTIVE');
+  const pastOnly = active.length > 0 && !d.nextEvent && !d.rolling;
 
   return (
     <>
+      {/* 좁은 화면에서는 버튼이 제목 아래 줄로 내려간다 — 잘리지 않게 */}
       <div className="page-header">
-        <div>
+        <div className="page-header__text">
           <h1>{d.name}</h1>
           <p>{[d.category, d.agency].filter(Boolean).join(' · ')}</p>
         </div>
-        <div style={{ marginLeft: 'auto' }}>
+        <div className="page-header__actions">
           <button className={`k-btn ${d.favorited ? 'k-btn--secondary' : 'k-btn--primary'}`} onClick={toggle}
                   aria-pressed={me ? d.favorited : undefined}>
             <Icon name="star" size={18} filled={!!me && d.favorited} />
@@ -56,15 +67,20 @@ export default function DetailPage() {
         </div>
       </div>
 
-      {err && <div className="k-alert k-alert--err">{err}</div>}
+      {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
 
+      {/* 지키지 못할 약속을 하지 않는다 — 상시시험엔 알릴 마감이 없고, 일정 없는 시험은 확인돼야 알릴 수 있다 */}
       {!d.favorited && (
         <p className="fineprint" style={{ marginTop: -6, marginBottom: 16 }}>
-          등록해 두면 <b>내 시험</b>과 캘린더에 뜨고, 원서접수 시작·마감에 알림을 보내 드립니다.
+          {d.rolling
+            ? <>등록해 두면 <b>내 시험</b>에 모아 볼 수 있습니다.</>
+            : active.length === 0
+              ? <>등록해 두면 <b>내 시험</b>에 모아 두고, 일정이 확인되면 알려 드립니다.</>
+              : <>등록해 두면 <b>내 시험</b>과 캘린더에 뜨고, 원서접수 시작·마감에 알림을 보내 드립니다.</>}
         </p>
       )}
 
-      {!d.nextEvent && !d.rolling && d.schedules.length > 0 && (
+      {pastOnly && (
         <div className="k-alert k-alert--warn">
           <b>다음 회차 미정</b> — 등록된 일정은 모두 지났습니다. 등록해 두면 다음 회차가 확인되는 대로 알려 드립니다.
         </div>
@@ -104,51 +120,57 @@ export default function DetailPage() {
           </div>
         )
       ) : (
-        <div className="k-tablewrap">
+        <>
           {d.schedules.some((s) => s.confirmed === false) && (
             <div className="k-alert k-alert--warn" style={{ marginBottom: 14 }}>
               <b>일부 날짜는 추정치입니다.</b> 회차 패턴으로 계산한 값이라 실제와 다를 수 있으니,
               접수 전에 시행처 공고를 꼭 확인하세요.
             </div>
           )}
-          <table className="k-table data-table">
-            <thead>
-              <tr>
-                <th>회차</th>
-                <th>접수</th>
-                <th>시험</th>
-                <th>발표</th>
-              </tr>
-            </thead>
-            <tbody>
-              {d.schedules.map((s) => (
-                <tr key={s.id}>
-                  <td className="round">
-                    {s.year}년 {s.round}회 · {TYPE_LABEL[s.examType] ?? s.examType}
-                    {s.status !== 'ACTIVE' && <> <span className="k-badge">{s.status}</span></>}
-                    {/* 추정치를 확정처럼 보여주면 "마감을 놓치지 않게 해준다"는 약속을 스스로 깬다 */}
-                    {s.confirmed === false && (
-                      <> <span className="k-badge k-badge--warn" title={s.provenanceLabel ?? undefined}>시행처 확인 필요</span></>
-                    )}
-                  </td>
-                  <td className="nowrap">{s.regStartAt ? `${fmt(s.regStartAt)} ~ ${fmt(s.regEndAt)}` : '-'}</td>
-                  <td className="nowrap">
-                    {s.examStartDate
-                      ? s.examStartDate + (s.examEndDate && s.examEndDate !== s.examStartDate ? ` ~ ${s.examEndDate}` : '')
-                      : '-'}
-                  </td>
-                  <td className="nowrap">{s.resultDate ?? '-'}</td>
+          {/* 표는 가로 스크롤 래퍼 안에만 둔다 — 390px 에서 표가 화면 밖으로 나갔다 */}
+          <div className="k-tablewrap">
+            <table className="k-table data-table">
+              <thead>
+                <tr>
+                  <th>회차</th>
+                  <th>접수</th>
+                  <th>시험</th>
+                  <th>발표</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {d.schedules.map((s) => {
+                  const badge = STATUS_BADGE[s.status];
+                  return (
+                    <tr key={s.id} className={s.status === 'CANCELED' ? 'is-canceled' : undefined}>
+                      <td className="round">
+                        {s.year}년 {s.round}회 · {TYPE_LABEL[s.examType] ?? s.examType}
+                        {badge && <> <span className={`k-badge ${badge.tone}`}>{badge.label}</span></>}
+                        {/* 추정치를 확정처럼 보여주면 "마감을 놓치지 않게 해준다"는 약속을 스스로 깬다 */}
+                        {s.confirmed === false && (
+                          <> <span className="k-badge k-badge--warn" title={s.provenanceLabel ?? undefined}>시행처 확인 필요</span></>
+                        )}
+                      </td>
+                      <td className="nowrap">{s.regStartAt ? `${fmt(s.regStartAt)} ~ ${fmt(s.regEndAt)}` : '-'}</td>
+                      <td className="nowrap">
+                        {s.examStartDate
+                          ? s.examStartDate + (s.examEndDate && s.examEndDate !== s.examStartDate ? ` ~ ${s.examEndDate}` : '')
+                          : '-'}
+                      </td>
+                      <td className="nowrap">{s.resultDate ?? '-'}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {d.sourceUrl && (
         <p className="fineprint">
           출처: <a href={d.sourceUrl} target="_blank" rel="noreferrer">{d.sourceUrl}</a>
-          {d.collectedAt && <> · 수집 {d.collectedAt}</>}
+          {d.collectedAt && <> · 수집 {fmt(d.collectedAt)}</>}
           <br />최종 일정은 시행처에서 확인하세요.
         </p>
       )}

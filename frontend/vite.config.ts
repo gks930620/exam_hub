@@ -18,6 +18,12 @@ export default defineConfig(({ mode }) => {
       fs: { allow: ['..'] },
       proxy: {
         '/api': { target, changeOrigin: true },
+        // 소셜 로그인 — /oauth2/authorization/{provider} 는 서버(Spring Security)의 주소다.
+        // 프록시가 없으면 SPA 폴백이 index.html 을 주어 버튼을 눌러도 홈으로 튄다.
+        // changeOrigin 이라 Host 가 8081 이 되고, 서버가 만드는 redirect_uri 도
+        // 카카오 콘솔에 등록한 http://localhost:8081/login/oauth2/code/kakao 와 맞는다.
+        '/oauth2': { target, changeOrigin: true },
+        '/login/oauth2': { target, changeOrigin: true },
       },
     },
   };

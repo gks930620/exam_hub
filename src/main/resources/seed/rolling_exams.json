@@ -20,24 +20,37 @@
       "why": "국시원 상시(기간제) 컴퓨터시험"
     },
     {
-      "sourceCode": "C011",
+      "sourceCode": "M0024",
       "name": "컴퓨터활용능력1급",
       "why": "상공회의소 상시검정(2021~)"
     },
     {
+      "sourceCode": "C011",
+      "name": "컴퓨터활용능력1급",
+      "why": "상공회의소 상시검정(2021~)",
+      "note": "로컬 데모·비큐넷 시드가 만든 코드(운영 마스터엔 없음). 같은 시험의 마스터 코드는 바로 위."
+    },
+    {
+      "sourceCode": "M0025",
+      "name": "컴퓨터활용능력 2급",
+      "why": "상동"
+    },
+    {
       "sourceCode": "KORCHAM-CA2",
       "name": "컴퓨터활용능력 2급",
+      "why": "상동",
+      "note": "로컬 데모·비큐넷 시드가 만든 코드(운영 마스터엔 없음). 같은 시험의 마스터 코드는 바로 위."
+    },
+    {
+      "sourceCode": "M0026",
+      "name": "워드프로세서",
       "why": "상동"
     },
     {
       "sourceCode": "KORCHAM-WP",
       "name": "워드프로세서",
-      "why": "상동"
-    },
-    {
-      "sourceCode": "MOS",
-      "name": "MOS",
-      "why": "상시 CBT"
+      "why": "상동",
+      "note": "로컬 데모·비큐넷 시드가 만든 코드(운영 마스터엔 없음). 같은 시험의 마스터 코드는 바로 위."
     },
     {
       "sourceCode": "M0387",
@@ -60,19 +73,37 @@
       "why": "상시 CBT"
     },
     {
-      "sourceCode": "TOEFL",
+      "sourceCode": "M0333",
       "name": "TOEFL iBT",
       "why": "연중 상시 — 원하는 날짜 예약"
     },
     {
+      "sourceCode": "TOEFL",
+      "name": "TOEFL iBT",
+      "why": "연중 상시 — 원하는 날짜 예약",
+      "note": "로컬 데모·비큐넷 시드가 만든 코드(운영 마스터엔 없음). 같은 시험의 마스터 코드는 바로 위."
+    },
+    {
+      "sourceCode": "M0334",
+      "name": "IELTS",
+      "why": "상동"
+    },
+    {
       "sourceCode": "IELTS",
       "name": "IELTS",
+      "why": "상동",
+      "note": "로컬 데모·비큐넷 시드가 만든 코드(운영 마스터엔 없음). 같은 시험의 마스터 코드는 바로 위."
+    },
+    {
+      "sourceCode": "M0330",
+      "name": "OPIc",
       "why": "상동"
     },
     {
       "sourceCode": "OPIC",
       "name": "OPIc",
-      "why": "상동"
+      "why": "상동",
+      "note": "로컬 데모·비큐넷 시드가 만든 코드(운영 마스터엔 없음). 같은 시험의 마스터 코드는 바로 위."
     },
     {
       "sourceCode": "M0393",
@@ -179,5 +210,6 @@
       "name": "소방안전관리자 3급",
       "why": "상동"
     }
-  ]
+  ],
+  "_codes": "코드는 exam_master.json(M코드)·qnet_master.json 의 sourceCode 와 같아야 적용된다. 코드가 안 맞으면 이름(공백 무시)으로 한 번 더 찾는다(RollingAdmissionInitializer). 2026-09-03: 7건이 로컬 시드 코드로 적혀 운영에서 빠지던 것을 정정."
 }

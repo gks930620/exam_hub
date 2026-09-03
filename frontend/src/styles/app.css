@@ -4,9 +4,7 @@
    design_kits_lets/(base→components→tokens→extras) 다음에 로드된다(main.tsx).
    규칙: 색·치수는 전부 킷의 var(--토큰) 만 쓴다. #hex 를 쓰고 싶어지면 토큰이
    부족한 것이다 — 예외는 카카오 노랑 같은 남의 브랜드 색뿐.
-
-   Halo 로 되돌리려면: main.tsx 의 import 블록을 halo-* 로 바꾸고
-   git checkout design-halo -- frontend/src/styles/app.css
+   마크업은 킷 계약 .k-* 를 먼저 쓰고, 여기엔 앱에만 있는 조각(카드 하단·D-day·스위치 …)만 둔다.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ── 상단바 부속 ── */
@@ -35,9 +33,14 @@
   .top-nav::-webkit-scrollbar { display: none; }
 }
 
-/* ── 페이지 머리 ── */
-.page-header { display: flex; align-items: center; gap: var(--sp-4); margin: var(--sp-2) 0 var(--sp-6); }
-.page-header h1 { margin: 0; font-size: var(--t-xl); font-weight: var(--display-weight); letter-spacing: var(--display-tracking); }
+/* ── 페이지 머리 ── 좁은 화면(390px)에서 오른쪽 버튼이 잘리지 않게 줄바꿈한다 */
+.page-header { display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; margin: var(--sp-2) 0 var(--sp-6); }
+.page-header__text { flex: 1 1 240px; min-width: 0; }
+.page-header__actions { margin-left: auto; display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.page-header h1 {
+  margin: 0; font-size: var(--t-xl); font-weight: var(--display-weight); letter-spacing: var(--display-tracking);
+  word-break: keep-all; overflow-wrap: anywhere;
+}
 .page-header p { margin: 4px 0 0; color: var(--muted); font-size: var(--t-sm); }
 .page-avatar {
   width: 46px; height: 46px; flex: none; border-radius: var(--r-lg);
@@ -49,7 +52,7 @@
 /* 섹션 머리 — 제목 + 오른쪽 부가정보 */
 .section-head { display: flex; align-items: baseline; gap: var(--sp-3); margin: var(--sp-6) 0 var(--sp-3); }
 .section-head h2 { margin: 0; font-size: var(--t-lg); font-weight: var(--w-heavy); letter-spacing: var(--tracking-tight); }
-.section-head .more, .step-head .more { margin-left: auto; font-size: var(--t-sm); color: var(--muted2); }
+.section-head .more { margin-left: auto; font-size: var(--t-sm); color: var(--muted2); }
 
 /* ── 검색 ── */
 .searchbar { position: relative; margin-bottom: var(--sp-4); }
@@ -96,6 +99,13 @@
 /* ── 표 부속 ── */
 .data-table td.round { font-weight: var(--w-bold); color: var(--text); white-space: nowrap; }
 .data-table .nowrap { white-space: nowrap; }
+/* 취소된 회차 — 멀쩡한 일정처럼 보이면 사용자가 그 날짜를 믿는다. 흐리게, 날짜는 줄 긋기 */
+.data-table tr.is-canceled td { color: var(--muted2); }
+.data-table tr.is-canceled .nowrap { text-decoration: line-through; }
+/* 다시 불러오는 동안 — 자리는 그대로, 내용만 흐리게 */
+.k-tablewrap[aria-busy="true"], .card-grid[aria-busy="true"] {
+  opacity: .55; transition: opacity var(--dur-fast) var(--ease);
+}
 .link-danger {
   border: none; background: none; cursor: pointer; padding: 0;
   color: var(--err-text); font-size: var(--t-sm); text-decoration: underline;
@@ -107,6 +117,10 @@
 /* ── 작은 활자 ── */
 .fineprint { font-size: var(--t-xs); color: var(--muted2); line-height: var(--lh); }
 .chip-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-4); }
+/* 알림 띠 안의 행동 버튼(다시 시도) — 오른쪽 끝 */
+.k-alert .alert-action { margin-left: auto; flex: none; }
+/* 목록 아래 줄 — 페이징·더 보기·폼 버튼이 앉는 자리 */
+.pager-row { display: flex; align-items: center; justify-content: center; gap: var(--sp-3); flex-wrap: wrap; margin-top: var(--sp-4); }
 
 /* ── 로그인 ── */
 .login-wrap { max-width: 420px; margin: 6vh auto 0; }
@@ -121,17 +135,7 @@
 .social.google { background: var(--surface); color: var(--text); border: var(--bw) solid var(--border-strong); }
 .social:hover { filter: brightness(.97); }
 
-/* ── 매니저 입력 화면 ── */
-.pick-list { margin-top: var(--sp-2); display: flex; flex-direction: column; }
-.pick {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
-  padding: var(--sp-2) var(--sp-3); border: none; background: none;
-  border-top: var(--bw) solid var(--border);
-  cursor: pointer; font-family: inherit; text-align: left; width: 100%;
-}
-.pick:hover { background: var(--surface-hover); }
-.pick b { font-size: var(--t-md); }
-.pick span { font-size: var(--t-xs); color: var(--muted2); }
+/* ── 매니저 입력 폼 ── */
 .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
 .form-grid .wide { grid-column: 1 / -1; }
 @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
@@ -162,16 +166,6 @@
 .cover-nums em { margin-left: auto; font-style: normal; font-weight: var(--w-bold); color: var(--point-text); font-size: var(--t-md); }
 .cover-bar { margin-top: var(--sp-3); height: 8px; border-radius: var(--r-pill); background: var(--surface-alt); overflow: hidden; }
 .cover-bar span { display: block; height: 100%; background: var(--point); border-radius: var(--r-pill); }
-
-/* 입력 화면의 1·2·3 */
-.step-head { display: flex; align-items: center; gap: var(--sp-2); margin: 0 0 var(--sp-3); }
-.step-head h2 { margin: 0; font-size: var(--t-lg); }
-.step-no {
-  display: grid; place-items: center;
-  width: 24px; height: 24px; border-radius: var(--r-pill);
-  background: var(--point); color: var(--on-point);
-  font-size: var(--t-sm); font-weight: var(--w-bold);
-}
 
 /* ── 페이지네이션 부속 (골격은 킷 .k-pager) ── */
 .page-gap { color: var(--muted2); padding: 0 2px; }
@@ -339,17 +333,14 @@
 
 /* 분류 드롭다운은 검색칸 왼쪽, 같은 높이·같은 둥글기 */
 .search-row .k-select { flex: 0 0 200px; min-height: var(--touch); }
+/* 분류 조회 실패 안내 — 드롭다운 아래 한 줄 */
+.search-row .k-help { flex: 1 0 100%; margin: 0; }
 
 /* ── 내 시험(홈) — 킷 데모 구조 ── */
 .my-hero h1 { word-break: keep-all; }
-.my-hero p { word-break: keep-all; }
+.my-hero p { word-break: keep-all; overflow-wrap: anywhere; }
 .my-hero p strong { color: inherit; }
 .my-hero .hero-actions { justify-content: flex-start; margin-top: var(--sp-4); }
-
-/* ── 매니저: 일정 없는 이유 ── */
-.reason-row { margin-bottom: var(--sp-4); }
-.reason-row .k-segment button b { margin-left: 4px; opacity: .75; }
-.cover-breakdown { display: flex; gap: var(--sp-2); align-items: center; flex-wrap: wrap; margin-top: var(--sp-3); }
 
 /* ── 매니저: 할 일 요약 띠 + 일정 모달 ── */
 .todo-strip {

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Link, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
 import DetailPage from './pages/DetailPage';
@@ -21,7 +21,7 @@ import { applyTheme, isDark, readTheme, type ThemeSetting } from './theme';
 import Avatar from './components/Avatar';
 import Icon from './components/Icon';
 
-// Halo 골격: 유리 헤더(원칙 ③ — 유리는 여기 한 곳만) + 본문. 메뉴는 헤더 안에 있다.
+// Lets 골격: 상단바(.k-topnav) + 본문(.k-main). 메뉴는 헤더 안에 있다(사이드바 없음 — 사용자 지시).
 //
 // 홈(/)은 '시험 찾기'다. 처음 온 사람이 가장 먼저 할 일이 그것이고, 비로그인도 볼 수 있다.
 // 예전엔 홈이 '내 시험'이라 로그인부터 요구했는데, 아직 관심 시험이 없는 사람에게는 빈 화면이었다.
@@ -33,31 +33,34 @@ const NAV = [
   { to: '/settings', label: '알림 설정', end: false },
 ];
 
-/** 로그인이 필요한 화면 — 비로그인이면 로그인으로 보내고, 돌아올 곳을 기억한다. */
 /**
  * 매니저 전용 구간. 일반 회원이 URL 을 직접 쳐서 들어오면 여기서 막는다.
  * 서버도 403 을 주지만, 화면이 먼저 막아야 "왜 안 되지" 하고 헤매지 않는다.
  */
 function RequireAdmin({ children }: { children: ReactNode }) {
   const { me, loading } = useAuth();
-  if (loading) return <div className="k-empty state">불러오는 중…</div>;
+  if (loading) return <div className="k-empty state" role="status">불러오는 중…</div>;
   if (!me) return <Navigate to="/manager/login" replace />;
   if (me.role !== 'ADMIN') {
     return (
       <div className="k-empty state">
         <span className="big">매니저만 볼 수 있는 화면입니다</span>
-        운영자 계정으로 로그인해야 합니다. <a href="/manager/login">매니저 로그인</a>
+        운영자 계정으로 로그인해야 합니다. <Link to="/manager/login">매니저 로그인</Link>
       </div>
     );
   }
   return <>{children}</>;
 }
 
+/**
+ * 로그인이 필요한 화면 — 비로그인이면 로그인으로 보내고, 돌아올 곳을 기억한다.
+ * 돌아올 곳은 검색어까지(pathname + search) — useRequireLogin 과 같은 규칙.
+ */
 function RequireAuth({ children }: { children: ReactNode }) {
   const { me, loading } = useAuth();
   const location = useLocation();
-  if (loading) return <div className="k-empty state">불러오는 중…</div>;
-  if (!me) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (loading) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  if (!me) return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
   return <>{children}</>;
 }
 
@@ -81,8 +84,9 @@ export default function App() {
               {n.label}
             </NavLink>
           ))}
+          {/* 운영 화면은 할 일·수집 지도·변천사 세 갈래 — '수기 일정 입력'은 그중 하나를 부르던 옛 이름 */}
           {me?.role === 'ADMIN' && (
-            <NavLink to="/admin" className="nav-item">수기 일정 입력</NavLink>
+            <NavLink to="/admin" className="nav-item">운영</NavLink>
           )}
         </nav>
         <span className="k-spacer" />
@@ -94,7 +98,8 @@ export default function App() {
               <Icon name={dark ? 'sun' : 'moon'} size={18} />
             </button>
             {loading ? null : me ? (
-              <NavLink to="/me" className="who">
+              // 좁은 화면에서는 닉네임이 숨어 아바타만 남는다 — 이름 없는 링크가 되지 않게 aria-label
+              <NavLink to="/me" className="who" aria-label={`내 정보 — ${me.nickname}`}>
                 <Avatar src={me.profileImage} nickname={me.nickname} />
                 <span className="only-desktop">{me.nickname}</span>
               </NavLink>

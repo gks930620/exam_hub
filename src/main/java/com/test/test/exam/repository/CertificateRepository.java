@@ -35,8 +35,13 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
     @Query("SELECT c FROM Certificate c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED) ORDER BY c.favoriteCount DESC, c.name ASC")
     List<Certificate> searchByName(@Param("q") String q, Pageable pageable);
 
-    /** 인기순 TOP N */
-    List<Certificate> findAllByOrderByFavoriteCountDescNameAsc(Pageable pageable);
+    /** 인기순 TOP N — 폐지·개칭은 뺀다(검색·둘러보기와 같은 모집단). */
+    @Query("""
+            SELECT c FROM Certificate c
+             WHERE c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
+             ORDER BY c.favoriteCount DESC, c.name ASC
+            """)
+    List<Certificate> findPopularVisible(Pageable pageable);
 
     /** 매니저용 — 폐지·개칭 기록(시험 변천사). 사용자 화면에서 사라진 것들이 여기 남는다. */
     @Query("""
@@ -80,16 +85,19 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
     long countVisible();
 
     /**
-     * 그중 살아 있는 일정이 하나라도 있는 시험 수. 위와 같은 모집단이어야 뺄셈이 맞는다.
+     * 그중 <b>날짜 있는</b> 살아 있는 일정이 하나라도 있는 시험 수. 위와 같은 모집단이어야 뺄셈이 맞는다.
      * 상시도 뺀다 — 예전 시드가 상시 시험에 넣어 둔 일정이 남아 있어, 안 빼면 분자만 부풀어
      * 현황 화면의 '일정 없음' 수와 6 어긋났다(실측).
+     * 연도·회차만 있고 날짜가 없는 행은 세지 않는다 — 매니저 현황·사용자 카드({@code ExamSchedule.hasAnyDate})와 같은 기준.
      */
     @Query("""
             SELECT COUNT(DISTINCT c.id) FROM Certificate c
              WHERE c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
                AND c.rollingAdmission = false
                AND EXISTS (SELECT 1 FROM ExamSchedule s
-                            WHERE s.certificate = c AND s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE)
+                            WHERE s.certificate = c AND s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+                              AND (s.examEndDate IS NOT NULL OR s.examStartDate IS NOT NULL
+                                   OR s.regEndAt IS NOT NULL OR s.regStartAt IS NOT NULL))
             """)
     long countVisibleWithSchedule();
 

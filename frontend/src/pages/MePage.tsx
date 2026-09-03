@@ -26,7 +26,7 @@ export default function MePage() {
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  if (!me) return <div className="k-empty state">불러오는 중…</div>;
+  if (!me) return <div className="k-empty state" role="status">불러오는 중…</div>;
 
   async function run(fn: () => Promise<unknown>, ok: string) {
     setSaving(true); setMsg(null); setErr(null);
@@ -58,14 +58,14 @@ export default function MePage() {
     <>
       <div className="page-header">
         <div className="page-avatar" aria-hidden="true"><Icon name="user" size={22} /></div>
-        <div>
+        <div className="page-header__text">
           <h1>내 정보</h1>
           <p>{me.provider === 'KAKAO' ? '카카오' : '구글'} 계정으로 로그인했습니다.</p>
         </div>
       </div>
 
-      {err && <div className="k-alert k-alert--err">{err}</div>}
-      {msg && <div className="k-alert k-alert--ok">{msg}</div>}
+      {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
+      {msg && <div className="k-alert k-alert--ok" role="status">{msg}</div>}
 
       {/* 알림이 실제로 갈 수 있는 상태인지 한눈에 */}
       <div className={`k-alert${hasEmail ? '' : ' k-alert--warn'}`}>
@@ -77,11 +77,11 @@ export default function MePage() {
 
       <div className="section-head"><h2>알림 받을 곳</h2></div>
       <div className="k-card" style={{ padding: 20 }}>
-        <div className="field">
+        <label className="field">
           <span>이메일 *</span>
           <input className="k-input" type="email" value={email} placeholder="name@example.com"
-                 onChange={(e) => setEmail(e.target.value)} />
-        </div>
+                 autoComplete="email" onChange={(e) => setEmail(e.target.value)} />
+        </label>
         <p className="fineprint" style={{ margin: '0 0 14px' }}>
           지금은 알림이 이메일로만 갑니다. 비우면 알림을 받을 수 없습니다.
         </p>
@@ -90,11 +90,11 @@ export default function MePage() {
           {saving ? '저장 중…' : '이메일 저장'}
         </button>
 
-        <div className="field" style={{ marginTop: 26 }}>
+        <label className="field" style={{ marginTop: 26 }}>
           <span>휴대폰번호 (지금은 안 씀)</span>
           <input className="k-input" value={phone} inputMode="numeric" placeholder="010-1234-5678"
-                 onChange={(e) => setPhone(formatPhone(e.target.value))} />
-        </div>
+                 autoComplete="tel" onChange={(e) => setPhone(formatPhone(e.target.value))} />
+        </label>
         <p className="fineprint" style={{ margin: '0 0 14px' }}>
           카카오톡 알림(알림톡)을 붙일 때 쓰려고 미리 받아 둡니다. 지금은 발송하지 않습니다.
         </p>
@@ -106,11 +106,11 @@ export default function MePage() {
 
       <div className="section-head"><h2>프로필</h2></div>
       <div className="k-card" style={{ padding: 20 }}>
-        <div className="field">
+        <label className="field">
           <span>닉네임 (커뮤니티 표시명)</span>
           <input className="k-input" value={nickname} maxLength={30}
                  onChange={(e) => setNickname(e.target.value)} />
-        </div>
+        </label>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="k-btn k-btn--primary"
                   onClick={() => run(() => examApi.changeNickname(nickname.trim()), '저장했습니다.')}

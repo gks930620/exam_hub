@@ -1,5 +1,5 @@
-// Halo 다크 모드 — <html data-theme> 하나만 바꾸면 토큰이 전부 따라온다.
-// (HALO-디자인-가이드.md §3-2. 첫 페인트 세팅은 index.html 인라인 스크립트가 담당)
+// 다크 모드 — <html data-theme> 하나만 바꾸면 킷 토큰이 전부 따라온다(Lets 킷 공통 계약).
+// 첫 페인트 세팅은 index.html 인라인 스크립트가 담당한다(CSS 로드 전에 깜빡임을 막는다).
 
 export type ThemeSetting = 'light' | 'dark' | 'system';
 

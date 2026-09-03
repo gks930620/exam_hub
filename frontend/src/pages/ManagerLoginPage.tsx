@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth } from '../auth';
 
@@ -49,7 +49,7 @@ export default function ManagerLoginPage() {
       <div className="login-card">
         <h1>매니저 로그인</h1>
         <p className="fineprint" style={{ margin: '6px 0 22px' }}>
-          운영자 전용입니다. 일반 이용자는 <a href="/login">이쪽</a>에서 카카오로 로그인하세요.
+          운영자 전용입니다. 일반 이용자는 <Link to="/login">이쪽</Link>에서 카카오로 로그인하세요.
         </p>
 
         {configured === false && (
@@ -58,19 +58,20 @@ export default function ManagerLoginPage() {
             <code> MANAGER_USERNAME</code> · <code>MANAGER_PASSWORD</code> 를 넣고 재기동하세요.
           </div>
         )}
-        {err && <div className="k-alert k-alert--err" style={{ marginBottom: 16 }}>{err}</div>}
+        {/* 5회 실패로 잠기면(429) 서버 문장을 그대로 보여준다 — 몇 분 뒤 다시 하라는 말까지 서버가 준다 */}
+        {err && <div className="k-alert k-alert--err" role="alert" style={{ marginBottom: 16 }}>{err}</div>}
 
         <form onSubmit={submit}>
-          <div className="field">
+          <label className="field">
             <span>아이디</span>
             <input className="k-input" value={username} autoComplete="username"
                    onChange={(e) => setUsername(e.target.value)} />
-          </div>
-          <div className="field">
+          </label>
+          <label className="field">
             <span>비밀번호</span>
             <input className="k-input" type="password" value={password} autoComplete="current-password"
                    onChange={(e) => setPassword(e.target.value)} />
-          </div>
+          </label>
           <button className="k-btn k-btn--primary k-btn--lg" type="submit" style={{ width: '100%' }}
                   disabled={busy || !username.trim() || !password}>
             {busy ? '확인 중…' : '로그인'}

@@ -11,9 +11,11 @@ import type { DataMapResponse } from '../api/types';
  */
 export default function AdminTodo() {
   const [map, setMap] = useState<DataMapResponse | null>(null);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    examApi.adminDataMap().then(setMap).catch(() => setMap(null));
+    // 실패하면 띠를 숨기지 않고 말한다 — 조용히 사라지면 "원래 없는 화면인가" 하고 넘어간다
+    examApi.adminDataMap().then(setMap).catch((e: Error) => setErr(e.message));
   }, []);
 
   const c = map?.coverage;
@@ -21,6 +23,8 @@ export default function AdminTodo() {
 
   return (
     <>
+      {err && <div className="k-alert k-alert--err" role="alert">채움률을 불러오지 못했습니다: {err}</div>}
+
       {c && (
         <div className="k-card cover-strip">
           <div className="cover-nums">

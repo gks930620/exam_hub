@@ -18,9 +18,10 @@ import java.util.regex.Pattern;
  * <p>공공 API 가 없는 시험(토익·텝스·JLPT 등)은 시행처의 일정 페이지가 유일한 원본이다.
  * 요청 시마다 긁지 않고 <b>수집 배치가 하루 1회</b> 읽어 DB 에 적재한다(설계 07 §4-5 가드레일).
  *
- * <p><b>기본은 꺼져 있다.</b> 각 구현체가 {@code scrape.enabled=true} 일 때만 빈으로 올라오므로,
- * 로컬·테스트는 네트워크를 타지 않는다. 파싱 로직({@link #parse})은 빈과 무관하게 순수 함수라
- * 저장해 둔 HTML 픽스처로 단위 테스트한다.
+ * <p><b>기본은 켜져 있다</b>({@code scrape.enabled} 기본 true — 운영에서도 05:00 배치에 API 와 같이 돈다).
+ * 다만 <b>기동 때는 돌지 않는다</b> — {@code collect.on-startup} 이 기본 false 라 파일 시드만 읽는다.
+ * 테스트 설정(yml)에는 이 키가 없어 구현체 빈이 안 뜨므로 테스트는 네트워크를 타지 않는다.
+ * 파싱 로직({@link #parse})은 빈과 무관하게 순수 함수라 저장해 둔 HTML 픽스처로 단위 테스트한다.
  *
  * <p>수집 예의: 사실(날짜)만 저장하고, 원문 URL 을 함께 남긴다. 설명 문구·표 구조는 복제하지 않는다.
  */
@@ -28,6 +29,12 @@ import java.util.regex.Pattern;
 public abstract class AbstractHtmlScheduleSource implements ScheduleSource {
 
     private static final Pattern CHARSET = Pattern.compile("charset\\s*=\\s*[\"']?([A-Za-z0-9_-]+)");
+
+    /** 스크래퍼 — 시드 뒤, 큐넷 API 앞. */
+    @Override
+    public int priority() {
+        return PRIORITY_SCRAPER;
+    }
 
     private final RestClient http = RestClient.builder()
             .requestFactory(timeoutFactory())

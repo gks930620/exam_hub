@@ -1,16 +1,13 @@
 import { api } from './client';
 import type {
-  SearchResponse, DetailResponse, FavoriteListResponse,
+  DetailResponse, FavoriteListResponse,
   NotifySettings, CalendarResponse, BrowseResponse, CategoryResponse,
   MeResponse, BoardItem, PostListResponse, PostDetail, CommentItem, AdminScheduleRow,
   ManagerLoginResponse, DataMapResponse, OverviewResponse, LifecycleResponse, StatsResponse,
 } from './types';
 
 export const examApi = {
-  search: (query: string) =>
-    api.get<SearchResponse>(`/api/certificates?query=${encodeURIComponent(query)}`),
-
-  /** 전체 둘러보기 — 검색어 없이도, 일정 없는 시험도 포함해 페이지 단위로 가져온다. */
+  /** 전체 둘러보기 — 검색어 없이도, 일정 없는 시험도 포함해 페이지 단위로 가져온다(서버 상한 100). */
   browse: (params: { query?: string; category?: string; page?: number; size?: number }) => {
     const q = new URLSearchParams();
     if (params.query) q.set('query', params.query);
@@ -24,12 +21,7 @@ export const examApi = {
 
   stats: () => api.get<StatsResponse>('/api/certificates/stats'),
 
-  popular: () => api.get<SearchResponse>('/api/certificates/popular'),
-
   detail: (id: number) => api.get<DetailResponse>(`/api/certificates/${id}`),
-
-  detailBySlug: (slug: string) =>
-    api.get<DetailResponse>(`/api/certificates/by-slug/${encodeURIComponent(slug)}`),
 
   favorites: () => api.get<FavoriteListResponse>('/api/me/favorites'),
 
@@ -116,6 +108,7 @@ export const examApi = {
 
   // ===== 관리자 (수기 일정 입력) =====
 
+  /** 시험 하나의 회차 목록 — ACTIVE 와 함께 보류(PENDING_REVIEW) 행도 온다 */
   adminSchedules: (certificateId: number) =>
     api.get<AdminScheduleRow[]>(`/api/admin/schedules?certificateId=${certificateId}`),
 

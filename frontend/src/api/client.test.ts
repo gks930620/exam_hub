@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { api, ApiError, clearToken, getToken, setToken } from './client';
+import { api, ApiError, clearToken, getToken, setToken, UNAUTHENTICATED_EVENT } from './client';
 
 /**
  * REST 클라이언트 — 인증 헤더와 에러 변환.
@@ -45,10 +45,54 @@ describe('api client', () => {
   });
 
   it('실패하면 서버 메시지를 담은 ApiError 를 던진다', async () => {
-    mockFetch(409, { message: '이미 관심 등록된 자격증입니다.' });
+    mockFetch(409, { message: '이미 관심 등록된 시험입니다.' });
 
     await expect(api.post('/api/me/favorites', { certificateId: 1 }))
-      .rejects.toMatchObject({ status: 409, message: '이미 관심 등록된 자격증입니다.' });
+      .rejects.toMatchObject({ status: 409, message: '이미 관심 등록된 시험입니다.' });
+  });
+
+  /** 매니저 로그인 5회 실패 → 429. 화면은 서버 문장을 그대로 보여주면 되므로 여기서 안 잘려야 한다. */
+  it('429 도 서버 메시지를 그대로 전달한다', async () => {
+    mockFetch(429, { message: '로그인 시도가 너무 많습니다. 15분 뒤 다시 시도하세요.' });
+
+    await expect(api.post('/api/manager/login', { username: 'm', password: 'x' }))
+      .rejects.toMatchObject({ status: 429, message: '로그인 시도가 너무 많습니다. 15분 뒤 다시 시도하세요.' });
+  });
+
+  /**
+   * 토큰 만료 — 401 을 받으면 죽은 토큰을 지우고 이벤트를 띄운다. AuthProvider 가 이걸 듣고
+   * me 를 비워 화면 전체가 비로그인으로 바뀐다. 예전엔 헤더에 닉네임이 남은 채 빨간 줄만 떴다.
+   */
+  it('401 이면 저장된 토큰을 지우고 exam-hub:unauthenticated 이벤트를 띄운다', async () => {
+    setToken('expired');
+    mockFetch(401, { message: '로그인이 필요합니다.' });
+    const heard = vi.fn();
+    window.addEventListener(UNAUTHENTICATED_EVENT, heard);
+    try {
+      await expect(api.get('/api/me/favorites')).rejects.toBeInstanceOf(ApiError);
+
+      expect(getToken()).toBeNull();
+      expect(heard).toHaveBeenCalledTimes(1);
+    } finally {
+      window.removeEventListener(UNAUTHENTICATED_EVENT, heard);
+    }
+  });
+
+  /** 매니저 로그인의 401 은 "비밀번호가 틀렸다"지 "네 토큰이 죽었다"가 아니다 — 멀쩡한 세션을 끊으면 안 된다. */
+  it('매니저 로그인의 401 은 토큰을 건드리지 않는다', async () => {
+    setToken('social-token');
+    mockFetch(401, { message: '아이디 또는 비밀번호가 올바르지 않습니다.' });
+    const heard = vi.fn();
+    window.addEventListener(UNAUTHENTICATED_EVENT, heard);
+    try {
+      await expect(api.post('/api/manager/login', { username: 'm', password: 'x' }))
+        .rejects.toMatchObject({ status: 401 });
+
+      expect(getToken()).toBe('social-token');
+      expect(heard).not.toHaveBeenCalled();
+    } finally {
+      window.removeEventListener(UNAUTHENTICATED_EVENT, heard);
+    }
   });
 
   it('401 은 isUnauthenticated 로 구분된다 — 화면이 로그인 유도를 띄울 근거', async () => {

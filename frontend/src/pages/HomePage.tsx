@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
-import { fmtAt } from '../lib/format';
+import { ddayLabel } from '../lib/format';
+import { eventAtLabel } from '../lib/status';
 import type { FavoriteCard, FavoriteListResponse } from '../api/types';
 import Icon from '../components/Icon';
+import CardStatus from '../components/CardStatus';
 
-// 홈: 내가 등록한 시험의 D-day. 백엔드가 배지 우선순위(접수중 → 접수 예정 → 시험 예정)로
-// 정렬해 주므로 첫 카드가 가장 급한 건이다 → 그 하나만 히어로로 올린다(Halo 원칙 ②).
-const dday = (n: number) => (n >= 0 ? `D-${n}` : `D+${-n}`);
+// 내 시험: 등록한 시험의 D-day. 킷 데모 구조 — 히어로(가장 급한 것 하나) → 지표 타일 → 카드.
+//
+// 카드는 scheduleState 로 갈린다. D-day 숫자는 <b>다가오는 일정이 있을 때만</b> 있다 —
+// 일정 없는 관심 시험이 빨간 "D-0" 으로 보이던 결함(2026-09-03)이 그 반대였다.
+const SOON_DAYS = 7;
+
+/** 다가오는 일정이 있는 카드 — 서버가 dday 를 준 것만. 이 좁힘이 곧 "D-day 를 그려도 되는가"다. */
+function hasUpcoming(c: FavoriteCard): c is FavoriteCard & { dday: number } {
+  return c.scheduleState === 'UPCOMING' && c.dday != null;
+}
 
 export default function HomePage() {
   const [data, setData] = useState<FavoriteListResponse | null>(null);
@@ -17,15 +26,15 @@ export default function HomePage() {
     examApi.favorites().then(setData).catch((e: Error) => setErr(e.message));
   }, []);
 
-  if (err) return <div className="k-alert k-alert--err">{err}</div>;
-  if (!data) return <div className="k-empty state">불러오는 중…</div>;
+  if (err) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
+  if (!data) return <div className="k-empty state" role="status">불러오는 중…</div>;
 
   if (data.items.length === 0) {
     return (
       <>
         <div className="page-header">
           <div className="page-avatar" aria-hidden="true"><Icon name="bookmark" size={22} /></div>
-          <div>
+          <div className="page-header__text">
             <h1>내 시험</h1>
             <p>관심 시험을 등록하면 접수 시작·마감과 시험일을 챙겨 드립니다.</p>
           </div>
@@ -41,21 +50,27 @@ export default function HomePage() {
     );
   }
 
-  // 백엔드가 급한 순으로 준다 — 첫 항목이 히어로다. 지표는 서버를 더 부르지 않고 여기서 센다.
-  const lead = data.items[0];
+  // 서버는 급한 순으로 준다 — 다가오는 일정이 있는 첫 카드가 히어로다. 하나도 없으면 그렇다고 말한다.
   // 접수 중·이번 주 같은 지표는 뺐다 — 지금은 헷갈린다(사용자 결정 2026-09-02). 익숙해지면 다시.
+  const lead = data.items.find(hasUpcoming) ?? null;
 
   return (
     <>
       {/* 킷 데모 구조: 히어로에 큰 제목 하나 + 가장 급한 일 + 행동 */}
       <section className="k-hero my-hero">
         <h1>{`등록한 시험 ${data.items.length}개`}</h1>
-        <p>
-          <strong>{lead.name}</strong> — {lead.eventLabel} {fmtAt(lead.eventAt)}
-          {lead.dday >= 0 ? ` (D-${lead.dday})` : ` (D+${-lead.dday})`}
-        </p>
+        {lead ? (
+          <p>
+            <strong>{lead.name}</strong> — {lead.eventLabel} {eventAtLabel(lead.badge, lead.eventAt)} ({ddayLabel(lead.dday)})
+          </p>
+        ) : (
+          <p>
+            <strong>다가오는 일정 없음</strong> — 등록한 시험에 아직 다가오는 접수·시험 일정이 없습니다.
+            일정이 확인되면 알려 드립니다.
+          </p>
+        )}
         <div className="hero-actions">
-          <Link to={`/cert/${lead.certificateId}`} className="k-btn k-btn--primary">일정 자세히 보기</Link>
+          {lead && <Link to={`/cert/${lead.certificateId}`} className="k-btn k-btn--primary">일정 자세히 보기</Link>}
           <Link to="/" className="k-btn k-btn--secondary">시험 더 찾기</Link>
         </div>
       </section>
@@ -69,7 +84,7 @@ export default function HomePage() {
           </div>
           <div className="k-stat k-stat--point">
             <div className="k-stat__label">가장 가까운 일정</div>
-            <div className="k-stat__value">{dday(lead.dday)}</div>
+            <div className="k-stat__value">{lead ? ddayLabel(lead.dday) : '없음'}</div>
           </div>
         </div>
       </section>
@@ -93,11 +108,16 @@ function ExamCard({ card }: { card: FavoriteCard }) {
     <Link to={`/cert/${card.certificateId}`} className="k-card k-card--hover exam-card">
       <div className="top">
         <h3>{card.name}</h3>
-        <span className={`dday${card.dday <= 7 ? ' soon' : ''}`}>{dday(card.dday)}</span>
+        {/* 빨간 D-day 는 7일 이내에만 — 전부 빨갛면 아무것도 급하지 않다 */}
+        {hasUpcoming(card) && (
+          <span className={`dday${card.dday >= 0 && card.dday <= SOON_DAYS ? ' soon' : ''}`}>
+            {ddayLabel(card.dday)}
+          </span>
+        )}
       </div>
       <div className="foot">
-        <span className={`k-badge${card.badge === 'REG_OPEN' ? ' k-badge--ok' : ''}`}>{card.badgeLabel}</span>
-        <span className="when">{card.eventLabel} · {fmtAt(card.eventAt)}</span>
+        <CardStatus state={card.scheduleState} badge={card.badge} badgeFallback={card.badgeLabel}
+                    label={card.eventLabel} at={card.eventAt} dday={card.dday} lastExamDate={card.lastExamDate} />
       </div>
     </Link>
   );

@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import DetailPage from './DetailPage';
 import * as auth from '../auth';
 import { examApi } from '../api/exams';
-import type { DetailResponse, MeResponse } from '../api/types';
+import type { DetailResponse, MeResponse, ScheduleDto } from '../api/types';
 
 /**
  * 시험 상세 — <b>비로그인이 관심 등록을 누르면 로그인으로 보낸다.</b>
@@ -94,5 +94,89 @@ describe('DetailPage — 관심 등록', () => {
     fireEvent.click(screen.getByRole('button', { name: /등록됨/ }));
 
     await waitFor(() => expect(remove).toHaveBeenCalledWith(2));
+  });
+});
+
+function sched(over: Partial<ScheduleDto> = {}): ScheduleDto {
+  return {
+    id: 1, year: 2026, round: 1, examType: 'WRITTEN',
+    regStartAt: '2026-01-10T10:00', regEndAt: '2026-01-20T18:00',
+    examStartDate: '2026-03-12', examEndDate: null, resultDate: null, status: 'ACTIVE',
+    ...over,
+  };
+}
+
+/**
+ * 문구와 회차 표 — <b>지키지 못할 약속을 하지 않는다.</b>
+ *
+ * <p>상시시험에 "접수 마감에 알려 드린다"고 하거나, 취소된 회차를 멀쩡한 일정처럼 보여주면
+ * 사용자가 그 말을 믿는다. 상태 원문(CANCELED)을 그대로 내는 것도 화면이 아니다.
+ */
+describe('DetailPage — 문구와 회차 표', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    mockAuth(null);
+  });
+
+  it('상시시험은 "모아 볼 수 있다"고 권한다', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({ rolling: true }));
+    renderDetail();
+
+    expect(await screen.findByText(/모아 볼 수 있습니다/)).toBeTruthy();
+    expect(screen.queryByText(/원서접수 시작·마감에 알림/)).toBeNull();
+  });
+
+  it('일정이 없으면 "확인되면 알려 드린다"고 권한다', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({ schedules: [] }));
+    renderDetail();
+
+    expect(await screen.findByText(/일정이 확인되면 알려 드립니다/)).toBeTruthy();
+    expect(screen.queryByText(/원서접수 시작·마감에 알림/)).toBeNull();
+  });
+
+  it('일정이 있으면 접수 알림을 약속한다', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({
+      schedules: [sched()], nextEvent: { type: 'REG_OPEN', label: '1회 필기 접수 시작', dday: 3, at: '2026-01-10T10:00' },
+    }));
+    renderDetail();
+
+    expect(await screen.findByText(/원서접수 시작·마감에 알림/)).toBeTruthy();
+  });
+
+  it('취소된 회차는 "취소됨"으로 보이고 영문 상태는 숨긴다', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({ schedules: [sched({ status: 'CANCELED' })] }));
+    renderDetail();
+
+    expect(await screen.findByText('취소됨')).toBeTruthy();
+    expect(screen.queryByText('CANCELED')).toBeNull();
+    expect(document.querySelector('tr.is-canceled')).toBeTruthy();
+    // 취소된 회차만 있으면 "지났다"가 아니라 "없다"다 — 다음 회차 미정 경고를 띄우지 않는다
+    expect(screen.queryByText(/다음 회차 미정/)).toBeNull();
+  });
+
+  it('지난 회차만 남았으면 "다음 회차 미정"을 알린다', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({ schedules: [sched()], nextEvent: null }));
+    renderDetail();
+
+    expect(await screen.findByText(/다음 회차 미정/)).toBeTruthy();
+  });
+
+  it('수집 시각은 사람이 읽는 표기로', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({
+      sourceUrl: 'https://www.q-net.or.kr', collectedAt: '2026-09-01T05:00:12',
+    }));
+    renderDetail();
+
+    expect(await screen.findByText(/수집 2026-09-01 05:00/)).toBeTruthy();
+    expect(document.body.textContent).not.toContain('T05:00');
+  });
+
+  /** 390px 에서 표가 화면 밖으로 나갔다 — 표는 가로 스크롤 래퍼 안에만 둔다. */
+  it('회차 표는 가로 스크롤 래퍼 안에 있다', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({ schedules: [sched()] }));
+    renderDetail();
+
+    await screen.findByText('전기기사');
+    expect(document.querySelector('.k-tablewrap > table')).toBeTruthy();
   });
 });

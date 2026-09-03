@@ -25,6 +25,12 @@ public class MockScheduleSource implements ScheduleSource {
         return false;   // 파일만 읽는다
     }
 
+    /** 데모 데이터는 시드와 같은 급 — 실데이터가 있으면 그쪽이 덮는다. */
+    @Override
+    public int priority() {
+        return PRIORITY_FILE;
+    }
+
     @Override
     public String sourceId() {
         return "MOCK";

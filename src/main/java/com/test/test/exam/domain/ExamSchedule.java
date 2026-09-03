@@ -126,6 +126,53 @@ public class ExamSchedule {
         return latestKnownDate() != null;
     }
 
+    public boolean isActive() {
+        return status == ScheduleStatus.ACTIVE;
+    }
+
+    /**
+     * 날짜 순서 규칙 — 수집(DiffService)과 수기 입력(AdminScheduleController)이 <b>같은 규칙</b>을 쓴다.
+     * 위반이 없으면 null, 있으면 사람이 읽을 사유.
+     *
+     * <p>접수 시작 ≤ 접수 마감 ≤ 시험 시작(같은 날 허용 — 당일 접수가 있다) ≤ 시험 종료 ≤ 발표.
+     * 발표는 시험 종료일(없으면 시작일) 이후여야 한다. null 인 칸은 검사하지 않는다.
+     */
+    public static String dateOrderViolation(LocalDateTime regStart, LocalDateTime regEnd,
+                                            LocalDate examStart, LocalDate examEnd, LocalDate result) {
+        if (regStart != null && regEnd != null && regStart.isAfter(regEnd)) {
+            return "접수 시작이 마감보다 늦습니다.";
+        }
+        if (regEnd != null && examStart != null && regEnd.toLocalDate().isAfter(examStart)) {
+            return "접수 마감이 시험일보다 늦습니다.";
+        }
+        if (examStart != null && examEnd != null && examStart.isAfter(examEnd)) {
+            return "시험 시작일이 종료일보다 늦습니다.";
+        }
+        LocalDate examLast = examEnd != null ? examEnd : examStart;
+        if (examLast != null && result != null && result.isBefore(examLast)) {
+            return "발표일이 시험 종료일보다 앞섭니다.";
+        }
+        return null;
+    }
+
+    public static boolean isDateOrderValid(LocalDateTime regStart, LocalDateTime regEnd,
+                                           LocalDate examStart, LocalDate examEnd, LocalDate result) {
+        return dateOrderViolation(regStart, regEnd, examStart, examEnd, result) == null;
+    }
+
+    /**
+     * 접수·시험·발표 날짜가 지금 값과 <b>실제로</b> 다른가 — SCHEDULE_CHANGED 알림의 근거.
+     * 수집과 수기 저장이 같은 판정을 쓴다. 원문 URL·해시 같은 메타는 변경이 아니다.
+     */
+    public boolean hasDifferentDates(LocalDateTime regStart, LocalDateTime regEnd,
+                                     LocalDate examStart, LocalDate examEnd, LocalDate result) {
+        return !java.util.Objects.equals(this.regStartAt, regStart)
+                || !java.util.Objects.equals(this.regEndAt, regEnd)
+                || !java.util.Objects.equals(this.examStartDate, examStart)
+                || !java.util.Objects.equals(this.examEndDate, examEnd)
+                || !java.util.Objects.equals(this.resultDate, result);
+    }
+
     /** 수집 diff 로 변경된 필드를 반영한다. */
     public void applyFrom(LocalDateTime regStartAt, LocalDateTime regEndAt,
                           LocalDate examStartDate, LocalDate examEndDate, LocalDate resultDate,

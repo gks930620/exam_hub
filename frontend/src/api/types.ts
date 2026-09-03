@@ -1,5 +1,18 @@
 // 백엔드 DTO(설계 05 / CertificateDtos·FavoriteDtos·MeDtos)와 1:1 대응.
 
+/** 카드가 어느 상태인가 — UPCOMING | PAST_ONLY(다음 회차 미정) | NONE | ROLLING(상시) */
+export type ScheduleState = 'UPCOMING' | 'PAST_ONLY' | 'NONE' | 'ROLLING';
+
+/**
+ * 서버 CardBadge 코드 — REG_OPEN | REG_UPCOMING | EXAM_UPCOMING | EXAM_ONGOING | NONE.
+ * 늘 수 있는 값이라 string 으로 받고, 화면 어휘는 lib/status.ts 가 정한다.
+ * EXAM_ONGOING 은 dday 0, 시각은 시험 <b>종료일</b> 00:00 이다.
+ */
+export type CardBadge = string;
+
+/** 회차 상태(도메인 ScheduleStatus). 공개 상세에는 ACTIVE·CANCELED 만 오고, 매니저 목록에는 PENDING_REVIEW 도 온다 */
+export type ScheduleStatus = 'ACTIVE' | 'PENDING_REVIEW' | 'CANCELED' | 'DONE';
+
 export interface CertItem {
   id: number;
   name: string;
@@ -13,17 +26,12 @@ export interface CertItem {
   hasSchedule: boolean;
   /** 상시·예약제 — '일정'이 없는 시험. '일정 미정'이 아니라 '상시시험'으로 보여준다 */
   rolling: boolean;
-  /** UPCOMING | PAST_ONLY(다음 회차 미정) | NONE | ROLLING */
-  scheduleState: 'UPCOMING' | 'PAST_ONLY' | 'NONE' | 'ROLLING' | null;
+  scheduleState: ScheduleState | null;
   nextLabel: string | null;
   nextAt: string | null;
   nextDday: number | null;
-  nextBadge: string | null;
+  nextBadge: CardBadge | null;
   lastExamDate: string | null;
-}
-
-export interface SearchResponse {
-  items: CertItem[];
 }
 
 export interface BrowseResponse {
@@ -53,7 +61,7 @@ export interface ScheduleDto {
   examStartDate: string | null;
   examEndDate: string | null;
   resultDate: string | null;
-  status: string;
+  status: ScheduleStatus;
   /** 이 날짜를 어디서 얻었나 */
   provenance?: string | null;
   provenanceLabel?: string | null;
@@ -85,11 +93,16 @@ export interface DetailResponse {
 export interface FavoriteCard {
   certificateId: number;
   name: string;
-  badge: string;
+  badge: CardBadge;
   badgeLabel: string;
   eventLabel: string;
-  eventAt: string;
-  dday: number;
+  /** 다가오는 이벤트가 없으면 null (EXAM_ONGOING 이면 시험 종료일 00:00) */
+  eventAt: string | null;
+  /** 다가오는 이벤트가 없으면 null — 그때 D-0 을 그리면 거짓말이다 */
+  dday: number | null;
+  scheduleState: ScheduleState;
+  /** PAST_ONLY 일 때 "마지막 시험 {날짜}" 로 보여준다 */
+  lastExamDate: string | null;
 }
 
 export interface FavoriteListResponse {
@@ -196,7 +209,8 @@ export interface AdminScheduleRow {
   examStartDate: string | null;
   examEndDate: string | null;
   resultDate: string | null;
-  status: string;
+  /** PENDING_REVIEW = 수집된 일정이 30일 넘게 움직여 보류 — 공고와 대조해 저장하면 풀린다 */
+  status: ScheduleStatus;
   sourceUrl: string | null;
 }
 
@@ -236,8 +250,8 @@ export interface DataMapResponse {
 /** 매니저 일정 현황 — 시험 하나의 상태 한 줄 */
 /** 매니저 현황 — 시험을 어디에 둘 것인가 */
 export type OverviewBucket = 'TODO' | 'WAITING' | 'OK' | 'ROLLING';
-/** 매니저가 지금 해야 하는 일 */
-export type OverviewAction = 'FIRST_INPUT' | 'NEXT_ROUND' | 'VERIFY' | 'CHECK_SOURCE';
+/** 매니저가 지금 해야 하는 일. REVIEW_MOVE = 수집된 일정이 30일 넘게 움직여 보류(PENDING_REVIEW)된 회차가 있음 */
+export type OverviewAction = 'FIRST_INPUT' | 'NEXT_ROUND' | 'VERIFY' | 'CHECK_SOURCE' | 'REVIEW_MOVE';
 
 export interface OverviewRow {
   certificateId: number;
@@ -260,7 +274,7 @@ export interface OverviewRow {
   nextLabel: string | null;
   nextAt: string | null;
   nextDday: number | null;
-  nextBadge: string | null;
+  nextBadge: CardBadge | null;
 }
 
 export interface OverviewResponse {

@@ -39,15 +39,28 @@ public enum ScheduleProvenance {
         return confirmed;
     }
 
+    /**
+     * 시드 문자열을 읽는다. {@code scraped:2026-07-28} 처럼 날짜가 붙은 형태는 {@code :} 앞만 본다.
+     *
+     * <p><b>빈 값·모르는 값은 추정치(APPROX)</b>다. 어디서 왔는지 모르는 날짜를 확정으로 보여주는 것이
+     * "시행처 확인 필요"가 하나 더 붙는 것보다 위험하다 — 사용자는 확정 표시를 믿고 마감을 놓친다.
+     * 시드는 출처를 반드시 적는다(52종 전부 적혀 있다).
+     */
     public static ScheduleProvenance from(String raw) {
         if (raw == null || raw.isBlank()) {
-            return SCRAPED;
+            return APPROX;
         }
-        return switch (raw.trim().toLowerCase()) {
+        String head = raw.trim().toLowerCase();
+        int colon = head.indexOf(':');
+        if (colon >= 0) {
+            head = head.substring(0, colon).trim();
+        }
+        return switch (head) {
             case "approx", "estimated" -> APPROX;
             case "manual" -> MANUAL;
             case "api" -> API;
-            default -> SCRAPED;
+            case "scraped", "scrape", "web" -> SCRAPED;
+            default -> APPROX;
         };
     }
 }

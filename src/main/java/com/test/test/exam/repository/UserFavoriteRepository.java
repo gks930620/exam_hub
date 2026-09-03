@@ -23,8 +23,16 @@ public interface UserFavoriteRepository extends JpaRepository<UserFavorite, Long
 
     void deleteByMemberIdAndCertificateId(Long memberId, Long certificateId);
 
-    /** 특정 자격증을 관심 등록한 사용자들 (알림 발송 대상 조회) */
-    @Query("SELECT f.member FROM UserFavorite f WHERE f.certificate.id = :certificateId")
+    /**
+     * 특정 시험을 관심 등록한 사용자들 (알림 발송 대상 조회).
+     * 탈퇴한 회원과 폐지·개칭으로 숨긴 시험은 뺀다 — 탈퇴자에게 메일이 가거나, 없어진 시험의 알림이 나가면 안 된다.
+     */
+    @Query("""
+            SELECT f.member FROM UserFavorite f
+             WHERE f.certificate.id = :certificateId
+               AND f.member.status = com.test.test.exam.domain.MemberStatus.ACTIVE
+               AND f.certificate.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
+            """)
     List<Member> findUsersByCertificateId(@Param("certificateId") Long certificateId);
 
     @Query("SELECT f.certificate.id FROM UserFavorite f WHERE f.member.id = :memberId")

@@ -74,12 +74,14 @@ management:
 
 # ===== exam-hub 수집/알림 설정 (운영) =====
 # 운영에는 데모/Mock·시드 소스(@Profile("!prod"))가 없으므로 실 소스를 활성화한다.
-# QnetApiScheduleSource 는 구현 완료(RestClient) — QNET_API_KEY(Encoding 키) 주입 + 실 네트워크 검증만 남음.
-# 비큐넷(한능검·어학 등)은 실 스크래퍼 추가 전까지 운영에 없음(로컬 시드 전용).
+# QnetApiScheduleSource 는 실 API 로 돈다 — QNET_API_KEY(Encoding 키) 주입(실호출 확인 2026-08).
+# 비큐넷은 스크래퍼 8곳(상의·KCA·Kdata·TOEIC·TEPS·JLPT·TOPIK·국시원)이 운영에서도 05:00 배치로 돈다
+# (scrape.enabled 기본 true). 파일 시드(non_qnet_exams.json·스냅샷)만 로컬 전용이다.
 qnet:
   api:
     enabled: true
     key: ${QNET_API_KEY:}
     base-url: ${QNET_API_BASE_URL:https://apis.data.go.kr/B490007/qualExamSchd}
 
-# ⚠️ 웹 전용: 실발송은 웹 푸시/이메일로 구현 예정. 그 전까지 LogNotificationSender(로그). (모바일 FCM 제거함)
+# 발송: NotificationSenderChain(알림톡 → 이메일 → 로그 폴백). MAIL_ENABLED=true 면 이메일이 실발송이고,
+# 알림톡은 사업자등록 후 ALIMTALK_ENABLED=true 로 켠다. 아무 채널도 안 켜져 있으면 로그로만 남는다.

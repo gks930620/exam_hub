@@ -286,39 +286,48 @@ class DeployPortabilityTest {
     }
 
     /**
-     * 큐넷을 켜 두면 <b>기동할 때는 수집하지 않는다.</b>
+     * 기동할 때는 <b>네트워크 수집을 하지 않는다 — 명시적으로 켠 경우만.</b>
      *
      * <p>전량 수집은 613콜이라 개발계정 한도(일 1,000회)의 2/3다. 기동마다 돌면 재시작 두 번에
      * 한도를 넘기고, 그날은 아무것도 못 받는다(실제로 613콜이 전부 429 로 돌아온 적이 있다).
-     * 실 수집은 05:00 스케줄러가 하고, 지금 당장 받아야 할 때만 {@code --collect.on-startup=true}.
+     * 예전 규칙("큐넷이 꺼져 있으면 돌린다")은 {@code .env} 없는 새 환경에서 첫 기동에 스크래퍼 8곳을
+     * 실호출하게 했다(2026-09-03). 그래서 기본은 파일 시드만 읽고, {@code --collect.on-startup=true} 일 때만 돈다.
      */
     @Nested
     class 기동수집_스위치 {
 
-        private boolean shouldCollect(boolean qnetEnabled, String explicit) {
-            ExamDataInitializer init = new ExamDataInitializer(null, null, null, null, null);
-            ReflectionTestUtils.setField(init, "qnetApiEnabled", qnetEnabled);
-            ReflectionTestUtils.setField(init, "collectOnStartup", explicit);
-            return (boolean) ReflectionTestUtils.invokeMethod(init, "shouldCollectOnStartup");
+        private com.test.test.exam.collect.CollectService run(boolean collectOnStartup) {
+            com.test.test.exam.repository.CertificateRepository certs =
+                    org.mockito.Mockito.mock(com.test.test.exam.repository.CertificateRepository.class);
+            org.mockito.Mockito.when(certs.count()).thenReturn(1L);   // 데모 마스터는 이미 있는 상태
+            com.test.test.exam.collect.CollectService collect =
+                    org.mockito.Mockito.mock(com.test.test.exam.collect.CollectService.class);
+            ExamDataInitializer init = new ExamDataInitializer(certs, null, null, null, collect);
+            ReflectionTestUtils.setField(init, "collectOnStartup", collectOnStartup);
+            init.seed();
+            return collect;
         }
 
         @Test
-        @DisplayName("큐넷을 켜면 기동 수집을 건너뛴다 (호출 한도 보호)")
-        void skips_when_qnet_enabled() {
-            assertFalse(shouldCollect(true, ""), "기동마다 613콜이 나가면 하루 한도를 금방 넘긴다");
+        @DisplayName("기본은 파일 시드만 읽는다 — 큐넷 한도와 시행처 사이트를 아낀다")
+        void default_reads_files_only() {
+            com.test.test.exam.collect.CollectService c = run(false);
+            org.mockito.Mockito.verify(c).collectWithoutNetwork();
+            org.mockito.Mockito.verify(c, org.mockito.Mockito.never()).collectAll();
         }
 
         @Test
-        @DisplayName("큐넷이 꺼져 있으면 기동 수집을 한다 (Mock·시드라 공짜)")
-        void collects_when_qnet_disabled() {
-            assertTrue(shouldCollect(false, ""));
+        @DisplayName("--collect.on-startup=true 를 명시하면 네트워크 수집을 한다")
+        void explicit_true_collects() {
+            com.test.test.exam.collect.CollectService c = run(true);
+            org.mockito.Mockito.verify(c).collectAll();
         }
 
         @Test
-        @DisplayName("명시하면 그 값을 따른다")
-        void explicit_value_wins() {
-            assertTrue(shouldCollect(true, "true"), "지금 당장 받아야 할 때 못 받으면 안 된다");
-            assertFalse(shouldCollect(false, "false"));
+        @DisplayName("데이터가 이미 있어도 파일 시드는 매 기동 다시 읽는다 (예전엔 두 번째 기동부터 건너뛰었다)")
+        void file_seeds_reload_every_boot() {
+            com.test.test.exam.collect.CollectService c = run(false);
+            org.mockito.Mockito.verify(c, org.mockito.Mockito.times(1)).collectWithoutNetwork();
         }
     }
 }

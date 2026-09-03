@@ -3,6 +3,7 @@ package com.test.test.exam.notification;
 import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.domain.ExamSchedule;
 import com.test.test.exam.domain.NotificationEventType;
+import com.test.test.exam.domain.ScheduleStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -53,8 +54,15 @@ public class NotificationContentFactory {
                 body = roundType + " 시험 " + d(s.getExamStartDate());
             }
             case SCHEDULE_CHANGED -> {
-                title = cert + " 일정이 변경됐어요";
-                body = roundType + " 일정이 업데이트됐어요. 앱에서 확인하세요.";
+                // 같은 이벤트라도 회차가 취소됐으면 "변경"이 아니라 "취소"라고 말해야 한다 —
+                // 접수해 둔 사람이 "업데이트됐다"는 문구를 보고 그대로 시험장에 가면 안 된다.
+                if (s.getStatus() == ScheduleStatus.CANCELED) {
+                    title = cert + " 일정이 취소·연기됐어요";
+                    body = roundType + " 일정이 취소 또는 연기됐어요. 시행처 공지를 확인하세요.";
+                } else {
+                    title = cert + " 일정이 변경됐어요";
+                    body = roundType + " 일정이 업데이트됐어요. 사이트에서 확인하세요.";
+                }
             }
             default -> {
                 title = cert + " 알림";
@@ -66,7 +74,7 @@ public class NotificationContentFactory {
         data.put("type", type.name());
         data.put("certificateId", String.valueOf(c.getId()));
         data.put("examScheduleId", String.valueOf(s.getId()));
-        data.put("route", "/certificate/" + c.getId());
+        data.put("route", "/cert/" + c.getId());   // React 상세 라우트
 
         return new NotificationMessage(title, body, data);
     }

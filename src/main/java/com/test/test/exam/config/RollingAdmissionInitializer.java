@@ -2,6 +2,7 @@ package com.test.test.exam.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.repository.CertificateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 상시·예약제 시험 표시 — {@code seed/rolling_exams.json}.
@@ -25,6 +26,9 @@ import java.util.List;
  * <p>폐지·개칭({@link CertificateMasterInitializer} 의 lifecycle)과 같은 부류의 <b>마스터
  * 메타데이터</b>라 운영에서도 돈다. 시행처가 정기시험으로 바꾸면 시드에서 빼면 된다 —
  * 기동할 때마다 시드 기준으로 맞추므로 양방향 전환이 다 반영된다.
+ *
+ * <p>매칭은 <b>종목코드, 안 되면 이름(공백 무시)</b>이다. 같은 시험이 시드마다 다른 코드를 갖는 일이
+ * 잦아(로컬 데모의 C011 vs 마스터의 M0024) 코드만 보면 표시가 빠진다.
  *
  * <p>마스터 적재(@Order(100)) 뒤에 돌아야 표시할 행이 존재한다.
  */
@@ -42,14 +46,14 @@ public class RollingAdmissionInitializer {
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void mark() {
-        List<String> codes = readCodes();
-        if (codes.isEmpty()) {
+        RollingSeed seed = readSeed();
+        if (seed.isEmpty()) {
             return;
         }
         int[] marked = {0};
         int[] cleared = {0};
         certificateRepository.findAll().forEach(c -> {
-            boolean shouldBe = c.getSourceCode() != null && codes.contains(c.getSourceCode());
+            boolean shouldBe = seed.matches(c);
             if (shouldBe && !c.isRollingAdmission()) {
                 c.markRollingAdmission();
                 marked[0]++;
@@ -59,25 +63,45 @@ public class RollingAdmissionInitializer {
                 cleared[0]++;
             }
         });
-        log.info("[상시표시] 상시·예약제 {}종 (새로 표시 {} · 해제 {})", codes.size(), marked[0], cleared[0]);
+        log.info("[상시표시] 상시·예약제 {}종 (새로 표시 {} · 해제 {})", seed.codes.size(), marked[0], cleared[0]);
     }
 
-    private List<String> readCodes() {
+    /** 시드가 아는 종목코드와 이름(공백 제거). */
+    private record RollingSeed(Set<String> codes, Set<String> names) {
+        boolean isEmpty() {
+            return codes.isEmpty() && names.isEmpty();
+        }
+
+        boolean matches(Certificate c) {
+            return (c.getSourceCode() != null && codes.contains(c.getSourceCode()))
+                    || names.contains(normalize(c.getName()));
+        }
+    }
+
+    private static String normalize(String name) {
+        return name == null ? "" : name.replaceAll("\\s+", "");
+    }
+
+    private RollingSeed readSeed() {
+        Set<String> codes = new HashSet<>();
+        Set<String> names = new HashSet<>();
         try {
             JsonNode root = objectMapper.readTree(
                     new ClassPathResource(RESOURCE).getInputStream());
-            List<String> codes = new ArrayList<>();
             root.path("exams").forEach(e -> {
                 String code = e.path("sourceCode").asText("");
                 if (!code.isBlank()) {
                     codes.add(code);
                 }
+                String name = normalize(e.path("name").asText(""));
+                if (!name.isBlank()) {
+                    names.add(name);
+                }
             });
-            return codes;
         } catch (Exception e) {
             // 시드가 없거나 깨져도 기동은 한다 — 표시가 안 될 뿐 서비스는 돌아야 한다
             log.warn("[상시표시] {} 를 읽지 못했다: {}", RESOURCE, e.toString());
-            return List.of();
         }
+        return new RollingSeed(codes, names);
     }
 }

@@ -14,19 +14,27 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * 수집 파이프라인 오케스트레이션 (설계 05 §4, 06 §1-1).
  * fetch → diff·검증 upsert → notification_schedule 재계산 → crawl_log.
  * 각 레코드 upsert 는 독립 트랜잭션(DiffService)이라 한 건 실패가 전체를 롤백하지 않는다 (NFR-04).
+ *
+ * <p><b>소스 실행 순서는 {@link ScheduleSource#priority()}</b> — 시드·스냅샷(0) → 스크래퍼(50) → 큐넷 API(100).
+ * 같은 키를 여러 소스가 주면 나중에 쓴 쪽이 이기므로, 확정도가 높은 소스가 마지막이어야 한다.
+ * 스프링이 빈을 어떤 순서로 주입하든 여기서 정렬한다. 기동 전용 소스(스냅샷)는 배치에서 돌지 않는다.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CollectService {
 
-    private final List<ScheduleSource> sources; // 활성 소스 (Mock 또는 Qnet)
+    private static final Comparator<ScheduleSource> BY_PRIORITY = Comparator.comparingInt(ScheduleSource::priority);
+
+    private final List<ScheduleSource> sources; // 활성 소스 전부 (시드·Mock·스크래퍼·큐넷)
     private final DiffService diffService;
     private final NotificationScheduleService notificationScheduleService;
     private final CrawlLogRepository crawlLogRepository;
@@ -34,13 +42,13 @@ public class CollectService {
     private final CertificateRepository certificateRepository;
 
     /**
-     * 전체 수집 (05:00 배치 / 기동 시 1회).
+     * 전체 수집 (05:00 배치 / {@code collect.on-startup=true} 일 때 기동 시 1회).
      *
      * <p><b>소스 하나가 죽어도 나머지는 돈다.</b> 시행처 사이트는 개편·점검으로 수시로 깨지는데,
      * 하나 때문에 그날 수집이 통째로 멈추면 멀쩡한 소스의 새 일정까지 못 받는다.
      */
     public void collectAll() {
-        for (ScheduleSource source : sources) {
+        for (ScheduleSource source : batchSources(s -> true)) {
             try {
                 runSource(source, source.fetchAll());
             } catch (Exception e) {
@@ -51,14 +59,16 @@ public class CollectService {
     }
 
     /**
-     * 파일 기반 소스만 수집 (기동할 때마다).
+     * 파일 기반 소스만 수집 (기동할 때마다). 기동 전용 스냅샷도 여기서 돈다.
      *
-     * <p>로컬은 인메모리 DB라 <b>재시작하면 일정이 전부 사라진다.</b> 그렇다고 기동마다 큐넷을
-     * 부를 수는 없어서(613콜) 예전엔 아무것도 안 했는데, 그러면 <b>공짜인 시드 파일까지</b>
-     * 같이 건너뛰어 "일정이 하나도 없는 화면"이 됐다. 파일은 돈이 안 드니 늘 읽는다.
+     * <p>파일은 돈이 안 드니 늘 읽는다. 스냅샷은 DB 가 파일보다 새로우면 스스로 건너뛴다
+     * ({@link SnapshotScheduleSource}) — 재기동마다 2,600건을 다시 쓰지 않는다.
      */
     public void collectWithoutNetwork() {
-        List<ScheduleSource> offline = sources.stream().filter(s -> !s.usesNetwork()).toList();
+        List<ScheduleSource> offline = sources.stream()
+                .filter(s -> !s.usesNetwork())
+                .sorted(BY_PRIORITY)
+                .toList();
         if (offline.isEmpty()) {
             return;
         }
@@ -76,9 +86,10 @@ public class CollectService {
     /**
      * 지정한 종목만 다시 수집 — 매니저의 "다시 받아오기"(AdminCollectController).
      * 전량 수집 중 일시 오류로 빈 종목을 그 수만큼의 호출로 채운다.
+     * 종목 지정 조회가 되는 소스(큐넷 API)만 부른다 — 스크래퍼를 전량 긁어 종목 하나를 고르는 건 낭비다.
      */
     public void collectByCodes(List<String> sourceCodes) {
-        for (ScheduleSource source : sources) {
+        for (ScheduleSource source : batchSources(ScheduleSource::supportsPartialFetch)) {
             try {
                 runSource(source, source.fetchByCertificateCodes(sourceCodes));
             } catch (Exception e) {
@@ -88,7 +99,7 @@ public class CollectService {
         }
     }
 
-    /** 접수 임박 종목 재확인 (17:00 배치). 7일 이내 접수 시작 종목만. */
+    /** 접수 임박 종목 재확인 (17:00 배치). 7일 이내 접수 시작 종목만. 종목 지정 조회가 되는 소스만. */
     public void collectImminent() {
         LocalDateTime now = TimeUtil.now();
         List<Long> certIds = examScheduleRepository.findCertificateIdsWithImminentRegistration(
@@ -102,9 +113,23 @@ public class CollectService {
                 .filter(java.util.Objects::nonNull)
                 .distinct().toList();
 
-        for (ScheduleSource source : sources) {
-            runSource(source, source.fetchByCertificateCodes(sourceCodes));
+        for (ScheduleSource source : batchSources(ScheduleSource::supportsPartialFetch)) {
+            try {
+                runSource(source, source.fetchByCertificateCodes(sourceCodes));
+            } catch (Exception e) {
+                log.error("[Collect] source={} 임박 재확인 실패 — 다른 소스는 계속합니다: {}",
+                        source.sourceId(), e.toString());
+            }
         }
+    }
+
+    /** 배치에서 돌 소스 — 기동 전용은 빼고 priority 순. */
+    private List<ScheduleSource> batchSources(Predicate<ScheduleSource> filter) {
+        return sources.stream()
+                .filter(s -> !s.startupOnly())
+                .filter(filter)
+                .sorted(BY_PRIORITY)
+                .toList();
     }
 
     private void runSource(ScheduleSource source, List<CollectedSchedule> records) {

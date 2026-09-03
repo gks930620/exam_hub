@@ -79,6 +79,11 @@ public class KorchamScheduleSource implements ScheduleSource {
     }
 
     @Override
+    public java.util.Set<String> coveredAgencies() {
+        return java.util.Set.of(AGENCY);
+    }
+
+    @Override
     public List<CollectedSchedule> fetchAll() {
         List<CollectedSchedule> out = new ArrayList<>();
         for (Target t : TARGETS) {

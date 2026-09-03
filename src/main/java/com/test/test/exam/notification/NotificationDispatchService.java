@@ -1,106 +1,53 @@
 package com.test.test.exam.notification;
 
 import com.test.test.exam.common.TimeUtil;
-import com.test.test.exam.domain.*;
-import com.test.test.exam.repository.NotificationLogRepository;
+import com.test.test.exam.domain.NotificationScheduleStatus;
 import com.test.test.exam.repository.NotificationScheduleRepository;
-import com.test.test.exam.repository.UserFavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * 발송 배치 (설계 04 §3-4). 도래한 PENDING 예약 → 관심 사용자 × 토글 필터 → 발송 →
  * notification_log UNIQUE 제약으로 멱등 처리 → 예약 SENT.
+ *
+ * <p><b>배치는 트랜잭션이 아니다.</b> 조회만 하고, 건별 처리는 {@link NotificationDispatchWorker} 가
+ * 각각 새 트랜잭션으로 한다. 배치 전체를 한 트랜잭션에 넣으면 ① 한 건의 예외가 앞서 남긴 발송 로그까지
+ * 되돌려 다음 배치에서 <b>같은 알림이 또 나가고</b> ② 수백 건을 보내는 동안 DB 커넥션을 붙잡는다.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationDispatchService {
 
-    private final NotificationScheduleRepository notificationScheduleRepository;
-    private final NotificationLogRepository notificationLogRepository;
-    private final UserFavoriteRepository userFavoriteRepository;
-    private final NotificationContentFactory contentFactory;
-    private final NotificationSender sender; // 활성 구현 1개(현재 Log, 채널 확정 시 웹 푸시/이메일)
+    /** 한 배치에서 처리할 상한. 5분마다 도니 밀린 게 있어도 다음 배치가 이어 받는다. */
+    static final int BATCH_LIMIT = 500;
 
-    /** 도래한 예약을 모두 처리. 반환: 실제 발송(신규 로그) 건수. */
-    @Transactional
+    private final NotificationScheduleRepository notificationScheduleRepository;
+    private final NotificationDispatchWorker worker;
+
+    /** 도래한 예약을 처리. 반환: 실제 발송(신규 로그) 건수. */
     public int dispatchDue() {
-        LocalDateTime now = TimeUtil.now();
-        List<NotificationSchedule> due = notificationScheduleRepository
-                .findByStatusAndSendAtLessThanEqualOrderBySendAtAsc(
-                        NotificationScheduleStatus.PENDING, now);
+        List<Long> due = notificationScheduleRepository.findDueIds(
+                NotificationScheduleStatus.PENDING, TimeUtil.now(), PageRequest.of(0, BATCH_LIMIT));
 
         int sentCount = 0;
-        for (NotificationSchedule ns : due) {
-            sentCount += dispatchOne(ns);
+        int failed = 0;
+        for (Long id : due) {
+            try {
+                sentCount += worker.dispatchOne(id);
+            } catch (Exception e) {
+                // 한 건이 죽어도 나머지는 나가야 한다 — 이 건은 PENDING 으로 남아 다음 배치가 다시 시도한다
+                failed++;
+                log.error("[Dispatch] 예약 {} 처리 실패 — 다음 배치에서 재시도: {}", id, e.toString());
+            }
         }
-        if (sentCount > 0 || !due.isEmpty()) {
-            log.info("[Dispatch] 도래 예약 {}건 처리, 신규 발송 {}건", due.size(), sentCount);
+        if (!due.isEmpty()) {
+            log.info("[Dispatch] 도래 예약 {}건 처리, 신규 발송 {}건, 실패 {}건", due.size(), sentCount, failed);
         }
         return sentCount;
-    }
-
-    private int dispatchOne(NotificationSchedule ns) {
-        ExamSchedule schedule = ns.getExamSchedule();
-
-        // 안전장치: 일정이 더 이상 ACTIVE 가 아니면 취소 처리
-        if (schedule.getStatus() != ScheduleStatus.ACTIVE) {
-            ns.cancel();
-            return 0;
-        }
-
-        NotificationEventType.ToggleTarget target = ns.getEventType().getToggleTarget();
-        NotificationMessage message = contentFactory.build(
-                new NotificationContentFactory.NotificationSchedule_Ref(schedule, ns.getEventType()));
-
-        List<Member> favoritedUsers = userFavoriteRepository
-                .findUsersByCertificateId(schedule.getCertificate().getId());
-
-        int sent = 0;
-        for (Member user : favoritedUsers) {
-            if (!user.acceptsEvent(target)) {
-                continue; // 유형별 토글 off
-            }
-            // 멱등: 이미 발송 로그가 있으면 스킵 (FR-27)
-            if (notificationLogRepository.existsByMemberIdAndNotificationScheduleId(user.getId(), ns.getId())) {
-                continue;
-            }
-            if (deliver(user, ns, message)) {
-                sent++;
-            }
-        }
-        ns.markSent();
-        return sent;
-    }
-
-    private boolean deliver(Member user, NotificationSchedule ns, NotificationMessage message) {
-        NotificationResult result = sender.send(user, message);
-        try {
-            notificationLogRepository.save(NotificationLog.builder()
-                    .member(user)
-                    .notificationSchedule(ns)
-                    .channel(sender.channel())   // 체인이면 실제로 나간 채널이 담긴다
-                    .sentAt(TimeUtil.now())
-                    .result(result)
-                    .errorMessage(result == NotificationResult.SUCCESS ? null : result.name())
-                    .build());
-        } catch (DataIntegrityViolationException dup) {
-            // 동시 배치 실행 경합 — UNIQUE 제약이 중복 발송을 최종 차단 (NFR-03)
-            log.debug("[Dispatch] 멱등 충돌 무시 user={} ns={}", user.getId(), ns.getId());
-            return false;
-        }
-
-        // 구독 만료(웹 푸시 410 등) → 로그로 남긴다. 만료 구독 삭제는 채널 확정 후 구독 모델과 함께 붙인다.
-        if (result == NotificationResult.SUBSCRIPTION_EXPIRED) {
-            log.warn("[Dispatch] 구독 만료 user={} — 채널 구현 시 만료 구독 정리 필요", user.getId());
-        }
-        return result == NotificationResult.SUCCESS;
     }
 }

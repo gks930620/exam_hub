@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
+import { weekdayOf } from '../lib/format';
 import type { CalendarEvent } from '../api/types';
 import Icon from '../components/Icon';
-
-const WEEKDAY = ['일', '월', '화', '수', '목', '금', '토'];
 
 // 월간 캘린더: 내 시험의 접수/시험/발표 이벤트를 날짜순으로.
 export default function CalendarPage() {
@@ -13,13 +12,18 @@ export default function CalendarPage() {
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [events, setEvents] = useState<CalendarEvent[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    let alive = true;
     setEvents(null);
+    setErr(null);
+    // 실패는 실패다 — events=[] 로 두면 "이 달 일정이 없습니다"로 둔갑해 사용자가 정말 없는 줄 안다
     examApi.calendar(year, month)
-      .then((r) => { setEvents(r.events); setErr(null); })
-      .catch((e: Error) => { setErr(e.message); setEvents([]); });
-  }, [year, month]);
+      .then((r) => { if (alive) setEvents(r.events); })
+      .catch((e: Error) => { if (alive) setErr(e.message); });
+    return () => { alive = false; };
+  }, [year, month, attempt]);
 
   function move(delta: number) {
     let m = month + delta, y = year;
@@ -31,7 +35,7 @@ export default function CalendarPage() {
     <>
       <div className="page-header">
         <div className="page-avatar" aria-hidden="true"><Icon name="calendar" size={22} /></div>
-        <div>
+        <div className="page-header__text">
           <h1>캘린더</h1>
           <p>등록한 시험의 접수·시험·발표 일정입니다.</p>
         </div>
@@ -43,10 +47,15 @@ export default function CalendarPage() {
         <button className="k-btn k-btn--secondary" onClick={() => move(1)}>다음 ›</button>
       </div>
 
-      {err && <div className="k-alert k-alert--err">{err}</div>}
-
-      {events === null ? (
-        <div className="k-empty state">불러오는 중…</div>
+      {err ? (
+        <div className="k-alert k-alert--err" role="alert">
+          <span>{err}</span>
+          <button className="k-btn k-btn--secondary k-btn--sm alert-action" onClick={() => setAttempt((a) => a + 1)}>
+            다시 시도
+          </button>
+        </div>
+      ) : events === null ? (
+        <div className="k-empty state" role="status">불러오는 중…</div>
       ) : events.length === 0 ? (
         <div className="k-empty state">
           <span className="big">이 달 일정이 없습니다</span>
@@ -63,7 +72,7 @@ export default function CalendarPage() {
               <Link to={`/cert/${e.certificateId}`} className="k-card day-row" key={`${e.date}-${i}`}>
                 <span className="date">
                   <b>{Number(e.date.slice(8, 10))}</b>
-                  <span>{WEEKDAY[new Date(e.date).getDay()]}</span>
+                  <span>{weekdayOf(e.date)}</span>
                 </span>
                 <span className="body">
                   <h3>{e.name}</h3>

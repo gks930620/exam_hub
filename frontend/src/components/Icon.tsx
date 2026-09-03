@@ -6,8 +6,10 @@
  * 타일·버튼·다크 모드 어디서든 글자색과 같이 움직인다 — 킷 extras ①의 "아이콘 타일" 문법에 맞는다.
  *
  * 경로는 24×24 좌표, 1.75px 선. 모양은 Feather/Lucide 계열의 단순한 형태만 골랐다.
+ *
+ * `as const satisfies` — 키를 리터럴로 좁혀 IconName 이 실제 이름만 받게 한다(오타가 컴파일에서 걸린다).
  */
-const PATHS: Record<string, string> = {
+const PATHS = {
   search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4',
   star: 'M12 3l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.2 20.9l1.1-6.5L2.6 9.8l6.5-.9z',
   bookmark: 'M6 3h12v18l-6-4-6 4z',
@@ -26,7 +28,7 @@ const PATHS: Record<string, string> = {
   chevronDown: 'M5 9l7 7 7-7',
   external: 'M14 4h6v6M20 4l-9 9M18 14v6H4V6h6',
   plus: 'M12 5v14M5 12h14',
-};
+} as const satisfies Record<string, string>;
 
 export type IconName = keyof typeof PATHS;
 

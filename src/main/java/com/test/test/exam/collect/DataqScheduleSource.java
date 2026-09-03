@@ -77,6 +77,11 @@ public class DataqScheduleSource extends AbstractHtmlScheduleSource {
     }
 
     @Override
+    public java.util.Set<String> coveredAgencies() {
+        return java.util.Set.of(AGENCY);
+    }
+
+    @Override
     protected String pageUrl() {
         return URL;
     }

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 실 큐넷(공공데이터포털 한국산업인력공단) 국가자격 시험일정 API 어댑터.
@@ -91,9 +92,29 @@ public class QnetApiScheduleSource implements ScheduleSource {
         return f;
     }
 
+    /** 이 API 가 맡는 시행기관. 국가전문자격(4자리 코드 없음)은 이 API 밖이라 매니저 판정은 종목코드도 같이 본다. */
+    static final String AGENCY = "한국산업인력공단";
+
     @Override
     public String sourceId() {
         return "QNET_API";
+    }
+
+    /** 공공 API — 마지막에 써서 시드·스크래퍼를 이긴다. */
+    @Override
+    public int priority() {
+        return PRIORITY_API;
+    }
+
+    /** jmCd 별 호출이라 종목 지정 재수집이 된다 — 이 소스가 유일하다. */
+    @Override
+    public boolean supportsPartialFetch() {
+        return true;
+    }
+
+    @Override
+    public Set<String> coveredAgencies() {
+        return Set.of(AGENCY);
     }
 
     @Override
@@ -318,7 +339,7 @@ public class QnetApiScheduleSource implements ScheduleSource {
             return;
         }
         out.add(new CollectedSchedule(
-                item.jmcd(), item.jmfldnm(), series, "한국산업인력공단", category,
+                item.jmcd(), item.jmfldnm(), series, AGENCY, category,
                 examStartDate != null ? examStartDate.getYear()
                         : (regStartAt != null ? regStartAt.getYear() : TimeUtil.today().getYear()),
                 round, type,

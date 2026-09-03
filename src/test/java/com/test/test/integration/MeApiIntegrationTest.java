@@ -1,15 +1,34 @@
 package com.test.test.integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.test.test.exam.common.TimeUtil;
+import com.test.test.exam.domain.Certificate;
+import com.test.test.exam.domain.CertificateLifecycle;
+import com.test.test.exam.domain.ExamSchedule;
+import com.test.test.exam.domain.ExamType;
 import com.test.test.exam.domain.Member;
+import com.test.test.exam.domain.ScheduleProvenance;
+import com.test.test.exam.domain.Series;
+import com.test.test.exam.repository.CertificateRepository;
+import com.test.test.exam.repository.ExamScheduleRepository;
+import com.test.test.exam.repository.UserFavoriteRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -255,5 +274,196 @@ class MeApiIntegrationTest extends ApiIntegrationTestSupport {
         mockMvc.perform(get("/api/me/calendar")
                         .header(HttpHeaders.AUTHORIZATION, bearer(newMember())))
                 .andExpect(status().isBadRequest());
+    }
+
+    // ===== 내 시험 카드의 일정 상태 =====
+    //
+    // 프런트와 합의한 계약: 카드에 scheduleState(ROLLING|UPCOMING|PAST_ONLY|NONE)·lastExamDate 가 있고,
+    // 이벤트가 없으면 dday 는 0 이 아니라 null 이다. 판정은 시험 찾기 카드(CertificateService.toItems)와 같다 —
+    // 날짜 없는 회차는 일정이 아니고, 상시가 우선한다.
+
+    @Autowired
+    private CertificateRepository certificateRepository;
+
+    @Autowired
+    private ExamScheduleRepository examScheduleRepository;
+
+    @Autowired
+    private UserFavoriteRepository userFavoriteRepository;
+
+    private Certificate newCertificate(String name) {
+        String unique = UUID.randomUUID().toString().substring(0, 8);
+        return certificateRepository.save(Certificate.builder()
+                .name(name + " " + unique).slug(name + "-" + unique)
+                .series(Series.ETC).agency("테스트시행처").category("테스트")
+                .build());
+    }
+
+    private ExamSchedule newSchedule(Certificate cert, LocalDateTime regStart, LocalDateTime regEnd,
+                                     LocalDate examStart, LocalDate examEnd) {
+        return examScheduleRepository.save(ExamSchedule.builder()
+                .certificate(cert).year(TimeUtil.today().getYear()).round(1).examType(ExamType.WRITTEN)
+                .regStartAt(regStart).regEndAt(regEnd).examStartDate(examStart).examEndDate(examEnd)
+                .provenance(ScheduleProvenance.MANUAL)
+                .build());
+    }
+
+    /** 관심 등록한 뒤 그 시험의 카드를 돌려준다. */
+    private JsonNode favoriteCard(Member m, Certificate cert) throws Exception {
+        mockMvc.perform(post("/api/me/favorites")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(m))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"certificateId\": " + cert.getId() + "}"))
+                .andExpect(status().isCreated());
+        return cardOf(m, cert);
+    }
+
+    private JsonNode cardOf(Member m, Certificate cert) throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/me/favorites").header(HttpHeaders.AUTHORIZATION, bearer(m)))
+                .andExpect(status().isOk()).andReturn();
+        for (JsonNode it : objectMapper.readTree(
+                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items")) {
+            if (it.path("certificateId").asLong() == cert.getId()) {
+                return it;
+            }
+        }
+        throw new AssertionError("관심 등록한 시험이 카드 목록에 없다: " + cert.getName());
+    }
+
+    @Test
+    @DisplayName("시험 기간 중이면 카드는 '시험 진행 중'(D-0)이다 — 종료일까지")
+    void card_shows_exam_ongoing_until_end_date() throws Exception {
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("진행중시험");
+        newSchedule(cert, null, null, today.minusDays(1), today.plusDays(1));
+
+        JsonNode card = favoriteCard(newMember(), cert);
+        assertEquals("EXAM_ONGOING", card.path("badge").asText(), "시험 종료일 전인데 진행 중이 아니다: " + card);
+        assertEquals("시험 진행 중", card.path("badgeLabel").asText());
+        assertEquals(0, card.path("dday").asInt(-1));
+        assertEquals("UPCOMING", card.path("scheduleState").asText());
+        assertTrue(card.path("eventLabel").asText().contains("진행 중"), card.path("eventLabel").asText());
+        assertEquals(TimeUtil.format(today.plusDays(1).atStartOfDay()), card.path("eventAt").asText());
+    }
+
+    @Test
+    @DisplayName("시험 당일도 '진행 중'이다")
+    void exam_day_itself_is_ongoing() throws Exception {
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("당일시험");
+        newSchedule(cert, null, null, today, today);
+
+        JsonNode card = favoriteCard(newMember(), cert);
+        assertEquals("EXAM_ONGOING", card.path("badge").asText());
+        assertEquals(0, card.path("dday").asInt(-1));
+    }
+
+    @Test
+    @DisplayName("접수 마감일을 몰라도 시작일이 앞에 있으면 '접수 예정'이다 — 알림은 가는데 카드엔 안 보이던 것")
+    void registration_upcoming_without_end_date() throws Exception {
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("마감미상시험");
+        newSchedule(cert, today.plusDays(3).atTime(9, 0), null, null, null);
+
+        JsonNode card = favoriteCard(newMember(), cert);
+        assertEquals("REG_UPCOMING", card.path("badge").asText(), card.toString());
+        assertEquals(3, card.path("dday").asInt(-1));
+    }
+
+    @Test
+    @DisplayName("이벤트가 없으면 dday 는 0 이 아니라 null 이고, 지난 일정만 있으면 마지막 시험일을 준다")
+    void card_without_event_has_null_dday_and_last_exam_date() throws Exception {
+        LocalDate today = TimeUtil.today();
+        Certificate none = newCertificate("일정없음");
+        Certificate past = newCertificate("지난일정만");
+        newSchedule(past, null, null, today.minusDays(10), today.minusDays(9));
+        Member m = newMember();
+
+        JsonNode noneCard = favoriteCard(m, none);
+        assertTrue(noneCard.path("dday").isNull(), "이벤트가 없는데 dday 가 " + noneCard.path("dday"));
+        assertEquals("NONE", noneCard.path("badge").asText());
+        assertEquals("NONE", noneCard.path("scheduleState").asText());
+        assertTrue(noneCard.path("lastExamDate").isNull());
+
+        JsonNode pastCard = favoriteCard(m, past);
+        assertTrue(pastCard.path("dday").isNull(), "지난 일정뿐인데 dday 가 " + pastCard.path("dday"));
+        assertEquals("PAST_ONLY", pastCard.path("scheduleState").asText());
+        assertEquals(today.minusDays(10).toString(), pastCard.path("lastExamDate").asText());
+    }
+
+    @Test
+    @DisplayName("날짜 없는 회차만 있으면 카드도 '일정 없음'이다 — 시험 찾기 카드와 같은 기준")
+    void undated_round_does_not_count_on_card() throws Exception {
+        Certificate cert = newCertificate("빈회차");
+        newSchedule(cert, null, null, null, null);
+
+        JsonNode card = favoriteCard(newMember(), cert);
+        assertEquals("NONE", card.path("scheduleState").asText());
+        assertTrue(card.path("dday").isNull());
+    }
+
+    // ===== 폐지·개칭 시험 =====
+
+    @Test
+    @DisplayName("폐지·개칭된 시험은 관심 등록을 거절한다 → 400")
+    void hidden_exam_cannot_be_favorited() throws Exception {
+        Certificate cert = newCertificate("폐지시험");
+        cert.markLifecycle(CertificateLifecycle.ABOLISHED, null, "테스트");
+        certificateRepository.save(cert);
+
+        mockMvc.perform(post("/api/me/favorites")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newMember()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"certificateId\": " + cert.getId() + "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("등록해 둔 시험이 개칭되면 카드에 새 이름이 붙고 D-day 는 사라지며 캘린더에서 빠진다")
+    void hidden_exam_card_carries_reason_and_leaves_calendar() throws Exception {
+        LocalDate today = TimeUtil.today();
+        Certificate cert = newCertificate("옛이름시험");
+        newSchedule(cert, null, null, today.plusDays(5), today.plusDays(5));
+        Member m = newMember();
+        assertTrue(favoriteCard(m, cert).path("hiddenReason").isNull());
+
+        cert.markLifecycle(CertificateLifecycle.RENAMED, "새이름시험", "테스트");
+        certificateRepository.save(cert);
+
+        JsonNode card = cardOf(m, cert);   // 카드는 남는다 — 사라지면 해제할 길이 없다
+        assertTrue(card.path("hiddenReason").asText("").contains("새이름시험"), "새 이름을 안내하지 않는다: " + card);
+        assertTrue(card.path("dday").isNull(), "숨긴 시험에 D-day 가 남아 있다");
+        assertEquals("NONE", card.path("badge").asText());
+
+        LocalDate examDay = today.plusDays(5);
+        MvcResult cal = mockMvc.perform(get("/api/me/calendar")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(m))
+                        .param("year", String.valueOf(examDay.getYear()))
+                        .param("month", String.valueOf(examDay.getMonthValue())))
+                .andExpect(status().isOk()).andReturn();
+        for (JsonNode ev : objectMapper.readTree(
+                cal.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("events")) {
+            assertNotEquals(cert.getId(), ev.path("certificateId").asLong(), "개칭된 시험의 일정이 캘린더에 남아 있다");
+        }
+    }
+
+    // ===== 탈퇴 =====
+
+    @Test
+    @DisplayName("탈퇴하면 관심 등록이 지워지고 시험의 관심 수도 줄어든다")
+    void withdraw_removes_favorites_and_decrements_count() throws Exception {
+        Certificate cert = newCertificate("탈퇴시험");
+        Member m = newMember();
+        favoriteCard(m, cert);
+        assertEquals(1, certificateRepository.findById(cert.getId()).orElseThrow().getFavoriteCount());
+
+        mockMvc.perform(delete("/api/me").header(HttpHeaders.AUTHORIZATION, bearer(m)))
+                .andExpect(status().isNoContent());
+
+        assertFalse(userFavoriteRepository.existsByMemberIdAndCertificateId(m.getId(), cert.getId()),
+                "탈퇴했는데 관심 등록이 남아 있다");
+        assertEquals(0, certificateRepository.findById(cert.getId()).orElseThrow().getFavoriteCount(),
+                "관심 수가 안 줄었다");
+        assertNotNull(memberRepository.findById(m.getId()).orElseThrow());
     }
 }

@@ -26,24 +26,30 @@ class ScheduleProvenanceTest {
         assertTrue(ScheduleProvenance.MANUAL.isConfirmed());
     }
 
-    /** 시드 JSON 의 문자열이 그대로 들어온다. 오타나 새 값이 와도 추정으로 잘못 분류되면 안 된다. */
+    /** 시드 JSON 의 문자열이 그대로 들어온다. 날짜가 붙은 형태({@code scraped:2026-07-28})도 있다. */
     @Test
-    @DisplayName("시드의 provenance 문자열을 읽는다")
+    @DisplayName("시드의 provenance 문자열을 읽는다 — ':' 뒤의 날짜는 무시")
     void parses_seed_values() {
         assertEquals(ScheduleProvenance.APPROX, ScheduleProvenance.from("approx"));
         assertEquals(ScheduleProvenance.SCRAPED, ScheduleProvenance.from("scraped"));
         assertEquals(ScheduleProvenance.MANUAL, ScheduleProvenance.from("manual"));
+        assertEquals(ScheduleProvenance.API, ScheduleProvenance.from("api"));
+        assertEquals(ScheduleProvenance.SCRAPED, ScheduleProvenance.from("scraped:2026-07-28"));
+        assertEquals(ScheduleProvenance.APPROX, ScheduleProvenance.from("approx:2026-07-28"),
+                "날짜가 붙은 추정치가 확정으로 읽힌다");
+        assertEquals(ScheduleProvenance.MANUAL, ScheduleProvenance.from(" Manual : 2026-08-01 "));
     }
 
     /**
-     * 출처를 안 밝히면 <b>확정</b>으로 본다.
-     * 기본값이 추정이면 멀쩡한 일정에까지 경고가 붙어, 경고 자체가 무시된다.
+     * 출처를 안 밝히면 <b>추정</b>으로 본다.
+     * 어디서 왔는지 모르는 날짜를 확정으로 보여주는 것이 "시행처 확인 필요"가 하나 더 붙는 것보다 위험하다 —
+     * 사용자는 확정 표시를 믿고 마감을 놓친다. 시드는 출처를 반드시 적는다.
      */
     @Test
-    @DisplayName("모르는 값·빈 값은 확정으로 본다 (경고 남발 방지)")
-    void unknown_defaults_to_confirmed() {
-        assertEquals(ScheduleProvenance.SCRAPED, ScheduleProvenance.from(null));
-        assertEquals(ScheduleProvenance.SCRAPED, ScheduleProvenance.from(""));
-        assertEquals(ScheduleProvenance.SCRAPED, ScheduleProvenance.from("무슨값인지모름"));
+    @DisplayName("모르는 값·빈 값은 추정으로 본다 (출처 불명을 확정으로 보여주지 않는다)")
+    void unknown_defaults_to_approx() {
+        assertEquals(ScheduleProvenance.APPROX, ScheduleProvenance.from(null));
+        assertEquals(ScheduleProvenance.APPROX, ScheduleProvenance.from(""));
+        assertEquals(ScheduleProvenance.APPROX, ScheduleProvenance.from("무슨값인지모름"));
     }
 }

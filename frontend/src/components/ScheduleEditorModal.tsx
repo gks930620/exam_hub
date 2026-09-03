@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { examApi } from '../api/exams';
+import { fmtAt } from '../lib/format';
 import type { AdminScheduleRow } from '../api/types';
 import Icon from './Icon';
 
@@ -12,6 +13,9 @@ import Icon from './Icon';
  *
  * 폼은 마지막 회차에서 이어진다 — 같은 해면 회차+1, 해가 지났으면 새 해 1회. 구분(필기/실기)은
  * 마지막 것을 따른다. 매니저가 바꿀 건 날짜뿐인 경우가 대부분이다.
+ *
+ * 보류(PENDING_REVIEW) 회차 = 수집된 일정이 30일 넘게 움직인 것. 같은 연도·회차·구분으로
+ * 공고와 대조해 저장하면 풀린다.
  */
 const EMPTY = {
   year: new Date().getFullYear(),
@@ -25,6 +29,8 @@ const EMPTY = {
   sourceUrl: '',
 };
 
+const CLOSE_CONFIRM = '입력 중인 내용이 있습니다. 닫을까요?';
+
 export default function ScheduleEditorModal({ certificateId, name, onClose, onSaved }: {
   certificateId: number;
   name: string;
@@ -37,7 +43,11 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // dirty = 서버 데이터가 바뀌었다(부모가 다시 읽어야 한다) / touched = 폼을 손댔다(닫기 전에 묻는다)
   const [dirty, setDirty] = useState(false);
+  const [touched, setTouched] = useState(false);
+  // Esc 리스너는 한 번만 달고, 최신 close 를 ref 로 본다 — 매 렌더마다 붙였다 떼지 않는다
+  const closeRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     let alive = true;
@@ -47,21 +57,23 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
         setRows(list);
         setForm(nextRound(list));
       })
-      .catch((e: Error) => alive && setErr(e.message));
+      .catch((e: Error) => { if (alive) setErr(e.message); });
     return () => { alive = false; };
   }, [certificateId]);
 
   // Esc 로 닫기 — 모달의 기본 예의
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeRef.current(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  });
+  }, []);
 
   function close() {
+    if (touched && !confirm(CLOSE_CONFIRM)) return;
     if (dirty) onSaved();
     onClose();
   }
+  closeRef.current = close;
 
   async function reload() {
     const list = await examApi.adminSchedules(certificateId);
@@ -87,6 +99,7 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
       });
       setMsg('저장했습니다. 알림 예약도 다시 만들었습니다.');
       setDirty(true);
+      setTouched(false);
       await reload();
     } catch (e) {
       setErr(e instanceof Error ? e.message : '저장하지 못했습니다.');
@@ -96,7 +109,7 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
   }
 
   async function cancel(scheduleId: number) {
-    if (!confirm('이 회차를 취소 처리할까요? (삭제가 아니라 상태만 CANCELED 로 바뀝니다)')) return;
+    if (!confirm('이 회차를 취소 처리할까요? (삭제가 아니라 상태만 취소로 바뀝니다)')) return;
     try {
       await examApi.adminCancelSchedule(scheduleId);
       setDirty(true);
@@ -106,8 +119,12 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
     }
   }
 
-  const set = (k: keyof typeof EMPTY) => (e: { target: { value: string } }) =>
+  const set = (k: keyof typeof EMPTY) => (e: { target: { value: string } }) => {
+    setTouched(true);
     setForm((f) => ({ ...f, [k]: e.target.value }));
+  };
+
+  const pending = rows?.some((r) => r.status === 'PENDING_REVIEW') ?? false;
 
   return (
     <div className="k-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) close(); }}>
@@ -119,31 +136,47 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
         </div>
 
         <div className="k-modal__body">
-          {err && <div className="k-alert k-alert--err">{err}</div>}
-          {msg && <div className="k-alert k-alert--ok">{msg}</div>}
+          {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
+          {msg && <div className="k-alert k-alert--ok" role="status">{msg}</div>}
 
           <div className="k-section" style={{ marginBottom: 16 }}>
             <h2>등록된 일정 {rows ? `${rows.length}건` : ''}</h2>
             {rows === null ? (
-              <div className="k-skeleton" style={{ height: 40 }} />
+              <div className="k-skeleton" style={{ height: 40 }} role="status" aria-label="불러오는 중" />
             ) : rows.length === 0 ? (
               <p className="fineprint" style={{ margin: 0 }}>아직 없습니다. 아래에 첫 회차를 넣으세요.</p>
             ) : (
-              <div className="k-tablewrap">
-                <table className="k-table data-table compact">
-                  <thead><tr><th>회차</th><th>접수</th><th>시험</th><th></th></tr></thead>
-                  <tbody>
-                    {rows.map((r) => (
-                      <tr key={r.id}>
-                        <td className="round">{r.year}년 {r.round}회 · {r.examType === 'WRITTEN' ? '필기' : '실기'}</td>
-                        <td className="nowrap">{r.regStartAt ?? '-'} ~ {r.regEndAt ?? '-'}</td>
-                        <td className="nowrap">{r.examStartDate ?? '-'}</td>
-                        <td><button className="link-danger" onClick={() => cancel(r.id)}>취소</button></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <>
+                <div className="k-tablewrap">
+                  <table className="k-table data-table compact">
+                    <thead><tr><th>회차</th><th>접수</th><th>시험</th><th></th></tr></thead>
+                    <tbody>
+                      {rows.map((r) => (
+                        <tr key={r.id} className={r.status === 'CANCELED' ? 'is-canceled' : undefined}>
+                          <td className="round">
+                            {r.year}년 {r.round}회 · {r.examType === 'WRITTEN' ? '필기' : '실기'}
+                            {r.status === 'PENDING_REVIEW' && <> <span className="k-badge k-badge--warn">보류</span></>}
+                            {r.status === 'CANCELED' && <> <span className="k-badge k-badge--err">취소됨</span></>}
+                          </td>
+                          <td className="nowrap">{fmtAt(r.regStartAt)} ~ {fmtAt(r.regEndAt)}</td>
+                          <td className="nowrap">{r.examStartDate ?? '-'}</td>
+                          <td>
+                            {r.status !== 'CANCELED' && (
+                              <button className="link-danger" onClick={() => cancel(r.id)}>취소</button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {pending && (
+                  <p className="fineprint" style={{ margin: '10px 0 0' }}>
+                    <b>보류 회차</b>는 수집된 일정이 30일 넘게 움직인 것입니다. 공고와 대조해 저장하면 풀립니다
+                    (같은 연도·회차·구분으로 넣으면 덮어씁니다).
+                  </p>
+                )}
+              </>
             )}
           </div>
 
@@ -154,7 +187,7 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
             </p>
             <div className="form-grid">
               <label className="field"><span>연도</span>
-                <input className="k-input" type="number" value={form.year} onChange={set('year')} /></label>
+                <input className="k-input" type="number" value={form.year} onChange={set('year')} autoFocus /></label>
               <label className="field"><span>회차</span>
                 <input className="k-input" type="number" value={form.round} onChange={set('round')} /></label>
               <label className="field"><span>구분</span>

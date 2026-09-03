@@ -24,6 +24,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <p>비로그인 접근은 <b>401</b> 로 끊는다 — 프런트가 로그인 화면으로 보낼 수 있어야 하기 때문.
  * (예전엔 헤더 누락이 400 이라 "요청이 잘못됨"과 구분되지 않았다)
  *
+ * <p><b>화면 경로는 화이트리스트가 아니라 "백엔드가 아닌 GET 전부"</b>다(2026-09-03).
+ * React 라우트를 하나씩 적던 시절엔 라우트를 추가할 때마다 빠뜨렸고, 빠지면 그 주소에서
+ * 새로고침이 401 이었다({@code /my} 가 실제로 그랬다). 백엔드 접두어({@code /api}·{@code /actuator} 등)는
+ * 이 규칙보다 <b>앞에서</b> 각자의 인증 규칙에 걸리므로, 화면을 열어 준다고 API 가 열리지는 않는다.
+ * 실제 파일이 아닌 경로는 {@code SpaWebConfig} 가 index.html 로 돌려준다.
+ *
  * <p>OAuth2 로그인은 <b>키가 설정된 경우에만</b> 켜진다({@code ClientRegistrationRepository} 존재 여부).
  * 키 없이도 앱이 뜨고 커뮤니티 읽기·시험 조회는 동작해야 하기 때문이다.
  */
@@ -33,17 +39,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    /** 공개 정적 자원 + React 화면 경로 (SpaWebConfig 가 index.html 로 폴백) */
-    private static final String[] PUBLIC_PAGES = {
-            "/", "/index.html", "/assets/**",
-            "/favicon.ico", "/favicon.svg", "/vite.svg", "/robots.txt",
-            // React 라우트 — ⚠️ App.tsx 에 라우트를 추가하면 여기도 추가할 것(빠뜨리면 새로고침 403)
-            "/search", "/calendar", "/settings", "/cert/**",
-            "/login", "/oauth/callback", "/me",
-            "/community", "/community/**", "/admin", "/admin/**",
-            "/manager", "/manager/**"
-    };
 
     private static final String[] PUBLIC_INFRA = {
             "/error", "/healthz",
@@ -77,8 +72,8 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
 
+        // 순서가 곧 규칙이다 — 먼저 맞은 매처가 이긴다. 백엔드 규칙을 전부 적은 뒤에 화면(GET /**)을 연다.
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(PUBLIC_PAGES).permitAll()
                 .requestMatchers(PUBLIC_INFRA).permitAll()
                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
 
@@ -102,7 +97,13 @@ public class SecurityConfig {
                 // 그 외 /api/** 는 로그인 필요 (내 시험·알림설정·캘린더·글쓰기)
                 .requestMatchers("/api/**").authenticated()
 
-                // 화이트리스트에 없는 나머지는 차단
+                // 위에서 열어 준 health·info 를 뺀 나머지 actuator 는 잠근다 — 아래 화면 규칙에 딸려 열리면 안 된다
+                .requestMatchers("/actuator/**").denyAll()
+
+                // React 화면 + 정적 자원: 백엔드가 아닌 GET 은 전부 화면이다 (SpaWebConfig 가 index.html 폴백)
+                .requestMatchers(HttpMethod.GET, "/**").permitAll()
+
+                // 화면 경로에 대한 GET 이외의 요청 등 나머지는 차단
                 .anyRequest().denyAll());
 
         // 인증 실패를 401 JSON 으로 — 기본 동작은 로그인 페이지 리다이렉트라 CSR 과 안 맞는다
