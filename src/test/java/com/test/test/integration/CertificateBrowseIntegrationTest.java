@@ -47,6 +47,34 @@ class CertificateBrowseIntegrationTest extends ApiIntegrationTestSupport {
         org.junit.jupiter.api.Assertions.assertTrue(j.path("rolling").asLong() <= total - with, "상시가 일정 없는 시험보다 많다");
     }
 
+    // ===== 카드의 일정 상태 =====
+
+    /**
+     * "일정 있음"만으로는 남은 일정이 전부 지난 시험이 멀쩡해 보인다 — 사용자가 지난 날짜를 믿는다.
+     * 카드는 UPCOMING / PAST_ONLY / NONE / ROLLING 을 구분해서 받는다.
+     */
+    @Test
+    void browse_items_carry_schedule_state() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/certificates/browse").param("size", "100"))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode items = objectMapper.readTree(
+                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+        java.util.Set<String> allowed = java.util.Set.of("UPCOMING", "PAST_ONLY", "NONE", "ROLLING");
+        for (JsonNode it : items) {
+            String state = it.path("scheduleState").asText("");
+            org.junit.jupiter.api.Assertions.assertTrue(allowed.contains(state), "모르는 상태: " + state);
+            if (!it.path("hasSchedule").asBoolean()) {
+                org.junit.jupiter.api.Assertions.assertTrue(state.equals("NONE") || state.equals("ROLLING"),
+                        "일정이 없는데 " + state + ": " + it.path("name").asText());
+            }
+            if (state.equals("UPCOMING")) {
+                org.junit.jupiter.api.Assertions.assertFalse(it.path("nextLabel").asText("").isBlank(),
+                        "앞으로 일정이 있다는데 무엇인지 없다: " + it.path("name").asText());
+            }
+        }
+    }
+
     // ===== 전체 둘러보기 =====
 
     @Test

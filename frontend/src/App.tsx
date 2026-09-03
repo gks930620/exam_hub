@@ -13,7 +13,6 @@ import PostDetailPage from './pages/PostDetailPage';
 import PostEditorPage from './pages/PostEditorPage';
 import AdminPage from './pages/AdminPage';
 import AdminTodo from './pages/AdminTodo';
-import AdminWrite from './pages/AdminWrite';
 import AdminSources from './pages/AdminSources';
 import AdminLifecyclePage from './pages/AdminLifecyclePage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
@@ -128,7 +127,6 @@ export default function App() {
             {/* 운영 화면은 갈래마다 주소가 있다 — 한 페이지에 다 쌓으면 무엇을 보는지 알 수 없다 */}
             <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>}>
               <Route index element={<AdminTodo />} />
-              <Route path="write" element={<AdminWrite />} />
               <Route path="sources" element={<AdminSources />} />
               <Route path="lifecycle" element={<AdminLifecyclePage />} />
             </Route>

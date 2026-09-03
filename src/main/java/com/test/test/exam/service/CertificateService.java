@@ -167,19 +167,28 @@ public class CertificateService {
         final Set<Long> favoriteIds = memberId == null
                 ? Collections.emptySet()
                 : Set.copyOf(userFavoriteRepository.findCertificateIdsByMemberId(memberId));
-        final Set<Long> withSchedule = certIdsHavingSchedule(certs);
+        // 카드마다 "앞으로 일정이 있나 / 다 지났나 / 없나"를 계산한다 — 상세·매니저와 같은 DdayService.
+        final java.util.Map<Long, List<ExamSchedule>> byCert = certs.isEmpty()
+                ? java.util.Map.of()
+                : examScheduleRepository.findByCertificateIdInAndStatus(
+                        certs.stream().map(Certificate::getId).toList(), ScheduleStatus.ACTIVE)
+                .stream().collect(Collectors.groupingBy(s -> s.getCertificate().getId()));
         return certs.stream()
-                .map(c -> CertificateDtos.Item.of(
-                        c, favoriteIds.contains(c.getId()), withSchedule.contains(c.getId())))
+                .map(c -> {
+                    // 날짜 없는 회차(연도·회차만)는 일정으로 치지 않는다 — 매니저 화면(AdminOverviewController.judge)과 같은 기준
+                    List<ExamSchedule> list = byCert.getOrDefault(c.getId(), List.of()).stream()
+                            .filter(ExamSchedule::hasAnyDate).toList();
+                    NextEvent next = list.isEmpty() ? null : ddayService.computeNextEvent(list);
+                    String state = c.isRollingAdmission() ? "ROLLING"
+                            : list.isEmpty() ? "NONE"
+                            : next != null && next.isPresent() ? "UPCOMING" : "PAST_ONLY";
+                    String lastExam = list.stream().map(ExamSchedule::getExamStartDate)
+                            .filter(java.util.Objects::nonNull)
+                            .max(java.util.Comparator.naturalOrder()).map(Object::toString).orElse(null);
+                    return CertificateDtos.Item.of(
+                            c, favoriteIds.contains(c.getId()), !list.isEmpty(), state, next, lastExam);
+                })
                 .collect(Collectors.toList());
     }
 
-    /** 목록의 자격증 중 일정이 있는 것들의 id — 항목마다 조회하지 않고 한 번에(N+1 방지). */
-    private Set<Long> certIdsHavingSchedule(List<Certificate> certs) {
-        if (certs.isEmpty()) {
-            return Collections.emptySet();
-        }
-        List<Long> ids = certs.stream().map(Certificate::getId).toList();
-        return Set.copyOf(examScheduleRepository.findCertificateIdsHavingSchedule(ids));
-    }
 }

@@ -3,11 +3,13 @@ package com.test.test.exam.admin;
 import com.test.test.exam.common.TimeUtil;
 import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.domain.ExamSchedule;
+import com.test.test.exam.domain.ScheduleProvenance;
 import com.test.test.exam.domain.ScheduleStatus;
 import com.test.test.exam.repository.CertificateRepository;
 import com.test.test.exam.repository.ExamScheduleRepository;
+import com.test.test.exam.service.DdayService;
+import com.test.test.exam.service.NextEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,57 +18,62 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 매니저용 <b>시험 일정 현황</b> — 여러 시험의 상태를 한 화면에서 본다.
+ * 매니저용 <b>시험 일정 현황</b> — 무엇을 해야 하는지가 곧바로 보이는 화면의 뒷단.
  *
- * <p><b>왜 필요한가</b>: 수기 입력 화면은 "시험 하나를 검색해 고른 뒤"에야 그 시험의 일정을
- * 보여준다. 그래서 매니저는 <b>무엇이 비어 있는지 알 방법이 없었다</b> — 480종을 하나씩
- * 검색해 볼 수는 없으니, 사실상 기억나는 시험만 채우게 된다.
+ * <p><b>"일정 있음/없음"으로는 부족했다.</b> 수기로 넣는 시험은 회차가 지나면 다음 회차를 넣어야
+ * 하는데 "일정 있음"으로 분류되어 매니저가 알 길이 없었다(사용자 지적 2026-09-02). 그래서 시험마다
+ * <b>행동</b>을 판정한다 — 첫 일정 입력 / 다음 회차 입력 / 시행처 확인 / 수집 점검. 행동이 없는
+ * 시험은 기다리면 되는 것(대기), 앞으로 일정이 있는 것(정상), 상시(대상 아님)로 나뉜다.
  *
- * <p>여기서는 반대로 <b>급한 것부터</b> 보여준다: 일정이 아예 없는 시험 → 있는 일정이 전부
- * 지나간 시험 → 접수 중 → 예정. 매니저는 위에서부터 처리하면 된다.
+ * <p>판정에 쓰는 사실: 이 시험이 <b>어디서 오나</b>(source — 큐넷 API·스크래퍼가 덮는가, 사람이 넣는가),
+ * <b>일정이 얼마나 신선한가</b>(freshness — 앞으로 남은 게 있나, 다 지났나, 없나),
+ * <b>확인이 필요한가</b>(APPROX 추정치가 걸려 있나). 다음 이벤트 계산은 사용자 화면과 같은
+ * {@link DdayService} 를 쓴다 — 매니저와 사용자가 다른 셈법을 보면 안 된다.
  */
 @RestController
 @RequestMapping("/api/admin/overview")
 @RequiredArgsConstructor
 public class AdminOverviewController {
 
+    /**
+     * 자동 소스인데 이보다 오래 새 회차가 없으면 "회차 끊김"으로 본다 — 폐지·개칭됐거나 수집이 빠진 것.
+     *
+     * <p>60일로 잡았더니 114종이 걸렸다(2026-09-02 실측). 큐넷 연 1~2회 시험이 올해 회차를 마친
+     * 정상 상태를 고장으로 본 것이다. 다음 해 계획은 12월에 나오니 1년을 넘겨야 진짜 이상하다.
+     */
+    static final int STALE_AUTO_DAYS = 365;
+
     private final CertificateRepository certificateRepository;
     private final ExamScheduleRepository examScheduleRepository;
+    private final DdayService ddayService;
 
     /**
-     * 시험별 일정 현황.
-     *
-     * @param status   비우면 전체. {@code NONE|PAST|OPEN|UPCOMING} — 쉼표로 여러 개.
-     *                  화면 기준은 "일정이 있냐 없냐" 둘뿐이라(사용자 결정) '있음' 은
-     *                  {@code PAST,OPEN,UPCOMING} 처럼 묶어서 온다.
+     * @param bucket   {@code TODO|WAITING|OK|ROLLING} — 비우면 전체
+     * @param action   TODO 안에서 행동으로 좁힌다 — {@code FIRST_INPUT|NEXT_ROUND|VERIFY|CHECK_SOURCE}
      * @param query    시험명 부분일치
      * @param category 분류
-     * @param reason   일정 없음 안에서 이유로 좁힌다 — {@code MANUAL|ANNOUNCEMENT_PENDING|CRAWL_PLANNED}
      */
     @GetMapping
     public ResponseEntity<OverviewResponse> overview(
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String bucket,
+            @RequestParam(required = false) String action,
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String reason,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size) {
 
         LocalDate today = TimeUtil.today();
 
-        // 보이는 시험 전부를 한 번에 읽는다. 이름·분류 필터는 그 뒤 메모리에서 건다 —
-        // 탭에 붙는 개수(얼마나 남았나)는 검색과 무관하게 늘 같은 값이어야 하기 때문이다.
-        // 예전엔 필터로 좁힌 목록을 세서, 검색창에 뭘 치면 탭 숫자가 같이 움직였다.
+        // 보이는 시험 전부를 한 번에 읽고, 필터는 메모리에서 건다 —
+        // 탭·행동의 개수는 검색과 무관하게 늘 같은 값이어야 한다(남은 일의 크기).
         List<Certificate> all = certificateRepository.browse("", "", PageRequest.of(0, 5000)).getContent();
-
-        // 시험마다 일정을 조회하면 800번 넘게 쿼리가 나간다 — 한 번에 가져와 묶는다.
         Map<Long, List<ExamSchedule>> byCert = examScheduleRepository
                 .findByCertificateIdInAndStatus(
                         all.stream().map(Certificate::getId).toList(), ScheduleStatus.ACTIVE)
@@ -74,71 +81,152 @@ public class AdminOverviewController {
                 .collect(Collectors.groupingBy(s -> s.getCertificate().getId()));
 
         List<Row> allRows = all.stream()
-                .map(c -> Row.of(c, byCert.getOrDefault(c.getId(), List.of()), today))
+                .map(c -> judge(c, byCert.getOrDefault(c.getId(), List.of()), today))
                 .toList();
 
         String q = query == null ? "" : query.trim().toLowerCase();
         String cat = category == null ? "" : category.trim();
-        Set<String> wanted = status == null || status.isBlank()
-                ? Set.of()
-                : Set.of(status.split(","));
 
         List<Row> rows = allRows.stream()
                 .filter(r -> q.isEmpty() || r.certificateName().toLowerCase().contains(q))
                 .filter(r -> cat.isEmpty() || cat.equals(r.category()))
-                .filter(r -> wanted.isEmpty() || wanted.contains(r.status()))
-                .filter(r -> reason == null || reason.isBlank() || reason.equals(r.reason()))
-                // 급한 것 위로. 같은 상태면 이름순이라 매번 같은 순서로 보인다.
-                .sorted(Comparator.comparingInt((Row r) -> Status.valueOf(r.status()).urgency)
-                        .thenComparing(Row::certificateName))
+                .filter(r -> bucket == null || bucket.isBlank() || bucket.equals(r.bucket()))
+                .filter(r -> action == null || action.isBlank() || action.equals(r.action()))
+                .sorted(Comparator.comparingInt(Row::sortKey).thenComparing(Row::certificateName))
                 .toList();
 
         int from = Math.min(page * size, rows.size());
         int to = Math.min(from + size, rows.size());
 
         return ResponseEntity.ok(new OverviewResponse(
-                rows.subList(from, to),
-                rows.size(),
-                page,
-                summarize(allRows),
-                reasonCounts(allRows)));
+                rows.subList(from, to), rows.size(), page,
+                count(allRows, Row::bucket),
+                count(allRows.stream().filter(r -> r.action() != null).toList(), Row::action),
+                count(allRows.stream().filter(r -> r.waitingReason() != null).toList(), Row::waitingReason)));
     }
 
-    /**
-     * 상태별 개수 — 매니저가 "얼마나 남았나"를 먼저 본다.
-     * <b>검색·분류 필터를 걸어도 이 숫자는 안 변한다</b>(전체 기준). 남은 일의 크기라서,
-     * 화면을 좁힐 때마다 같이 줄면 얼마나 남았는지를 알 수 없다.
-     */
-    /** 일정 없음 안의 이유별 개수 — 매니저의 진짜 할 일(수기)이 몇 개인지. 필터와 무관하게 전체 기준. */
-    private Map<String, Long> reasonCounts(List<Row> allRows) {
-        return allRows.stream()
-                .filter(r -> r.reason() != null)
-                .collect(Collectors.groupingBy(Row::reason, Collectors.counting()));
+    private static Map<String, Long> count(List<Row> rows, java.util.function.Function<Row, String> key) {
+        return rows.stream().collect(Collectors.groupingBy(key, Collectors.counting()));
     }
 
-    private Map<String, Long> summarize(List<Row> allRows) {
-        return allRows.stream()
-                .collect(Collectors.groupingBy(Row::status, Collectors.counting()));
+    // ── 판정 ──────────────────────────────────────────────────────────────
+
+    /** 이 시험의 일정이 어디서 오나 */
+    enum Source {
+        AUTO("자동"), CRAWL_PLANNED("크롤링 예정"), MANUAL("수기"), ROLLING("상시");
+        final String label;
+        Source(String label) { this.label = label; }
     }
 
-    /**
-     * 매니저가 손대야 하는 순서. {@code urgency} 가 작을수록 위로 온다.
-     *
-     * <p>{@link #PAST} 를 {@link #NONE} 만큼 급하게 보는 이유: 지난 일정만 남은 시험은
-     * 화면에 <b>끝난 날짜가 그대로 걸려 있다</b>. 비어 있는 것보다 오히려 나쁘다.
-     */
-    private enum Status {
-        NONE(0),      // 일정이 하나도 없다
-        PAST(1),      // 있는 일정이 전부 지나갔다
-        OPEN(2),      // 지금 접수 중
-        UPCOMING(3),  // 앞으로 있을 일정이 있다 — 할 일 없음
-        ROLLING(4);   // 상시·예약제 — "일정"이 존재하지 않는다. 할 일 아님(사용자 결정 2026-09-01)
+    /** 매니저가 지금 해야 하는 일 */
+    enum Action {
+        FIRST_INPUT("첫 일정 입력", 0),
+        NEXT_ROUND("다음 회차 입력", 1),
+        VERIFY("시행처 확인", 2),
+        CHECK_SOURCE("회차 끊김 확인", 3);
+        final String label;
+        final int order;
+        Action(String label, int order) { this.label = label; this.order = order; }
+    }
 
-        final int urgency;
+    /** 할 일은 아니지만 왜 비어 있는지 — 기다리면 되는 이유 */
+    enum Waiting {
+        ANNOUNCEMENT_PENDING("공고 전 — 나오면 자동"),
+        AUTO_NEXT_PENDING("다음 회차 수집 대기 — 자동"),
+        CRAWL_PLANNED("크롤링 예정 — 자동");
+        final String label;
+        Waiting(String label) { this.label = label; }
+    }
 
-        Status(int urgency) {
-            this.urgency = urgency;
+    private Row judge(Certificate c, List<ExamSchedule> schedules, LocalDate today) {
+        boolean rolling = c.isRollingAdmission();
+        boolean qnet = c.getSourceCode() != null && c.getSourceCode().matches("[0-9]{4}");
+        boolean fedByMachine = schedules.stream()
+                .anyMatch(s -> s.getProvenance() == ScheduleProvenance.API || s.getProvenance() == ScheduleProvenance.SCRAPED);
+
+        Source source;
+        if (rolling) {
+            source = Source.ROLLING;
+        } else if (qnet || fedByMachine) {
+            source = Source.AUTO;
+        } else {
+            source = switch (NoScheduleReason.of(c)) {
+                case ANNOUNCEMENT_PENDING -> Source.AUTO;
+                case CRAWL_PLANNED -> Source.CRAWL_PLANNED;
+                case MANUAL -> Source.MANUAL;
+            };
         }
+
+        // 날짜가 하나도 없는 회차(연도·회차만 넣고 잊은 것)는 일정으로 치지 않는다 — 사용자에게 아무것도 못 알려 준다
+        List<ExamSchedule> dated = schedules.stream().filter(ExamSchedule::hasAnyDate).toList();
+        NextEvent next = ddayService.computeNextEvent(dated);
+        // 추정치 경고는 아직 안 지난 회차에만 — 지난 추정치는 아무도 안 본다
+        boolean needsReview = dated.stream().anyMatch(s -> s.getProvenance() == ScheduleProvenance.APPROX
+                && !s.latestKnownDate().isBefore(today));
+        // 마지막 회차 = 연도·회차가 가장 뒤인 것. 같은 회차면 늦은 날짜(실기)가 뒤
+        ExamSchedule last = dated.stream()
+                .max(Comparator.comparing((ExamSchedule s) -> s.getYear() == null ? 0 : s.getYear())
+                        .thenComparing(s -> s.getRound() == null ? 0 : s.getRound())
+                        .thenComparing(ExamSchedule::latestKnownDate))
+                .orElse(null);
+        LocalDate lastDate = last == null ? null : last.latestKnownDate();
+        String freshness = dated.isEmpty() ? "NONE" : next.isPresent() ? "UPCOMING" : "PAST_ONLY";
+        Integer daysSince = lastDate == null ? null : (int) ChronoUnit.DAYS.between(lastDate, today);
+
+        Action act = null;
+        Waiting waiting = null;
+        if (source == Source.ROLLING) {
+            // 상시는 판정 대상이 아니다 — 추정치가 걸려 있어도 "시행처 확인"을 시키지 않는다(실측: 6종이 새어 들어왔다)
+        } else if (source == Source.MANUAL && freshness.equals("NONE")) {
+            act = Action.FIRST_INPUT;
+        } else if (source == Source.MANUAL && freshness.equals("PAST_ONLY")) {
+            act = Action.NEXT_ROUND;
+        } else if (needsReview && freshness.equals("UPCOMING")) {
+            act = Action.VERIFY;
+        } else if (source == Source.AUTO && freshness.equals("PAST_ONLY")
+                && daysSince != null && daysSince > STALE_AUTO_DAYS) {
+            act = Action.CHECK_SOURCE;
+        } else if (source == Source.AUTO && freshness.equals("NONE")) {
+            waiting = Waiting.ANNOUNCEMENT_PENDING;
+        } else if (source == Source.AUTO && freshness.equals("PAST_ONLY")) {
+            waiting = Waiting.AUTO_NEXT_PENDING;
+        } else if (source == Source.CRAWL_PLANNED && !freshness.equals("UPCOMING")) {
+            waiting = Waiting.CRAWL_PLANNED;
+        }
+
+        String bucket = source == Source.ROLLING ? "ROLLING"
+                : act != null ? "TODO"
+                : waiting != null ? "WAITING"
+                : "OK";
+
+        // 정렬: 할 일은 행동 순. 다음 회차는 오래 지난 것부터, 시행처 확인은 임박한 것부터(급하다). 대기·정상은 이름순.
+        int sortKey = switch (bucket) {
+            case "TODO" -> act.order * 100_000 + switch (act) {
+                case NEXT_ROUND -> daysSince == null ? 99_999 : Math.max(0, 99_999 - daysSince);
+                case VERIFY -> next.isPresent() ? (int) Math.min(99_999, Math.max(0, next.dday())) : 99_999;
+                default -> 0;
+            };
+            case "WAITING" -> 400_000;
+            case "OK" -> 500_000;
+            default -> 600_000;
+        };
+
+        String lastLabel = last == null || freshness.equals("UPCOMING") ? null
+                : "%d년 %d회 %s".formatted(last.getYear(), last.getRound(),
+                        last.getExamType() == null ? "" : last.getExamType().getLabel());
+
+        return new Row(
+                c.getId(), c.getName(), c.getCategory(), c.getAgency(), schedules.size(),
+                source.name(), source.label, freshness, needsReview,
+                act == null ? null : act.name(), act == null ? null : act.label,
+                waiting == null ? null : waiting.name(), waiting == null ? null : waiting.label,
+                bucket,
+                lastDate == null ? null : lastDate.toString(), lastLabel, daysSince,
+                next.isPresent() ? next.label() : null,
+                next.isPresent() ? TimeUtil.format(next.at()) : null,
+                next.isPresent() ? (int) next.dday() : null,
+                next.isPresent() ? next.badge().name() : null,
+                sortKey);
     }
 
     public record Row(
@@ -147,65 +235,39 @@ public class AdminOverviewController {
             String category,
             String agency,
             int scheduleCount,
-            String status,
-            /** 다음(또는 마지막) 일정 요약 — 연도·회차·구분 */
+            /** AUTO | CRAWL_PLANNED | MANUAL | ROLLING */
+            String source,
+            String sourceLabel,
+            /** NONE | PAST_ONLY | UPCOMING */
+            String freshness,
+            boolean needsReview,
+            /** 할 일. 없으면 null — FIRST_INPUT | NEXT_ROUND | VERIFY | CHECK_SOURCE */
+            String action,
+            String actionLabel,
+            /** 할 일은 아니고 기다리면 되는 이유. 없으면 null */
+            String waitingReason,
+            String waitingLabel,
+            /** TODO | WAITING | OK | ROLLING */
+            String bucket,
+            /** 마지막 시험일과 그 회차 — 다음 회차를 넣을 때 "어디까지 넣었더라"의 답 */
+            String lastExamDate,
+            String lastLabel,
+            Integer daysSinceLast,
+            /** 앞으로의 대표 이벤트(사용자 화면과 같은 계산) */
             String nextLabel,
-            String nextRegStartAt,
-            String nextRegEndAt,
-            String nextExamDate,
-            /** 접수 마감까지 남은 날. 접수 중이 아니면 null */
-            Integer regDDay,
-            /** 일정이 없을 때만 — 왜 없는가({@link NoScheduleReason}). 나머지 상태는 null */
-            String reason,
-            String reasonLabel
+            String nextAt,
+            Integer nextDday,
+            String nextBadge,
+            int sortKey
     ) {
-        static Row of(Certificate c, List<ExamSchedule> schedules, LocalDate today) {
-            if (c.isRollingAdmission()) {
-                // 상시는 일정 유무와 무관하게 별도 상태다 — NONE 에 섞이면 영원히 못 채우는 숙제가 된다
-                return new Row(c.getId(), c.getName(), c.getCategory(), c.getAgency(),
-                        schedules.size(), Status.ROLLING.name(), null, null, null, null, null, null, null);
-            }
-            if (schedules.isEmpty()) {
-                NoScheduleReason why = NoScheduleReason.of(c);
-                return new Row(c.getId(), c.getName(), c.getCategory(), c.getAgency(),
-                        0, Status.NONE.name(), null, null, null, null, null, why.name(), why.label());
-            }
-
-            // 앞으로 남은 것 중 가장 이른 것. 없으면 가장 최근에 지난 것을 보여준다
-            // (매니저가 "어디까지 넣었더라"를 알아야 다음 회차를 넣을 수 있다).
-            ExamSchedule next = schedules.stream()
-                    .filter(s -> s.getExamStartDate() != null && !s.getExamStartDate().isBefore(today))
-                    .min(Comparator.comparing(ExamSchedule::getExamStartDate))
-                    .orElseGet(() -> schedules.stream()
-                            .max(Comparator.comparing(ExamSchedule::getExamStartDate,
-                                    Comparator.nullsFirst(Comparator.naturalOrder())))
-                            .orElse(schedules.get(0)));
-
-            boolean hasFuture = next.getExamStartDate() != null
-                    && !next.getExamStartDate().isBefore(today);
-            boolean regOpen = next.getRegStartAt() != null && next.getRegEndAt() != null
-                    && !today.isBefore(next.getRegStartAt().toLocalDate())
-                    && !today.isAfter(next.getRegEndAt().toLocalDate());
-
-            Status status = !hasFuture ? Status.PAST : regOpen ? Status.OPEN : Status.UPCOMING;
-            Integer dDay = regOpen
-                    ? (int) java.time.temporal.ChronoUnit.DAYS.between(today, next.getRegEndAt().toLocalDate())
-                    : null;
-
-            return new Row(
-                    c.getId(), c.getName(), c.getCategory(), c.getAgency(),
-                    schedules.size(), status.name(),
-                    "%d년 %d회 %s".formatted(next.getYear(), next.getRound(),
-                            next.getExamType() == null ? "" : next.getExamType().getLabel()),
-                    TimeUtil.format(next.getRegStartAt()),
-                    TimeUtil.format(next.getRegEndAt()),
-                    TimeUtil.format(next.getExamStartDate()),
-                    dDay, null, null);
-        }
     }
 
     public record OverviewResponse(List<Row> items, int totalElements, int page,
-                                   Map<String, Long> counts,
-                                   /** 일정 없음 안의 이유별 개수 */ Map<String, Long> reasonCounts) {
+                                   /** TODO/WAITING/OK/ROLLING 별 개수 — 필터와 무관 */
+                                   Map<String, Long> bucketCounts,
+                                   /** 할 일 안의 행동별 개수 */
+                                   Map<String, Long> actionCounts,
+                                   /** 대기 안의 이유별 개수 */
+                                   Map<String, Long> waitingCounts) {
     }
 }

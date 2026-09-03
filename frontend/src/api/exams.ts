@@ -67,12 +67,11 @@ export const examApi = {
   adminLifecycle: () => api.get<LifecycleResponse>('/api/admin/lifecycle'),
 
   /** 시험별 일정 현황 — 급한 것(일정 없음·지난 것)이 위로 온다 */
-  adminOverview: (params: { status?: string; reason?: string; query?: string; category?: string; page?: number }) => {
+  adminOverview: (params: { bucket?: string; action?: string; query?: string; page?: number }) => {
     const q = new URLSearchParams();
-    if (params.status) q.set('status', params.status);
-    if (params.reason) q.set('reason', params.reason);
+    if (params.bucket) q.set('bucket', params.bucket);
+    if (params.action) q.set('action', params.action);
     if (params.query) q.set('query', params.query);
-    if (params.category) q.set('category', params.category);
     q.set('page', String(params.page ?? 0));
     return api.get<OverviewResponse>(`/api/admin/overview?${q.toString()}`);
   },

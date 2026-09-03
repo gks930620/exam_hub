@@ -106,6 +106,26 @@ public class ExamSchedule {
 
     // ===== 비즈니스 메서드 =====
 
+    /**
+     * 이 회차에서 알려진 가장 늦은 날짜 — 시험 종료·시작, 없으면 접수 마감·시작. 아무 날짜도 없으면 null.
+     *
+     * <p>연도·회차만 있고 날짜가 하나도 없는 행은 사용자에게 아무것도 알려 주지 못한다.
+     * 그래서 현황 판정(매니저 할 일·사용자 카드)은 이런 행을 "일정 없음"으로 친다 —
+     * 회차만 넣어 두고 잊은 것이 "일정 있음"으로 둔갑하지 않게.
+     */
+    public LocalDate latestKnownDate() {
+        if (examEndDate != null) return examEndDate;
+        if (examStartDate != null) return examStartDate;
+        if (regEndAt != null) return regEndAt.toLocalDate();
+        if (regStartAt != null) return regStartAt.toLocalDate();
+        return null;
+    }
+
+    /** 날짜가 하나라도 있는가 — 없으면 일정으로 세지 않는다 */
+    public boolean hasAnyDate() {
+        return latestKnownDate() != null;
+    }
+
     /** 수집 diff 로 변경된 필드를 반영한다. */
     public void applyFrom(LocalDateTime regStartAt, LocalDateTime regEndAt,
                           LocalDate examStartDate, LocalDate examEndDate, LocalDate resultDate,

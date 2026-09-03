@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
+import { fmtAt } from '../lib/format';
 import type { FavoriteCard, FavoriteListResponse } from '../api/types';
 import Icon from '../components/Icon';
 
@@ -100,9 +101,4 @@ function ExamCard({ card }: { card: FavoriteCard }) {
       </div>
     </Link>
   );
-}
-
-/** 2026-09-21T10:00 → 2026-09-21 10:00 — ISO 의 T 는 사람이 읽는 표기가 아니다 */
-function fmtAt(iso: string): string {
-  return iso.replace("T", " ").slice(0, 16);
 }

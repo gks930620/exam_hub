@@ -16,7 +16,9 @@ function item(over: Partial<Record<string, unknown>> = {}) {
     id: 1, name: '정보처리기사', slug: '정보처리기사',
     series: 'TECHNICIAN', seriesLabel: '기사',
     category: '국가기술자격-정보통신', agency: '한국산업인력공단',
-    favorited: false, hasSchedule: true, rolling: false,
+    favorited: false, hasSchedule: true,
+    // 카드 상태는 서버가 준다. 픽스처는 null 로 두어 hasSchedule/rolling 로 유도되게 한다
+    scheduleState: null, nextLabel: null, nextAt: null, nextDday: null, nextBadge: null, lastExamDate: null, rolling: false,
     ...over,
   };
 }

@@ -13,6 +13,13 @@ export interface CertItem {
   hasSchedule: boolean;
   /** 상시·예약제 — '일정'이 없는 시험. '일정 미정'이 아니라 '상시시험'으로 보여준다 */
   rolling: boolean;
+  /** UPCOMING | PAST_ONLY(다음 회차 미정) | NONE | ROLLING */
+  scheduleState: 'UPCOMING' | 'PAST_ONLY' | 'NONE' | 'ROLLING' | null;
+  nextLabel: string | null;
+  nextAt: string | null;
+  nextDday: number | null;
+  nextBadge: string | null;
+  lastExamDate: string | null;
 }
 
 export interface SearchResponse {
@@ -227,9 +234,10 @@ export interface DataMapResponse {
 }
 
 /** 매니저 일정 현황 — 시험 하나의 상태 한 줄 */
-export type ScheduleStatusKind = 'NONE' | 'PAST' | 'OPEN' | 'UPCOMING' | 'ROLLING';
-/** 일정이 없는 이유 — 매니저가 손댈 것은 MANUAL 뿐 */
-export type NoScheduleReason = 'MANUAL' | 'ANNOUNCEMENT_PENDING' | 'CRAWL_PLANNED';
+/** 매니저 현황 — 시험을 어디에 둘 것인가 */
+export type OverviewBucket = 'TODO' | 'WAITING' | 'OK' | 'ROLLING';
+/** 매니저가 지금 해야 하는 일 */
+export type OverviewAction = 'FIRST_INPUT' | 'NEXT_ROUND' | 'VERIFY' | 'CHECK_SOURCE';
 
 export interface OverviewRow {
   certificateId: number;
@@ -237,25 +245,31 @@ export interface OverviewRow {
   category: string | null;
   agency: string | null;
   scheduleCount: number;
-  status: ScheduleStatusKind;
-  /** 일정 없음일 때만 */
-  reason: NoScheduleReason | null;
-  reasonLabel: string | null;
+  source: 'AUTO' | 'CRAWL_PLANNED' | 'MANUAL' | 'ROLLING';
+  sourceLabel: string;
+  freshness: 'NONE' | 'PAST_ONLY' | 'UPCOMING';
+  needsReview: boolean;
+  action: OverviewAction | null;
+  actionLabel: string | null;
+  waitingReason: string | null;
+  waitingLabel: string | null;
+  bucket: OverviewBucket;
+  lastExamDate: string | null;
+  lastLabel: string | null;
+  daysSinceLast: number | null;
   nextLabel: string | null;
-  nextRegStartAt: string | null;
-  nextRegEndAt: string | null;
-  nextExamDate: string | null;
-  /** 접수 마감까지 남은 날. 접수 중일 때만 */
-  regDDay: number | null;
+  nextAt: string | null;
+  nextDday: number | null;
+  nextBadge: string | null;
 }
 
 export interface OverviewResponse {
   items: OverviewRow[];
   totalElements: number;
   page: number;
-  /** 상태별 개수 — 필터를 걸어도 안 변한다 */
-  counts: Partial<Record<ScheduleStatusKind, number>>;
-  reasonCounts: Partial<Record<NoScheduleReason, number>>;
+  bucketCounts: Partial<Record<OverviewBucket, number>>;
+  actionCounts: Partial<Record<OverviewAction, number>>;
+  waitingCounts: Partial<Record<string, number>>;
 }
 
 /** 시험 변천사 — 폐지·개칭된 시험 */

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { examApi } from '../api/exams';
+import { fmtAt } from '../lib/format';
 import { useAuth, useRequireLogin } from '../auth';
 import type { CategoryItem, CertItem } from '../api/types';
 import Icon from '../components/Icon';
@@ -140,17 +141,7 @@ export default function SearchPage() {
                 </button>
               </div>
               {/* 상태는 배지 하나로 — 문장을 846번 반복하면 화면이 지저분해진다 */}
-              <div className="foot">
-                {c.rolling
-                  ? <>
-                      <span className="k-badge">상시시험</span>
-                      {/* 상시만 한 줄 설명 — 28종뿐이고, 왜 일정이 없는지는 알려줘야 한다 */}
-                      <span className="when">원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다</span>
-                    </>
-                  : c.hasSchedule
-                    ? <span className="k-badge k-badge--ok">일정 있음</span>
-                    : <span className="k-badge k-badge--warn">일정 미정</span>}
-              </div>
+              <div className="foot"><CardStatus c={c} /></div>
             </div>
           ))}
         </div>
@@ -185,4 +176,42 @@ function groupCategories(cats: CategoryItem[]): { label: string; items: Category
   return [...groups.entries()]
     .map(([label, items]) => ({ label, items: [...items].sort((a, b) => collator.compare(a.name, b.name)) }))
     .sort((a, b) => (a.label === '그 외' ? 1 : b.label === '그 외' ? -1 : collator.compare(a.label, b.label)));
+}
+
+/**
+ * 카드 하단 상태 — "일정 있음/없음"이 아니라 <b>지금 무엇이 다가오나</b>.
+ * 남은 일정이 전부 지난 시험은 '다음 회차 미정'이다. 지난 날짜를 멀쩡한 일정처럼 보여주면
+ * 사용자가 그 날짜를 믿는다.
+ */
+function CardStatus({ c }: { c: CertItem }) {
+  const state = c.scheduleState ?? (c.rolling ? 'ROLLING' : c.hasSchedule ? 'UPCOMING' : 'NONE');
+  if (state === 'ROLLING') {
+    return (
+      <>
+        <span className="k-badge">상시시험</span>
+        <span className="when">원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다</span>
+      </>
+    );
+  }
+  if (state === 'UPCOMING') {
+    const open = c.nextBadge === 'REG_OPEN';
+    return (
+      <>
+        <span className={`k-badge ${open ? 'k-badge--ok' : 'k-badge--point'}`}>
+          {open ? '접수 중' : c.nextBadge === 'REG_UPCOMING' ? '접수 예정' : '시험 예정'}
+          {c.nextDday != null && <> · D-{c.nextDday}</>}
+        </span>
+        {c.nextLabel && <span className="when">{c.nextLabel} {fmtAt(c.nextAt)}</span>}
+      </>
+    );
+  }
+  if (state === 'PAST_ONLY') {
+    return (
+      <>
+        <span className="k-badge k-badge--warn">다음 회차 미정</span>
+        {c.lastExamDate && <span className="when">마지막 시험 {c.lastExamDate}</span>}
+      </>
+    );
+  }
+  return <span className="k-badge k-badge--warn">일정 미정</span>;
 }

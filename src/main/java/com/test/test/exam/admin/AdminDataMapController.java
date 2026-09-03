@@ -34,13 +34,17 @@ public class AdminDataMapController {
         // 상시·예약제는 "일정"이 존재하지 않아 채울 대상이 아니다 — 분모에서 빼고 따로 알린다.
         long rolling = certificateRepository.countVisibleRolling();
         long totalExams = certificateRepository.countVisible() - rolling;
-        long withSchedule = certificateRepository.countVisibleWithSchedule();
         // 일정 없음을 이유별로 — 사람이 넣어야 하는 건 수기 필수뿐이다(설계/시험데이터/05_일정없음_분류)
         java.util.List<com.test.test.exam.domain.Certificate> all = certificateRepository.findAll();
-        // "일정 있음" 은 살아 있는(ACTIVE) 일정 기준이어야 countVisibleWithSchedule 과 셈법이 같다
+        // "일정 있음" = 살아 있는(ACTIVE) 일정 중 날짜가 하나라도 있는 회차를 가진 시험.
+        // 할 일 판정(AdminOverviewController.judge)과 같은 셈법이어야 위(채움률)·아래(할 일) 숫자가 맞는다 —
+        // SQL count 로 세면 연도·회차만 넣은 빈 행도 "있음"이 돼 할 일의 '첫 일정 입력'보다 하나 적게 나온다(실측 BJT).
         java.util.Set<Long> having = examScheduleRepository
                 .findByCertificateIdInAndStatus(all.stream().map(c -> c.getId()).toList(), com.test.test.exam.domain.ScheduleStatus.ACTIVE)
-                .stream().map(sch -> sch.getCertificate().getId()).collect(java.util.stream.Collectors.toSet());
+                .stream().filter(com.test.test.exam.domain.ExamSchedule::hasAnyDate)
+                .map(sch -> sch.getCertificate().getId()).collect(java.util.stream.Collectors.toSet());
+        long withSchedule = all.stream()
+                .filter(c -> c.isVisibleToUsers() && !c.isRollingAdmission() && having.contains(c.getId())).count();
         long manual = 0, pending = 0, planned = 0;
         for (com.test.test.exam.domain.Certificate c : all) {
             if (!c.isVisibleToUsers() || c.isRollingAdmission() || having.contains(c.getId())) {

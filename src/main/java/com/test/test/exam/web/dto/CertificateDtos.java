@@ -30,18 +30,43 @@ public final class CertificateDtos {
             boolean favorited,
             boolean hasSchedule,
             /** 상시·예약제 — "일정"이 없는 시험. 화면은 '일정 미정' 대신 '상시시험'을 보여준다 */
-            boolean rolling
+            boolean rolling,
+            /**
+             * 카드가 보여줄 상태 — UPCOMING(앞으로 일정 있음) | PAST_ONLY(남은 일정이 전부 지남 = 다음 회차 미정)
+             * | NONE(일정 없음) | ROLLING(상시). "일정 있음"만으로는 지난 일정만 남은 시험이
+             * 멀쩡해 보여서 사용자가 지난 날짜를 믿게 된다.
+             */
+            String scheduleState,
+            /** UPCOMING 일 때 대표 이벤트(사용자 화면과 매니저 화면이 같은 계산을 쓴다) */
+            String nextLabel,
+            String nextAt,
+            Integer nextDday,
+            String nextBadge,
+            /** PAST_ONLY 일 때 마지막 시험일 */
+            String lastExamDate
     ) {
         public static Item of(Certificate c, boolean favorited) {
             return of(c, favorited, true);
         }
 
         public static Item of(Certificate c, boolean favorited, boolean hasSchedule) {
+            return of(c, favorited, hasSchedule, null, null, null);
+        }
+
+        public static Item of(Certificate c, boolean favorited, boolean hasSchedule,
+                              String scheduleState, NextEvent next, String lastExamDate) {
+            boolean upcoming = next != null && next.isPresent();
             return new Item(
                     c.getId(), c.getName(), c.getSlug(),
                     c.getSeries().name(), c.getSeries().getLabel(),
                     c.getCategory(),
-                    c.getAgency(), favorited, hasSchedule, c.isRollingAdmission());
+                    c.getAgency(), favorited, hasSchedule, c.isRollingAdmission(),
+                    scheduleState,
+                    upcoming ? next.label() : null,
+                    upcoming ? TimeUtil.format(next.at()) : null,
+                    upcoming ? (int) next.dday() : null,
+                    upcoming ? next.badge().name() : null,
+                    lastExamDate);
         }
     }
 

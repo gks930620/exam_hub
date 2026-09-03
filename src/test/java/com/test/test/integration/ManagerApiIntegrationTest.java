@@ -202,108 +202,6 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     // 검색해 볼 수는 없으니 결국 기억나는 시험만 채우게 된다. 그래서 급한 것부터 세운다.
 
     @Test
-    @DisplayName("현황은 상태별 개수와 목록을 준다")
-    void overview_returns_rows_and_counts() throws Exception {
-        mockMvc.perform(get("/api/admin/overview")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.items").isArray())
-                .andExpect(jsonPath("$.totalElements").isNumber())
-                .andExpect(jsonPath("$.counts").exists());
-    }
-
-    /** 일정이 없는 시험이 매니저의 첫 번째 할 일이다 — 이 필터가 곧 작업 목록이다. */
-    @Test
-    @DisplayName("일정 없는 시험만 골라 본다")
-    void overview_filters_exams_without_schedule() throws Exception {
-        MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("status", "NONE")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        JsonNode items = objectMapper.readTree(
-                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
-        assertTrue(items.size() > 0, "일정 없는 시험이 하나도 없다 — 시드가 바뀌었나?");
-        for (JsonNode it : items) {
-            assertEquals("NONE", it.path("status").asText());
-            assertEquals(0, it.path("scheduleCount").asInt(), "일정이 있는데 NONE 으로 분류됐다");
-        }
-    }
-
-    /** 일정이 있는 시험은 NONE 이 아니어야 한다 — 분류가 뒤집히면 목록이 쓸모없어진다. */
-    @Test
-    @DisplayName("일정이 있으면 NONE 이 아니다")
-    void exam_with_schedule_is_not_none() throws Exception {
-        long certId = anyCertificateId();   // 데모 시드 — 일정이 붙어 있다
-
-        MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("size", "2000")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        JsonNode items = objectMapper.readTree(
-                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
-        for (JsonNode it : items) {
-            if (it.path("certificateId").asLong() == certId) {
-                assertNotEquals("NONE", it.path("status").asText());
-                assertTrue(it.path("scheduleCount").asInt() > 0);
-                return;
-            }
-        }
-    }
-
-    /**
-     * 매니저 화면의 기준은 <b>일정이 있냐 없냐</b> 딱 둘이다(사용자 결정 2026-09-01 —
-     * "접수중이냐 아니냐는 헷갈리니까 하지 말자"). '있음' 은 세부 상태 셋의 합이라
-     * 상태를 쉼표로 묶어 한 번에 거를 수 있어야 한다.
-     */
-    @Test
-    @DisplayName("상태 여러 개를 쉼표로 묶어 거른다 — '일정 있음' 탭")
-    void overview_filters_by_multiple_statuses() throws Exception {
-        MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("status", "PAST,OPEN,UPCOMING")
-                        .param("size", "2000")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        JsonNode items = objectMapper.readTree(
-                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
-        assertTrue(items.size() > 0, "일정 있는 시험이 하나도 없다 — 시드가 바뀌었나?");
-        for (JsonNode it : items) {
-            assertNotEquals("NONE", it.path("status").asText(), "일정 없는 시험이 '있음' 탭에 섞였다");
-            assertTrue(it.path("scheduleCount").asInt() > 0);
-        }
-    }
-
-    /**
-     * 상시·예약제(AWS·컴활·운전면허 등)는 "일정"이라는 것이 존재하지 않는다.
-     * NONE 에 섞이면 <b>영원히 못 채우는 숙제</b>가 되어 매니저가 "왜 아직 173이냐"고 묻게 된다
-     * (실제로 물었다, 2026-09-01). 별도 상태 ROLLING 으로 구별한다.
-     */
-    @Test
-    @DisplayName("상시·예약제는 '일정 없음'에 섞이지 않는다")
-    void rolling_exams_are_not_counted_as_none() throws Exception {
-        MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("status", "NONE")
-                        .param("size", "2000")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        JsonNode body = objectMapper.readTree(
-                res.getResponse().getContentAsString(StandardCharsets.UTF_8));
-        for (JsonNode it : body.path("items")) {
-            assertNotEquals("AWS Certified Cloud Practitioner",
-                    it.path("certificateName").asText(), "상시 시험이 '일정 없음' 목록에 있다");
-        }
-        assertTrue(body.path("counts").path("ROLLING").asLong(0) >= 20,
-                "상시 표시가 안 붙었다 — RollingAdmissionInitializer 가 돌았나?");
-    }
-
-    @Test
     @DisplayName("상시 시험은 사용자 응답에도 rolling 으로 표시된다")
     void rolling_flag_reaches_public_api() throws Exception {
         MvcResult res = mockMvc.perform(get("/api/certificates/browse")
@@ -316,51 +214,6 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
         assertTrue(items.size() > 0, "AWS 시험을 못 찾았다");
         assertTrue(items.get(0).path("rolling").asBoolean(false),
                 "상시 표시가 공개 API 에 안 실렸다 — 화면이 '일정 미정'이라는 거짓말을 하게 된다");
-    }
-
-    /**
-     * "일정 없음"은 한 덩어리가 아니다(설계/시험데이터/05_일정없음_분류). 매니저가 손댈 것은
-     * <b>수기 필수</b>뿐이고, 큐넷 공고 전·크롤링 예정은 자동으로 들어온다. 그 구분이 화면에
-     * 없으면 매니저는 143종을 전부 숙제로 안는다(사용자 지적 2026-09-02).
-     */
-    @Test
-    @DisplayName("일정 없는 시험마다 이유(수기/공고 전/크롤링 예정)가 붙는다")
-    void none_rows_carry_a_reason() throws Exception {
-        MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("status", "NONE").param("size", "2000")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.reasonCounts").exists())
-                .andReturn();
-        JsonNode body = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8));
-        java.util.Set<String> allowed = java.util.Set.of("MANUAL", "ANNOUNCEMENT_PENDING", "CRAWL_PLANNED");
-        long qnetPending = 0;
-        for (JsonNode it : body.path("items")) {
-            String reason = it.path("reason").asText("");
-            assertTrue(allowed.contains(reason), "이유가 없거나 모르는 값: " + reason + " / " + it.path("certificateName").asText());
-            assertFalse(it.path("reasonLabel").asText("").isBlank(), "화면용 라벨이 비었다");
-            if ("ANNOUNCEMENT_PENDING".equals(reason)) qnetPending++;
-        }
-        // 이유별 합 = 일정 없음 전체 — 어긋나면 위 요약 숫자와 목록이 따로 논다
-        long sum = 0;
-        for (JsonNode n : body.path("reasonCounts")) sum += n.asLong();
-        assertEquals(body.path("totalElements").asLong(), sum, "이유별 합이 일정 없음 전체와 다르다");
-        assertTrue(qnetPending > 0, "큐넷 공고 전이 하나도 없다 — 분류가 죽었나?");
-    }
-
-    @Test
-    @DisplayName("수기 필수만 골라 본다 — 매니저의 진짜 할 일")
-    void none_rows_filter_by_reason() throws Exception {
-        MvcResult res = mockMvc.perform(get("/api/admin/overview")
-                        .param("status", "NONE").param("reason", "MANUAL").param("size", "2000")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode items = objectMapper.readTree(
-                res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
-        for (JsonNode it : items) {
-            assertEquals("MANUAL", it.path("reason").asText(), "수기 필터에 다른 이유가 섞였다");
-        }
     }
 
     /** 위 요약 막대도 같은 셈법이어야 한다 — 수기 + 공고 전 + 크롤링 예정 = 일정 없음. */
@@ -376,6 +229,190 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
         long without = c.path("withoutSchedule").asLong();
         long sum = c.path("manualNeeded").asLong() + c.path("announcementPending").asLong() + c.path("crawlPlanned").asLong();
         assertEquals(without, sum, "이유별 합이 일정 없음과 다르다");
+    }
+
+    // ── 행동 중심 현황 (2026-09-02 재설계) ──
+    // "일정 있음/없음"으로는 수기 시험의 회차가 지나 다음 회차를 넣어야 하는 상황이 안 보였다.
+    // 서버가 시험마다 행동을 판정한다: 첫 일정 입력 / 다음 회차 입력 / 시행처 확인 / 수집 점검.
+
+    @Test
+    @DisplayName("현황은 할 일·대기·정상·상시 개수와 목록을 준다")
+    void overview_returns_buckets() throws Exception {
+        mockMvc.perform(get("/api/admin/overview")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.bucketCounts").exists())
+                .andExpect(jsonPath("$.actionCounts").exists())
+                .andExpect(jsonPath("$.waitingCounts").exists());
+    }
+
+    /** 할 일 탭의 모든 행에는 행동이 있고, 행동별 합이 할 일 전체와 같다 — 요약과 목록이 따로 놀면 안 된다. */
+    @Test
+    @DisplayName("할 일에는 행동이 붙고 행동별 합이 맞는다")
+    void todo_rows_carry_actions() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("bucket", "TODO").param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode body = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        java.util.Set<String> allowed = java.util.Set.of("FIRST_INPUT", "NEXT_ROUND", "VERIFY", "CHECK_SOURCE");
+        assertTrue(body.path("items").size() > 0, "할 일이 하나도 없다 — 마스터에 수기 시험이 없나?");
+        for (JsonNode it : body.path("items")) {
+            assertEquals("TODO", it.path("bucket").asText());
+            assertTrue(allowed.contains(it.path("action").asText("")), "행동이 없거나 모르는 값: " + it);
+            assertFalse(it.path("actionLabel").asText("").isBlank());
+        }
+        long sum = 0;
+        for (JsonNode n : body.path("actionCounts")) sum += n.asLong();
+        assertEquals(body.path("totalElements").asLong(), sum, "행동별 합이 할 일 전체와 다르다");
+    }
+
+    /** 수기 대상인데 일정이 없으면 '첫 일정 입력' — 매니저가 가장 먼저 볼 것. */
+    @Test
+    @DisplayName("수기 대상 + 일정 없음 = 첫 일정 입력")
+    void manual_without_schedule_is_first_input() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("bucket", "TODO").param("action", "FIRST_INPUT").param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode items = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+        assertTrue(items.size() > 0, "첫 일정 입력이 하나도 없다");
+        for (JsonNode it : items) {
+            assertEquals("FIRST_INPUT", it.path("action").asText());
+            assertEquals("MANUAL", it.path("source").asText(), "수기 대상이 아닌데 첫 입력을 시킨다: " + it.path("certificateName").asText());
+            assertEquals("NONE", it.path("freshness").asText());
+        }
+    }
+
+    /** 대기는 사람이 손댈 게 없는 것 — 행동이 없고, 왜 기다리면 되는지 이유가 붙는다. */
+    @Test
+    @DisplayName("대기에는 행동이 없고 기다리는 이유가 있다")
+    void waiting_rows_are_automatic() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("bucket", "WAITING").param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode items = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+        assertTrue(items.size() > 0, "대기가 하나도 없다 — 큐넷 마스터가 안 실렸나?");
+        for (JsonNode it : items) {
+            assertTrue(it.path("action").isNull(), "대기인데 행동이 있다: " + it.path("certificateName").asText());
+            assertFalse(it.path("waitingLabel").asText("").isBlank(), "왜 기다리면 되는지가 없다");
+            String src = it.path("source").asText();
+            assertTrue(src.equals("AUTO") || src.equals("CRAWL_PLANNED"), "대기인데 출처가 " + src);
+        }
+    }
+
+    /** 정상은 앞으로의 일정이 있는 것 — 사용자에게 D-day 가 간다. */
+    @Test
+    @DisplayName("정상은 앞으로의 일정을 갖는다")
+    void ok_rows_have_upcoming_event() throws Exception {
+        MvcResult res = mockMvc.perform(get("/api/admin/overview")
+                        .param("bucket", "OK").param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk())
+                .andReturn();
+        JsonNode items = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+        for (JsonNode it : items) {
+            assertEquals("UPCOMING", it.path("freshness").asText());
+            assertFalse(it.path("nextLabel").asText("").isBlank(), "정상인데 다음 일정이 없다: " + it.path("certificateName").asText());
+        }
+    }
+
+    /** 상시·예약제는 할 일에 섞이면 영원히 못 끝내는 숙제가 된다. */
+    @Test
+    @DisplayName("상시는 할 일에 없고 상시 탭에 있다")
+    void rolling_is_its_own_bucket() throws Exception {
+        MvcResult todo = mockMvc.perform(get("/api/admin/overview")
+                        .param("bucket", "TODO").param("size", "2000")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk()).andReturn();
+        for (JsonNode it : objectMapper.readTree(todo.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items")) {
+            assertNotEquals("AWS Certified Cloud Practitioner", it.path("certificateName").asText(), "상시가 할 일에 있다");
+        }
+        MvcResult body = mockMvc.perform(get("/api/admin/overview").param("bucket", "ROLLING")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
+                .andExpect(status().isOk()).andReturn();
+        assertTrue(objectMapper.readTree(body.getResponse().getContentAsString(StandardCharsets.UTF_8))
+                .path("bucketCounts").path("ROLLING").asLong(0) >= 20, "상시 표시가 안 붙었다");
+    }
+
+    /**
+     * 연도·회차만 넣고 날짜를 하나도 안 넣은 회차는 일정이 아니다 — 사용자에게 아무것도 못 알려 준다.
+     * 실측(BJT, 2026-09-02)에서 이런 시험이 "다음 회차 입력"에 마지막 회차도 없이 걸렸다. 첫 일정 입력이 맞고,
+     * 사용자 카드도 "일정 미정"이어야 한다. 매니저 화면과 사용자 화면이 같은 기준을 써야 숫자가 맞는다.
+     */
+    @Test
+    @DisplayName("날짜 없는 회차만 있으면 여전히 '첫 일정 입력'이고 사용자에겐 '일정 미정'이다")
+    void undated_round_is_not_a_schedule() throws Exception {
+        String token = bearer(newAdmin());
+        MvcResult first = mockMvc.perform(get("/api/admin/overview")
+                        .param("bucket", "TODO").param("action", "FIRST_INPUT").param("size", "1")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode target = objectMapper.readTree(first.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items").get(0);
+        long certId = target.path("certificateId").asLong();
+        String name = target.path("certificateName").asText();
+
+        // 날짜 없이 연도·회차·구분만 저장
+        mockMvc.perform(post("/api/admin/schedules")
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"certificateId\":" + certId + ",\"year\":2099,\"round\":1,\"examType\":\"WRITTEN\"}"))
+                .andExpect(status().is2xxSuccessful());
+
+        MvcResult after = mockMvc.perform(get("/api/admin/overview")
+                        .param("bucket", "TODO").param("query", name).param("size", "50")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk()).andReturn();
+        JsonNode row = null;
+        for (JsonNode it : objectMapper.readTree(after.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items")) {
+            if (it.path("certificateId").asLong() == certId) row = it;
+        }
+        assertNotNull(row, "날짜 없는 회차를 넣었더니 할 일에서 사라졌다");
+        assertEquals("FIRST_INPUT", row.path("action").asText(), "날짜 없는 회차가 일정으로 세어졌다");
+        assertEquals("NONE", row.path("freshness").asText());
+        assertEquals(1, row.path("scheduleCount").asInt(), "회차 행 자체는 보여야 모달에서 지울 수 있다");
+
+        MvcResult pub = mockMvc.perform(get("/api/certificates/browse").param("query", name).param("size", "50"))
+                .andExpect(status().isOk()).andReturn();
+        for (JsonNode it : objectMapper.readTree(pub.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items")) {
+            if (it.path("id").asLong() == certId) {
+                assertEquals("NONE", it.path("scheduleState").asText(), "사용자 카드가 날짜 없는 회차를 일정으로 안다");
+                assertFalse(it.path("hasSchedule").asBoolean(true));
+            }
+        }
+    }
+
+    /**
+     * 화면 위(채움률)와 아래(할 일)는 같은 API 가 아니다 — 셈법이 다르면 "일정 없음 142 인데 첫 일정 입력 63" 같은
+     * 어긋남이 생긴다(실측 2026-09-02). 수기로 채워야 할 수 = 첫 일정 입력 수, 있음+없음 = 전체 — 이게 깨지면 실패.
+     */
+    @Test
+    @DisplayName("채움률과 할 일이 같은 숫자를 말한다")
+    void coverage_and_todo_agree() throws Exception {
+        String token = bearer(newAdmin());
+        JsonNode cov = objectMapper.readTree(mockMvc.perform(get("/api/admin/data-map")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8)).path("coverage");
+        JsonNode ov = objectMapper.readTree(mockMvc.perform(get("/api/admin/overview")
+                        .param("bucket", "TODO").param("size", "1")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8));
+
+        assertEquals(cov.path("totalExams").asLong(), cov.path("withSchedule").asLong() + cov.path("withoutSchedule").asLong(),
+                "있음 + 없음 이 전체와 다르다");
+        assertEquals(cov.path("manualNeeded").asLong(), ov.path("actionCounts").path("FIRST_INPUT").asLong(0),
+                "채움률의 '수기로 넣어야 하는 수'와 할 일의 '첫 일정 입력' 수가 다르다");
+        assertEquals(cov.path("rolling").asLong(), ov.path("bucketCounts").path("ROLLING").asLong(0),
+                "상시 수가 위아래 다르다");
+        long buckets = 0;
+        for (JsonNode n : ov.path("bucketCounts")) buckets += n.asLong();
+        assertEquals(cov.path("totalExams").asLong() + cov.path("rolling").asLong(), buckets,
+                "네 탭의 합이 공개 시험 수와 다르다");
     }
 
     @Test

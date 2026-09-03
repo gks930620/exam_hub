@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
+import { fmtAt as fmt } from '../lib/format';
 import { useAuth, useRequireLogin } from '../auth';
 import type { DetailResponse } from '../api/types';
 import Icon from '../components/Icon';
@@ -61,6 +62,12 @@ export default function DetailPage() {
         <p className="fineprint" style={{ marginTop: -6, marginBottom: 16 }}>
           등록해 두면 <b>내 시험</b>과 캘린더에 뜨고, 원서접수 시작·마감에 알림을 보내 드립니다.
         </p>
+      )}
+
+      {!d.nextEvent && !d.rolling && d.schedules.length > 0 && (
+        <div className="k-alert k-alert--warn">
+          <b>다음 회차 미정</b> — 등록된 일정은 모두 지났습니다. 등록해 두면 다음 회차가 확인되는 대로 알려 드립니다.
+        </div>
       )}
 
       {d.nextEvent && (
@@ -147,9 +154,4 @@ export default function DetailPage() {
       )}
     </>
   );
-}
-
-function fmt(iso: string | null): string {
-  if (!iso) return '-';
-  return iso.replace('T', ' ').slice(0, 16);
 }

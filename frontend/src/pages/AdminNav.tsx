@@ -12,7 +12,6 @@ import Icon from '../components/Icon';
  */
 const ITEMS = [
   { to: '/admin', end: true, icon: 'list', label: '할 일', hint: '무엇을 채워야 하나' },
-  { to: '/admin/write', end: false, icon: 'pencil', label: '일정 넣기', hint: '직접 입력' },
   { to: '/admin/sources', end: false, icon: 'layers', label: '수집 지도', hint: '뭐가 자동인가' },
   { to: '/admin/lifecycle', end: false, icon: 'clock', label: '변천사', hint: '폐지·개칭' },
 ];

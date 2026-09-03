@@ -306,6 +306,9 @@
   padding: var(--sp-2) var(--sp-4) var(--sp-3);
   background: none; border-top: var(--bw) solid var(--border); border-radius: 0;
 }
+/* "접수 예정 · D-19" 가 두 줄로 꺾이면 배지가 아니다 — 배지는 한 줄, 설명이 접힌다 */
+.exam-card .foot .k-badge { white-space: nowrap; flex: none; }
+.exam-card .foot .when { min-width: 0; }
 
 /* 관심 별 — 동그라미 없이 아이콘만. 평소 옅게, 올리면 인디고, 켜지면 채운 인디고 별 */
 .star {
@@ -347,3 +350,22 @@
 .reason-row { margin-bottom: var(--sp-4); }
 .reason-row .k-segment button b { margin-left: 4px; opacity: .75; }
 .cover-breakdown { display: flex; gap: var(--sp-2); align-items: center; flex-wrap: wrap; margin-top: var(--sp-3); }
+
+/* ── 매니저: 할 일 요약 띠 + 일정 모달 ── */
+.todo-strip {
+  display: flex; align-items: center; gap: var(--sp-5); flex-wrap: wrap;
+  padding: var(--sp-4) var(--sp-5); margin-bottom: var(--sp-4);
+  background: var(--hero-bg); border: var(--bw) solid var(--border); border-radius: var(--r-lg);
+}
+.todo-strip__lead { display: flex; align-items: baseline; gap: var(--sp-2); }
+.todo-strip__num { font-size: var(--t-2xl); font-weight: var(--w-heavy); color: var(--point); letter-spacing: var(--display-tracking); }
+.todo-strip__label { font-size: var(--t-sm); color: var(--muted); font-weight: var(--w-bold); }
+.todo-strip__parts { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.todo-strip__parts .k-chip b { margin-left: 4px; }
+.schedule-modal { max-width: 720px; }
+.schedule-modal__title { font-size: var(--t-lg); margin: 0; }
+.schedule-modal__title .k-muted { font-weight: var(--w-medium); font-size: var(--t-sm); margin-left: 6px; }
+.schedule-modal .k-modal__body { max-height: 70vh; overflow-y: auto; }
+.schedule-modal .k-modal__foot { display: flex; align-items: center; gap: var(--sp-2); }
+.data-table.compact td, .data-table.compact th { padding-top: 6px; padding-bottom: 6px; font-size: var(--t-sm); }
+.rotate45 { transform: rotate(45deg); }
