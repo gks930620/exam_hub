@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth } from '../auth';
 import Icon from '../components/Icon';
+import type { MeResponse } from '../api/types';
 
 // 내 정보 — 닉네임, 알림 받을 곳(이메일·휴대폰), 탈퇴.
 //
@@ -60,7 +61,7 @@ export default function MePage() {
         <div className="page-avatar" aria-hidden="true"><Icon name="user" size={22} /></div>
         <div className="page-header__text">
           <h1>내 정보</h1>
-          <p>{me.provider === 'KAKAO' ? '카카오' : '구글'} 계정으로 로그인했습니다.</p>
+          <p>{providerLabel(me.provider)}</p>
         </div>
       </div>
 
@@ -130,4 +131,16 @@ export default function MePage() {
       </div>
     </>
   );
+}
+
+/**
+ * 로그인 수단을 사실대로 적는다.
+ *
+ * <p>예전엔 "카카오가 아니면 구글"이라 매니저 계정(LOCAL)이 구글로 표시됐다(QA 2026-09-03).
+ * 매니저는 소셜이 아니라 아이디·비밀번호로 들어온다.
+ */
+function providerLabel(provider: MeResponse['provider']): string {
+  if (provider === 'KAKAO') return '카카오 계정으로 로그인했습니다.';
+  if (provider === 'GOOGLE') return '구글 계정으로 로그인했습니다.';
+  return '매니저 계정으로 로그인했습니다.';
 }

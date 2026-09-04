@@ -1,5 +1,6 @@
 package com.test.test.exam.web;
 
+import com.test.test.common.exception.BusinessRuleException;
 import com.test.test.exam.auth.CurrentMember;
 import com.test.test.exam.auth.MemberService;
 import com.test.test.exam.domain.Member;
@@ -106,12 +107,24 @@ public class MeController {
                 member.isNotifyReg(), member.isNotifyExam(), member.isNotifyChange()));
     }
 
-    /** 월간 캘린더 이벤트 */
+    /**
+     * 월간 캘린더 이벤트.
+     *
+     * <p>달을 먼저 검증한다 — 안 하면 {@code LocalDate.of(year, 13, 1)} 이 터져 500 이 난다.
+     * 관심 시험이 없을 때는 그 앞에서 빈 목록으로 빠져나가 안 터졌기 때문에, 데이터가 쌓인
+     * 계정에서만 나는 사고였다(QA 2026-09-03).
+     */
     @GetMapping("/calendar")
     public ResponseEntity<MeDtos.CalendarResponse> calendar(
             @CurrentMember Member member,
             @RequestParam int year,
             @RequestParam int month) {
+        if (month < 1 || month > 12) {
+            throw new BusinessRuleException("month 는 1~12 사이여야 합니다.");
+        }
+        if (year < 2000 || year > 2100) {
+            throw new BusinessRuleException("year 는 2000~2100 사이여야 합니다.");
+        }
         return ResponseEntity.ok(favoriteService.calendar(member, year, month));
     }
 }

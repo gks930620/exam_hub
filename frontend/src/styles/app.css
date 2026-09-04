@@ -31,6 +31,10 @@
   .k-topnav.app-header { flex-wrap: wrap; row-gap: var(--sp-1); height: auto; padding-top: var(--sp-2); padding-bottom: var(--sp-2); }
   .top-nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; gap: var(--sp-4); }
   .top-nav::-webkit-scrollbar { display: none; }
+  /* 탭 줄(할 일·대기·정상·상시)이 390px 에서 21px 넘쳐 페이지가 통째로 가로 스크롤됐다(QA 2026-09-03).
+     넘치는 건 탭 줄 안에서만 넘긴다 — 페이지는 안 움직인다. */
+  .k-tabs { overflow-x: auto; scrollbar-width: none; }
+  .k-tabs::-webkit-scrollbar { display: none; }
 }
 
 /* ── 페이지 머리 ── 좁은 화면(390px)에서 오른쪽 버튼이 잘리지 않게 줄바꿈한다 */

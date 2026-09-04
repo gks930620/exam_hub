@@ -136,7 +136,8 @@ export interface MeResponse {
   profileImage: string | null;
   /** 알림톡 수신 번호(숫자만). 없으면 카톡 알림을 못 받고 이메일로만 간다 */
   phoneNumber: string | null;
-  provider: 'KAKAO' | 'GOOGLE';
+  /** 소셜 둘 + 매니저(LOCAL). 매니저는 소셜이 아니라 아이디·비밀번호로 들어온다 */
+  provider: 'KAKAO' | 'GOOGLE' | 'LOCAL';
   role: 'USER' | 'ADMIN';
 }
 

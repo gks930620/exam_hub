@@ -276,6 +276,29 @@ class MeApiIntegrationTest extends ApiIntegrationTestSupport {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * 달이 1~12 밖이면 <b>400</b>이다. 500 이 아니다.
+     *
+     * <p>QA 에서 잡혔다(2026-09-03): 관심 시험이 있는 계정으로 {@code month=13} 을 부르면
+     * {@code LocalDate.of(year, 13, 1)} 이 터져 500 이 났다. 관심이 없으면 앞에서 빈 목록으로
+     * 빠져나가 안 터졌기 때문에, 데이터가 있는 계정에서만 나는 사고였다.
+     */
+    @Test
+    @DisplayName("캘린더: 달이 1~12 밖이면 400 (관심 시험이 있어도)")
+    void calendar_rejects_month_out_of_range() throws Exception {
+        Member m = newMember();
+        Certificate cert = newCertificate("캘린더경계시험");
+        newSchedule(cert, null, null, TimeUtil.today().plusDays(3), TimeUtil.today().plusDays(3));
+        favoriteCard(m, cert);   // 관심이 있어야 달 계산까지 내려간다 — 없으면 앞에서 빈 목록으로 빠진다
+
+        for (String month : new String[]{"0", "13", "-1"}) {
+            mockMvc.perform(get("/api/me/calendar")
+                            .header(HttpHeaders.AUTHORIZATION, bearer(m))
+                            .param("year", "2026").param("month", month))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
     // ===== 내 시험 카드의 일정 상태 =====
     //
     // 프런트와 합의한 계약: 카드에 scheduleState(ROLLING|UPCOMING|PAST_ONLY|NONE)·lastExamDate 가 있고,

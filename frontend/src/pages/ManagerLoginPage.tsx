@@ -49,13 +49,13 @@ export default function ManagerLoginPage() {
       <div className="login-card">
         <h1>매니저 로그인</h1>
         <p className="fineprint" style={{ margin: '6px 0 22px' }}>
-          운영자 전용입니다. 일반 이용자는 <Link to="/login">이쪽</Link>에서 카카오로 로그인하세요.
+          운영자 전용입니다. 일반 이용자는 <Link to="/login">이쪽</Link>에서 로그인하세요.
         </p>
 
+        {/* 로그인 전에 누구나 여는 화면이라 서버 설정 방법은 적지 않는다 — 절차는 운영 문서에 있다(QA 2026-09-03) */}
         {configured === false && (
           <div className="k-alert k-alert--warn" style={{ marginBottom: 16 }}>
-            <b>매니저 계정이 아직 없습니다.</b> 서버의 <code>.env</code> 에
-            <code> MANAGER_USERNAME</code> · <code>MANAGER_PASSWORD</code> 를 넣고 재기동하세요.
+            <b>매니저 계정이 아직 없습니다.</b> 서버 담당자에게 문의하세요.
           </div>
         )}
         {/* 5회 실패로 잠기면(429) 서버 문장을 그대로 보여준다 — 몇 분 뒤 다시 하라는 말까지 서버가 준다 */}
@@ -79,8 +79,7 @@ export default function ManagerLoginPage() {
         </form>
 
         <p className="fineprint">
-          비밀번호를 잊었으면 서버 <code>.env</code> 의 <code>MANAGER_PASSWORD</code> 를 바꾸고
-          재기동하면 그 값으로 갱신됩니다.
+          비밀번호를 잊었으면 서버 담당자에게 재설정을 요청하세요.
         </p>
       </div>
     </div>
