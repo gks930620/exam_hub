@@ -44,7 +44,9 @@ public class TepsScheduleSource extends AbstractHtmlScheduleSource {
     static final String CATEGORY = "어학-영어";
     static final String URL = "https://www.teps.or.kr/";
 
-    private static final Pattern CELL = Pattern.compile("(?is)<t[dh][^>]*>(.*?)</t[dh]>");
+        /** 닫는 {@code </td>} 가 없어도 읽는다 — 시행처 페이지가 실제로 그렇게 깨져 있었다(KCA, 2026-09-04). */
+    private static final Pattern CELL =
+            Pattern.compile("(?is)<t[dh][^>]*>(.*?)(?=</t[dh]>|<t[dh][\\s>]|</tr>|$)");
     private static final Pattern ROUND = Pattern.compile("제\\s*(\\d+)\\s*회");
     private static final Pattern RANGE = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})\\s*~\\s*(\\d{4})-(\\d{2})-(\\d{2})");
     private static final Pattern DATE = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})");

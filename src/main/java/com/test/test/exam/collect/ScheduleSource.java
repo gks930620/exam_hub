@@ -54,8 +54,11 @@ public interface ScheduleSource {
 
     /**
      * 종목코드를 지정한 <b>부분 조회</b>가 되는가. 큐넷 API 는 jmCd 별 호출이라 된다.
-     * 스크래퍼는 페이지 하나를 통째로 읽는 구조라 "몇 종목만"이 없다 — 지원하지 않는 소스는
-     * 재수집·임박 재확인에서 부르지 않는다(안 그러면 종목 하나 다시 받자고 8곳을 전량 긁는다).
+     * 스크래퍼는 페이지 하나를 통째로 읽는 구조라 "몇 종목만"이 없다.
+     *
+     * <p>이 값은 <b>부를지 말지</b>가 아니라 <b>어떻게 부를지</b>를 가른다. 지원하지 않는 소스도
+     * 담당 기관이 걸리면 부른다 — 사이트를 한 번 읽고 걸러 주면 되니까. 부르는 조건은
+     * {@code CollectService.runForCodes} 에 있다.
      */
     default boolean supportsPartialFetch() {
         return false;
@@ -63,10 +66,16 @@ public interface ScheduleSource {
 
     /**
      * 접수 임박 종목만 재확인(17:00 배치)·매니저 재수집용. 종목코드 필터.
-     * {@link #supportsPartialFetch()} 가 true 인 소스만 구현한다.
+     *
+     * <p>기본 구현은 <b>전량을 읽고 코드로 거른다</b> — 스크래퍼가 이 경로로 들어온다.
+     * 예전엔 여기서 예외를 던졌는데, 그러면 매니저가 KCA 종목에 "다시 받아오기"를 눌렀을 때
+     * 스크래퍼가 예외로 죽고 아무 일도 안 일어났다(2026-09-04 실측). 큐넷처럼 종목별 호출이
+     * 되는 소스만 이 메서드를 재정의해 필요한 것만 부른다.
      */
     default List<CollectedSchedule> fetchByCertificateCodes(List<String> sourceCodes) {
-        throw new UnsupportedOperationException(sourceId() + " 는 종목 지정 수집을 지원하지 않는다");
+        return fetchAll().stream()
+                .filter(c -> sourceCodes.contains(c.sourceCode()))
+                .toList();
     }
 
     /**

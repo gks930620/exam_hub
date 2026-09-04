@@ -75,7 +75,8 @@ class CollectServiceOrderingTest {
                 Mockito.mock(DiffService.class),
                 Mockito.mock(NotificationScheduleService.class),
                 Mockito.mock(CrawlLogRepository.class),
-                examScheduleRepository, certificateRepository);
+                examScheduleRepository, certificateRepository,
+                Mockito.mock(com.test.test.exam.repository.NotificationScheduleRepository.class));
     }
 
     @Test
@@ -87,11 +88,54 @@ class CollectServiceOrderingTest {
     }
 
     @Test
-    @DisplayName("종목 지정 재수집은 부분 조회를 지원하는 소스만 부른다 — 스크래퍼 8곳을 전량 긁지 않는다")
-    void collect_by_codes_calls_only_partial_fetch_sources() {
-        service.collectByCodes(List.of("1320"));
+    @DisplayName("종목 지정 재수집: 그 종목과 무관한 스크래퍼는 안 부른다")
+    void collect_by_codes_skips_unrelated_scrapers() {
+        service.collectByCodes(List.of("1320"));   // 담당 기관이 '한국산업인력공단'인 큐넷 종목
 
         assertEquals(List.of("QNET:codes"), calls);
+    }
+
+    /**
+     * 스크래퍼가 담당하는 종목을 재수집하면 <b>그 스크래퍼가 돌아야 한다.</b>
+     *
+     * <p>부분 조회를 지원하는 소스(큐넷)만 부르게 했더니, 매니저가 KCA 종목(정보보안기사)에
+     * "다시 받아오기"를 눌러도 큐넷만 돌고 아무 일도 안 일어났다(2026-09-04 실측).
+     * 스크래퍼는 사이트를 통째로 읽고 걸러 주므로, 담당 기관이 걸리면 불러야 한다.
+     */
+    @Test
+    @DisplayName("종목 지정 재수집: 그 기관을 담당하는 스크래퍼는 부른다")
+    void collect_by_codes_runs_the_scraper_that_covers_the_agency() {
+        CertificateRepository repo = Mockito.mock(CertificateRepository.class);
+        Mockito.when(repo.findBySourceCodeIn(anyList())).thenReturn(List.of(
+                Certificate.builder().name("정보보안기사").slug("s").series(Series.ETC)
+                        .agency("한국방송통신전파진흥원").sourceCode("KCA-SEC").build()));
+        List<ScheduleSource> withKca = new ArrayList<>(sources);
+        withKca.add(covering("KCA", 50, "한국방송통신전파진흥원"));
+        service = new CollectService(withKca, Mockito.mock(DiffService.class),
+                Mockito.mock(NotificationScheduleService.class), Mockito.mock(CrawlLogRepository.class),
+                mockImminentRepo(), repo,
+                Mockito.mock(com.test.test.exam.repository.NotificationScheduleRepository.class));
+
+        service.collectByCodes(List.of("KCA-SEC"));
+
+        // 큐넷은 부분 조회를 지원해 늘 불리지만, 4자리 코드가 없으면 스스로 빈 목록을 돌려준다
+        // (QnetApiScheduleSource.fetchByCertificateCodes) — 실제 API 호출은 없다.
+        assertEquals(List.of("KCA:codes", "QNET:codes"), calls,
+                "담당 스크래퍼가 안 돌면 매니저의 '다시 받아오기'가 아무 일도 안 한다");
+    }
+
+    /** 담당 기관을 밝히는 가짜 스크래퍼(부분 조회는 지원하지 않는다). */
+    private ScheduleSource covering(String id, int priority, String agency) {
+        ScheduleSource base = fake(id, priority, false, false, true, false);
+        return new ScheduleSource() {
+            @Override public String sourceId() { return base.sourceId(); }
+            @Override public int priority() { return base.priority(); }
+            @Override public java.util.Set<String> coveredAgencies() { return java.util.Set.of(agency); }
+            @Override public List<CollectedSchedule> fetchAll() { return base.fetchAll(); }
+            @Override public List<CollectedSchedule> fetchByCertificateCodes(List<String> codes) {
+                return base.fetchByCertificateCodes(codes);
+            }
+        };
     }
 
     @Test
@@ -103,7 +147,8 @@ class CollectServiceOrderingTest {
         service = new CollectService(withExploding,
                 Mockito.mock(DiffService.class), Mockito.mock(NotificationScheduleService.class),
                 Mockito.mock(CrawlLogRepository.class),
-                mockImminentRepo(), mockCertRepo());
+                mockImminentRepo(), mockCertRepo(),
+                Mockito.mock(com.test.test.exam.repository.NotificationScheduleRepository.class));
 
         service.collectImminent();
 

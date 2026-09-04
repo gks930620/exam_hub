@@ -75,7 +75,16 @@ public class KcaScheduleSource extends AbstractHtmlScheduleSource {
 
     private static final Pattern TABLE = Pattern.compile("<table[\\s\\S]*?</table>");
     private static final Pattern ROW = Pattern.compile("<tr[\\s\\S]*?</tr>");
-    private static final Pattern CELL = Pattern.compile("<t[dh]([^>]*)>([\\s\\S]*?)</t[dh]>");
+    /**
+     * 칸 하나. <b>닫는 태그가 없어도 읽는다</b> — 다음 칸이 열리거나 행이 끝나면 거기까지가 그 칸이다.
+     *
+     * <p>실제 페이지가 그렇게 깨져 있다(2026-09-04 확인): 이어지는 행의 마지막 비고 칸이
+     * {@code <td class="board_l"span>통신설비기능장<br>정보보안 분야…} 로 끝나고 {@code </td>} 가 없다.
+     * {@code </td>} 를 요구하면 그 칸이 통째로 사라져 <b>분야를 모르는 행</b>이 되고, 제1·4회의
+     * 정보보안·정보통신·무선설비·방송통신이 한 건도 안 들어왔다. 그 빈자리를 시드의 추정치가 메웠다.
+     */
+    private static final Pattern CELL =
+            Pattern.compile("<t[dh]([^>]*)>([\\s\\S]*?)(?=</t[dh]>|<t[dh][\\s>]|</tr>|$)");
     private static final Pattern ROWSPAN = Pattern.compile("rowspan=[\"']?([0-9]+)", Pattern.CASE_INSENSITIVE);
     private static final Pattern TAG = Pattern.compile("<[^>]+>");
     private static final Pattern YEAR = Pattern.compile("(20[0-9]{2})\\s*년");

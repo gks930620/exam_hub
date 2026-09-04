@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,9 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
     Optional<Certificate> findBySlug(String slug);
 
     Optional<Certificate> findBySourceCode(String sourceCode);
+
+    /** 재수집 대상의 시행기관을 알아내려고 쓴다 — 그 기관을 담당하는 스크래퍼만 부르기 위해서다. */
+    List<Certificate> findBySourceCodeIn(Collection<String> sourceCodes);
 
     /**
      * 이름으로 찾기(공백 무시). 수집이 <b>같은 시험을 하나 더 만드는 것</b>을 막는 마지막 방어선이다.

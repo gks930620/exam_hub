@@ -31,6 +31,19 @@ public final class AgencyMatcher {
         return false;
     }
 
+    /** {@code agencies} 중 하나라도 {@code candidates} 와 같은 기관인가. */
+    public static boolean matchesAny(Collection<String> agencies, Collection<String> candidates) {
+        if (agencies == null || candidates == null || candidates.isEmpty()) {
+            return false;
+        }
+        for (String agency : agencies) {
+            if (matches(agency, candidates)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** 괄호 접미사·공백 제거, 대소문자 무시. */
     static String normalize(String raw) {
         if (raw == null) {

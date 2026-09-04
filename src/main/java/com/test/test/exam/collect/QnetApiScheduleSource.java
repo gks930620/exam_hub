@@ -152,6 +152,11 @@ public class QnetApiScheduleSource implements ScheduleSource {
 
     @Override
     public List<CollectedSchedule> fetchByCertificateCodes(List<String> sourceCodes) {
+        // 큐넷 종목코드(4자리)가 하나도 없으면 종목 목록조차 부르지 않는다 —
+        // 매니저가 KCA 종목 하나를 다시 받을 때 큐넷 API 호출을 한 번 낭비하던 것(2026-09-04)
+        if (sourceCodes.stream().noneMatch(c -> c != null && c.matches("[0-9]{4}"))) {
+            return List.of();
+        }
         int year = implYear > 0 ? implYear : TimeUtil.today().getYear();
         List<CollectedSchedule> out = new ArrayList<>();
         for (JmItem item : fetchItemListWithRetry()) {

@@ -65,7 +65,9 @@ public class DataqScheduleSource extends AbstractHtmlScheduleSource {
 
     private static final Pattern TABLE = Pattern.compile("<table[\\s\\S]*?</table>");
     private static final Pattern ROW = Pattern.compile("<tr[\\s\\S]*?</tr>");
-    private static final Pattern CELL = Pattern.compile("<t[dh][^>]*>([\\s\\S]*?)</t[dh]>");
+    /** 닫는 {@code </td>} 가 없어도 읽는다 — 시행처 페이지가 실제로 그렇게 깨져 있었다(KCA, 2026-09-04). */
+    private static final Pattern CELL =
+            Pattern.compile("<t[dh][^>]*>([\\s\\S]*?)(?=</t[dh]>|<t[dh][\\s>]|</tr>|$)");
     private static final Pattern TAG = Pattern.compile("<[^>]+>");
 
     /** 뒤에서부터 고정으로 붙는 칸 수: 구분·접수·수험표·시험일·사전점수·발표·서류 */
