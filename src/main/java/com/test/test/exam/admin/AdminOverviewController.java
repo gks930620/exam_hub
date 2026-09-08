@@ -216,7 +216,10 @@ public class AdminOverviewController {
                 .orElse(null);
         LocalDate lastDate = last == null ? null : last.latestKnownDate();
         String freshness = dated.isEmpty() ? "NONE" : next.isPresent() ? "UPCOMING" : "PAST_ONLY";
-        Integer daysSince = lastDate == null ? null : (int) ChronoUnit.DAYS.between(lastDate, today);
+        // 마지막 회차가 미래일 수 있다(접수 마감만 있고 시작이 없는 행처럼 D-day 후보가 안 되는 경우).
+        // 그때 "-45일 지남" 같은 문구가 나오고 정렬 밴드까지 넘어가므로 0 아래로는 내리지 않는다.
+        Integer daysSince = lastDate == null ? null
+                : Math.max(0, (int) ChronoUnit.DAYS.between(lastDate, today));
 
         Action act = null;
         Waiting waiting = null;

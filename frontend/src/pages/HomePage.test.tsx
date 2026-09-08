@@ -18,10 +18,31 @@ function card(over: Partial<FavoriteCard>): FavoriteCard {
   return {
     certificateId: 1, name: '정보처리기사', badge: 'REG_UPCOMING', badgeLabel: '접수 예정',
     eventLabel: '1회 필기 접수 시작', eventAt: '2026-09-10T10:00', dday: 5,
-    scheduleState: 'UPCOMING', lastExamDate: null,
+    scheduleState: 'UPCOMING', lastExamDate: null, hiddenReason: null,
     ...over,
   };
 }
+
+/**
+ * 폐지·개칭된 시험은 카드가 남는다(사라지면 해제할 길이 없다). 그때 "일정이 확인되면 알려 드립니다"는
+ * 지킬 수 없는 약속이라 사유를 그대로 말해야 한다 — 서버가 hiddenReason 을 주는데 화면이 버리고 있었다(2026-09-04).
+ */
+describe('내 시험 — 폐지·개칭된 관심 시험', () => {
+  it('오지 않을 일정을 약속하지 않고 사유를 보여준다', async () => {
+    vi.spyOn(examApi, 'favorites').mockResolvedValue({
+      items: [card({
+        certificateId: 9, name: '옛이름기사', badge: 'NONE', badgeLabel: '일정 없음',
+        eventLabel: '', eventAt: null, dday: null, scheduleState: 'NONE',
+        hiddenReason: "'새이름기사'(으)로 이름이 바뀌었습니다. 새 이름으로 다시 등록해 주세요.",
+      })],
+    });
+
+    render(<MemoryRouter><HomePage /></MemoryRouter>);
+
+    expect(await screen.findByText(/이름이 바뀌었습니다/)).toBeTruthy();
+    expect(screen.queryByText(/일정이 확인되면 알려 드립니다/)).toBeNull();
+  });
+});
 
 /** 일정이 없는 카드 — 서버는 dday/eventAt 을 null 로 준다. */
 function noSchedule(over: Partial<FavoriteCard>): FavoriteCard {

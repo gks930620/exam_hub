@@ -63,11 +63,12 @@ public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long
     @Query("SELECT MAX(s.collectedAt) FROM ExamSchedule s WHERE s.provenance = :provenance")
     LocalDateTime findLatestCollectedAt(@Param("provenance") ScheduleProvenance provenance);
 
-    /** 지금 접수 중인 시험 수 — 첫 화면 지표. 폐지·개칭은 뺀다. */
+    /** 지금 접수 중인 시험 수 — 첫 화면 지표. 폐지·개칭과 상시는 뺀다(같은 줄의 다른 숫자와 모집단을 맞춘다). */
     @Query("""
             SELECT COUNT(DISTINCT s.certificate.id) FROM ExamSchedule s
             WHERE s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
               AND s.regStartAt <= :now AND s.regEndAt >= :now
+              AND s.certificate.rollingAdmission = false
               AND s.certificate.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
             """)
     long countCertificatesWithOpenRegistration(@Param("now") LocalDateTime now);
@@ -77,6 +78,7 @@ public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long
             SELECT COUNT(DISTINCT s.certificate.id) FROM ExamSchedule s
             WHERE s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
               AND s.regStartAt > :from AND s.regStartAt <= :to
+              AND s.certificate.rollingAdmission = false
               AND s.certificate.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
             """)
     long countCertificatesWithRegistrationOpening(@Param("from") LocalDateTime from,

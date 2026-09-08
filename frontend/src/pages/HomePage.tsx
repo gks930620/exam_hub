@@ -66,7 +66,10 @@ export default function HomePage() {
         ) : (
           <p>
             <strong>다가오는 일정 없음</strong> — 등록한 시험에 아직 다가오는 접수·시험 일정이 없습니다.
-            일정이 확인되면 알려 드립니다.
+            {/* 등록한 게 전부 폐지·개칭된 시험이면 오지 않을 일정을 약속하지 않는다 */}
+            {data.items.some((c) => !c.hiddenReason)
+              ? ' 일정이 확인되면 알려 드립니다.'
+              : ' 등록한 시험이 모두 폐지·개칭되었습니다. 새 이름으로 다시 등록해 주세요.'}
           </p>
         )}
         <div className="hero-actions">
@@ -116,8 +119,16 @@ function ExamCard({ card }: { card: FavoriteCard }) {
         )}
       </div>
       <div className="foot">
-        <CardStatus state={card.scheduleState} badge={card.badge} badgeFallback={card.badgeLabel}
-                    label={card.eventLabel} at={card.eventAt} dday={card.dday} lastExamDate={card.lastExamDate} />
+        {/* 폐지·개칭된 시험은 사유를 그대로 말한다 — "일정이 확인되면 알려 드립니다"는 지킬 수 없는 약속이다 */}
+        {card.hiddenReason ? (
+          <>
+            <span className="k-badge k-badge--warn">더 이상 없음</span>
+            <span className="when">{card.hiddenReason}</span>
+          </>
+        ) : (
+          <CardStatus state={card.scheduleState} badge={card.badge} badgeFallback={card.badgeLabel}
+                      label={card.eventLabel} at={card.eventAt} dday={card.dday} lastExamDate={card.lastExamDate} />
+        )}
       </div>
     </Link>
   );

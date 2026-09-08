@@ -224,7 +224,10 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
 }
 
 /** 마지막 회차에서 이어지는 다음 회차를 미리 채운다. */
-function nextRound(list: AdminScheduleRow[]): typeof EMPTY {
+function nextRound(rows: AdminScheduleRow[]): typeof EMPTY {
+  // 취소한 회차는 "어디까지 넣었나"의 기준이 아니다 — 그걸 세면 다음 회차 번호를 건너뛰고,
+  // 같은 번호를 제안하면 취소한 회차를 되살린다(2026-09-04).
+  const list = rows.filter((r) => r.status !== 'CANCELED');
   if (list.length === 0) return { ...EMPTY };
   const last = [...list].sort((a, b) => (a.year - b.year) || (a.round - b.round))[list.length - 1];
   const thisYear = new Date().getFullYear();

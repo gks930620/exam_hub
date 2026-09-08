@@ -154,7 +154,8 @@ public class CollectService {
                 .toList();
     }
 
-    private void runSource(ScheduleSource source, List<CollectedSchedule> records) {
+    private void runSource(ScheduleSource source, List<CollectedSchedule> input) {
+        List<CollectedSchedule> records = withoutSeedGuesses(source, input);
         CrawlLog crawlLog = CrawlLog.start(source.sourceId());
         int neu = 0, updated = 0, skipped = 0, pending = 0;
         Set<Long> touched = new java.util.LinkedHashSet<>();
@@ -193,6 +194,45 @@ public class CollectService {
         } catch (Exception e) {
             handleFailure(source, crawlLog, e);
         }
+    }
+
+    /**
+     * <b>파일 시드의 추정치는 살아 있는 스크래퍼가 맡은 기관에 넣지 않는다.</b>
+     *
+     * <p>안 그러면 정리와 시드가 매일 싸운다. 실제로 그랬다(2026-09-04): 재수집이 TOEIC·TEPS 의
+     * 지어낸 회차를 지웠는데 다음 기동에 시드가 그대로 다시 넣어 "시행처 확인"이 40 에서 42 로 되돌아갔다.
+     * 시드는 <b>아무도 안 긁는 시험</b>의 임시 데이터다.
+     *
+     * <p>거르는 건 추정치뿐이다 — 스냅샷이 담고 있는 실수집 값(SCRAPED·API)은 그대로 얹는다.
+     * 그게 없으면 새 DB 로 시작한 날 스크래퍼가 돌기 전까지 그 시험들이 통째로 비어 보인다.
+     */
+    private List<CollectedSchedule> withoutSeedGuesses(ScheduleSource source, List<CollectedSchedule> records) {
+        if (source.usesNetwork() || !source.coveredAgencies().isEmpty() || records.isEmpty()) {
+            return records;   // 살아 있는 소스가 자기 기관에 넣는 건 당연히 그대로
+        }
+        Set<String> live = sources.stream()
+                .flatMap(s -> s.coveredAgencies().stream())
+                .collect(Collectors.toSet());
+        // 상시로 표시된 시험엔 회차가 없다. 시드가 매 기동 넣고 RollingAdmissionInitializer 가 지우는
+        // 헛일을 막는다(2026-09-04 실측 6건).
+        Set<String> rolling = certificateRepository
+                .findBySourceCodeIn(records.stream().map(CollectedSchedule::sourceCode).distinct().toList()).stream()
+                .filter(Certificate::isRollingAdmission)
+                .map(Certificate::getSourceCode)
+                .collect(Collectors.toSet());
+        if (live.isEmpty() && rolling.isEmpty()) {
+            return records;
+        }
+        List<CollectedSchedule> kept = records.stream()
+                .filter(r -> !rolling.contains(r.sourceCode()))
+                .filter(r -> r.provenance() != ScheduleProvenance.APPROX
+                        || !AgencyMatcher.matches(r.agency(), live))
+                .toList();
+        if (kept.size() < records.size()) {
+            log.info("[Collect] source={} {}건은 넣지 않는다 (스크래퍼가 맡은 기관의 추정치 또는 상시 시험)",
+                    source.sourceId(), records.size() - kept.size());
+        }
+        return kept;
     }
 
     /**

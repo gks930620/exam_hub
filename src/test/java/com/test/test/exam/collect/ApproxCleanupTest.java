@@ -132,6 +132,46 @@ class ApproxCleanupTest {
         Mockito.verify(schedules, Mockito.never()).delete(Mockito.any());
     }
 
+    /**
+     * <b>파일 시드는 살아 있는 스크래퍼가 맡은 기관에 추정치를 넣지 않는다.</b>
+     *
+     * <p>안 그러면 정리와 시드가 매일 싸운다. 실제로 그랬다(2026-09-04): 재수집이 TOEIC·TEPS 의
+     * 가짜 회차를 지웠는데, 다음 기동에 시드가 그대로 다시 넣어 "시행처 확인" 40 → 42 로 되돌아갔다.
+     * 시드는 <b>아무도 안 긁는 시험</b>의 임시 데이터여야 한다.
+     */
+    @Test
+    @DisplayName("파일 시드의 추정치는 스크래퍼가 맡은 기관이면 안 넣는다")
+    void file_seed_skips_agencies_a_live_source_covers() {
+        CollectedSchedule ybmApprox = new CollectedSchedule("TOEIC", "TOEIC 토익", Series.ETC, "YBM", "어학-영어",
+                2026, 202610, ExamType.WRITTEN, null, null, LocalDate.of(2026, 10, 25), null, null,
+                "https://exam.toeic.co.kr/", ScheduleProvenance.APPROX);
+        CollectedSchedule ownApprox = new CollectedSchedule("GOSI-N9", "국가직 9급", Series.ETC, "인사혁신처", "공무원",
+                2026, 1, ExamType.WRITTEN, null, null, LocalDate.of(2026, 4, 5), null, null,
+                "https://www.gosi.kr/", ScheduleProvenance.APPROX);
+
+        ScheduleSource seed = new ScheduleSource() {
+            @Override public String sourceId() { return "SEED_NONQNET"; }
+            @Override public int priority() { return 0; }
+            @Override public boolean usesNetwork() { return false; }
+            @Override public List<CollectedSchedule> fetchAll() { return List.of(ybmApprox, ownApprox); }
+        };
+        ScheduleSource toeic = new ScheduleSource() {
+            @Override public String sourceId() { return "TOEIC_WEB"; }
+            @Override public int priority() { return 50; }
+            @Override public java.util.Set<String> coveredAgencies() { return java.util.Set.of("YBM"); }
+            @Override public List<CollectedSchedule> fetchAll() { return List.of(); }
+        };
+        Mockito.when(schedules.findByCertificateIdInAndStatus(Mockito.anyList(), Mockito.any())).thenReturn(List.of());
+        CollectService service = new CollectService(List.of(seed, toeic), diff,
+                Mockito.mock(NotificationScheduleService.class), Mockito.mock(CrawlLogRepository.class),
+                schedules, Mockito.mock(CertificateRepository.class), notifications);
+
+        service.collectWithoutNetwork();
+
+        Mockito.verify(diff, Mockito.never()).upsert(ybmApprox);
+        Mockito.verify(diff).upsert(ownApprox);
+    }
+
     /** 그 시험의 일정을 하나도 못 물어 온 소스는 아무것도 못 지운다 — 사이트가 빈 날의 사고 방지. */
     @Test
     @DisplayName("소스가 그 시험에 대해 0건이면 추정치를 건드리지 않는다")

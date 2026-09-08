@@ -103,6 +103,11 @@ export interface FavoriteCard {
   scheduleState: ScheduleState;
   /** PAST_ONLY 일 때 "마지막 시험 {날짜}" 로 보여준다 */
   lastExamDate: string | null;
+  /**
+   * 폐지·개칭으로 숨겨진 시험이면 그 사유(예: "폐지된 시험입니다", "이름이 바뀌었습니다 → 새 이름").
+   * 카드는 남는다 — 사라지면 해제할 길이 없다. 이때 "일정이 확인되면 알려 드립니다"는 거짓말이다.
+   */
+  hiddenReason: string | null;
 }
 
 export interface FavoriteListResponse {

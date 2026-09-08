@@ -5,6 +5,7 @@ import com.test.test.exam.domain.ExamSchedule;
 import com.test.test.exam.domain.NotificationEventType;
 import com.test.test.exam.domain.NotificationSchedule;
 import com.test.test.exam.domain.NotificationScheduleStatus;
+import com.test.test.exam.repository.NotificationLogRepository;
 import com.test.test.exam.repository.NotificationScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 public class NotificationScheduleService {
 
     private final NotificationScheduleRepository repository;
+    private final NotificationLogRepository logRepository;
 
     /**
      * 회차 일정 1건의 알림 예약 재계산.
@@ -81,7 +83,12 @@ public class NotificationScheduleService {
     private void upsertChangeAlert(ExamSchedule s, LocalDateTime now) {
         repository.findByExamScheduleAndEventType(s, NotificationEventType.SCHEDULE_CHANGED)
                 .ifPresentOrElse(
-                        existing -> existing.reschedule(now, NotificationScheduleStatus.PENDING),
+                        existing -> {
+                            // 지난 사건의 발송 이력을 비운다 — 안 그러면 멱등키(회원, 예약)에 걸려
+                            // 첫 변경을 받은 사람은 두 번째 변경·취소를 영영 못 받는다(2026-09-04).
+                            logRepository.deleteByNotificationScheduleId(existing.getId());
+                            existing.reschedule(now, NotificationScheduleStatus.PENDING);
+                        },
                         () -> repository.save(NotificationSchedule.builder()
                                 .examSchedule(s)
                                 .eventType(NotificationEventType.SCHEDULE_CHANGED)

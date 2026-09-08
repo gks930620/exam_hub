@@ -46,7 +46,14 @@ import java.util.Optional;
 public class AdminScheduleController {
 
     /** 매니저 목록에 보이는 상태 — 보류(PENDING_REVIEW)는 매니저가 확인해야 풀리므로 반드시 보여야 한다. */
-    private static final List<ScheduleStatus> MANAGER_VISIBLE = List.of(ScheduleStatus.ACTIVE, ScheduleStatus.PENDING_REVIEW);
+    /**
+     * 매니저가 보는 회차 — <b>취소한 것도 보인다.</b>
+     *
+     * <p>안 보이면 취소한 회차를 매니저가 잊고 같은 번호로 다시 넣어 되살린다. 사용자 상세에는
+     * "취소됨"으로 남아 있는데 매니저 화면에서만 사라져 서로 다른 사실을 보게 된다(2026-09-04).
+     */
+    private static final List<ScheduleStatus> MANAGER_VISIBLE =
+            List.of(ScheduleStatus.ACTIVE, ScheduleStatus.PENDING_REVIEW, ScheduleStatus.CANCELED);
 
     private final CertificateRepository certificateRepository;
     private final ExamScheduleRepository examScheduleRepository;

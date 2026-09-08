@@ -173,8 +173,8 @@ public record CommunityDTO(Long id, String title) {}
 
 ## 7. 프론트엔드 (React, 해당 모듈에 한함)
 
-- API 호출은 공용 클라이언트(`lib/http.js`)로 일원화, 상대경로 + 쿠키 인증(`credentials: 'include'`).
-- 토큰을 localStorage에 저장하지 않는다(쿠키 사용).
+- API 호출은 공용 클라이언트로 일원화, 상대경로. **이 프로젝트는 `frontend/src/api/client.ts`**(쿠키가 아니라 `Authorization: Bearer`).
+- **토큰 저장은 이 프로젝트의 예외다** — 소셜 로그인 + JWT 를 `localStorage` 에 둔다(설계 `08_계정과_커뮤니티.md` §3). 쿠키 세션으로 바꾸려면 CSRF 를 함께 켜야 하므로 senior-dev 결정 사항이다. 여기 적힌 "쿠키 인증"은 일반 지침일 뿐 이 저장소의 현행 규칙이 아니다.
 - `console.log` 잔재 남기지 않는다.
 - 반복되는 fetch/loading/error 패턴은 커스텀 훅으로, 중복 컴포넌트는 통합.
 

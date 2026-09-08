@@ -134,7 +134,11 @@ public class DiffService {
         existing.applyFrom(rec.regStartAt(), rec.regEndAt(),
                 rec.examStartDate(), rec.examEndDate(), rec.resultDate(),
                 rec.sourceUrl(), newHash,
-                bigMove ? ScheduleStatus.PENDING_REVIEW : ScheduleStatus.ACTIVE,
+                // 이미 보류 중이면 그대로 둔다 — 해제는 매니저가 저장할 때만.
+                // 안 그러면 다음 수집이 발표일 하나만 바꿔도(bigMove=false) 30일 옮겨진 날짜가
+                // 사람 확인 없이 사용자에게 공개된다(2026-09-04).
+                bigMove || existing.getStatus() == ScheduleStatus.PENDING_REVIEW
+                        ? ScheduleStatus.PENDING_REVIEW : ScheduleStatus.ACTIVE,
                 now);
         examScheduleRepository.save(existing);
 

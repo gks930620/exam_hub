@@ -3,7 +3,11 @@ package com.test.test.exam.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.test.exam.domain.Certificate;
+import com.test.test.exam.domain.ExamSchedule;
+import com.test.test.exam.domain.ScheduleStatus;
 import com.test.test.exam.repository.CertificateRepository;
+import com.test.test.exam.repository.ExamScheduleRepository;
+import com.test.test.exam.repository.NotificationScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,7 +45,12 @@ public class RollingAdmissionInitializer {
 
     private static final String RESOURCE = "seed/rolling_exams.json";
 
+    private static final java.util.List<ScheduleStatus> TO_DROP =
+            java.util.List.of(ScheduleStatus.ACTIVE, ScheduleStatus.PENDING_REVIEW);
+
     private final CertificateRepository certificateRepository;
+    private final ExamScheduleRepository examScheduleRepository;
+    private final NotificationScheduleRepository notificationScheduleRepository;
     private final ObjectMapper objectMapper;
 
     @EventListener(ApplicationReadyEvent.class)
@@ -52,18 +62,44 @@ public class RollingAdmissionInitializer {
         }
         int[] marked = {0};
         int[] cleared = {0};
+        int[] dropped = {0};
         certificateRepository.findAll().forEach(c -> {
             boolean shouldBe = seed.matches(c);
             if (shouldBe && !c.isRollingAdmission()) {
                 c.markRollingAdmission();
                 marked[0]++;
+                dropped[0] += dropSchedules(c);
+            } else if (shouldBe && c.isRollingAdmission()) {
+                // 이미 표시된 시험에 나중에 일정이 들어왔을 수도 있다(시드·수집). 상시엔 회차가 없다.
+                dropped[0] += dropSchedules(c);
             } else if (!shouldBe && c.isRollingAdmission()) {
                 // 시행처가 정기시험으로 바꿔 시드에서 빠진 경우 — 다시 일정 대상이 된다
                 c.clearRollingAdmission();
                 cleared[0]++;
             }
         });
-        log.info("[상시표시] 상시·예약제 {}종 (새로 표시 {} · 해제 {})", seed.codes.size(), marked[0], cleared[0]);
+        log.info("[상시표시] 상시·예약제 {}종 (새로 표시 {} · 해제 {} · 남은 일정 정리 {})",
+                seed.codes.size(), marked[0], cleared[0], dropped[0]);
+    }
+
+    /**
+     * 상시 시험에 남아 있는 회차를 지운다.
+     *
+     * <p>표시만 바꾸고 일정을 두면 <b>화면마다 다른 말을 한다</b>(2026-09-04 실측: IELTS·OPIc·TOEFL·
+     * 워드프로세서·컴퓨터활용능력 2급 다섯 종). 카드는 "상시시험 — 정해진 일정이 없습니다"라고 하는데
+     * 상세엔 D-day 히어로와 회차표가 뜨고, 캘린더엔 접수 마감이 찍히고, <b>접수 마감 알림 메일까지 나간다.</b>
+     * 상시에는 회차가 없다는 게 이 표시의 뜻이므로, 남은 회차는 지운다(알림 예약도 함께).
+     */
+    private int dropSchedules(Certificate c) {
+        List<ExamSchedule> rows = examScheduleRepository
+                .findByCertificateIdAndStatusInOrderByExamStartDateAsc(c.getId(), TO_DROP);
+        for (ExamSchedule s : rows) {
+            notificationScheduleRepository.deleteAll(notificationScheduleRepository.findByExamSchedule(s));
+            examScheduleRepository.delete(s);
+            log.info("[상시표시] {} 의 회차 정리 — {}년 {}회 {} (상시 시험엔 회차가 없다)",
+                    c.getName(), s.getYear(), s.getRound(), s.getExamType());
+        }
+        return rows.size();
     }
 
     /** 시드가 아는 종목코드와 이름(공백 제거). */
