@@ -117,8 +117,11 @@ public class YbmScheduleSource extends AbstractHtmlScheduleSource {
     /** 이름을 대고 찾아가는 7종. BCT 는 사이트가 안 열려 여기 없다(수기). */
     @Override
     public Set<String> coveredExamCodes() {
-        return TARGETS.stream().flatMap(t -> t.exams().stream()).map(Exam::sourceCode)
-                .collect(java.util.stream.Collectors.toSet());
+        // 비큐넷 시드가 같은 시험에 다른 코드를 붙인다 — 로컬은 시드 코드, 운영은 마스터 코드다.
+        // 둘 다 밝혀야 "일정 없어도 자동" 판정이 로컬에서도 먹는다. 자세한 사정은 SeedCodeAlias.
+        return SeedCodeAlias.plus(
+                TARGETS.stream().flatMap(t -> t.exams().stream()).map(Exam::sourceCode).toList(),
+                "TOEIC", "TOEIC-SP", "JPT", "SJPT", "TSC");
     }
 
     /** 안 쓴다 — 시험마다 페이지가 따로라 {@link #fetchAll()} 이 직접 돈다. */

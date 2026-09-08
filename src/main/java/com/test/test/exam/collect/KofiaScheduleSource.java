@@ -84,7 +84,9 @@ public class KofiaScheduleSource extends AbstractHtmlScheduleSource {
     /** 이름을 대고 찾아가는 9종. 올해 회차가 없어도 "자동"이다 — 시행처가 열면 그대로 들어온다. */
     @Override
     public Set<String> coveredExamCodes() {
-        return Set.copyOf(CODES.values());
+        // 비큐넷 시드가 같은 시험에 다른 코드를 붙인다 — 로컬은 시드 코드, 운영은 마스터 코드다.
+        // 둘 다 밝혀야 "일정 없어도 자동" 판정이 로컬에서도 먹는다. 자세한 사정은 SeedCodeAlias.
+        return SeedCodeAlias.plus(CODES.values(), "KOFIA-IAM", "KOFIA-FUND", "KOFIA-SEC");
     }
 
     @Override

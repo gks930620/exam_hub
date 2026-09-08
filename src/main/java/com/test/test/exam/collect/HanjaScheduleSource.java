@@ -74,7 +74,9 @@ public class HanjaScheduleSource extends AbstractHtmlScheduleSource {
 
     @Override
     public Set<String> coveredExamCodes() {
-        return Set.copyOf(EXAMS.keySet());
+        // 비큐넷 시드가 같은 시험에 다른 코드를 붙인다 — 로컬은 시드 코드, 운영은 마스터 코드다.
+        // 둘 다 밝혀야 "일정 없어도 자동" 판정이 로컬에서도 먹는다. 자세한 사정은 SeedCodeAlias.
+        return SeedCodeAlias.plus(EXAMS.keySet(), "HANJA-2", "HANJA-3");
     }
 
     @Override
