@@ -40,6 +40,9 @@ export function eventAtLabel(code: string | null | undefined, at: string | null 
   return code === 'EXAM_ONGOING' ? `~ ${fmtDate(at)}` : fmtAt(at);
 }
 
+/** 이보다 큰 숫자는 회차가 아니라 서버가 만든 멱등 키다 — 실제 회차는 네 자리를 안 넘는다(DIAT 2612회가 최대). */
+const MAX_REAL_ROUND = 10_000;
+
 /**
  * 회차 표기 — `2026년 576회`, 시행처가 회차를 안 매기는 시험이면 `2026년`.
  *
@@ -49,5 +52,5 @@ export function eventAtLabel(code: string | null | undefined, at: string | null 
  * 서버의 `ExamSchedule.roundLabel()` 과 같은 규칙이다.
  */
 export function roundLabel(year: number, round: number): string {
-  return round < 1_000_000 ? `${year}년 ${round}회` : `${year}년`;
+  return round < MAX_REAL_ROUND ? `${year}년 ${round}회` : `${year}년`;
 }
