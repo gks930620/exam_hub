@@ -93,6 +93,7 @@ public class AdminOverviewController {
 
         LocalDate today = TimeUtil.today();
         Set<String> covered = liveCoverage();
+        Set<String> coveredCodes = liveExamCodes();
 
         // 보이는 시험 전부를 한 번에 읽고, 필터는 메모리에서 건다 —
         // 탭·행동의 개수는 검색과 무관하게 늘 같은 값이어야 한다(남은 일의 크기).
@@ -104,7 +105,7 @@ public class AdminOverviewController {
                 .collect(Collectors.groupingBy(s -> s.getCertificate().getId()));
 
         List<Row> allRows = all.stream()
-                .map(c -> judge(c, byCert.getOrDefault(c.getId(), List.of()), today, covered))
+                .map(c -> judge(c, byCert.getOrDefault(c.getId(), List.of()), today, covered, coveredCodes))
                 .toList();
 
         String q = query == null ? "" : query.trim().toLowerCase();
@@ -135,6 +136,15 @@ public class AdminOverviewController {
             covered.addAll(s.coveredAgencies());
         }
         return covered;
+    }
+
+    /** 지금 떠 있는 소스들이 <b>이름을 대고</b> 맡는 종목코드의 합집합. 기관보다 정확하다. */
+    private Set<String> liveExamCodes() {
+        Set<String> codes = new LinkedHashSet<>();
+        for (ScheduleSource s : sources) {
+            codes.addAll(s.coveredExamCodes());
+        }
+        return codes;
     }
 
     private static Map<String, Long> count(List<Row> rows, java.util.function.Function<Row, String> key) {
@@ -173,7 +183,8 @@ public class AdminOverviewController {
         Waiting(String label) { this.label = label; }
     }
 
-    private Row judge(Certificate c, List<ExamSchedule> schedules, LocalDate today, Set<String> covered) {
+    private Row judge(Certificate c, List<ExamSchedule> schedules, LocalDate today,
+                      Set<String> covered, Set<String> coveredCodes) {
         boolean rolling = c.isRollingAdmission();
         boolean qnet = c.getSourceCode() != null && c.getSourceCode().matches("[0-9]{4}");
         // "자동"의 근거 = 살아 있는 소스가 그 기관을 담당하고, 실제로 그 소스가 넣은 행(API·SCRAPED)이 있다.
@@ -181,7 +192,12 @@ public class AdminOverviewController {
         // 안 긁는 무역영어가 "공고 전"이 됐다(실측 2026-09-03, 31종). 행만 보면 정적 시드의 scraped 에 속는다.
         boolean hasMachineRows = schedules.stream().anyMatch(s ->
                 s.getProvenance() == ScheduleProvenance.API || s.getProvenance() == ScheduleProvenance.SCRAPED);
-        boolean fedByMachine = qnet || (AgencyMatcher.matches(c.getAgency(), covered) && hasMachineRows);
+        // 소스가 종목코드를 대 놓고 아는 경우는 행이 없어도 자동이다 — 시행처가 올해 회차를 안 연 것뿐이고,
+        // 열면 그대로 들어온다. 이게 없으면 "수기로 넣으세요"가 떠서 매니저가 헛일을 한다
+        // (파생상품투자권유대행인, 2026-09-08).
+        boolean namedByLiveSource = c.getSourceCode() != null && coveredCodes.contains(c.getSourceCode());
+        boolean fedByMachine = qnet || namedByLiveSource
+                || (AgencyMatcher.matches(c.getAgency(), covered) && hasMachineRows);
 
         Source source;
         if (rolling) {
@@ -272,8 +288,7 @@ public class AdminOverviewController {
         };
 
         String lastLabel = last == null || freshness.equals("UPCOMING") ? null
-                : "%d년 %d회 %s".formatted(last.getYear(), last.getRound(),
-                        last.getExamType() == null ? "" : last.getExamType().getLabel());
+                : "%d년 %s".formatted(last.getYear(), last.roundLabel());
 
         return new Row(
                 c.getId(), c.getName(), c.getCategory(), c.getAgency(), schedules.size(),

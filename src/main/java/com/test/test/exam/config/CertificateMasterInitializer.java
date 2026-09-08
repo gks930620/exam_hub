@@ -143,11 +143,12 @@ public class CertificateMasterInitializer {
         if (file == null || file.items() == null) {
             return;
         }
-        int marked = 0, notFound = 0;
+        int marked = 0;
+        List<String> notFound = new java.util.ArrayList<>();
         for (LifecycleItem item : file.items()) {
             Certificate cert = existing.get(normalize(item.name()));
             if (cert == null) {
-                notFound++;
+                notFound.add(item.name());
                 continue;
             }
             CertificateLifecycle lifecycle;
@@ -161,7 +162,13 @@ public class CertificateMasterInitializer {
             certificateRepository.save(cert);
             marked++;
         }
-        log.info("[MasterSeed] 시험 변천사 {}건 표시 (마스터에 없어 건너뜀 {}건)", marked, notFound);
+        log.info("[MasterSeed] 시험 변천사 {}건 표시", marked);
+        if (!notFound.isEmpty()) {
+            // 이름이 안 맞으면 그 기록은 아무 일도 안 한다 — 뺐다고 믿은 시험이 그대로 남는다.
+            // 건수만 찍어 두면 어느 것이 죽은 기록인지 알 수 없어 몇 달을 그냥 지나간다(실제로 그랬다).
+            log.warn("[MasterSeed] 변천사에 적혔지만 그런 이름의 시험이 없다 — 이 기록은 아무 일도 하지 않는다: {}",
+                    notFound);
+        }
     }
 
     private LifecycleFile readLifecycle() {

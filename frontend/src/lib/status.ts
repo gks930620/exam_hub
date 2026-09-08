@@ -39,3 +39,15 @@ export function scheduleStateOf(c: {
 export function eventAtLabel(code: string | null | undefined, at: string | null | undefined): string {
   return code === 'EXAM_ONGOING' ? `~ ${fmtDate(at)}` : fmtAt(at);
 }
+
+/**
+ * 회차 표기 — `2026년 576회`, 시행처가 회차를 안 매기는 시험이면 `2026년`.
+ *
+ * <p>토익스피킹·TOEIC Bridge 처럼 회차가 없는 시험은 서버가 시험일(`YYYYMMDD`)을 회차 자리에
+ * 멱등 키로 넣는다. 그건 우리 내부 키지 시행처가 부르는 이름이 아니다 — 그대로 찍으면
+ * "2026년 20261011회" 가 되고, 사용자는 우리가 뭔가 잘못 읽었다고 생각한다(2026-09-08 실측).
+ * 서버의 `ExamSchedule.roundLabel()` 과 같은 규칙이다.
+ */
+export function roundLabel(year: number, round: number): string {
+  return round < 1_000_000 ? `${year}년 ${round}회` : `${year}년`;
+}

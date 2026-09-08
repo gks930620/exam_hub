@@ -18,6 +18,11 @@ spring:
       ddl-auto: create-drop # 테스트 시작 시 생성, 종료 시 삭제
     properties:
       hibernate:
+        # ⚠️ enum 은 엔티티에서 @JdbcTypeCode(SqlTypes.VARCHAR) 로 저장한다(설정으로는 안 먹었다).
+        # 네이티브 ENUM 은 값 목록이 스키마에 박히는데 우리는 ddl-auto=update 라 그 목록이 저절로 안 넓어진다.
+        # 그래서 enum 에 값을 하나만 더해도 기존 DB 에서 기동이 통째로 깨진다 —
+        # 2026-09-08 CertificateLifecycle.EXCLUDED 를 더하다 실제로 겪었다.
+        # EnumColumnTypeTest 가 재발을 막는다.
         format_sql: true
         show_sql: true
         default_batch_fetch_size: 100

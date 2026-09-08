@@ -2,6 +2,8 @@ package com.test.test.exam.domain;
 
 import com.test.test.exam.common.TimeUtil;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -34,6 +36,7 @@ public class NotificationLog {
     private NotificationSchedule notificationSchedule;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 10)
     private NotificationChannel channel;
 
@@ -41,6 +44,7 @@ public class NotificationLog {
     private LocalDateTime sentAt;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private NotificationResult result;
 

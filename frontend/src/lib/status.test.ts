@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { badgeLabel, badgeTone, eventAtLabel, scheduleStateOf } from './status';
+import { badgeLabel, badgeTone, eventAtLabel, roundLabel, scheduleStateOf } from './status';
 
 /**
  * 상태 배지 어휘 — 시험 찾기·내 시험·매니저 현황이 <b>같은 말</b>을 쓰도록 한 곳에서 정한다.
@@ -51,5 +51,19 @@ describe('eventAtLabel', () => {
 
   it('시각이 없으면 - 로 둔다', () => {
     expect(eventAtLabel('REG_UPCOMING', null)).toBe('-');
+  });
+});
+
+/**
+ * 회차가 없는 시험(토익스피킹·TOEIC Bridge)은 서버가 시험일을 회차 자리에 멱등 키로 넣는다.
+ * 그 숫자는 우리 내부 키다 — 화면에 "2026년 20261011회"로 새어 나가면 안 된다.
+ */
+describe('roundLabel', () => {
+  it('시행처가 매긴 회차는 그대로 보여준다', () => {
+    expect(roundLabel(2026, 576)).toBe('2026년 576회');
+  });
+
+  it('시험일을 키로 쓴 회차는 회차로 보여주지 않는다', () => {
+    expect(roundLabel(2026, 20261011)).toBe('2026년');
   });
 });

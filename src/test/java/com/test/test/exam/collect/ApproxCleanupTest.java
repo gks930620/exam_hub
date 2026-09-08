@@ -115,16 +115,65 @@ class ApproxCleanupTest {
         Mockito.verify(schedules, Mockito.never()).delete(Mockito.any());
     }
 
-    /** 확정값(스크래핑·API·매니저 입력)은 소스가 안 줬다고 지우지 않는다 — 그건 별개의 판단이다. */
+    /** 매니저 입력은 어떤 경우에도 지우지 않는다 — 사람이 공고를 보고 넣은 값이다. */
     @Test
-    @DisplayName("확정된 회차는 지우지 않는다")
-    void never_removes_confirmed_rounds() {
+    @DisplayName("매니저 입력은 지우지 않는다")
+    void never_removes_manual_rows() {
         Certificate c = cert(1L);
-        ExamSchedule oldScraped = row(c, 1, ExamType.WRITTEN, ScheduleProvenance.SCRAPED);
         ExamSchedule manual = row(c, 2, ExamType.WRITTEN, ScheduleProvenance.MANUAL);
         CollectedSchedule produced = record(4, ExamType.WRITTEN);
 
-        CollectService service = serviceThatCollects(c, List.of(oldScraped, manual),
+        CollectService service = serviceThatCollects(c, List.of(manual),
+                List.of(produced), List.of(row(c, 4, ExamType.WRITTEN, ScheduleProvenance.SCRAPED)));
+
+        service.collectAll();
+
+        Mockito.verify(schedules, Mockito.never()).delete(Mockito.any());
+    }
+
+    /**
+     * <b>시행처가 이번에 안 실은 수집값도 치운다 — 단 이번에 읽어 온 기간 안에서만.</b>
+     *
+     * <p>토익이 그랬다(2026-09-08). 회차가 없는 줄 알고 시험일을 회차 자리에 넣어 뒀는데,
+     * 시행처가 매긴 "제580회"로 바꾸니 같은 날짜가 두 줄이 됐다. 사용자에겐 같은 시험이 두 번 보인다.
+     */
+    @Test
+    @DisplayName("시행처가 이번에 안 실은 수집값은 지운다 — 수집 기간 안이면")
+    void removes_scraped_rounds_the_source_no_longer_lists() {
+        Certificate c = cert(1L);
+        ExamSchedule renumbered = ExamSchedule.builder()
+                .certificate(c).year(2026).round(20260914).examType(ExamType.WRITTEN)
+                .examStartDate(LocalDate.of(2026, 9, 14))
+                .provenance(ScheduleProvenance.SCRAPED).status(ScheduleStatus.ACTIVE)
+                .build();
+        CollectedSchedule produced = record(4, ExamType.WRITTEN);   // 시험일 2026-09-14
+
+        CollectService service = serviceThatCollects(c, List.of(renumbered),
+                List.of(produced), List.of(row(c, 4, ExamType.WRITTEN, ScheduleProvenance.SCRAPED)));
+
+        service.collectAll();
+
+        ArgumentCaptor<ExamSchedule> deleted = ArgumentCaptor.forClass(ExamSchedule.class);
+        Mockito.verify(schedules).delete(deleted.capture());
+        assertEquals(20260914, deleted.getValue().getRound(), "회차 번호가 바뀌기 전의 옛 행이 남았다");
+    }
+
+    /**
+     * 시행처가 반년치만 싣는데 그 뒤 일정까지 지우면 멀쩡한 값이 날아간다.
+     * <b>이번에 본 가장 먼 시험일 너머는 손대지 않는다.</b>
+     */
+    @Test
+    @DisplayName("이번에 읽어 온 기간 너머의 수집값은 건드리지 않는다")
+    void keeps_scraped_rounds_beyond_this_run() {
+        Certificate c = cert(1L);
+        ExamSchedule nextYear = ExamSchedule.builder()
+                .certificate(c).year(2027).round(1).examType(ExamType.WRITTEN)
+                .examStartDate(LocalDate.of(2027, 3, 7))
+                .provenance(ScheduleProvenance.SCRAPED).status(ScheduleStatus.ACTIVE)
+                .build();
+        CollectedSchedule produced = record(4, ExamType.WRITTEN);   // 시험일 2026-09-14 까지만 봤다
+
+        CollectService service = serviceThatCollects(c, List.of(nextYear),
                 List.of(produced), List.of(row(c, 4, ExamType.WRITTEN, ScheduleProvenance.SCRAPED)));
 
         service.collectAll();
@@ -156,7 +205,7 @@ class ApproxCleanupTest {
             @Override public List<CollectedSchedule> fetchAll() { return List.of(ybmApprox, ownApprox); }
         };
         ScheduleSource toeic = new ScheduleSource() {
-            @Override public String sourceId() { return "TOEIC_WEB"; }
+            @Override public String sourceId() { return "YBM_WEB"; }
             @Override public int priority() { return 50; }
             @Override public java.util.Set<String> coveredAgencies() { return java.util.Set.of("YBM"); }
             @Override public List<CollectedSchedule> fetchAll() { return List.of(); }

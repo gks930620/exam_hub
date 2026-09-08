@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { examApi } from '../api/exams';
 import { fmtAt } from '../lib/format';
+import { roundLabel } from '../lib/status';
 import type { AdminScheduleRow } from '../api/types';
 import Icon from './Icon';
 
@@ -155,7 +156,7 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
                       {rows.map((r) => (
                         <tr key={r.id} className={r.status === 'CANCELED' ? 'is-canceled' : undefined}>
                           <td className="round">
-                            {r.year}년 {r.round}회 · {r.examType === 'WRITTEN' ? '필기' : '실기'}
+                            {roundLabel(r.year, r.round)} · {r.examType === 'WRITTEN' ? '필기' : '실기'}
                             {r.status === 'PENDING_REVIEW' && <> <span className="k-badge k-badge--warn">보류</span></>}
                             {r.status === 'CANCELED' && <> <span className="k-badge k-badge--err">취소됨</span></>}
                             {r.sourceConflict && <> <span className="k-badge k-badge--err">수집값 다름</span></>}

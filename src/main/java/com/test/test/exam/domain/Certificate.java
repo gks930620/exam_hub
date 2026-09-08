@@ -2,6 +2,8 @@ package com.test.test.exam.domain;
 
 import com.test.test.exam.common.TimeUtil;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class Certificate {
     private String slug;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 30)
     private Series series;
 
@@ -51,6 +54,7 @@ public class Certificate {
 
     /** 지금도 시행되는가. 폐지·개칭된 시험도 기록은 남긴다 — {@link CertificateLifecycle} */
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "lifecycle", nullable = false, length = 20)
     @Builder.Default
     private CertificateLifecycle lifecycle = CertificateLifecycle.ACTIVE;
@@ -158,6 +162,10 @@ public class Certificate {
         }
         if (lifecycle == CertificateLifecycle.ABOLISHED) {
             return "폐지된 시험입니다. 더 이상 일정이 없습니다.";
+        }
+        // 살아 있는 시험이다 — 폐지라고 하면 거짓말이 된다. 우리 사정을 그대로 밝힌다.
+        if (lifecycle == CertificateLifecycle.EXCLUDED) {
+            return "이 서비스에서 다루지 않는 시험입니다. 시행처가 일정을 공개하는 곳을 찾지 못했습니다.";
         }
         return lifecycle.getLabel();
     }

@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -186,7 +187,7 @@ public class CollectService {
                     }
                 }
             }
-            int dropped = dropUnconfirmedApprox(source, touched, confirmed);
+            int dropped = dropUnconfirmedRounds(source, touched, confirmed, horizon(records));
             crawlLog.finishSuccess(records.size(), neu, updated, skipped, pending);
             crawlLogRepository.save(crawlLog);
             log.info("[Collect] source={} fetched={} new={} updated={} skipped={} pendingReview={} 추정치정리={}",
@@ -236,27 +237,44 @@ public class CollectService {
     }
 
     /**
-     * 실데이터가 들어온 시험에서 <b>소스가 확인해 주지 않은 추정치 회차를 지운다.</b>
+     * 실데이터가 들어온 시험에서 <b>시행처가 더 이상 싣지 않는 회차를 지운다.</b>
      *
-     * <p>정보보안기사가 그랬다(2026-09-04): 시드가 회차 패턴으로 "2026년 3회"를 지어냈는데
+     * <h3>① 지어낸 추정치</h3>
+     * 정보보안기사가 그랬다(2026-09-04): 시드가 회차 패턴으로 "2026년 3회"를 지어냈는데
      * 시행처에 그런 회차가 없다(제3회는 특성화고 기능사 전용). 스크래퍼가 제1·2·4회를 제대로
      * 물어 온 뒤에도 가짜 3회가 남아 "시행처 확인 필요"로 떠 있었고, 그 접수일은 실제와 달랐다.
      * <b>없는 접수일을 기다리게 하는 건 일정이 없는 것보다 나쁘다.</b>
      *
-     * <p>안전장치 둘: ① 지우는 건 <b>추정치(APPROX)뿐</b>이다 — 확정값이 소스에서 사라진 건
-     * 사람이 판단할 일이다. ② <b>그 소스가 그 시험의 일정을 실제로 물어 온 경우만</b> 본다 —
-     * 사이트가 잠깐 비어 0건이 온 날 멀쩡한 일정을 지우면 안 된다.
+     * <h3>② 사라진 수집값</h3>
+     * 시행처가 회차를 취소하거나 회차 번호 매김을 바꾸면, 예전에 긁어 둔 행이 그대로 남아
+     * <b>같은 시험이 두 번</b> 보인다. 토익이 그랬다(2026-09-08): 회차가 없는 줄 알고 시험일을
+     * 회차 자리에 넣었다가 시행처가 매긴 "제580회"로 바꾸니 같은 날짜가 둘이 됐다.
      *
+     * <h3>안전장치</h3>
+     * <ol>
+     *   <li>지우는 소스는 <b>그 기관을 맡은 소스</b>뿐이다 — 파일 시드는 아무것도 못 지운다.</li>
+     *   <li><b>그 시험의 일정을 실제로 물어 온 경우만</b> 본다 — 사이트가 잠깐 비어 0건이 온 날
+     *       멀쩡한 일정을 지우면 안 된다.</li>
+     *   <li>수집값(SCRAPED)은 <b>이번에 읽어 온 기간 안</b>에서만 지운다 — 오늘부터 이번에 본
+     *       가장 먼 시험일까지. 시행처가 반년치만 싣는데 그 뒤 일정까지 지우면 멀쩡한 값이 날아간다.
+     *       지난 일정도 건드리지 않는다(기록이다).</li>
+     *   <li>매니저 입력(MANUAL)과 공공 API 값은 어떤 경우에도 안 지운다 — 사람이 판단할 일이다.</li>
+     * </ol>
+     *
+     * @param horizon 이번에 읽어 온 가장 먼 시험일. null 이면 수집값은 손대지 않는다.
      * @return 지운 건수
      */
-    private int dropUnconfirmedApprox(ScheduleSource source, Set<Long> touched, Set<String> confirmed) {
+    private int dropUnconfirmedRounds(ScheduleSource source, Set<Long> touched, Set<String> confirmed,
+                                      LocalDate horizon) {
         if (touched.isEmpty() || source.coveredAgencies().isEmpty()) {
             return 0;   // 파일 시드는 아무 기관도 맡지 않는다 — 자기가 만든 추정치를 스스로 지우면 안 된다
         }
+        LocalDate today = TimeUtil.today();
         List<ExamSchedule> stale = examScheduleRepository
                 .findByCertificateIdInAndStatus(List.copyOf(touched), ScheduleStatus.ACTIVE).stream()
-                .filter(s -> s.getProvenance() == ScheduleProvenance.APPROX)
                 .filter(s -> !confirmed.contains(roundKey(s)))
+                .filter(s -> s.getProvenance() == ScheduleProvenance.APPROX
+                        || (s.getProvenance() == ScheduleProvenance.SCRAPED && insideHorizon(s, today, horizon)))
                 .toList();
         for (ExamSchedule s : stale) {
             // 시험 이름은 안 찍는다 — 트랜잭션 밖이라 지연 로딩 프록시를 건드리면 터진다(실측 2026-09-04).
@@ -264,10 +282,25 @@ public class CollectService {
             long certId = s.getCertificate().getId();
             notificationScheduleRepository.deleteAll(notificationScheduleRepository.findByExamSchedule(s));
             examScheduleRepository.delete(s);
-            log.info("[Collect] source={} 추정치 정리 — cert={} {}년 {}회 {} (시행처가 확인해 주지 않은 회차)",
-                    source.sourceId(), certId, s.getYear(), s.getRound(), s.getExamType());
+            log.info("[Collect] source={} 회차 정리 — cert={} {}년 {}회 {} ({}, 시행처가 이번에 안 실은 회차)",
+                    source.sourceId(), certId, s.getYear(), s.getRound(), s.getExamType(), s.getProvenance());
         }
         return stale.size();
+    }
+
+    /** 이번에 읽어 온 기간(오늘 ~ 가장 먼 시험일) 안에 있는 회차인가. */
+    private boolean insideHorizon(ExamSchedule s, LocalDate today, LocalDate horizon) {
+        LocalDate when = s.latestKnownDate();
+        return horizon != null && when != null && !when.isBefore(today) && !when.isAfter(horizon);
+    }
+
+    /** 이번 수집이 본 가장 먼 시험일. 날짜가 하나도 없으면 null. */
+    private LocalDate horizon(List<CollectedSchedule> records) {
+        return records.stream()
+                .map(CollectedSchedule::examStartDate)
+                .filter(java.util.Objects::nonNull)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
     }
 
     /** 같은 회차인지 보는 키 — (시험, 연도, 회차, 구분). */

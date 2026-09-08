@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { fmtAt as fmt } from '../lib/format';
+import { roundLabel } from '../lib/status';
 import { useAuth, useRequireLogin } from '../auth';
 import type { DetailResponse, ScheduleStatus } from '../api/types';
 import Icon from '../components/Icon';
@@ -144,7 +145,7 @@ export default function DetailPage() {
                   return (
                     <tr key={s.id} className={s.status === 'CANCELED' ? 'is-canceled' : undefined}>
                       <td className="round">
-                        {s.year}년 {s.round}회 · {TYPE_LABEL[s.examType] ?? s.examType}
+                        {roundLabel(s.year, s.round)} · {TYPE_LABEL[s.examType] ?? s.examType}
                         {badge && <> <span className={`k-badge ${badge.tone}`}>{badge.label}</span></>}
                         {/* 추정치를 확정처럼 보여주면 "마감을 놓치지 않게 해준다"는 약속을 스스로 깬다 */}
                         {s.confirmed === false && (

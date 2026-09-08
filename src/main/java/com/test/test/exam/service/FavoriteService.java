@@ -139,7 +139,7 @@ public class FavoriteService {
         for (ExamSchedule s : schedules) {
             Long cid = s.getCertificate().getId();
             String name = nameById.getOrDefault(cid, "");
-            String typeLabel = s.getRound() + "회 " + s.getExamType().getLabel();
+            String typeLabel = s.roundLabel();
 
             addIfInMonth(events, s.getRegStartAt() == null ? null : s.getRegStartAt().toLocalDate(),
                     monthStart, monthEnd, "REG_START", cid, name, typeLabel + " 접수 시작");

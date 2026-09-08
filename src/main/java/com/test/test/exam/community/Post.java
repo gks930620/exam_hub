@@ -3,6 +3,8 @@ package com.test.test.exam.community;
 import com.test.test.exam.common.TimeUtil;
 import com.test.test.exam.domain.Member;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class Post {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     private Board board;
 

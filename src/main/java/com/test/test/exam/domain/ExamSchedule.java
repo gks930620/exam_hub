@@ -2,6 +2,8 @@ package com.test.test.exam.domain;
 
 import com.test.test.exam.common.TimeUtil;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -41,6 +43,7 @@ public class ExamSchedule {
     private Integer round;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "exam_type", nullable = false, length = 20)
     private ExamType examType;
 
@@ -60,6 +63,7 @@ public class ExamSchedule {
     private LocalDate resultDate;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     @Builder.Default
     private ScheduleStatus status = ScheduleStatus.ACTIVE;
@@ -69,6 +73,7 @@ public class ExamSchedule {
 
     /** 이 일정을 어디서 얻었나. APPROX 면 화면이 "시행처 확인 필요"를 띄운다 */
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "provenance", length = 20)
     @Builder.Default
     private ScheduleProvenance provenance = ScheduleProvenance.SCRAPED;
@@ -134,6 +139,27 @@ public class ExamSchedule {
     /** 날짜가 하나라도 있는가 — 없으면 일정으로 세지 않는다 */
     public boolean hasAnyDate() {
         return latestKnownDate() != null;
+    }
+
+    /**
+     * 시행처가 <b>실제로 회차를 매기는</b> 시험인가.
+     *
+     * <p>토익스피킹·TOEIC Bridge·토플처럼 회차 개념이 없는 시험이 있다. 그래도 우리는 같은 회차를
+     * 두 번 넣지 않으려고 회차 자리에 <b>시험일({@code YYYYMMDD})</b>을 멱등 키로 넣는다.
+     * 그 숫자는 시행처가 부르는 이름이 아니라 우리 내부 키다 — 화면에 "20261011회"로 새어 나가면
+     * 사용자는 우리가 뭔가 잘못 읽었다고 생각한다(실제로 그렇게 보였다, 2026-09-08).
+     */
+    public boolean hasPublishedRound() {
+        return round != null && round < 1_000_000;
+    }
+
+    /**
+     * 화면에 쓰는 회차 표기 — {@code "576회 필기"}, 회차가 없는 시험이면 {@code "필기"}.
+     * D-day·캘린더가 <b>같은 문구</b>를 쓰도록 여기 한 곳에 둔다.
+     */
+    public String roundLabel() {
+        String type = examType == null ? "" : examType.getLabel();
+        return hasPublishedRound() ? round + "회 " + type : type;
     }
 
     public boolean isActive() {

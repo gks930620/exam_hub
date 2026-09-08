@@ -18,39 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 픽스처를 갱신해 파서를 고치는 게 유지보수 흐름이다.
  *
  * <p>픽스처 수집 시점: 2026-08-06.
+ *
+ * <p>TOEIC 계열은 여기 없다 — YBM 여섯 페이지를 한 파서가 맡게 되면서 {@link YbmParserTest} 로 옮겼다(2026-09-08).
  */
 class LanguageExamParserTest {
 
     private String fixture(String name) throws IOException {
         return new String(new ClassPathResource("fixtures/" + name).getInputStream().readAllBytes(),
                 StandardCharsets.UTF_8);
-    }
-
-    // ===== TOEIC =====
-
-    @Test
-    @DisplayName("TOEIC — 시험일·정기접수 기간·성적발표일을 회차별로 뽑는다")
-    void toeic_parses_schedule_rows() throws IOException {
-        List<CollectedSchedule> out = new ToeicScheduleSource().parse(fixture("toeic_schedule.html"));
-
-        assertThat(out).isNotEmpty();
-        assertThat(out).allSatisfy(s -> {
-            assertThat(s.certificateName()).isEqualTo("TOEIC 토익");
-            assertThat(s.examStartDate()).isNotNull();
-            // 종목코드는 회차마다 달라지면 안 된다. 전에는 "TOEIC-" + 회차라서
-            // 수집할 때마다 같은 이름의 시험이 새로 생겼다(토익이 10개였다).
-            assertThat(s.sourceCode()).isEqualTo("TOEIC");
-        });
-
-        // 픽스처에 들어 있는 실제 회차 하나를 콕 집어 검증
-        CollectedSchedule aug = out.stream()
-                .filter(s -> s.examStartDate().toString().equals("2026-08-09"))
-                .findFirst().orElseThrow(() -> new AssertionError("2026-08-09 회차를 못 찾음"));
-
-        assertThat(aug.regStartAt()).isNotNull();
-        assertThat(aug.regEndAt()).isNotNull();
-        assertThat(aug.regStartAt()).isBefore(aug.regEndAt());
-        assertThat(aug.regEndAt().toLocalDate()).isBefore(aug.examStartDate());
     }
 
     // ===== TEPS =====
@@ -105,7 +80,6 @@ class LanguageExamParserTest {
     @Test
     @DisplayName("모든 파서 — 빈 HTML 이면 예외 없이 빈 목록")
     void parsers_return_empty_on_garbage() {
-        assertThat(new ToeicScheduleSource().parse("")).isEmpty();
         assertThat(new TepsScheduleSource().parse("<html><body>없음</body></html>")).isEmpty();
         assertThat(new JlptScheduleSource().parse("<html></html>")).isEmpty();
     }

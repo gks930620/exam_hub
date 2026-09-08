@@ -2,6 +2,8 @@ package com.test.test.exam.domain;
 
 import com.test.test.exam.common.TimeUtil;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class Member {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 10)
     private AuthProvider provider;
 
@@ -80,11 +83,13 @@ public class Member {
     private LocalDateTime kakaoTokenExpiresAt;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 10)
     @Builder.Default
     private MemberRole role = MemberRole.USER;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 10)
     @Builder.Default
     private MemberStatus status = MemberStatus.ACTIVE;

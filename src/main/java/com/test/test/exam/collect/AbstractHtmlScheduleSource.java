@@ -38,7 +38,9 @@ public abstract class AbstractHtmlScheduleSource implements ScheduleSource {
 
     private final RestClient http = RestClient.builder()
             .requestFactory(timeoutFactory())
-            .defaultHeader("User-Agent", "exam-hub/1.0 (+시험일정 수집; 사실 데이터만 저장)")
+            // 헤더 값은 아스키여야 한다(RFC 7230). 한글을 넣어 뒀는데, 서버에 따라 깨져 보이거나
+            // 아예 거절당한다 — 표준 HTTP 클라이언트는 이 값으로 요청 자체를 못 만든다(2026-09-08 실측).
+            .defaultHeader("User-Agent", "exam-hub/1.0 (+exam schedule collector; stores facts only)")
             .defaultHeader("Accept", "text/html,application/xhtml+xml")
             .build();
 
@@ -100,9 +102,39 @@ public abstract class AbstractHtmlScheduleSource implements ScheduleSource {
         }
     }
 
+    /**
+     * 폼 값을 실어 POST 한다 — <b>시행처 화면이 자기 서버에 묻는 그 주소를 그대로 부를 때</b> 쓴다.
+     *
+     * <p>금융투자협회·금융연수원처럼 일정 표를 서버렌더로 안 그리고 자바스크립트가 조회 결과(JSON)로
+     * 그리는 곳이 있다. 그때는 HTML 을 긁는 것보다 <b>같은 조회 주소를 그대로 부르는 편이 정직하고 가볍다</b> —
+     * 로그인도 키도 필요 없고, 페이지 한 장을 통째로 받지 않으니 서버 부담도 적다.
+     * 응답이 JSON 이어도 이 메서드는 문자열까지만 책임진다(파싱은 각 소스의 몫).
+     */
+    protected String post(String url, String formBody) {
+        byte[] body = http.post().uri(URI.create(url))
+                .header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                .header("Accept", "application/json, text/javascript, */*")
+                .header("X-Requested-With", "XMLHttpRequest")
+                .body(formBody)
+                .retrieve().body(byte[].class);
+        return body == null ? "" : new String(body, StandardCharsets.UTF_8);
+    }
+
     private String declaredCharset(String head) {
         Matcher m = CHARSET.matcher(head.length() > 2000 ? head.substring(0, 2000) : head);
         return m.find() ? m.group(1) : null;
+    }
+
+    /**
+     * <b>주석 처리된 markup 을 걷어낸다.</b> 파싱 전에 반드시 한 번 통과시킨다.
+     *
+     * <p>시행처는 지난 연도의 일정표를 지우지 않고 {@code <!-- -->} 로 묶어 두는 일이 잦다.
+     * 공인회계사회가 그랬다(2026-09-08): 주석 안에 남아 있던 <b>제45~50회</b> 표가 살아 있는
+     * 제88~95회 표를 덮어써서, 사용자에게 <b>지난해 접수일</b>이 올해 일정으로 나갔다.
+     * 사람 눈에는 안 보이는 값이라 화면을 봐도 못 잡는다.
+     */
+    protected static String stripComments(String html) {
+        return html == null ? "" : html.replaceAll("(?s)<!--.*?-->", " ");
     }
 
     /** 태그를 걷어내고 공백을 정규화한 평문. 표 구조가 아니라 문장에서 뽑을 때 쓴다. */

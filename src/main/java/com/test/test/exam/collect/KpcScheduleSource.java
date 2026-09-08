@@ -90,6 +90,13 @@ public class KpcScheduleSource extends AbstractHtmlScheduleSource {
         return Set.of(AGENCY);
     }
 
+    /** 이름을 대고 찾아가는 12종. */
+    @Override
+    public Set<String> coveredExamCodes() {
+        return EXAMS.values().stream().flatMap(List::stream).map(Exam::code)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
     @Override
     protected String pageUrl() {
         return URL;

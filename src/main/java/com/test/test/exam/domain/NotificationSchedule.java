@@ -2,6 +2,8 @@ package com.test.test.exam.domain;
 
 import com.test.test.exam.common.TimeUtil;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class NotificationSchedule {
     private ExamSchedule examSchedule;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "event_type", nullable = false, length = 30)
     private NotificationEventType eventType;
 
@@ -38,6 +41,7 @@ public class NotificationSchedule {
     private LocalDateTime sendAt;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     @Builder.Default
     private NotificationScheduleStatus status = NotificationScheduleStatus.PENDING;

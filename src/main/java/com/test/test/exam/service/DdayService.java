@@ -42,7 +42,7 @@ public class DdayService {
             if (!s.isActive()) {
                 continue;
             }
-            String typeLabel = s.getRound() + "회 " + s.getExamType().getLabel();
+            String typeLabel = s.roundLabel();
 
             LocalDateTime regStart = s.getRegStartAt();
             LocalDateTime regEnd = s.getRegEndAt();

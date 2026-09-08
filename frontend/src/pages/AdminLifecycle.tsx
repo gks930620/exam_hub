@@ -24,14 +24,14 @@ export default function AdminLifecycle() {
   if (err) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
   if (!data) return <div className="k-empty state" role="status">불러오는 중…</div>;
   if (data.items.length === 0) {
-    return <p className="fineprint" style={{ margin: 0 }}>폐지·개칭된 시험이 없습니다.</p>;
+    return <p className="fineprint" style={{ margin: 0 }}>목록에서 뺀 시험이 없습니다.</p>;
   }
 
   return (
     <>
       <button className="k-btn k-btn--secondary" style={{ width: '100%', justifyContent: 'flex-start' }}
               onClick={() => setOpen((v) => !v)}>
-        폐지·개칭 {data.items.length}건
+        목록에서 뺀 시험 {data.items.length}건
         {data.needsCheck > 0 && (
           <span className="k-badge k-badge--warn" style={{ marginLeft: 10 }}>확인 필요 {data.needsCheck}</span>
         )}
@@ -41,9 +41,15 @@ export default function AdminLifecycle() {
       {open && (
         <div className="k-card" style={{ padding: 18, marginTop: 10 }}>
           <p className="fineprint" style={{ margin: '0 0 14px' }}>
-            폐지·개칭이 확정된 시험은 <b>검색·목록에서 빠져 있습니다</b>(오지 않을 접수를 기다리게 두지 않으려고).
-            기록은 여기 남아 있어서 "왜 없어졌는지" 답할 수 있습니다.
+            폐지·개칭이 확정됐거나 <b>우리가 다루지 못하는</b> 시험은 <b>검색·목록에서 빠져 있습니다</b>
+            (오지 않을 접수를 기다리게 두지 않으려고). 기록은 여기 남아 있어서 "왜 없어졌는지" 답할 수 있습니다.
           </p>
+          <div className="k-alert" style={{ marginBottom: 16 }}>
+            <span>
+              <b>다루지 않음</b>은 <b>폐지가 아닙니다</b>. 시험은 지금도 치르는데 시행처가 일정을 공개하는
+              곳을 못 찾아 뺀 것입니다. 근거는 오른쪽 칸에 있고, 시행처 사이트가 확인되면 되돌릴 수 있습니다.
+            </span>
+          </div>
           <div className="k-alert k-alert--warn" style={{ marginBottom: 16 }}>
             <span>
               <b>확인 필요</b>가 붙은 것은 <b>큐넷 목록에 없다는 것만</b> 확인된 상태라 <b>아직 검색에 나옵니다</b>.
@@ -66,7 +72,7 @@ export default function AdminLifecycle() {
                       {r.category && <div style={{ fontSize: 12, color: 'var(--muted2)' }}>{r.category}</div>}
                     </td>
                     <td>
-                      <span className={`k-badge${r.lifecycle === 'UNVERIFIED' ? ' k-badge--warn' : ''}`}>
+                      <span className={`k-badge${r.lifecycle === 'UNVERIFIED' ? ' k-badge--warn' : r.lifecycle === 'EXCLUDED' ? ' k-badge--point' : ''}`}>
                         {r.lifecycleLabel}
                       </span>
                     </td>

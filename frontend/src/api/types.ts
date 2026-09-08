@@ -303,7 +303,8 @@ export interface LifecycleRow {
   certificateId: number;
   name: string;
   category: string | null;
-  lifecycle: 'RENAMED' | 'ABOLISHED' | 'UNVERIFIED';
+  /** EXCLUDED 는 폐지가 아니다 — 시험은 살아 있는데 우리가 일정을 못 구해 뺀 것 */
+  lifecycle: 'RENAMED' | 'ABOLISHED' | 'UNVERIFIED' | 'EXCLUDED';
   lifecycleLabel: string;
   supersededBy: string | null;
   note: string | null;
