@@ -218,6 +218,11 @@ export interface AdminScheduleRow {
   /** PENDING_REVIEW = 수집된 일정이 30일 넘게 움직여 보류 — 공고와 대조해 저장하면 풀린다 */
   status: ScheduleStatus;
   sourceUrl: string | null;
+  /**
+   * 수집이 본 날짜가 이 행과 다르면 그 내용. 매니저 값은 덮지 않되 시행처가 뭐라고 하는지는 보여 준다.
+   * 다시 저장하면 풀린다(수집값이 여전히 다르면 다음 수집이 다시 세운다).
+   */
+  sourceConflict: string | null;
 }
 
 // ===== 매니저(운영자) =====
@@ -257,7 +262,8 @@ export interface DataMapResponse {
 /** 매니저 현황 — 시험을 어디에 둘 것인가 */
 export type OverviewBucket = 'TODO' | 'WAITING' | 'OK' | 'ROLLING';
 /** 매니저가 지금 해야 하는 일. REVIEW_MOVE = 수집된 일정이 30일 넘게 움직여 보류(PENDING_REVIEW)된 회차가 있음 */
-export type OverviewAction = 'FIRST_INPUT' | 'NEXT_ROUND' | 'VERIFY' | 'CHECK_SOURCE' | 'REVIEW_MOVE';
+export type OverviewAction =
+  'FIRST_INPUT' | 'REVIEW_MOVE' | 'SOURCE_MISMATCH' | 'NEXT_ROUND' | 'VERIFY' | 'CHECK_SOURCE';
 
 export interface OverviewRow {
   certificateId: number;

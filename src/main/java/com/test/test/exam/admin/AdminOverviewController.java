@@ -155,9 +155,10 @@ public class AdminOverviewController {
         FIRST_INPUT("첫 일정 입력", 0),
         /** 수집이 30일 넘게 이동한 회차를 보류했다 — 매니저가 확인해 저장하면 풀린다 */
         REVIEW_MOVE("일정 이동 확인", 1),
-        NEXT_ROUND("다음 회차 입력", 2),
-        VERIFY("시행처 확인", 3),
-        CHECK_SOURCE("회차 끊김 확인", 4);
+        SOURCE_MISMATCH("수집값과 다름", 2),
+        NEXT_ROUND("다음 회차 입력", 3),
+        VERIFY("시행처 확인", 4),
+        CHECK_SOURCE("회차 끊김 확인", 5);
         final String label;
         final int order;
         Action(String label, int order) { this.label = label; this.order = order; }
@@ -196,6 +197,10 @@ public class AdminOverviewController {
         }
 
         // 보류 회차 중 아직 안 지난 것만 사람의 확인이 필요하다 — 지난 회차의 보류(TOPIK 104·105회)는 아무도 안 본다
+        // 아직 안 지난 회차의 충돌만 본다 — 지난 회차의 불일치는 아무도 안 본다
+        boolean hasSourceConflict = schedules.stream()
+                .filter(s -> s.getSourceConflict() != null && s.hasAnyDate())
+                .anyMatch(s -> !s.latestKnownDate().isBefore(today));
         boolean hasPendingReview = schedules.stream().anyMatch(s -> s.getStatus() == ScheduleStatus.PENDING_REVIEW
                 && s.hasAnyDate() && !s.latestKnownDate().isBefore(today));
         // 날짜가 하나도 없는 회차(연도·회차만 넣고 잊은 것)는 일정으로 치지 않는다 — 사용자에게 아무것도 못 알려 준다.
@@ -228,6 +233,10 @@ public class AdminOverviewController {
         } else if (hasPendingReview) {
             // 보류는 사용자에게도 안 보이고 알림도 안 간다 — 매니저가 풀어 주기 전엔 영원히 그대로다
             act = Action.REVIEW_MOVE;
+        } else if (hasSourceConflict) {
+            // 매니저가 넣은 값과 시행처가 말하는 값이 다르다. 수집은 사람 값을 안 덮으므로
+            // 여기서 알려 주지 않으면 옛 날짜로 D-day 와 알림이 계속 나간다.
+            act = Action.SOURCE_MISMATCH;
         } else if (source == Source.MANUAL && freshness.equals("NONE")) {
             act = Action.FIRST_INPUT;
         } else if (source == Source.MANUAL && freshness.equals("PAST_ONLY")) {

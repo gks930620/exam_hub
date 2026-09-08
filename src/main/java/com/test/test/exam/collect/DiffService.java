@@ -101,8 +101,17 @@ public class DiffService {
 
         // 사람이 넣었거나 취소한 행은 수집이 건드리지 않는다 — 해시 비교보다 먼저 봐야 출처·시각도 안 바뀐다
         if (existing.getProvenance() == ScheduleProvenance.MANUAL) {
-            log.debug("[Diff] 매니저 입력 행 — 수집이 건드리지 않음: {} {}년 {}회 {}",
-                    rec.certificateName(), rec.year(), rec.round(), rec.examType());
+            // 다만 <b>말없이 버리지는 않는다.</b> 시행처가 날짜를 바꿨는데 우리는 안 덮으니,
+            // 매니저가 그 사실을 알 방법이 없으면 옛 날짜로 D-day 와 알림이 계속 나간다(2026-09-08).
+            if (existing.hasDifferentDates(rec.regStartAt(), rec.regEndAt(),
+                    rec.examStartDate(), rec.examEndDate(), rec.resultDate())) {
+                existing.markSourceConflict(describeDates(rec), now);
+                examScheduleRepository.save(existing);
+                log.warn("[Diff] 매니저 입력 행과 수집값이 다르다 — 덮지 않고 표시만: {} {}년 {}회 {} → {}",
+                        rec.certificateName(), rec.year(), rec.round(), rec.examType(), describeDates(rec));
+            } else {
+                existing.clearSourceConflict();   // 시행처가 매니저 값과 같아졌다
+            }
             return Outcome.unchanged(existing);
         }
         if (existing.getStatus() == ScheduleStatus.CANCELED) {
@@ -211,6 +220,25 @@ public class DiffService {
             i++;
         }
         return base + "-" + i;
+    }
+
+    /** 매니저가 읽을 한 줄 — "시행처는 이렇게 말한다". */
+    private String describeDates(CollectedSchedule rec) {
+        StringBuilder sb = new StringBuilder();
+        if (rec.regStartAt() != null || rec.regEndAt() != null) {
+            sb.append("접수 ").append(TimeUtil.format(rec.regStartAt()))
+                    .append(" ~ ").append(TimeUtil.format(rec.regEndAt()));
+        }
+        if (rec.examStartDate() != null) {
+            sb.append(sb.length() > 0 ? " · " : "").append("시험 ").append(rec.examStartDate());
+            if (rec.examEndDate() != null && !rec.examEndDate().equals(rec.examStartDate())) {
+                sb.append(" ~ ").append(rec.examEndDate());
+            }
+        }
+        if (rec.resultDate() != null) {
+            sb.append(sb.length() > 0 ? " · " : "").append("발표 ").append(rec.resultDate());
+        }
+        return sb.length() == 0 ? "날짜 없음" : sb.toString();
     }
 
     private boolean isBigMove(ExamSchedule existing, CollectedSchedule rec) {

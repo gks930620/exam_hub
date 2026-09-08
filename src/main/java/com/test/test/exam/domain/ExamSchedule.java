@@ -80,6 +80,16 @@ public class ExamSchedule {
     @Column(name = "collected_at", nullable = false)
     private LocalDateTime collectedAt;
 
+    /**
+     * 매니저 입력 행에 대해 <b>수집이 다른 날짜를 봤다</b>는 기록(사람이 읽을 문장).
+     * 덮지는 않는다 — 매니저가 공고와 대조해 판단할 근거만 남긴다.
+     */
+    @Column(name = "source_conflict", length = 300)
+    private String sourceConflict;
+
+    @Column(name = "source_conflict_at")
+    private LocalDateTime sourceConflictAt;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -171,6 +181,21 @@ public class ExamSchedule {
                 || !java.util.Objects.equals(this.examStartDate, examStart)
                 || !java.util.Objects.equals(this.examEndDate, examEnd)
                 || !java.util.Objects.equals(this.resultDate, result);
+    }
+
+    /**
+     * 매니저가 넣은 값과 <b>수집값이 다르다</b>는 표시. 수집은 이 행을 덮지 않되(사람이 넣은 값이 이긴다)
+     * 시행처가 뭐라고 하는지는 남겨 둔다 — 없으면 매니저가 바뀐 사실을 영영 모른다(2026-09-08).
+     */
+    public void markSourceConflict(String sourceSays, LocalDateTime at) {
+        this.sourceConflict = sourceSays;
+        this.sourceConflictAt = at;
+    }
+
+    /** 시행처가 매니저 값과 같아졌거나, 매니저가 다시 저장했다 — 표시를 뗀다. */
+    public void clearSourceConflict() {
+        this.sourceConflict = null;
+        this.sourceConflictAt = null;
     }
 
     /** 수집 diff 로 변경된 필드를 반영한다. */

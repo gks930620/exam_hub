@@ -125,6 +125,7 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
   };
 
   const pending = rows?.some((r) => r.status === 'PENDING_REVIEW') ?? false;
+  const conflicted = rows?.some((r) => r.sourceConflict) ?? false;
 
   return (
     <div className="k-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) close(); }}>
@@ -157,9 +158,18 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
                             {r.year}년 {r.round}회 · {r.examType === 'WRITTEN' ? '필기' : '실기'}
                             {r.status === 'PENDING_REVIEW' && <> <span className="k-badge k-badge--warn">보류</span></>}
                             {r.status === 'CANCELED' && <> <span className="k-badge k-badge--err">취소됨</span></>}
+                            {r.sourceConflict && <> <span className="k-badge k-badge--err">수집값 다름</span></>}
                           </td>
                           <td className="nowrap">{fmtAt(r.regStartAt)} ~ {fmtAt(r.regEndAt)}</td>
-                          <td className="nowrap">{r.examStartDate ?? '-'}</td>
+                          <td className="nowrap">
+                            {r.examStartDate ?? '-'}
+                            {/* 매니저 값은 그대로 두고, 시행처가 뭐라고 하는지만 알려 준다 */}
+                            {r.sourceConflict && (
+                              <div className="fineprint" style={{ margin: '2px 0 0' }}>
+                                시행처: {r.sourceConflict}
+                              </div>
+                            )}
+                          </td>
                           <td>
                             {r.status !== 'CANCELED' && (
                               <button className="link-danger" onClick={() => cancel(r.id)}>취소</button>
@@ -170,6 +180,12 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
                     </tbody>
                   </table>
                 </div>
+                {conflicted && (
+                  <p className="fineprint" style={{ margin: '10px 0 0' }}>
+                    <b>수집값 다름</b>은 매니저가 넣은 값을 자동 수집이 덮지 않은 것입니다 — 사람이 넣은 값이 이깁니다.
+                    공고를 보고 <b>맞는 쪽으로 다시 저장</b>하면 표시가 사라집니다(수집값이 맞다면 그 날짜로 저장하세요).
+                  </p>
+                )}
                 {pending && (
                   <p className="fineprint" style={{ margin: '10px 0 0' }}>
                     <b>보류 회차</b>는 수집된 일정이 30일 넘게 움직인 것입니다. 공고와 대조해 저장하면 풀립니다

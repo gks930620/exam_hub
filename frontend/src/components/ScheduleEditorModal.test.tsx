@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import ScheduleEditorModal from './ScheduleEditorModal';
 import { examApi } from '../api/exams';
 import type { AdminScheduleRow } from '../api/types';
@@ -11,7 +11,7 @@ function row(over: Partial<AdminScheduleRow> = {}): AdminScheduleRow {
   return {
     id: 9, certificateId: 1, certificateName: '국가직 9급', year: 2026, round: 1, examType: 'WRITTEN',
     regStartAt: '2026-01-10T10:00', regEndAt: '2026-01-20T18:00', examStartDate: '2026-03-12',
-    examEndDate: null, resultDate: null, status: 'ACTIVE', sourceUrl: null, ...over,
+    examEndDate: null, resultDate: null, status: 'ACTIVE', sourceUrl: null, sourceConflict: null, ...over,
   };
 }
 
@@ -70,5 +70,22 @@ describe('ScheduleEditorModal', () => {
 
     expect(confirm).toHaveBeenCalledWith('입력 중인 내용이 있습니다. 닫을까요?');
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  /**
+   * 수집은 매니저 값을 덮지 않는다 — 그래서 시행처가 날짜를 바꿔도 화면이 말해 주지 않으면
+   * 옛 날짜로 D-day 와 알림이 계속 나간다(2026-09-08).
+   */
+  it('수집값이 다르면 시행처가 뭐라고 하는지 보여 준다', async () => {
+    vi.spyOn(examApi, 'adminSchedules').mockResolvedValue([
+      row({ sourceConflict: '접수 2026-03-02 10:00 ~ 2026-03-05 18:00 · 시험 2026-04-11' }),
+    ]);
+    renderModal();
+
+    // 표 안의 배지와 아래 설명에 같은 낱말이 있으니 표 안에서 찾는다
+    const table = await screen.findByRole('table');
+    expect(within(table).getByText('수집값 다름')).toBeTruthy();
+    expect(within(table).getByText(/시행처: 접수 2026-03-02/)).toBeTruthy();
+    expect(screen.getByText(/사람이 넣은 값이 이깁니다/)).toBeTruthy();
   });
 });

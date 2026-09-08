@@ -109,6 +109,9 @@ public class AdminScheduleController {
 
         // 매니저가 공고를 보고 넣은 값이다 — 추정치 경고가 붙으면 안 되고, 수집이 덮어쓰지도 않는다
         schedule.changeProvenance(ScheduleProvenance.MANUAL);
+        // 매니저가 공고를 보고 다시 저장했다 — "수집값과 다름" 표시는 여기서 풀린다.
+        // (수집값이 여전히 다르면 다음 수집이 다시 세운다)
+        schedule.clearSourceConflict();
         schedule.applyFrom(
                 req.regStartAt(), req.regEndAt(),
                 req.examStartDate(), req.examEndDate(), req.resultDate(),
@@ -191,7 +194,9 @@ public class AdminScheduleController {
                 int year, int round, String examType,
                 String regStartAt, String regEndAt,
                 String examStartDate, String examEndDate, String resultDate,
-                String status, String sourceUrl
+                String status, String sourceUrl,
+                /** 수집이 본 날짜가 이 행과 다르면 그 내용(사람이 읽는 한 줄). 같거나 수기가 아니면 null */
+                String sourceConflict
         ) {
             /** 시험은 호출부가 이미 갖고 있다 — 지연 로딩을 건드리지 않으려고 받아 쓴다. */
             public static ScheduleRow of(ExamSchedule s, Certificate cert) {
@@ -201,7 +206,7 @@ public class AdminScheduleController {
                         TimeUtil.format(s.getRegStartAt()), TimeUtil.format(s.getRegEndAt()),
                         TimeUtil.format(s.getExamStartDate()), TimeUtil.format(s.getExamEndDate()),
                         TimeUtil.format(s.getResultDate()),
-                        s.getStatus().name(), s.getSourceUrl());
+                        s.getStatus().name(), s.getSourceUrl(), s.getSourceConflict());
             }
         }
     }

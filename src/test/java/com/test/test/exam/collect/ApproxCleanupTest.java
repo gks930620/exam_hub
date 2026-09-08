@@ -172,6 +172,42 @@ class ApproxCleanupTest {
         Mockito.verify(diff).upsert(ownApprox);
     }
 
+    /**
+     * <b>매니저 값은 지키되, 시행처가 다른 말을 하면 그 사실은 남긴다.</b>
+     *
+     * <p>수집이 MANUAL 행을 안 덮는 건 맞다 — 사람이 공고를 보고 넣은 값이 이긴다. 그런데 조용히 버리면
+     * 시행처가 접수일을 2주 당겨도 매니저가 알 방법이 없어 옛 날짜로 D-day 와 알림이 계속 나간다(2026-09-08).
+     */
+    @Test
+    @DisplayName("수기 행은 안 덮지만 수집값이 다르면 표시를 남긴다")
+    void manual_row_keeps_value_but_records_the_conflict() {
+        Certificate c = cert(1L);
+        ExamSchedule manual = ExamSchedule.builder()
+                .certificate(c).year(2026).round(1).examType(ExamType.WRITTEN)
+                .examStartDate(LocalDate.of(2026, 9, 19))
+                .provenance(ScheduleProvenance.MANUAL).status(ScheduleStatus.ACTIVE)
+                .build();
+        ExamScheduleRepository repo = Mockito.mock(ExamScheduleRepository.class);
+        Mockito.when(repo.findByCertificateAndYearAndRoundAndExamType(
+                        Mockito.any(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any()))
+                .thenReturn(java.util.Optional.of(manual));
+        CertificateRepository certs = Mockito.mock(CertificateRepository.class);
+        Mockito.when(certs.findBySourceCode(Mockito.any())).thenReturn(java.util.Optional.of(c));
+        DiffService diffService = new DiffService(certs, repo);
+
+        CollectedSchedule fromSite = new CollectedSchedule("KCA-SEC", "정보보안기사", Series.ETC,
+                "한국방송통신전파진흥원", "IT-보안", 2026, 1, ExamType.WRITTEN,
+                null, null, LocalDate.of(2026, 9, 5), null, null,
+                "https://www.cq.or.kr/", ScheduleProvenance.SCRAPED);
+
+        DiffService.Outcome outcome = diffService.upsert(fromSite);
+
+        assertEquals(DiffService.DiffType.UNCHANGED, outcome.type(), "매니저 값을 덮었다");
+        assertEquals(LocalDate.of(2026, 9, 19), manual.getExamStartDate(), "매니저가 넣은 날짜가 바뀌었다");
+        assertTrue(manual.getSourceConflict() != null && manual.getSourceConflict().contains("2026-09-05"),
+                "시행처가 뭐라고 하는지 안 남겼다 — 매니저가 바뀐 사실을 알 길이 없다");
+    }
+
     /** 그 시험의 일정을 하나도 못 물어 온 소스는 아무것도 못 지운다 — 사이트가 빈 날의 사고 방지. */
     @Test
     @DisplayName("소스가 그 시험에 대해 0건이면 추정치를 건드리지 않는다")

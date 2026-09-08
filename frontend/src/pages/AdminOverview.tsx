@@ -31,13 +31,16 @@ const ACTIONS: { key: OverviewAction; label: string; hint: string; tone: string 
   { key: 'NEXT_ROUND', label: '다음 회차 입력', hint: '수기 대상인데 남은 일정이 전부 지났습니다 — 오래 지난 것부터', tone: 'k-badge--warn' },
   { key: 'VERIFY', label: '시행처 확인', hint: '앞으로의 일정이 추정치(회차 패턴 계산)입니다 — 임박한 것부터. 공고와 대조해 저장하면 빠집니다', tone: 'k-badge--point' },
   { key: 'REVIEW_MOVE', label: '일정 이동 확인', hint: '수집된 일정이 30일 넘게 움직여 보류 중입니다 — 공고와 대조해 저장하면 풀립니다', tone: 'k-badge--warn' },
-  { key: 'CHECK_SOURCE', label: '회차 끊김 확인', hint: '자동 소스인데 1년 넘게 새 회차가 없습니다 — 폐지·개칭됐거나 수집이 빠졌을 수 있습니다', tone: 'k-badge--err' },
+  { key: 'SOURCE_MISMATCH', label: '수집값과 다름', hint: '매니저가 넣은 날짜와 시행처가 말하는 날짜가 다릅니다 — 사람이 넣은 값이 이기므로 덮지 않았습니다. 공고를 보고 맞는 쪽으로 다시 저장하세요', tone: 'k-badge--err' },
+  { key: 'CHECK_SOURCE', label: '회차 끊김 확인', hint: '자동 소스인데 1년 넘게 새 회차가 없습니다 — 폐지·개칭됐거나 수집이 빠졌을 수 있습니다. 시행처를 보고 다음 회차를 직접 넣으면(수기가 이깁니다) 사용자에게는 바로 보입니다. 폐지로 보이면 개발자에게 알려 주세요', tone: 'k-badge--err' },
 ];
 
 /** [넣기]가 뜨는 행 — 수기 대상이거나, 자동이라도 사람이 공고와 대조해 저장해야 풀리는 것 */
 function canEdit(row: OverviewRow): boolean {
   if (row.bucket === 'ROLLING') return false;
-  return row.source === 'MANUAL' || row.action === 'VERIFY' || row.action === 'REVIEW_MOVE';
+  return row.source === 'MANUAL' || row.action === 'VERIFY' || row.action === 'REVIEW_MOVE'
+    // 회차 끊김도 사람이 손대야 풀린다 — 시행처를 보고 다음 회차를 넣거나(수기가 이긴다) 개발자에게 알린다
+    || row.action === 'CHECK_SOURCE' || row.action === 'SOURCE_MISMATCH';
 }
 
 export default function AdminOverview() {
