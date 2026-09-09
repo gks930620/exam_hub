@@ -1074,10 +1074,12 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
         assertEquals("MANUAL", overviewRow(token, history).path("source").asText(),
                 "시드의 scraped 표시만 보고 자동이라 한다");
 
-        // 스크래퍼 코드는 있지만 이 테스트 설정에선 떠 있지 않다 → 크롤링 예정이지 자동은 아니다
-        Certificate kdata = newCertificate("데이터자격", "한국데이터산업진흥원", "KDATA");
-        diffService.upsert(collected(kdata, Series.ETC, today.getYear(), 1, today.plusDays(30), ScheduleProvenance.SCRAPED));
-        assertEquals("CRAWL_PLANNED", overviewRow(token, kdata).path("source").asText());
+        // 붙일 예정인 기관 → 크롤링 예정이지 자동은 아니다
+        // (예시를 삼일회계법인으로 둔다 — 한국데이터산업진흥원은 robots.txt 전체 차단이라
+        //  수집을 껐고, 그래서 이제 "크롤링 예정"이 아니다. 2026-09-09)
+        Certificate samil = newCertificate("회계자격", "삼일회계법인", "SAMIL");
+        diffService.upsert(collected(samil, Series.ETC, today.getYear(), 1, today.plusDays(30), ScheduleProvenance.SCRAPED));
+        assertEquals("CRAWL_PLANNED", overviewRow(token, samil).path("source").asText());
     }
 
     @Test

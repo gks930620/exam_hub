@@ -31,9 +31,21 @@ import java.util.regex.Pattern;
  * <p>날짜에 <b>연도가 없다</b>({@code 3.3~9}, {@code 9.28~10.13}, {@code 4.4(토)}).
  * 연도는 표 제목("2026년 …")에서 얻고, 못 읽으면 아무것도 넣지 않는다 —
  * 엉뚱한 연도로 넣으면 사용자가 1년 뒤 시험을 보고 준비한다.
+ *
+ * <h3>지금은 꺼져 있다 — robots.txt</h3>
+ * {@code dataq.or.kr/robots.txt} 가 <b>{@code Disallow: /}</b> 다({@code Allow: /$} 로 첫 화면만 연다).
+ * 우리가 읽는 {@code /www/accept/schedule.do} 는 막힌 경로다. 그런데 이 수집기는 그걸 매일 긁고 있었다 —
+ * <b>"robots 를 존중한다"는 우리 규칙을 우리가 어기고 있었다</b>(2026-09-08 발견, 2026-09-09 정리).
+ *
+ * <p>그래서 <b>기본으로 안 뜬다.</b> 파서는 멀쩡하니 지우지 않았다 — 시행처에서 허락을 받거나
+ * 공식 경로(공공데이터포털 API 등)를 찾으면 {@code scrape.dataq.enabled=true} 한 줄로 되살아난다.
+ * 이미 받아 둔 일정은 지우지 않았다(받은 사실이 없어지는 건 아니다). 다만 새 회차는 안 들어오므로
+ * 매니저 화면에서 "다음 회차 입력"으로 뜬다.
+ *
+ * <p><b>대가가 크다.</b> 빅데이터분석기사는 여기서만 들어온다 — 큐넷 API 에 없는 국가기술자격이다.
  */
 @Component
-@ConditionalOnProperty(name = "scrape.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "scrape.dataq.enabled", havingValue = "true")
 public class DataqScheduleSource extends AbstractHtmlScheduleSource {
 
     static final String URL = "https://www.dataq.or.kr/www/accept/schedule.do";
