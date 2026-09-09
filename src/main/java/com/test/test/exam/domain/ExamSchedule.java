@@ -157,7 +157,7 @@ public class ExamSchedule {
      * DIAT 의 2612회라 네 자리를 안 넘는다.
      */
     public boolean hasPublishedRound() {
-        return round != null && round < MAX_REAL_ROUND;
+        return round != null && round > 0 && round < MAX_REAL_ROUND;
     }
 
     /**

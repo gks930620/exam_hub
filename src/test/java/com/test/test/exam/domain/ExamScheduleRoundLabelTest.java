@@ -52,6 +52,19 @@ class ExamScheduleRoundLabelTest {
         }
     }
 
+    /**
+     * 큐넷이 실기 회차를 <b>0</b> 으로 주는 행이 92건 있었다(2026-09-09 실측).
+     * 그대로 두면 화면에 "2026년 0회 실기"로 뜬다.
+     */
+    @Test
+    @DisplayName("0 이하는 회차가 아니다")
+    void zero_or_negative_is_not_a_round() {
+        for (int bad : new int[]{0, -3}) {
+            assertFalse(withRound(bad).hasPublishedRound(), bad + " 를 진짜 회차로 봤다");
+            assertEquals("필기", withRound(bad).roundLabel(), bad + " 가 화면에 새어 나간다");
+        }
+    }
+
     @Test
     @DisplayName("회차가 없어도 터지지 않는다")
     void missing_round_is_safe() {

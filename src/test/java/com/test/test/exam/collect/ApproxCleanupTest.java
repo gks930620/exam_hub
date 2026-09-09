@@ -159,6 +159,40 @@ class ApproxCleanupTest {
     }
 
     /**
+     * <b>회차 번호만 다르고 시험일이 같은 행은 같은 시행이다.</b> 토익이 그랬다 — 시험일을 회차 자리에
+     * 넣던 옛 행과 시행처가 매긴 회차가 같은 날짜로 나란히 남아, 사용자에게 같은 시험이 두 번 보였다.
+     * 이건 <b>지난 회차라도</b> 지운다. 지난 목록에 같은 날이 두 줄인 것도 틀린 화면이다.
+     */
+    @Test
+    @DisplayName("같은 시험일의 중복 회차는 지난 것이라도 지운다")
+    void duplicate_sittings_are_removed_even_in_the_past() {
+        Certificate c = cert(1L);
+        LocalDate past = LocalDate.of(2026, 1, 10);
+        ExamSchedule oldKey = ExamSchedule.builder()
+                .certificate(c).year(2026).round(20260110).examType(ExamType.WRITTEN)
+                .examStartDate(past)
+                .provenance(ScheduleProvenance.SCRAPED).status(ScheduleStatus.ACTIVE)
+                .build();
+        ExamSchedule real = ExamSchedule.builder()
+                .certificate(c).year(2026).round(576).examType(ExamType.WRITTEN)
+                .examStartDate(past)
+                .provenance(ScheduleProvenance.SCRAPED).status(ScheduleStatus.ACTIVE)
+                .build();
+        CollectedSchedule produced = new CollectedSchedule("KCA-SEC", "정보보안기사", Series.ETC,
+                "한국방송통신전파진흥원", "IT-보안", 2026, 576, ExamType.WRITTEN,
+                null, null, past, null, null, "https://www.cq.or.kr/", ScheduleProvenance.SCRAPED);
+
+        CollectService service = serviceThatCollects(c, List.of(oldKey, real),
+                List.of(produced), List.of(real));
+
+        service.collectAll();
+
+        ArgumentCaptor<ExamSchedule> deleted = ArgumentCaptor.forClass(ExamSchedule.class);
+        Mockito.verify(schedules).delete(deleted.capture());
+        assertEquals(20260110, deleted.getValue().getRound(), "같은 날짜의 옛 행이 남았다");
+    }
+
+    /**
      * 시행처가 반년치만 싣는데 그 뒤 일정까지 지우면 멀쩡한 값이 날아간다.
      * <b>이번에 본 가장 먼 시험일 너머는 손대지 않는다.</b>
      */

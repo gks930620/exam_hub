@@ -169,12 +169,17 @@ public class CollectService {
         int neu = 0, updated = 0, skipped = 0, pending = 0;
         Set<Long> touched = new java.util.LinkedHashSet<>();
         Set<String> confirmed = new java.util.HashSet<>();
+        Set<String> confirmedSittings = new java.util.HashSet<>();
         try {
             for (CollectedSchedule rec : records) {
                 DiffService.Outcome outcome = diffService.upsert(rec);
                 if (outcome.schedule() != null && outcome.schedule().getCertificate() != null) {
                     touched.add(outcome.schedule().getCertificate().getId());
                     confirmed.add(roundKey(outcome.schedule()));
+                    String sitting = sittingKey(outcome.schedule());
+                    if (sitting != null) {
+                        confirmedSittings.add(sitting);
+                    }
                 }
                 switch (outcome.type()) {
                     case NEW -> {
@@ -195,7 +200,7 @@ public class CollectService {
                     }
                 }
             }
-            int dropped = dropUnconfirmedRounds(source, touched, confirmed, horizon(records));
+            int dropped = dropUnconfirmedRounds(source, touched, confirmed, confirmedSittings, horizon(records));
             crawlLog.finishSuccess(records.size(), neu, updated, skipped, pending);
             crawlLogRepository.save(crawlLog);
             log.info("[Collect] source={} fetched={} new={} updated={} skipped={} pendingReview={} 추정치정리={}",
@@ -269,11 +274,17 @@ public class CollectService {
      *   <li>매니저 입력(MANUAL)과 공공 API 값은 어떤 경우에도 안 지운다 — 사람이 판단할 일이다.</li>
      * </ol>
      *
+     * <h3>③ 같은 시행이 두 줄</h3>
+     * 회차 번호만 다르고 <b>시험일이 같은</b> 행은 같은 시행이다. 토익이 그랬다 — 시험일을 회차 자리에
+     * 넣던 옛 행(20260823)과 시행처가 매긴 회차(576회)가 같은 날짜로 나란히 남았다.
+     * 사용자에겐 같은 시험이 두 번 보인다. 이건 <b>지난 회차라도</b> 지운다 — 지난 목록에 같은 날이
+     * 두 줄인 것도 틀린 화면이고, 같은 시행을 방금 확인했으니 어느 쪽이 진짜인지 분명하다.
+     *
      * @param horizon 이번에 읽어 온 가장 먼 시험일. null 이면 수집값은 손대지 않는다.
      * @return 지운 건수
      */
     private int dropUnconfirmedRounds(ScheduleSource source, Set<Long> touched, Set<String> confirmed,
-                                      LocalDate horizon) {
+                                      Set<String> confirmedSittings, LocalDate horizon) {
         if (touched.isEmpty() || source.coveredAgencies().isEmpty()) {
             return 0;   // 파일 시드는 아무 기관도 맡지 않는다 — 자기가 만든 추정치를 스스로 지우면 안 된다
         }
@@ -282,7 +293,8 @@ public class CollectService {
                 .findByCertificateIdInAndStatus(List.copyOf(touched), ScheduleStatus.ACTIVE).stream()
                 .filter(s -> !confirmed.contains(roundKey(s)))
                 .filter(s -> s.getProvenance() == ScheduleProvenance.APPROX
-                        || (s.getProvenance() == ScheduleProvenance.SCRAPED && insideHorizon(s, today, horizon)))
+                        || (s.getProvenance() == ScheduleProvenance.SCRAPED
+                            && (insideHorizon(s, today, horizon) || duplicatesConfirmedSitting(s, confirmedSittings))))
                 .toList();
         for (ExamSchedule s : stale) {
             // 시험 이름은 안 찍는다 — 트랜잭션 밖이라 지연 로딩 프록시를 건드리면 터진다(실측 2026-09-04).
@@ -294,6 +306,23 @@ public class CollectService {
                     source.sourceId(), certId, s.getYear(), s.getRound(), s.getExamType(), s.getProvenance());
         }
         return stale.size();
+    }
+
+    /**
+     * 이번에 확인한 <b>같은 시행</b>을 회차 번호만 달리해 중복으로 갖고 있는 행인가.
+     * (시험, 구분, 시험일)이 같으면 같은 시행이다 — 회차 번호는 시행처가 바꿀 수 있다.
+     */
+    private boolean duplicatesConfirmedSitting(ExamSchedule s, Set<String> confirmedSittings) {
+        String key = sittingKey(s);
+        return key != null && confirmedSittings.contains(key);
+    }
+
+    /** 같은 시행인지 보는 키 — (시험, 구분, 시험일). 시험일이 없으면 판단하지 않는다. */
+    private String sittingKey(ExamSchedule s) {
+        if (s.getExamStartDate() == null || s.getCertificate() == null) {
+            return null;
+        }
+        return s.getCertificate().getId() + "/" + s.getExamType() + "/" + s.getExamStartDate();
     }
 
     /** 이번에 읽어 온 기간(오늘 ~ 가장 먼 시험일) 안에 있는 회차인가. */

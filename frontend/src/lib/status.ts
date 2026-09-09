@@ -52,5 +52,5 @@ const MAX_REAL_ROUND = 10_000;
  * 서버의 `ExamSchedule.roundLabel()` 과 같은 규칙이다.
  */
 export function roundLabel(year: number, round: number): string {
-  return round < MAX_REAL_ROUND ? `${year}년 ${round}회` : `${year}년`;
+  return round > 0 && round < MAX_REAL_ROUND ? `${year}년 ${round}회` : `${year}년`;
 }
