@@ -14,7 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 매경TEST 1종 · 보험연수원 보험심사역 2종 · HSK 1종.
+ * 매경TEST 1종 · 보험연수원 보험심사역 2종.
+ *
+ * <p>HSK 는 뺐다 — 시행처가 우리 수집기를 거부한다(브라우저가 아닌 UA 는 /error.htm 으로 302, 2026-09-09).
  *
  * <p>남은 소규모 시행처들이다. 함정이 각각 다르다.
  * <ul>
@@ -22,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *       ({@code 2025.12.22&#8203;(월)} — 폭 없는 공백). 숫자만 보고 읽어야 한다.</li>
  *   <li><b>보험연수원</b> — 표가 <b>가로로 눕혀</b> 있고(회차가 열), 두 번째 날짜는 연도를 생략한다
  *       ({@code 2026. 3. 3(화) 10:00 ~ 3. 12(목) 18:00}).</li>
- *   <li><b>HSK</b> — 시험일자에 <b>연도가 없다</b>({@code 1월 10일(토)}). 연도는 제목에만 있고,
- *       접수는 전해 11월에 열리는 회차가 있어 앞으로 넘겨야 한다.</li>
- * </ul>
+ *  </ul>
  */
 class MkInsuranceHskParserTest {
 
@@ -136,55 +136,14 @@ class MkInsuranceHskParserTest {
         assertEquals(4, out.size(), "2회차 × 2부문이어야 한다");
     }
 
-    // ===== HSK =====
-
-    /** 시험일자에 연도가 없다 — 제목의 "2026년 시험일정"에서 가져와야 한다. */
-    @Test
-    @DisplayName("HSK: 제목의 연도를 시험일에 붙인다")
-    void hsk_takes_the_year_from_the_heading() throws IOException {
-        List<CollectedSchedule> out = new HskScheduleSource().parse(fixture("hsk_schedule.html"));
-
-        assertFalse(out.isEmpty(), "한 건도 못 뽑았다");
-        assertTrue(out.stream().allMatch(s -> s.year() == 2026), "연도가 2026 이 아니다");
-        assertEquals("M0341", out.get(0).sourceCode());
-        assertEquals("HSK 중국어능력시험(필기)", out.get(0).certificateName());
-    }
-
-    /**
-     * <b>1월 시험은 전해 11월에 접수한다.</b> 접수 칸에는 연도가 적혀 있지만
-     * 시험일에는 없어서, 둘을 따로 읽어 붙여야 한다.
-     */
-    @Test
-    @DisplayName("HSK: 1월 시험의 전해 접수를 제대로 읽는다")
-    void hsk_handles_registration_in_the_previous_year() throws IOException {
-        CollectedSchedule s = new HskScheduleSource().parse(fixture("hsk_schedule.html")).stream()
-                .filter(x -> "2026-01-10".equals(String.valueOf(x.examStartDate())))
-                .findFirst().orElse(null);
-
-        assertNotNull(s, "1월 10일 회차가 없다");
-        assertEquals("2025-11-26T10:00", s.regStartAt().toString());
-        assertEquals("2025-12-31T18:00", s.regEndAt().toString());
-    }
-
-    /** 회차 번호가 없는 시험이다 — 지어내지 않고 시험일을 내부 키로 쓴다. */
-    @Test
-    @DisplayName("HSK: 없는 회차 번호를 지어내지 않는다")
-    void hsk_does_not_invent_a_round_number() throws IOException {
-        List<CollectedSchedule> out = new HskScheduleSource().parse(fixture("hsk_schedule.html"));
-
-        assertTrue(out.stream().allMatch(s -> s.round() >= 1_000_000),
-                "회차 자리에 시행처가 안 준 작은 숫자가 들어갔다 — 화면에 '1회'로 뜬다");
-    }
-
     // ===== 공통 계약 =====
 
     @Test
-    @DisplayName("셋 다 접수가 시험보다 늦지 않다")
+    @DisplayName("둘 다 접수가 시험보다 늦지 않다")
     void registration_precedes_exam() throws IOException {
         List<CollectedSchedule> all = new java.util.ArrayList<>();
         all.addAll(new MkTestScheduleSource().parse(fixture("mktest_schedule.html")));
         all.addAll(new InsuranceScheduleSource().parse(fixture("insurance_aiu_schedule.html")));
-        all.addAll(new HskScheduleSource().parse(fixture("hsk_schedule.html")));
 
         assertFalse(all.isEmpty());
         all.stream()
@@ -199,7 +158,6 @@ class MkInsuranceHskParserTest {
         for (String html : new String[]{"", "<html>점검 중</html>", "<html><table></table></html>"}) {
             assertTrue(new MkTestScheduleSource().parse(html).isEmpty(), "매경: " + html);
             assertTrue(new InsuranceScheduleSource().parse(html).isEmpty(), "보험연수원: " + html);
-            assertTrue(new HskScheduleSource().parse(html).isEmpty(), "HSK: " + html);
         }
     }
 }

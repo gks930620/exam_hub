@@ -52,8 +52,9 @@ class AgencyMatcherTest {
     @Test
     @DisplayName("일정 없음 이유 판정도 같은 규칙이다 — 괄호가 있든 없든 크롤링 예정")
     void no_schedule_reason_uses_same_rule() {
-        assertEquals(NoScheduleReason.CRAWL_PLANNED, NoScheduleReason.of(certWithAgency("한국정보통신자격협회(ICQA)")));
-        assertEquals(NoScheduleReason.CRAWL_PLANNED, NoScheduleReason.of(certWithAgency("한국정보통신자격협회")));
+        // 예시는 KAIT 로 둔다 — ICQA 는 정기시험 일정을 구글 캘린더로만 안내해 크롤링 예정에서 뺐다(2026-09-09)
+        assertEquals(NoScheduleReason.CRAWL_PLANNED, NoScheduleReason.of(certWithAgency("한국정보통신진흥협회(KAIT)")));
+        assertEquals(NoScheduleReason.CRAWL_PLANNED, NoScheduleReason.of(certWithAgency("한국정보통신진흥협회")));
         assertEquals(NoScheduleReason.CRAWL_PLANNED, NoScheduleReason.of(certWithAgency("한국방송통신전파진흥원")));
         assertEquals(NoScheduleReason.CRAWL_PLANNED, NoScheduleReason.of(certWithAgency("한국방송통신전파진흥원(KCA)")));
         assertEquals(NoScheduleReason.MANUAL, NoScheduleReason.of(certWithAgency("국사편찬위원회")));

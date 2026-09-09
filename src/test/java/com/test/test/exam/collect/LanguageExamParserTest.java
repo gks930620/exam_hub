@@ -19,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * <p>픽스처 수집 시점: 2026-08-06.
  *
+ * <p>JLPT 도 여기 없다 — 시행처가 우리 수집기를 거부해(UA 필터) 자동 수집을 접었다(2026-09-09).
+ *
  * <p>TOEIC 계열은 여기 없다 — YBM 여섯 페이지를 한 파서가 맡게 되면서 {@link YbmParserTest} 로 옮겼다(2026-09-08).
  */
 class LanguageExamParserTest {
@@ -57,30 +59,11 @@ class LanguageExamParserTest {
         assertThat(out).hasSize((int) distinct);
     }
 
-    // ===== JLPT =====
-
-    @Test
-    @DisplayName("JLPT — 연 2회 일정에서 접수기간과 시험일을 뽑는다")
-    void jlpt_parses_schedule() throws IOException {
-        List<CollectedSchedule> out = new JlptScheduleSource().parse(fixture("jlpt_main.html"));
-
-        assertThat(out).isNotEmpty();
-        CollectedSchedule s = out.get(0);
-
-        assertThat(s.certificateName()).isEqualTo("JLPT 일본어능력시험");
-        assertThat(s.year()).isEqualTo(2026);
-        assertThat(s.round()).isEqualTo(2);
-        assertThat(s.regStartAt().toLocalDate().toString()).isEqualTo("2026-09-01");
-        assertThat(s.regEndAt().toLocalDate().toString()).isEqualTo("2026-09-20");
-        assertThat(s.examStartDate().toString()).isEqualTo("2026-12-06");
-    }
-
     // ===== 공통 계약 =====
 
     @Test
     @DisplayName("모든 파서 — 빈 HTML 이면 예외 없이 빈 목록")
     void parsers_return_empty_on_garbage() {
         assertThat(new TepsScheduleSource().parse("<html><body>없음</body></html>")).isEmpty();
-        assertThat(new JlptScheduleSource().parse("<html></html>")).isEmpty();
     }
 }

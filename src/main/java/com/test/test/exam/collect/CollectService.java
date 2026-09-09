@@ -133,10 +133,18 @@ public class CollectService {
      * 담당 기관이 걸리면 불러야 한다</b> — 사이트를 한 번 읽고 걸러 주기 때문이다. 이 조건이 없으면
      * 매니저가 KCA 종목에 "다시 받아오기"를 눌러도 큐넷만 돌고 아무 일도 안 일어난다(2026-09-04 실측).
      * 반대로 조건이 없으면 큐넷 종목 세 개를 다시 받자고 시행처 8곳을 전부 두드린다.
+     *
+     * <p><b>기관 이름만 보면 표기 차이에서 깨진다.</b> JLPT 가 그랬다(2026-09-09): 소스는
+     * "JEES / 국제교류기금", 시험 쪽은 "일본국제교류기금·JEES" 라 서로 포함되지 않아
+     * 매니저가 "다시 받아오기"를 눌러도 그 수집기가 영영 안 돌았다. 그래서 소스가 <b>종목코드를
+     * 대 놓고 밝혔으면</b>({@link ScheduleSource#coveredExamCodes()}) 그걸 먼저 본다 —
+     * 코드는 표기가 흔들리지 않는다.
      */
     private void runForCodes(List<String> sourceCodes, Set<String> agencies, String what) {
         for (ScheduleSource source : batchSources(s ->
-                s.supportsPartialFetch() || AgencyMatcher.matchesAny(agencies, s.coveredAgencies()))) {
+                s.supportsPartialFetch()
+                        || !java.util.Collections.disjoint(sourceCodes, s.coveredExamCodes())
+                        || AgencyMatcher.matchesAny(agencies, s.coveredAgencies()))) {
             try {
                 runSource(source, source.fetchByCertificateCodes(sourceCodes));
             } catch (Exception e) {
