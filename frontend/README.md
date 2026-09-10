@@ -11,7 +11,7 @@
 ```bash
 cd frontend
 npm install
-npm run dev        # http://localhost:5171  (/api 요청은 vite proxy 로 8081 백엔드에 전달)
+npm run dev        # http://localhost:5101  (/api 요청은 vite proxy 로 8101 백엔드에 전달)
 ```
 
 백엔드를 먼저 띄워야 데이터가 보인다: 저장소 루트에서 `./gradlew bootRun` (로컬 프로파일, H2 + 데모/시드 자동 적재).

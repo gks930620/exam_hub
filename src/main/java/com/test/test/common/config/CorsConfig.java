@@ -33,9 +33,9 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         List<String> origins = new ArrayList<>(Arrays.asList(
-                "http://localhost:5171",   // Vite(React CSR) 개발 서버 — 화면 QA 는 여기서 본다
+                "http://localhost:5101",   // Vite(React CSR) 개발 서버 — 화면 QA 는 여기서 본다
                 "http://localhost:3000",   // 대체 개발 서버
-                "http://localhost:8081"    // 로컬 백엔드(단일 서버 — application.yml 기본 포트)
+                "http://localhost:8101"    // 로컬 백엔드(단일 서버 — application.yml 기본 포트)
         ));
         if (allowedOriginsProp != null && !allowedOriginsProp.isBlank()) {
             for (String o : allowedOriginsProp.split(",")) {

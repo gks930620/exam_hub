@@ -85,7 +85,7 @@ public class EmailNotificationSender implements NotificationSender {
     private String body(Member member, NotificationMessage message) {
         Map<String, String> data = message.data() == null ? Map.of() : message.data();
         String certId = data.getOrDefault("certificateId", "");
-        // app.link-base 를 써야 로컬(8081)·운영이 각자 자기 주소로 간다.
+        // app.link-base 를 써야 로컬(8101)·운영이 각자 자기 주소로 간다.
         // 여기를 하드코딩하면 메일 속 버튼이 아무 데도 닿지 않는다.
         String link = linkBase + "/cert/" + certId;
 

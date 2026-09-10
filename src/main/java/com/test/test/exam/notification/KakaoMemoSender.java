@@ -53,7 +53,7 @@ public class KakaoMemoSender implements NotificationSender {
                            MemberRepository memberRepository,
                            @Value("${spring.security.oauth2.client.registration.kakao.client-id:}") String clientId,
                            @Value("${spring.security.oauth2.client.registration.kakao.client-secret:}") String clientSecret,
-                           @Value("${app.link-base:http://localhost:8081}") String linkBase) {
+                           @Value("${app.link-base:http://localhost:8101}") String linkBase) {
         this.objectMapper = objectMapper;
         this.memberRepository = memberRepository;
         this.clientId = clientId;

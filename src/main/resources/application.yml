@@ -4,9 +4,11 @@ dotenv:
 # 환경 무관 실행(코드컨벤션 §5): 기본=local, 운영은 SPRING_PROFILES_ACTIVE=prod 로만 가른다.
 # Railway 는 주입된 PORT 로 리슨해야 하고, 프록시 뒤 절대 URL 을 위해 forward-headers 를 신뢰한다.
 server:
-  # 로컬 기본 포트는 8081 로 고정한다(8080 은 다른 프로젝트가 자주 쓴다 — 사용자 지시 2026-08-06).
+  # 로컬 기본 포트는 8101 이다(2026-09-10 사용자 지시 — 그전엔 8081, 8080 은 다른 프로젝트가 자주 쓴다).
+  # ⚠️ 포트를 바꾸면 카카오·구글 콘솔의 Redirect URI 도 같이 바꿔야 소셜 로그인이 된다
+  #    (콘솔에는 8081~8085 만 등록돼 있다 — 진행사항/02_내가_할일 참고).
   # 운영(Railway)은 주입된 PORT 를 그대로 따른다.
-  port: ${PORT:8081}
+  port: ${PORT:8101}
   forward-headers-strategy: framework
 
 spring:
@@ -60,7 +62,7 @@ spring:
 
   h2:
     console:
-      enabled: true   # http://localhost:8081/h2-console (JDBC URL: jdbc:h2:file:./.localdb/exam) — 운영은 prod 프로파일에서 off
+      enabled: true   # http://localhost:8101/h2-console (JDBC URL: jdbc:h2:file:./.localdb/exam) — 운영은 prod 프로파일에서 off
 
   jpa:
     hibernate:
@@ -183,7 +185,7 @@ app:
     validity-seconds: 86400          # 24시간. refresh 토큰은 범위 밖 — 만료되면 재로그인
   # 알림 메시지 안의 링크 주소. 운영은 APP_PUBLIC_BASE_URL 하나만 넣으면 여기까지 따라온다 —
   # 변수를 따로 기억해야 하면 잊어버리고, 그러면 배포 후 알림 메일 링크가 localhost 로 간다.
-  link-base: ${APP_LINK_BASE:${APP_PUBLIC_BASE_URL:${APP_BASE_URL:http://localhost:8081}}}
+  link-base: ${APP_LINK_BASE:${APP_PUBLIC_BASE_URL:${APP_BASE_URL:http://localhost:8101}}}
   oauth:
     redirect-uri: ${APP_OAUTH_REDIRECT_URI:/oauth/callback}   # 단일 서버라 기본은 같은 출처
 

@@ -29,7 +29,7 @@ import java.util.Map;
  * ({@link com.test.test.exam.collect.SnapshotScheduleSource} 가 읽는다), 다음부터는 공짜로 얹는다.
  *
  * <pre>
- * curl -H "Authorization: Bearer &lt;매니저토큰&gt;" http://localhost:8081/api/admin/export/schedules \
+ * curl -H "Authorization: Bearer &lt;매니저토큰&gt;" http://localhost:8101/api/admin/export/schedules \
  *   -o src/main/resources/seed/schedules_snapshot.json
  * </pre>
  *

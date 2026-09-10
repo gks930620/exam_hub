@@ -2,18 +2,18 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 // CSR 개발 서버. /api 요청은 Spring 백엔드로 프록시 → CORS 회피.
-// 로컬 백엔드 기본 포트는 8081(application.yml 과 맞춤 — 8080 은 다른 프로젝트가 자주 쓴다).
+// 로컬 백엔드 기본 포트는 8101(application.yml 과 맞춤).
 // 다른 포트로 띄웠으면 frontend/.env 에 VITE_API_TARGET=http://localhost:9090 처럼 적는다.
 // ⚠️ loadEnv 로 읽어야 한다 — Vite 는 .env 를 process.env 에 넣지 않으므로
 //    process.env.VITE_API_TARGET 은 항상 undefined 였고, 조용히 엉뚱한 포트로 프록시됐다.
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const target = env.VITE_API_TARGET || 'http://localhost:8081';
+  const target = env.VITE_API_TARGET || 'http://localhost:8101';
 
   return {
     plugins: [react()],
     server: {
-      port: 5171,
+      port: 5101,
       // 포트를 못 잡으면 조용히 5172 로 밀리지 않고 그 자리에서 멈춘다.
       // 예전 세션의 Vite 가 포트를 물고 있어 새 것이 옆 포트로 떴는데, 낡은 쪽이 다른 백엔드로
       // 프록시하는 바람에 화면이 401 만 뱉었다(2026-09-10). 조용히 어긋나느니 안 뜨는 게 낫다.
@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => {
         '/api': { target, changeOrigin: true },
         // 소셜 로그인 — /oauth2/authorization/{provider} 는 서버(Spring Security)의 주소다.
         // 프록시가 없으면 SPA 폴백이 index.html 을 주어 버튼을 눌러도 홈으로 튄다.
-        // changeOrigin 이라 Host 가 8081 이 되고, 서버가 만드는 redirect_uri 도
-        // 카카오 콘솔에 등록한 http://localhost:8081/login/oauth2/code/kakao 와 맞는다.
+        // changeOrigin 이라 Host 가 8101 이 되고, 서버가 만드는 redirect_uri 도
+        // 카카오 콘솔에 등록한 http://localhost:8101/login/oauth2/code/kakao 와 맞는다.
         '/oauth2': { target, changeOrigin: true },
         '/login/oauth2': { target, changeOrigin: true },
       },
