@@ -55,7 +55,10 @@ export default function CalendarPage() {
           </button>
         </div>
       ) : events === null ? (
-        <div className="k-empty state" role="status">불러오는 중…</div>
+        // 첫 로딩은 스켈레톤 — 스피너 대신 자리를 미리 잡아 목록이 뜰 때 화면이 튀지 않게 한다(설계 05 §8)
+        <div className="day-list" role="status" aria-label="일정 불러오는 중">
+          {Array.from({ length: 4 }, (_, i) => <div className="k-skeleton row-skeleton" key={i} />)}
+        </div>
       ) : events.length === 0 ? (
         <div className="k-empty state">
           <span className="big">이 달 일정이 없습니다</span>

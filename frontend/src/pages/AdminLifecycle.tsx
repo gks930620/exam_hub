@@ -22,7 +22,7 @@ export default function AdminLifecycle() {
   }, []);
 
   if (err) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
-  if (!data) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  if (!data) return <div className="day-list" role="status" aria-label="변천사 불러오는 중">{Array.from({ length: 4 }, (_, i) => <div className="k-skeleton row-skeleton" key={i} />)}</div>;
   if (data.items.length === 0) {
     return <p className="fineprint" style={{ margin: 0 }}>목록에서 뺀 시험이 없습니다.</p>;
   }
@@ -69,7 +69,7 @@ export default function AdminLifecycle() {
                   <tr key={r.certificateId}>
                     <td>
                       <b>{r.name}</b>
-                      {r.category && <div style={{ fontSize: 12, color: 'var(--muted2)' }}>{r.category}</div>}
+                      {r.category && <div style={{ fontSize: 12, color: 'var(--muted)' }}>{r.category}</div>}
                     </td>
                     <td>
                       <span className={`k-badge${r.lifecycle === 'UNVERIFIED' ? ' k-badge--warn' : r.lifecycle === 'EXCLUDED' ? ' k-badge--point' : ''}`}>

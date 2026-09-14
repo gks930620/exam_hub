@@ -33,7 +33,7 @@ export default function AdminDataMap() {
   }, []);
 
   if (err) return <div className="k-alert k-alert--err">{err}</div>;
-  if (!data) return <div className="k-empty state">데이터 지도를 불러오는 중…</div>;
+  if (!data) return <div className="day-list" role="status" aria-label="수집 지도 불러오는 중">{Array.from({ length: 4 }, (_, i) => <div className="k-skeleton row-skeleton" key={i} />)}</div>;
 
   const { sources } = data;
   const grouped = MODE_ORDER.map((mode) => ({
@@ -71,7 +71,7 @@ function SourceCard({ row }: { row: DataSourceRow }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <div>
           <b>{row.group}</b>
-          <span style={{ color: 'var(--muted2)', fontSize: 13 }}> · {row.exams}</span>
+          <span style={{ color: 'var(--muted)', fontSize: 13 }}> · {row.exams}</span>
         </div>
         <span className="k-chip">{row.frequency}</span>
       </div>
@@ -79,7 +79,7 @@ function SourceCard({ row }: { row: DataSourceRow }) {
       <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 8, lineHeight: 1.8 }}>
         <div>시행처 — {row.sourceName}</div>
         {row.checkPath !== '—' && <div>어디를 보나 — {row.checkPath}</div>}
-        {row.note && <div style={{ color: 'var(--muted2)' }}>{row.note}</div>}
+        {row.note && <div style={{ color: 'var(--muted)' }}>{row.note}</div>}
       </div>
 
       {row.mode !== 'EXCLUDED' && (

@@ -100,12 +100,26 @@ export default function CommunityPage() {
       </div>
 
       {loading ? (
-        <div className="k-empty state" role="status">불러오는 중…</div>
-      ) : items.length === 0 ? (
-        <div className="k-empty state">
-          <span className="big">아직 글이 없습니다</span>
-          첫 글을 남겨 보세요.
+        // 첫 로딩은 스켈레톤으로 자리를 먼저 잡는다 — 한 화면분만(설계 05 §8)
+        <div className="post-list" role="status" aria-label="글 목록 불러오는 중">
+          {Array.from({ length: 5 }, (_, i) => <div className="k-skeleton row-skeleton" key={i} />)}
         </div>
+      ) : items.length === 0 ? (
+        // 0건 문구는 조건이 있느냐로 갈린다(§8) — 게시판을 고른 탓인지, 정말 아무 글도 없는지
+        board ? (
+          <div className="k-empty state">
+            <span className="big">이 게시판에는 아직 글이 없어요</span>
+            다른 게시판에는 글이 있을 수 있습니다.
+            <div className="empty-actions">
+              <button className="k-btn k-btn--secondary k-btn--sm" onClick={() => setParams({})}>전체 글 보기</button>
+            </div>
+          </div>
+        ) : (
+          <div className="k-empty state">
+            <span className="big">아직 글이 없어요</span>
+            첫 글을 남겨 보세요.
+          </div>
+        )
       ) : (
         <div className="post-list">
           {items.map((p) => (

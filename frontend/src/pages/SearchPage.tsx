@@ -119,7 +119,8 @@ export default function SearchPage() {
             ? `시험 ${grandTotal.toLocaleString()}종, 접수 마감을 놓치지 않게`
             : '시험 일정, 접수 마감을 놓치지 않게'}
         </h1>
-        <p>큐넷·국시원·어학까지 한곳에서 찾고, 등록해 두면 접수 시작·마감을 알려 드립니다.</p>
+        {/* 제목이 이미 "접수 마감을 놓치지 않게"라고 말했다 — 같은 말을 두 번 하지 않는다(설계 05 §19-6) */}
+        <p>큐넷·국시원·어학까지 한곳에서 찾고, 관심 등록해 두면 알려 드립니다.</p>
         <div className="search-row">
           {/* 분류는 38개 — 칩으로 늘어놓으면 5줄이다. 고르는 건 드롭다운이 깔끔하다 */}
           <select className="k-select" value={cat}
@@ -156,16 +157,16 @@ export default function SearchPage() {
         <h2>{q ? `‘${q}’ 검색 결과` : cat || '전체 시험'} <span className="more">{total.toLocaleString()}개</span></h2>
       </div>
 
-      {loading && (!data || data.items.length === 0) && (
-        <div className="k-empty state" role="status">불러오는 중…</div>
-      )}
-
-      {!loading && data && data.items.length === 0 && (
-        <div className="k-empty state">
-          <span className="big">결과가 없습니다</span>
-          다른 이름이나 분류로 찾아보세요.
+      {/* 첫 로딩은 스켈레톤으로 자리를 미리 잡는다 — 한 화면분(6장)만. 48개를 다 깔면 화면이 맥동한다(설계 05 §8) */}
+      {loading && !data && (
+        <div className="card-grid" role="status" aria-label="시험 목록 불러오는 중">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div className="k-skeleton card-skeleton" key={i} />
+          ))}
         </div>
       )}
+
+      {!loading && data && data.items.length === 0 && <EmptyResult q={q} cat={cat} onReset={update} />}
 
       {data && data.items.length > 0 && (
         // 다시 불러오는 동안 목록은 남고 흐려진다 — 자리가 흔들리면 어디를 보고 있었는지 잃는다
@@ -184,13 +185,14 @@ export default function SearchPage() {
                   aria-label={c.favorited ? '관심 해제' : '관심 등록'}
                   aria-pressed={c.favorited}
                 >
-                  <Icon name="star" size={20} filled={c.favorited} />
+                  <Icon name="star" size={22} filled={c.favorited} />
                 </button>
               </div>
-              {/* 상태는 배지 하나로 — 문장을 846번 반복하면 화면이 지저분해진다 */}
+              {/* 목록은 "어떤 시험인지 고르는" 화면이다 — 회차·구분·시각은 상세에서 본다.
+                  여기 남는 건 언제쯤인지 한 줄뿐이고, 그래서 카드 841장의 줄이 전부 맞는다. */}
               <div className="foot">
                 <CardStatus state={scheduleStateOf(c)} badge={c.nextBadge} label={c.nextLabel} at={c.nextAt}
-                            dday={c.nextDday} lastExamDate={c.lastExamDate} inlineDday />
+                            dday={c.nextDday} lastExamDate={c.lastExamDate} inlineDday compact />
               </div>
             </div>
           ))}
@@ -203,6 +205,43 @@ export default function SearchPage() {
         </div>
       )}
     </>
+  );
+}
+
+/**
+ * 0건 문구는 3분기다(설계 05 §8). 한 문구로 뭉치면 <b>사용자가 고칠 수 있는 게 있는지</b>를 알 수 없다.
+ *
+ * <p>검색어가 있으면 오타를 스스로 발견하도록 작은따옴표로 되읽어 주고, 분류만 걸렸으면 그 분류를 말한다.
+ * 조건이 하나도 없는데 0건인 것은 <b>사용자가 고칠 수 있는 게 없는 상태</b>라 "초기화"를 권하면 거짓 안내가 된다.
+ */
+function EmptyResult({ q, cat, onReset }: {
+  q: string;
+  cat: string;
+  onReset: (patch: Patch) => void;
+}) {
+  if (!q && !cat) {
+    return (
+      <div className="k-empty state">
+        <span className="big">아직 준비 중이에요</span>
+        시험 목록을 불러왔지만 보여 드릴 것이 없습니다. 잠시 뒤 다시 열어 보세요.
+      </div>
+    );
+  }
+  return (
+    <div className="k-empty state">
+      <span className="big">{q ? `‘${q}’ 검색 결과가 없어요` : '조건에 맞는 시험이 없어요'}</span>
+      {q && cat ? `분류 ‘${cat}’ 안에서 찾았습니다.` : cat ? `분류 ‘${cat}’ 에는 아직 없습니다.` : '다른 이름으로 찾아보세요.'}
+      <div className="empty-actions">
+        {q && (
+          <button className="k-btn k-btn--secondary k-btn--sm"
+                  onClick={() => onReset({ q: null, page: null })}>검색어 지우기</button>
+        )}
+        {cat && (
+          <button className="k-btn k-btn--secondary k-btn--sm"
+                  onClick={() => onReset({ cat: null, page: null })}>분류 초기화</button>
+        )}
+      </div>
+    </div>
   );
 }
 

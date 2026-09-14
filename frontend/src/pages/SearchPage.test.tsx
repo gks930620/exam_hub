@@ -104,12 +104,39 @@ describe('SearchPage', () => {
     });
   });
 
-  it('결과가 없으면 빈 상태를 보여준다', async () => {
-    vi.spyOn(examApi, 'browse').mockResolvedValue(page([], { totalPages: 0 }));
+  /**
+   * 0건 문구는 3분기다(설계 05 §8). 한 문구로 뭉치면 <b>사용자가 고칠 수 있는 게 있는지</b>를 알 수 없다 —
+   * 조건 때문에 0건인 것과 목록이 통째로 빈 것은 할 일이 정반대다.
+   */
+  describe('0건', () => {
+    beforeEach(() => {
+      vi.spyOn(examApi, 'browse').mockResolvedValue(page([], { totalPages: 0 }));
+    });
 
-    renderAt();
+    it('검색어가 있으면 그 말을 되읽어 주고 지울 길을 준다', async () => {
+      renderAt('/?q=없는시험');
 
-    expect(await screen.findByText('결과가 없습니다')).toBeInTheDocument();
+      expect(await screen.findByText('‘없는시험’ 검색 결과가 없어요')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: '검색어 지우기' }));
+      await waitFor(() => expect(paramsOf().get('q')).toBeNull());
+    });
+
+    it('분류만 걸렸으면 그 분류를 말하고 초기화 버튼을 준다', async () => {
+      renderAt('/?cat=어학-영어');
+
+      expect(await screen.findByText('조건에 맞는 시험이 없어요')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: '검색어 지우기' })).not.toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: '분류 초기화' }));
+      await waitFor(() => expect(paramsOf().get('cat')).toBeNull());
+    });
+
+    /** 사용자가 고칠 수 있는 게 없는 상태다 — "초기화"를 권하면 거짓 안내가 된다. */
+    it('조건이 하나도 없는데 0건이면 초기화를 권하지 않는다', async () => {
+      renderAt();
+
+      expect(await screen.findByText('아직 준비 중이에요')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /초기화|지우기/ })).not.toBeInTheDocument();
+    });
   });
 
   /** 상세와 같은 계약 — 비로그인은 401 대신 로그인 화면으로 간다. */
@@ -133,22 +160,27 @@ describe('SearchPage', () => {
 
     expect(screen.getByText('상시시험')).toBeTruthy();
     expect(screen.queryByText('일정 미정')).toBeNull();
-    // 카드 안의 설명만 본다 — 페이지 상단 안내문에도 '알려 드립니다'가 있다
-    expect(document.querySelector('.exam-card .when')?.textContent).toContain('원하는 날짜');
   });
 
-  it('시험 진행 중은 배지와 종료일로 보여준다', async () => {
+  /**
+   * 목록은 <b>어떤 시험인지 고르는</b> 화면이다 — 회차·구분·시각은 상세의 몫이다(2026-09-10 사용자 판단).
+   *
+   * <p>설명 줄을 같이 실었을 때 카드 523장 중 86%가 두 줄로 접혔고, 배지를 어디에 맞춰도
+   * 그리드가 들쭉날쭉했다. 줄이 맞는 목록은 정렬을 고쳐서가 아니라 <b>덜어내서</b> 나왔다.
+   */
+  it('목록 카드는 배지 한 줄만 남기고 회차·시각은 싣지 않는다', async () => {
     vi.spyOn(examApi, 'browse').mockResolvedValue(page([item({
-      scheduleState: 'UPCOMING', nextBadge: 'EXAM_ONGOING', nextLabel: '1회 필기 시험',
-      nextAt: '2026-09-05T00:00', nextDday: 0,
+      scheduleState: 'UPCOMING', nextBadge: 'REG_UPCOMING', nextLabel: '3회 실기 접수 시작',
+      nextAt: '2026-09-21T10:00', nextDday: 11,
     })]));
 
     renderAt();
     await waitFor(() => expect(screen.getByText('정보처리기사')).toBeTruthy());
 
-    expect(document.querySelector('.exam-card .k-badge')?.textContent).toContain('시험 진행 중');
-    expect(document.querySelector('.exam-card .when')?.textContent).toContain('~ 2026-09-05');
-    expect(document.querySelector('.exam-card .when')?.textContent).not.toContain('00:00');
+    expect(document.querySelector('.exam-card .k-badge')?.textContent).toBe('접수 예정 · D-11');
+    expect(document.querySelector('.exam-card .when')).toBeNull();
+    expect(screen.queryByText(/3회 실기/)).toBeNull();
+    expect(screen.queryByText(/10:00/)).toBeNull();
   });
 
   // ── URL 동기화 ──────────────────────────────────────────────

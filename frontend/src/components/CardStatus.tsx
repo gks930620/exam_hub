@@ -8,9 +8,14 @@ import type { CardBadge, ScheduleState } from '../api/types';
  * 시험 찾기·내 시험이 같은 어휘·같은 배지 색을 쓰도록 한 곳에 둔다. 남은 일정이 전부 지난
  * 시험은 '다음 회차 미정'이다 — 지난 날짜를 멀쩡한 일정처럼 보여주면 사용자가 그 날짜를 믿는다.
  * 상시시험에 "등록해 두면 알려드립니다"는 지키지 못할 약속이라 다른 말을 한다.
+ *
+ * <p><b>두 화면은 묻는 것이 다르다</b>(2026-09-10). 시험 찾기는 <b>어떤 시험인지 고르는</b> 화면이라
+ * 회차·구분·시각까지 늘어놓을 자리가 아니다 — 그건 상세의 몫이다({@code compact}).
+ * 내 시험은 이미 고른 시험을 <b>지키는</b> 화면이라 "몇 회 무슨 시험이 언제"가 본문이다.
  */
 export default function CardStatus({
-  state, badge, badgeFallback = '예정', label, at, dday, lastExamDate, inlineDday = false,
+  state, badge, badgeFallback = '예정', label, at, dday, lastExamDate,
+  inlineDday = false, compact = false,
 }: {
   state: ScheduleState;
   /** 서버 CardBadge 코드 — 어휘·색은 lib/status 가 정한다 */
@@ -23,23 +28,26 @@ export default function CardStatus({
   lastExamDate: string | null;
   /** 배지 안에 D-n 을 붙일지 — 내 시험 카드는 큰 D-day 를 따로 두므로 뺀다 */
   inlineDday?: boolean;
+  /** 목록용 — 배지 한 줄만 남긴다. 설명 줄이 접히며 만들던 들쭉날쭉함이 사라진다 */
+  compact?: boolean;
 }) {
+  const dot = inlineDday && dday != null ? <> · {ddayLabel(dday)}</> : null;
+
   if (state === 'ROLLING') {
     return (
       <>
-        <span className="k-badge">상시시험</span>
-        <span className="when">원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다</span>
+        {/* 킷 기본 배지는 면이 --surface-alt 다. 카드를 그 색으로 칠한 화면에서는 통째로 사라지므로
+            (설계 05 §19-7) 이름을 붙여 두고, 그 화면이 면만 한 단 올린다. */}
+        <span className="k-badge badge-neutral">상시시험</span>
+        {!compact && <span className="when">원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다</span>}
       </>
     );
   }
   if (state === 'UPCOMING') {
     return (
       <>
-        <span className={`k-badge ${badgeTone(badge)}`}>
-          {badgeLabel(badge, badgeFallback)}
-          {inlineDday && dday != null && <> · {ddayLabel(dday)}</>}
-        </span>
-        {label && <span className="when">{label} · {eventAtLabel(badge, at)}</span>}
+        <span className={`k-badge ${badgeTone(badge)}`}>{badgeLabel(badge, badgeFallback)}{dot}</span>
+        {!compact && label && <span className="when">{label} · {eventAtLabel(badge, at)}</span>}
       </>
     );
   }
@@ -47,14 +55,14 @@ export default function CardStatus({
     return (
       <>
         <span className="k-badge k-badge--warn">다음 회차 미정</span>
-        {lastExamDate && <span className="when">마지막 시험 {lastExamDate}</span>}
+        {!compact && lastExamDate && <span className="when">마지막 시험 {lastExamDate}</span>}
       </>
     );
   }
   return (
     <>
       <span className="k-badge k-badge--warn">일정 미정</span>
-      <span className="when">일정이 확인되면 알려 드립니다</span>
+      {!compact && <span className="when">일정이 확인되면 알려 드립니다</span>}
     </>
   );
 }

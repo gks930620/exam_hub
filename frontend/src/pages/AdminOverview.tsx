@@ -126,7 +126,7 @@ export default function AdminOverview() {
       </div>
 
       {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
-      {loading && !data && <div className="k-empty state" role="status">불러오는 중…</div>}
+      {loading && !data && <div className="day-list" role="status" aria-label="할 일 불러오는 중">{Array.from({ length: 5 }, (_, i) => <div className="k-skeleton row-skeleton" key={i} />)}</div>}
 
       {data && data.items.length === 0 && (
         <div className="k-empty state">
@@ -138,7 +138,7 @@ export default function AdminOverview() {
       {data && data.items.length > 0 && (
         <>
           {/* 다시 불러오는 동안 표는 남고 흐려진다 — 자리가 흔들리면 어디를 보고 있었는지 잃는다 */}
-          <div className="k-card k-tablewrap" style={{ padding: 0 }} aria-busy={loading}>
+          <div className="k-card k-card--flush k-tablewrap" aria-busy={loading}>
             <table className="k-table data-table">
               <thead>
                 <tr>
@@ -178,7 +178,7 @@ function RowView({ row, onEdit }: { row: OverviewRow; onEdit: () => void }) {
     <tr>
       <td>
         <b>{row.certificateName}</b>
-        {row.agency && <div style={{ fontSize: 12, color: 'var(--muted2)' }}>{row.agency}</div>}
+        {row.agency && <div style={{ fontSize: 12, color: 'var(--muted)' }}>{row.agency}</div>}
       </td>
       <td><span className="k-badge">{row.sourceLabel}</span></td>
       <td>

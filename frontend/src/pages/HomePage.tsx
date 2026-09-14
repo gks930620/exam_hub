@@ -27,7 +27,8 @@ export default function HomePage() {
   }, []);
 
   if (err) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
-  if (!data) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  // 첫 로딩은 스켈레톤 — 자리를 먼저 잡아 카드가 뜰 때 화면이 튀지 않게 한다(설계 05 §8)
+  if (!data) return <div className="card-grid" role="status" aria-label="내 시험 불러오는 중">{Array.from({ length: 6 }, (_, i) => <div className="k-skeleton card-skeleton" key={i} />)}</div>;
 
   if (data.items.length === 0) {
     return (
