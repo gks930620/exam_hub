@@ -25,25 +25,39 @@ public class DemoDataProvider {
     private static final String KCCI = "대한상공회의소";
     private static final String QNET_URL = "https://www.q-net.or.kr/";
 
-    /** 데모 자격증 정의 (마스터용). schedules 는 CollectedSchedule 로 평면화되어 수집 소스로 쓰인다. */
-    public record DemoCert(String name, String slug, Series series, String agency, String category, String sourceCode) {
+    /**
+     * 데모 자격증 정의 (마스터용). schedules 는 CollectedSchedule 로 평면화되어 수집 소스로 쓰인다.
+     *
+     * <p>slug 은 여기서 정하지 않는다 — 이름에서 파생하는 값이라 두 군데서 정하면 어긋난다
+     * ({@code CertificateMasterInitializer.reconcileSlugs()} 가 이름에서 만든다).
+     */
+    public record DemoCert(String name, Series series, String agency, String category, String sourceCode) {
     }
 
     private static final String CAT_QNET = "국가기술자격";
 
-    /** 마스터 시드용 자격증 10종 (설계 04 §4). */
+    /**
+     * 마스터 시드용 자격증 10종 (설계 04 §4).
+     *
+     * <p>⚠️ <b>종목코드(jmCd)는 반드시 {@code seed/qnet_master.json} 의 그 이름의 코드와 같아야 한다.</b>
+     * 큐넷 수집은 코드로 행을 찾으므로, 코드가 남의 것이면 <b>그 행의 이름이 남의 이름으로 바뀐다.</b>
+     * 실제로 산업안전기사에 2290(정보처리산업기사)을 달아 둔 탓에 그 행이 정보처리산업기사가 되고
+     * slug 만 '산업안전기사' 로 남아, {@code /by-slug/산업안전기사} 가 엉뚱한 시험을 돌려줬다(2026-09-10).
+     * 없는 코드(1230·1450·5836)를 달아 둔 셋은 코드 매칭이 아예 안 돼 이름으로만 붙고 있었다.
+     * {@code DemoSeedCodeTest} 가 이 대조를 자동으로 한다.
+     */
     public List<DemoCert> demoCertificates() {
         return List.of(
-                new DemoCert("정보처리기사", "정보처리기사", Series.TECHNICIAN, QNET, CAT_QNET, "1320"),
-                new DemoCert("전기기사", "전기기사", Series.TECHNICIAN, QNET, CAT_QNET, "1230"),
-                new DemoCert("산업안전기사", "산업안전기사", Series.TECHNICIAN, QNET, CAT_QNET, "2290"),
-                new DemoCert("소방설비기사(전기분야)", "소방설비기사-전기", Series.TECHNICIAN, QNET, CAT_QNET, "7761"),
-                new DemoCert("건축기사", "건축기사", Series.TECHNICIAN, QNET, CAT_QNET, "1450"),
-                new DemoCert("정보처리산업기사", "정보처리산업기사", Series.INDUSTRIAL, QNET, CAT_QNET, "2320"),
-                new DemoCert("지게차운전기능사", "지게차운전기능사", Series.CRAFTSMAN, QNET, CAT_QNET, "5836"),
-                new DemoCert("한식조리기능사", "한식조리기능사", Series.CRAFTSMAN, QNET, CAT_QNET, "7910"),
-                new DemoCert("SQL개발자(SQLD)", "SQLD", Series.SERVICE, KDATA, "IT-데이터", "S001"),
-                new DemoCert("컴퓨터활용능력1급", "컴퓨터활용능력1급", Series.SERVICE, KCCI, "사무-IT", "C011")
+                new DemoCert("정보처리기사", Series.TECHNICIAN, QNET, CAT_QNET, "1320"),
+                new DemoCert("전기기사", Series.TECHNICIAN, QNET, CAT_QNET, "1150"),
+                new DemoCert("산업안전기사", Series.TECHNICIAN, QNET, CAT_QNET, "1431"),
+                new DemoCert("소방설비기사(전기분야)", Series.TECHNICIAN, QNET, CAT_QNET, "1910"),
+                new DemoCert("건축기사", Series.TECHNICIAN, QNET, CAT_QNET, "1630"),
+                new DemoCert("정보처리산업기사", Series.INDUSTRIAL, QNET, CAT_QNET, "2290"),
+                new DemoCert("지게차운전기능사", Series.CRAFTSMAN, QNET, CAT_QNET, "7875"),
+                new DemoCert("한식조리기능사", Series.CRAFTSMAN, QNET, CAT_QNET, "7910"),
+                new DemoCert("SQL개발자(SQLD)", Series.SERVICE, KDATA, "IT-데이터", "S001"),
+                new DemoCert("컴퓨터활용능력1급", Series.SERVICE, KCCI, "사무-IT", "C011")
         );
     }
 

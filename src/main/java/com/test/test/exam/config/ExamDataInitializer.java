@@ -85,7 +85,8 @@ public class ExamDataInitializer {
     private void seedDemo() {
         List<Certificate> certs = demoDataProvider.demoCertificates().stream()
                 .map(d -> Certificate.builder()
-                        .name(d.name()).slug(d.slug())
+                        // slug 은 이름에서 만든다 — 규칙은 reconcileSlugs() 한 곳에만 둔다
+                        .name(d.name()).slug(d.name().replaceAll("\\s+", ""))
                         .series(d.series()).agency(d.agency())
                         .category(d.category())
                         .sourceCode(d.sourceCode())

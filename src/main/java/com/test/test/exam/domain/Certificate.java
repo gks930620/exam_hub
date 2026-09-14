@@ -138,6 +138,14 @@ public class Certificate {
         this.sourceCode = sourceCode;
     }
 
+    /**
+     * slug 을 이름에 다시 맞춘다. 수집이 종목코드로 행을 찾아 <b>이름만 고치면</b> slug 이 남의 것으로
+     * 남기 때문에, {@code CertificateMasterInitializer.reconcileSlugs()} 가 기동 때 되돌린다.
+     */
+    public void renameSlug(String slug) {
+        this.slug = slug;
+    }
+
     /** 폐지·개칭 기록. 지우지 않고 상태로 남겨 "왜 없어졌는지"를 답할 수 있게 한다. */
     public void markLifecycle(CertificateLifecycle lifecycle, String supersededBy, String note) {
         this.lifecycle = lifecycle;

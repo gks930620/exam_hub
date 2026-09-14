@@ -178,6 +178,38 @@ class MeApiIntegrationTest extends ApiIntegrationTestSupport {
                 .andExpect(jsonPath("$.notifyChange").value(false));
     }
 
+    /**
+     * <b>빠뜨린 값을 꺼진 것으로 삼지 않는다.</b>
+     *
+     * <p>{@code boolean} 3개짜리 DTO 였을 때는 JSON 에 없는 필드를 Jackson 이 조용히 {@code false} 로
+     * 채웠고, 서버는 그걸 사용자의 뜻으로 알고 저장했다. {@code {}} 를 보내면 <b>200 과 함께 알림 셋이
+     * 전부 꺼졌다</b>(2026-09-10 실측). 화면상 성공이라 사용자는 알림이 꺼진 줄도 모른 채
+     * 접수 기간을 놓친다 — 이 서비스가 막으려는 바로 그 일이다.
+     */
+    @Test
+    void partial_notify_settings_is_rejected_not_silently_false() throws Exception {
+        Member m = newMember();
+
+        mockMvc.perform(put("/api/me/notify-settings")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(m))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"notifyReg\": true}"))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(put("/api/me/notify-settings")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(m))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+
+        // 거절된 요청은 아무것도 바꾸지 않았다 — 기본값(전부 켬)이 그대로다
+        mockMvc.perform(get("/api/me/notify-settings").header(HttpHeaders.AUTHORIZATION, bearer(m)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.notifyReg").value(true))
+                .andExpect(jsonPath("$.notifyExam").value(true))
+                .andExpect(jsonPath("$.notifyChange").value(true));
+    }
+
     // ===== 프로필 =====
 
     @Test

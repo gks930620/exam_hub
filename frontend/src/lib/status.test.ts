@@ -11,6 +11,7 @@ describe('badgeLabel', () => {
     expect(badgeLabel('REG_UPCOMING', '')).toBe('접수 예정');
     expect(badgeLabel('EXAM_UPCOMING', '')).toBe('시험 예정');
     expect(badgeLabel('EXAM_ONGOING', '')).toBe('시험 진행 중');
+    expect(badgeLabel('RESULT_PENDING', '')).toBe('합격 발표 예정');
   });
 
   it('모르는 코드면 대체 문구를 쓴다 — 영문 코드를 화면에 내지 않는다', () => {
@@ -47,6 +48,14 @@ describe('eventAtLabel', () => {
 
   it('시험 진행 중은 종료일 00:00 이 오므로 "~ 날짜"로', () => {
     expect(eventAtLabel('EXAM_ONGOING', '2026-09-05T00:00')).toBe('~ 2026-09-05');
+  });
+
+  /**
+   * 시험은 끝났고 발표만 남은 상태. 시행처가 발표 <b>시각</b>까지 알려주지 않아 at 이 00:00 이라,
+   * "2026-09-16 00:00" 으로 찍으면 자정에 발표하는 것처럼 읽힌다.
+   */
+  it('합격 발표 예정은 날짜만', () => {
+    expect(eventAtLabel('RESULT_PENDING', '2026-09-16T00:00')).toBe('2026-09-16');
   });
 
   it('시각이 없으면 - 로 둔다', () => {

@@ -12,6 +12,7 @@ const LABELS: Record<string, string> = {
   REG_UPCOMING: '접수 예정',
   EXAM_UPCOMING: '시험 예정',
   EXAM_ONGOING: '시험 진행 중',
+  RESULT_PENDING: '합격 발표 예정',
 };
 
 export function badgeLabel(code: string | null | undefined, fallback: string): string {
@@ -35,9 +36,12 @@ export function scheduleStateOf(c: {
 /**
  * 이벤트 시각 표기. 시험 진행 중(EXAM_ONGOING)은 at 이 <b>종료일 00:00</b> 이라 시각을 보여주면
  * "00:00 에 뭐가 있나" 싶다 — "~ 종료일" 로 날짜만.
+ * 합격 발표(RESULT_PENDING)도 같다 — 시행처가 발표 시각까지 알려주지 않으므로 날짜만 쓴다.
  */
 export function eventAtLabel(code: string | null | undefined, at: string | null | undefined): string {
-  return code === 'EXAM_ONGOING' ? `~ ${fmtDate(at)}` : fmtAt(at);
+  if (code === 'EXAM_ONGOING') return `~ ${fmtDate(at)}`;
+  if (code === 'RESULT_PENDING') return fmtDate(at);
+  return fmtAt(at);
 }
 
 /** 이보다 큰 숫자는 회차가 아니라 서버가 만든 멱등 키다 — 실제 회차는 네 자리를 안 넘는다(DIAT 2612회가 최대). */

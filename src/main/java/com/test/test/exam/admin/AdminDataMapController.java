@@ -1,5 +1,6 @@
 package com.test.test.exam.admin;
 
+import com.test.test.exam.collect.ScheduleSource;
 import com.test.test.exam.repository.CertificateRepository;
 import com.test.test.exam.repository.ExamScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +27,13 @@ public class AdminDataMapController {
 
     private final CertificateRepository certificateRepository;
     private final ExamScheduleRepository examScheduleRepository;
+    /** 판정을 할 일 화면과 맞추려면 "지금 어떤 소스가 떠 있나"를 여기서도 알아야 한다 */
+    private final List<ScheduleSource> sources;
 
     @GetMapping
     public ResponseEntity<DataMapResponse> dataMap() {
         // 화면에 보이는 시험만 센다 — 폐지·개칭까지 세면 "일정 없는 시험" 이 24 부풀어
-        // 일정 현황 화면(846종)과 숫자가 어긋난다.
+        // 일정 현황 화면(841종)과 숫자가 어긋난다.
         // 상시·예약제는 "일정"이 존재하지 않아 채울 대상이 아니다 — 분모에서 빼고 따로 알린다.
         long rolling = certificateRepository.countVisibleRolling();
         long totalExams = certificateRepository.countVisible() - rolling;
@@ -45,12 +48,17 @@ public class AdminDataMapController {
                 .map(sch -> sch.getCertificate().getId()).collect(java.util.stream.Collectors.toSet());
         long withSchedule = all.stream()
                 .filter(c -> c.isVisibleToUsers() && !c.isRollingAdmission() && having.contains(c.getId())).count();
+        // 할 일 화면(AdminOverviewController.judge)과 같은 근거를 쓴다 — 안 그러면 같은 시험을
+        // 한쪽은 "수기 필수", 다른 쪽은 "공고 전 — 자동"으로 세서 매니저가 헛일을 한다.
+        java.util.Set<String> liveExamCodes = sources.stream()
+                .flatMap(s -> s.coveredExamCodes().stream())
+                .collect(java.util.stream.Collectors.toSet());
         long manual = 0, pending = 0, planned = 0;
         for (com.test.test.exam.domain.Certificate c : all) {
             if (!c.isVisibleToUsers() || c.isRollingAdmission() || having.contains(c.getId())) {
                 continue;
             }
-            switch (NoScheduleReason.of(c)) {
+            switch (NoScheduleReason.of(c, liveExamCodes)) {
                 case MANUAL -> manual++;
                 case ANNOUNCEMENT_PENDING -> pending++;
                 case CRAWL_PLANNED -> planned++;

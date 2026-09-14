@@ -54,6 +54,24 @@ public enum NoScheduleReason {
     /** 공단 시행인데 4자리 코드가 아니면 전문자격 — 기술자격 API 밖이라 큐넷 전문자격 게시판을 긁어야 한다(05 문서 C 표 1번). */
     private static final Set<String> QNET_AGENCY = Set.of("한국산업인력공단");
 
+    /**
+     * <b>살아 있는 소스가 종목코드를 대 놓고 맡는 시험</b>은 행이 없어도 자동이다 — 시행처가 아직
+     * 올해 회차를 안 연 것뿐이고, 열면 그대로 들어온다.
+     *
+     * <p>이 오버로드가 있어야 매니저 두 화면의 숫자가 맞는다. 할 일 화면은 이 판정을 하는데
+     * 수집 지도는 {@link #of(Certificate)} 만 불러서, 같은 시험을 한쪽은 "공고 전 — 자동",
+     * 다른 쪽은 "수기 필수"로 셌다 — ERP정보관리사 4종·파생상품투자권유대행인 다섯이 그랬다
+     * (수기 35 vs 첫 일정 입력 30, 2026-09-10 실측). 매니저는 안 넣어도 될 걸 손으로 넣게 된다.
+     *
+     * @param liveExamCodes 지금 떠 있는 소스들이 {@code coveredExamCodes()} 로 이름을 댄 종목코드
+     */
+    public static NoScheduleReason of(Certificate c, Set<String> liveExamCodes) {
+        if (c.getSourceCode() != null && liveExamCodes.contains(c.getSourceCode())) {
+            return ANNOUNCEMENT_PENDING;
+        }
+        return of(c);
+    }
+
     public static NoScheduleReason of(Certificate c) {
         String code = c.getSourceCode();
         if (code != null && code.matches("[0-9]{4}")) {

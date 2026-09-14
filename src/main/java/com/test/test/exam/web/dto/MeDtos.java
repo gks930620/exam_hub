@@ -3,6 +3,7 @@ package com.test.test.exam.web.dto;
 import com.test.test.exam.domain.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -65,11 +66,30 @@ public final class MeDtos {
     ) {
     }
 
-    /** GET·PUT /api/me/notify-settings 요청/응답 (동일 형태) */
+    /** GET·PUT /api/me/notify-settings 응답 */
     public record NotifySettings(
             boolean notifyReg,
             boolean notifyExam,
             boolean notifyChange
+    ) {
+    }
+
+    /**
+     * PUT /api/me/notify-settings 요청.
+     *
+     * <p><b>세 값을 모두 보내야 한다.</b> {@code Boolean} + {@code @NotNull} 인 이유가 이것이다 —
+     * {@code boolean} 이면 JSON 에 없는 필드를 Jackson 이 조용히 {@code false} 로 채우고,
+     * 서버는 그걸 사용자의 뜻으로 알고 저장한다. 실제로 {@code {}} 를 보내면 200 과 함께
+     * <b>알림 셋이 전부 꺼졌다</b>(2026-09-10 실측). 이 서비스는 "접수 기간을 놓치면 반년 대기"를
+     * 막으려고 있는데, 그 알림이 화면상 성공인 채로 꺼지는 게 가장 나쁜 실패다.
+     */
+    public record UpdateNotifySettingsRequest(
+            @NotNull(message = "원서접수 알림 여부를 보내세요.")
+            Boolean notifyReg,
+            @NotNull(message = "시험일 알림 여부를 보내세요.")
+            Boolean notifyExam,
+            @NotNull(message = "일정 변경 알림 여부를 보내세요.")
+            Boolean notifyChange
     ) {
     }
 

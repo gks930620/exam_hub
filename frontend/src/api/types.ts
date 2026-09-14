@@ -4,9 +4,10 @@
 export type ScheduleState = 'UPCOMING' | 'PAST_ONLY' | 'NONE' | 'ROLLING';
 
 /**
- * 서버 CardBadge 코드 — REG_OPEN | REG_UPCOMING | EXAM_UPCOMING | EXAM_ONGOING | NONE.
+ * 서버 CardBadge 코드 — REG_OPEN | REG_UPCOMING | EXAM_UPCOMING | EXAM_ONGOING | RESULT_PENDING | NONE.
  * 늘 수 있는 값이라 string 으로 받고, 화면 어휘는 lib/status.ts 가 정한다.
  * EXAM_ONGOING 은 dday 0, 시각은 시험 <b>종료일</b> 00:00 이다.
+ * RESULT_PENDING 은 시험이 끝나고 합격자 발표만 남은 상태 — 시각은 발표일 00:00 이라 날짜만 쓴다.
  */
 export type CardBadge = string;
 

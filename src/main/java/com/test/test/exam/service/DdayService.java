@@ -76,6 +76,17 @@ public class DdayService {
                             typeLabel + " 시험 진행 중", examEnd.atStartOfDay(), 0, s.getId()));
                 }
             }
+
+            // 시험이 끝나고 합격자 발표만 남은 회차 — 시험을 친 사람이 가장 궁금한 날짜다.
+            // 이게 없으면 그 사람에게 "다음 회차 미정"만 보인다(감정사: 8/21 시험, 9/16 발표).
+            // 시험일을 모르면 발표일만으로는 판단하지 않는다 — 접수만 있고 시험일이 빈 행이 섞여 있다.
+            LocalDate resultDate = s.getResultDate();
+            if (resultDate != null && examStart != null && today.isAfter(examEnd)
+                    && !today.isAfter(resultDate)) {
+                long dday = ChronoUnit.DAYS.between(today, resultDate);
+                candidates.add(new NextEvent(CardBadge.RESULT_PENDING, "RESULT",
+                        typeLabel + " 합격자 발표", resultDate.atStartOfDay(), dday, s.getId()));
+            }
         }
 
         if (candidates.isEmpty()) {

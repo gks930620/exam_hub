@@ -96,11 +96,16 @@ public class MeController {
                 member.isNotifyReg(), member.isNotifyExam(), member.isNotifyChange()));
     }
 
-    /** 알림 유형 토글 저장 */
+    /**
+     * 알림 유형 토글 저장.
+     *
+     * <p>세 값을 모두 받아야 한다({@code @Valid}). 빠진 값을 {@code false} 로 채워 저장하면
+     * 사용자는 알림이 꺼진 줄도 모르고 접수 기간을 놓친다 — 이 서비스가 존재하는 이유가 그거다.
+     */
     @PutMapping("/notify-settings")
     public ResponseEntity<MeDtos.NotifySettings> updateNotifySettings(
             @CurrentMember Member member,
-            @RequestBody MeDtos.NotifySettings request) {
+            @Valid @RequestBody MeDtos.UpdateNotifySettingsRequest request) {
         memberService.updateNotifySettings(member,
                 request.notifyReg(), request.notifyExam(), request.notifyChange());
         return ResponseEntity.ok(new MeDtos.NotifySettings(

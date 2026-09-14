@@ -77,7 +77,17 @@ public class CertificateMasterInitializer {
             }
         });
 
-        int created = 0, skipped = 0, recategorized = 0, linked = 0;
+        int created = 0, skipped = 0, recategorized = 0, linked = 0, relinked = 0;
+
+        // 마스터가 아는 종목코드 전부. "이 코드가 진짜 있는 코드인가"를 판단하는 근거다.
+        Set<String> knownCodes = new HashSet<>();
+        for (String resource : RESOURCES) {
+            MasterFile f = read(resource);
+            if (f != null && f.exams() != null) {
+                f.exams().stream().map(MasterExam::sourceCode)
+                        .filter(java.util.Objects::nonNull).forEach(knownCodes::add);
+            }
+        }
 
         for (String resource : RESOURCES) {
             MasterFile file = read(resource);
@@ -102,10 +112,24 @@ public class CertificateMasterInitializer {
                         recategorized++;
                     }
                     // 종목코드를 붙여 둔다. 이게 있어야 일정 연동이 이름 매칭 없이 된다.
-                    if (e.sourceCode() != null && already.getSourceCode() == null
+                    //
+                    // <b>죽은 코드도 갈아 끼운다</b>: 마스터 어디에도 없는 코드를 달고 있으면 코드 매칭이
+                    // 통째로 실패하고, 남는 건 이름 매칭이라는 약한 고리뿐이다 — 시행처가 표기를 한 글자만
+                    // 바꾸면 그날로 일정이 안 붙는다. 데모 시드가 전기기사에 1230, 건축기사에 1450,
+                    // 지게차운전기능사에 5836 이라는 없는 코드를 달아 놓은 채였다(2026-09-10 실측).
+                    // 남이 쓰고 있는 코드는 뺏지 않는다(usedSourceCodes).
+                    boolean deadCode = already.getSourceCode() != null
+                            && !knownCodes.contains(already.getSourceCode());
+                    if (e.sourceCode() != null && (already.getSourceCode() == null || deadCode)
                             && usedSourceCodes.add(e.sourceCode())) {
+                        if (deadCode) {
+                            log.info("[MasterSeed] {} 의 죽은 종목코드 {} → {} 로 교체",
+                                    already.getName(), already.getSourceCode(), e.sourceCode());
+                            relinked++;
+                        } else {
+                            linked++;
+                        }
                         already.linkSourceCode(e.sourceCode());
-                        linked++;
                     }
                     certificateRepository.save(already);
                     skipped++;
@@ -128,10 +152,66 @@ public class CertificateMasterInitializer {
             }
         }
 
-        log.info("[MasterSeed] 시험 마스터 신규 {}종 (기존 {}종 중 분류 갱신 {} · 종목코드 연결 {})",
-                created, skipped, recategorized, linked);
+        log.info("[MasterSeed] 시험 마스터 신규 {}종 (기존 {}종 중 분류 갱신 {} · 종목코드 연결 {} · 죽은 코드 교체 {})",
+                created, skipped, recategorized, linked, relinked);
 
         applyLifecycle(existing);
+        reconcileSlugs();
+    }
+
+    /**
+     * slug 을 이름과 다시 맞춘다. <b>규칙은 하나다: 이름에서 공백을 뺀 것.</b> 겹치면 뒤에 번호를 붙인다.
+     *
+     * <p><b>왜 매 기동 도나</b>: slug 은 이름에서 나온 파생값인데, 수집은 종목코드로 행을 찾아
+     * <b>이름만 고치고 slug 은 그대로 둔다.</b> 그래서 이름이 바뀐 행은 남의 slug 을 단 채로 남는다 —
+     * 데모 시드가 산업안전기사에 정보처리산업기사의 코드(2290)를 달아 둔 탓에 실제로 네 종목이
+     * 어긋나 있었고, {@code /api/certificates/by-slug/산업안전기사} 가 정보처리산업기사를 돌려줬다
+     * (2026-09-10 실측). 코드를 고쳐도 <b>이미 만들어진 DB 는 안 낫기 때문에</b> 여기서 되돌린다.
+     *
+     * <p>덤으로 규칙이 하나가 된다. 그전엔 만드는 경로마다 달라 절반은 공백을 남기고("TOEIC 토익")
+     * 절반은 뺐다("FLEX영어"). 프런트는 {@code /cert/:id} 로 다니므로 slug 이 바뀌어도 화면은 그대로다.
+     *
+     * <p><b>두 번에 나눠 쓴다</b> — 3번이 놓아 준 이름을 644번이 가져가는 식의 맞교환이 있어서,
+     * 한 번에 저장하면 slug 의 unique 제약에 걸린다. 임시값으로 자리를 비운 뒤 확정값을 넣는다.
+     */
+    private void reconcileSlugs() {
+        List<Certificate> all = certificateRepository.findAll().stream()
+                .sorted(java.util.Comparator.comparing(Certificate::getId))
+                .toList();
+
+        Map<Long, String> desired = new HashMap<>();
+        Set<String> taken = new HashSet<>();
+        for (Certificate c : all) {
+            String base = normalize(c.getName());
+            if (base.isEmpty()) {
+                continue;   // 이름이 없는 행은 손대지 않는다 — 만들 근거가 없다
+            }
+            String slug = base;
+            for (int n = 2; !taken.add(slug); n++) {
+                slug = base + "-" + n;
+            }
+            desired.put(c.getId(), slug);
+        }
+
+        List<Certificate> changed = all.stream()
+                .filter(c -> desired.containsKey(c.getId()))
+                .filter(c -> !desired.get(c.getId()).equals(c.getSlug()))
+                .toList();
+        if (changed.isEmpty()) {
+            return;
+        }
+
+        List<String> before = changed.stream()
+                .map(c -> c.getName() + "(" + c.getSlug() + " → " + desired.get(c.getId()) + ")")
+                .toList();
+
+        changed.forEach(c -> c.renameSlug("__reslug__" + c.getId()));
+        certificateRepository.saveAllAndFlush(changed);
+        changed.forEach(c -> c.renameSlug(desired.get(c.getId())));
+        certificateRepository.saveAllAndFlush(changed);
+
+        log.info("[MasterSeed] slug 재조정 {}건{}", changed.size(),
+                changed.size() <= 20 ? " — " + before : "");
     }
 
     /**
@@ -184,9 +264,9 @@ public class CertificateMasterInitializer {
         }
     }
 
-    /** slug 는 unique 제약이 있다. 같은 값이 있으면 뒤에 번호를 붙인다. */
+    /** slug 는 unique 제약이 있다. 같은 값이 있으면 뒤에 번호를 붙인다. 규칙은 {@link #reconcileSlugs()} 와 같다. */
     private String uniqueSlug(String name, Set<String> used) {
-        String base = name.replace(" ", "");
+        String base = normalize(name);
         String slug = base;
         int n = 2;
         while (!used.add(slug)) {
