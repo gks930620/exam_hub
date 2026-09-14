@@ -18,7 +18,7 @@ import AdminLifecyclePage from './pages/AdminLifecyclePage';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 import { useAuth } from './auth';
 import { applyTheme, isDark, readTheme, type ThemeSetting } from './theme';
-import Avatar from './components/Avatar';
+import AccountMenu from './components/AccountMenu';
 import Icon from './components/Icon';
 
 // Lets 골격: 상단바(.k-topnav) + 본문(.k-main). 메뉴는 헤더 안에 있다(사이드바 없음 — 사용자 지시).
@@ -66,7 +66,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
 
 export default function App() {
   const [theme, setTheme] = useState<ThemeSetting>(readTheme);
-  const { me, loading } = useAuth();
+  const { me, loading, logout } = useAuth();
 
   useEffect(() => { applyTheme(theme); }, [theme]);
 
@@ -98,11 +98,8 @@ export default function App() {
               <Icon name={dark ? 'sun' : 'moon'} size={18} />
             </button>
             {loading ? null : me ? (
-              // 좁은 화면에서는 닉네임이 숨어 아바타만 남는다 — 이름 없는 링크가 되지 않게 aria-label
-              <NavLink to="/me" className="who" aria-label={`내 정보 — ${me.nickname}`}>
-                <Avatar src={me.profileImage} nickname={me.nickname} />
-                <span className="only-desktop">{me.nickname}</span>
-              </NavLink>
+              // 계정 자리는 사람 아이콘 하나 — 누르면 내 정보·로그아웃이 내려온다(AccountMenu)
+              <AccountMenu me={me} onLogout={logout} />
             ) : (
               <NavLink to="/login" className="k-btn k-btn--primary k-btn--sm">로그인</NavLink>
             )}

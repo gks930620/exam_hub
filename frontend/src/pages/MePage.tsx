@@ -77,7 +77,7 @@ export default function MePage() {
       </div>
 
       <div className="section-head"><h2>알림 받을 곳</h2></div>
-      <div className="k-card" style={{ padding: 20 }}>
+      <div className="k-card">
         <label className="field">
           <span>이메일 *</span>
           <input className="k-input" type="email" value={email} placeholder="name@example.com"
@@ -86,7 +86,7 @@ export default function MePage() {
         <p className="fineprint" style={{ margin: '0 0 14px' }}>
           지금은 알림이 이메일로만 갑니다. 비우면 알림을 받을 수 없습니다.
         </p>
-        <button className="k-btn k-btn--primary" onClick={() => run(() => examApi.changeEmail(email.trim()), '이메일을 저장했습니다.')}
+        <button className="k-btn k-btn--secondary" onClick={() => run(() => examApi.changeEmail(email.trim()), '이메일을 저장했습니다.')}
                 disabled={saving}>
           {saving ? '저장 중…' : '이메일 저장'}
         </button>
@@ -106,24 +106,22 @@ export default function MePage() {
       </div>
 
       <div className="section-head"><h2>프로필</h2></div>
-      <div className="k-card" style={{ padding: 20 }}>
+      <div className="k-card">
         <label className="field">
           <span>닉네임 (커뮤니티 표시명)</span>
           <input className="k-input" value={nickname} maxLength={30}
                  onChange={(e) => setNickname(e.target.value)} />
         </label>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="k-btn k-btn--primary"
-                  onClick={() => run(() => examApi.changeNickname(nickname.trim()), '저장했습니다.')}
-                  disabled={saving || !nickname.trim()}>
-            저장
-          </button>
-          <button className="k-btn k-btn--secondary" onClick={logout}>로그아웃</button>
-        </div>
+        {/* 로그아웃은 여기 없다 — 상단바 계정 메뉴에 있다. 개인정보 화면은 고치는 곳이지 나가는 곳이 아니다 */}
+        <button className="k-btn k-btn--secondary"
+                onClick={() => run(() => examApi.changeNickname(nickname.trim()), '저장했습니다.')}
+                disabled={saving || !nickname.trim()}>
+          저장
+        </button>
       </div>
 
       <div className="section-head"><h2>계정 삭제</h2></div>
-      <div className="k-card" style={{ padding: 20 }}>
+      <div className="k-card">
         <p className="fineprint" style={{ margin: '0 0 14px' }}>
           탈퇴하면 등록한 시험과 알림 설정이 사라집니다. 작성한 글·댓글은 남고 작성자만 가려집니다.
         </p>
