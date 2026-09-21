@@ -259,6 +259,37 @@ class DeployPortabilityTest {
         }
 
         /** 매니저를 아예 설정 안 했으면 문제가 아니다 — 운영 화면만 못 쓸 뿐이다. */
+        /**
+         * <b>H2 콘솔은 임의 SQL 실행 창이다.</b> 붙을 JDBC 주소를 사람이 직접 입력하는 구조라,
+         * 운영 DB 가 MySQL 이어도 그 창에서 운영 DB 로 붙을 수 있다.
+         *
+         * <p>application-prod.yml 이 끄고는 있지만 그건 <b>prod 프로파일이 켜졌을 때만</b>이다.
+         * Railway 에 올리면서 SPRING_PROFILES_ACTIVE 를 빠뜨리면 그대로 열린 채 뜬다 —
+         * 나머지 필수 설정(MySQL 주소·JWT 키)만 맞으면 기동은 성공하므로 아무도 눈치채지 못한다.
+         * 그래서 프로파일과 무관하게 여기서 한 번 더 막는다.
+         */
+        @Test
+        @DisplayName("운영 + H2 콘솔 켜짐 → 기동 중단 (임의 SQL 실행 창이 열린다)")
+        void prod_with_h2_console_fails() {
+            RailwayDeploymentValidator v = prodValidator(
+                    "jdbc:mysql://host/db", "충분히-긴-운영용-비밀키-12345678", "https://exam.example.com", "운영용-충분히-긴-비밀번호");
+            org.springframework.test.util.ReflectionTestUtils.setField(v, "h2ConsoleEnabled", true);
+
+            assertThatThrownBy(() -> validate(v))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("H2 콘솔");
+        }
+
+        @Test
+        @DisplayName("H2 콘솔이 꺼져 있으면 막지 않는다")
+        void prod_with_h2_console_off_passes() {
+            RailwayDeploymentValidator v = prodValidator(
+                    "jdbc:mysql://host/db", "충분히-긴-운영용-비밀키-12345678", "https://exam.example.com", "운영용-충분히-긴-비밀번호");
+            org.springframework.test.util.ReflectionTestUtils.setField(v, "h2ConsoleEnabled", false);
+
+            validate(v);
+        }
+
         @Test
         @DisplayName("매니저를 설정하지 않은 배포는 막지 않는다")
         void prod_without_manager_passes() {
@@ -281,6 +312,7 @@ class DeployPortabilityTest {
             org.springframework.test.util.ReflectionTestUtils.setField(v, "jwtSecret", secret);
             org.springframework.test.util.ReflectionTestUtils.setField(v, "linkBase", linkBase);
             org.springframework.test.util.ReflectionTestUtils.setField(v, "managerPassword", managerPassword);
+            org.springframework.test.util.ReflectionTestUtils.setField(v, "h2ConsoleEnabled", false);
             return v;
         }
     }

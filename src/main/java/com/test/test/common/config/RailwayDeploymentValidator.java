@@ -24,10 +24,15 @@ import java.util.stream.Collectors;
  *   <li>JWT 서명키가 개발용 기본값 → <b>토큰을 누구나 위조</b>할 수 있다 → 차단</li>
  *   <li>알림 링크 주소가 localhost → 메일은 가는데 <b>링크가 죽어</b> 접수하러 갈 수 없다 → 차단</li>
  *   <li>매니저 비밀번호가 로컬용으로 짧다 → <b>운영 화면이 그대로 뚫린다</b> → 차단</li>
+ *   <li>H2 콘솔이 켜져 있다 → <b>임의 SQL 실행 창</b>이 열린다 → 차단</li>
  * </ol>
  *
- * <p>세 가지 모두 "조용히 잘못 동작"하는 부류다 — 기동은 되고 로그도 멀쩡한데 데이터가 날아가거나,
+ * <p>다섯 가지 모두 "조용히 잘못 동작"하는 부류다 — 기동은 되고 로그도 멀쩡한데 데이터가 날아가거나,
  * 인증이 뚫려 있거나, 알림이 무용지물이 된다. 그래서 기동 시점에 시끄럽게 죽인다.
+ *
+ * <p>⚠️ H2 콘솔은 {@code application-prod.yml} 도 끄지만 그건 <b>prod 프로파일이 켜졌을 때만</b>이다.
+ * Railway 에 올리며 {@code SPRING_PROFILES_ACTIVE} 를 빠뜨리면 나머지 설정이 맞는 한 기동은
+ * 성공하고 콘솔만 열린 채 뜬다. 그래서 프로파일과 무관하게 여기서 한 번 더 막는다.
  *
  * <p>파일 업로드가 없어 BUCKET 검증은 대상이 아니다.
  */
@@ -49,6 +54,9 @@ public class RailwayDeploymentValidator {
 
     @Value("${manager.password:}")
     private String managerPassword;
+
+    @Value("${spring.h2.console.enabled:false}")
+    private boolean h2ConsoleEnabled;
 
     @PostConstruct
     public void validate() {
@@ -85,6 +93,16 @@ public class RailwayDeploymentValidator {
         if (!managerPassword.isBlank() && managerPassword.length() < ManagerAccountInitializer.MIN_PASSWORD_LENGTH) {
             errors.add("운영에서 매니저 비밀번호가 " + managerPassword.length() + "자입니다(운영 화면이 뚫립니다). "
                     + "MANAGER_PASSWORD 를 " + ManagerAccountInitializer.MIN_PASSWORD_LENGTH + "자 이상으로 바꾸세요.");
+        }
+
+        // ⑤ H2 콘솔: 임의 SQL 을 치는 창이다. 붙을 JDBC 주소를 사람이 직접 넣는 구조라
+        //    운영 DB 가 MySQL 이어도 그 창에서 운영 DB 로 붙을 수 있다.
+        //    application-prod.yml 이 끄고는 있지만 그건 prod 프로파일이 켜졌을 때만이다 —
+        //    SPRING_PROFILES_ACTIVE 를 빠뜨리고 올리면 나머지 설정이 맞는 한 기동은 성공하고,
+        //    콘솔만 조용히 열린 채로 뜬다. 프로파일과 무관하게 여기서 한 번 더 막는다.
+        if (h2ConsoleEnabled) {
+            errors.add("운영에서 H2 콘솔이 켜져 있습니다(임의 SQL 실행 창이 열립니다). "
+                    + "SPRING_PROFILES_ACTIVE=prod 를 설정하거나 SPRING_H2_CONSOLE_ENABLED=false 로 끄세요.");
         }
 
         // 파일 업로드가 없어 BUCKET 검증은 대상이 아니다.
