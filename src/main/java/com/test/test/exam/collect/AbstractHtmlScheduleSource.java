@@ -84,8 +84,10 @@ public abstract class AbstractHtmlScheduleSource implements ScheduleSource {
      * (timezone 쿠키를 놓고 리다이렉트하는 구조라, 처음부터 보내야 본문이 온다).
      */
     protected String get(String url, Map<String, String> headers) {
+        // set 이다(add 아님) — 기본 헤더를 <b>덮어쓸</b> 수 있어야 한다.
+        // add 면 User-Agent 가 두 줄이 되어 서버가 어느 쪽을 볼지 알 수 없다.
         byte[] body = http.get().uri(URI.create(url))
-                .headers(h -> headers.forEach(h::add))
+                .headers(h -> headers.forEach(h::set))
                 .retrieve().body(byte[].class);
         if (body == null) {
             return "";
