@@ -64,11 +64,11 @@ public class TepsScheduleSource extends AbstractHtmlScheduleSource {
     /**
      * 이름을 대고 찾아가는 종목. 기관 이름은 표기가 흔들려 재수집이 안 걸리는 일이 있다
      * (JLPT: 소스는 "JEES / 국제교류기금", 시험 쪽은 "일본국제교류기금·JEES" — 2026-09-09).
-     * 코드는 흔들리지 않는다. 비큐넷 시드가 다른 코드를 쓰면 둘 다 밝힌다({@link SeedCodeAlias}).
+     * 코드는 흔들리지 않는다.
      */
     @Override
     public java.util.Set<String> coveredExamCodes() {
-        return SeedCodeAlias.plus(java.util.Set.of("M0327"), SOURCE_CODE);
+        return java.util.Set.of("M0327");
     }
 
     @Override

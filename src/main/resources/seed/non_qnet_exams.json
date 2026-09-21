@@ -9,7 +9,7 @@
       "name": "국가직 9급 공개경쟁채용",
       "agency": "인사혁신처",
       "category": "공무원",
-      "sourceCode": "GOSI-N9",
+      "sourceCode": "M0457",
       "sourceUrl": "https://www.gosi.kr/",
       "provenance": "approx",
       "schedules": [
@@ -29,7 +29,7 @@
       "name": "국가직 7급 공개경쟁채용",
       "agency": "인사혁신처",
       "category": "공무원",
-      "sourceCode": "GOSI-N7",
+      "sourceCode": "M0458",
       "sourceUrl": "https://www.gosi.kr/",
       "provenance": "approx",
       "schedules": [
@@ -59,7 +59,7 @@
       "name": "지방직 9급 공개경쟁채용",
       "agency": "각 시·도 지방자치단체",
       "category": "공무원",
-      "sourceCode": "LOCAL-9",
+      "sourceCode": "M0460",
       "sourceUrl": "https://local.gosi.go.kr/",
       "provenance": "approx",
       "schedules": [
@@ -79,7 +79,7 @@
       "name": "경찰공무원 순경 공개채용",
       "agency": "경찰청",
       "category": "공무원",
-      "sourceCode": "POLICE-SUN",
+      "sourceCode": "M0462",
       "sourceUrl": "https://www.police.go.kr/",
       "provenance": "approx",
       "schedules": [
@@ -109,7 +109,7 @@
       "name": "소방공무원 공개채용",
       "agency": "소방청",
       "category": "공무원",
-      "sourceCode": "FIRE-PUB",
+      "sourceCode": "M0464",
       "sourceUrl": "https://www.nfa.go.kr/",
       "provenance": "approx",
       "schedules": [
@@ -129,7 +129,7 @@
       "name": "한국사능력검정시험(심화)",
       "agency": "국사편찬위원회",
       "category": "한국사",
-      "sourceCode": "HISTORY-SIM",
+      "sourceCode": "M0449",
       "sourceUrl": "https://www.historyexam.go.kr/",
       "provenance": "manual",
       "schedules": [
@@ -169,7 +169,7 @@
       "name": "한국사능력검정시험(기본)",
       "agency": "국사편찬위원회",
       "category": "한국사",
-      "sourceCode": "HISTORY-BAS",
+      "sourceCode": "M0450",
       "sourceUrl": "https://www.historyexam.go.kr/",
       "provenance": "approx",
       "schedules": [
@@ -199,7 +199,7 @@
       "name": "TOEIC 토익",
       "agency": "YBM",
       "category": "어학-영어",
-      "sourceCode": "TOEIC",
+      "sourceCode": "M0323",
       "sourceUrl": "https://exam.toeic.co.kr/",
       "provenance": "approx",
       "schedules": [
@@ -239,7 +239,7 @@
       "name": "TOEIC Speaking 토익스피킹",
       "agency": "YBM",
       "category": "어학-영어",
-      "sourceCode": "TOEIC-SP",
+      "sourceCode": "M0324",
       "sourceUrl": "https://www.toeicswt.co.kr/",
       "provenance": "approx",
       "schedules": [
@@ -269,7 +269,7 @@
       "name": "OPIc 오픽",
       "agency": "ACTFL / 크레듀",
       "category": "어학-영어",
-      "sourceCode": "OPIC",
+      "sourceCode": "M0330",
       "sourceUrl": "https://www.opic.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -299,7 +299,7 @@
       "name": "TEPS 텝스",
       "agency": "서울대학교 TEPS관리위원회",
       "category": "어학-영어",
-      "sourceCode": "TEPS",
+      "sourceCode": "M0327",
       "sourceUrl": "https://www.teps.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -329,7 +329,7 @@
       "name": "G-TELP 지텔프(Level 2)",
       "agency": "국제 TESOL·G-TELP KOREA",
       "category": "어학-영어",
-      "sourceCode": "GTELP-L2",
+      "sourceCode": "M0331",
       "sourceUrl": "https://www.g-telp.co.kr/",
       "provenance": "approx",
       "schedules": [
@@ -359,7 +359,7 @@
       "name": "IELTS 아이엘츠",
       "agency": "British Council",
       "category": "어학-영어",
-      "sourceCode": "IELTS",
+      "sourceCode": "M0334",
       "sourceUrl": "https://www.britishcouncil.kr/",
       "provenance": "approx",
       "schedules": [
@@ -389,7 +389,7 @@
       "name": "TOEFL iBT 토플",
       "agency": "ETS",
       "category": "어학-영어",
-      "sourceCode": "TOEFL",
+      "sourceCode": "M0333",
       "sourceUrl": "https://www.ets.org/toefl",
       "provenance": "approx",
       "schedules": [
@@ -419,7 +419,7 @@
       "name": "JLPT 일본어능력시험",
       "agency": "일본국제교류기금·JEES",
       "category": "어학-일본어",
-      "sourceCode": "JLPT",
+      "sourceCode": "M0336",
       "sourceUrl": "https://www.jlpt.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -449,7 +449,7 @@
       "name": "JPT 일본어능력시험",
       "agency": "YBM",
       "category": "어학-일본어",
-      "sourceCode": "JPT",
+      "sourceCode": "M0337",
       "sourceUrl": "https://www.jpt.co.kr/",
       "provenance": "approx",
       "schedules": [
@@ -479,7 +479,7 @@
       "name": "SJPT 일본어 말하기시험",
       "agency": "YBM",
       "category": "어학-일본어",
-      "sourceCode": "SJPT",
+      "sourceCode": "M0338",
       "sourceUrl": "https://www.sjpt.co.kr/",
       "provenance": "approx",
       "schedules": [
@@ -499,7 +499,7 @@
       "name": "HSK 중국어능력시험(필기)",
       "agency": "중국교육부 한판·HSK한국사무국",
       "category": "어학-중국어",
-      "sourceCode": "HSK",
+      "sourceCode": "M0341",
       "sourceUrl": "https://www.hsk.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -529,7 +529,7 @@
       "name": "HSKK 중국어 회화시험",
       "agency": "HSK한국사무국",
       "category": "어학-중국어",
-      "sourceCode": "HSKK",
+      "sourceCode": "M0342",
       "sourceUrl": "https://www.hsk.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -549,7 +549,7 @@
       "name": "TSC 중국어 말하기시험",
       "agency": "YBM",
       "category": "어학-중국어",
-      "sourceCode": "TSC",
+      "sourceCode": "M0343",
       "sourceUrl": "https://www.ybmtsc.co.kr/",
       "provenance": "approx",
       "schedules": [
@@ -569,7 +569,7 @@
       "name": "TOPIK 한국어능력시험(II)",
       "agency": "국립국제교육원",
       "category": "한국어",
-      "sourceCode": "TOPIK-2",
+      "sourceCode": "M0356",
       "sourceUrl": "https://www.topik.go.kr/",
       "provenance": "approx",
       "schedules": [
@@ -599,7 +599,7 @@
       "name": "KBS한국어능력시험",
       "agency": "KBS한국방송",
       "category": "국어",
-      "sourceCode": "KBS-KOR",
+      "sourceCode": "M0357",
       "sourceUrl": "https://www.klt.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -629,7 +629,7 @@
       "name": "ToKL 국어능력인증시험",
       "agency": "한국언어문화연구원",
       "category": "국어",
-      "sourceCode": "TOKL",
+      "sourceCode": "M0358",
       "sourceUrl": "https://www.tokl.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -649,7 +649,7 @@
       "name": "컴퓨터활용능력 2급",
       "agency": "대한상공회의소",
       "category": "사무-IT",
-      "sourceCode": "KORCHAM-CA2",
+      "sourceCode": "M0025",
       "sourceUrl": "https://license.korcham.net/",
       "provenance": "approx",
       "schedules": [
@@ -679,7 +679,7 @@
       "name": "워드프로세서",
       "agency": "대한상공회의소",
       "category": "사무-IT",
-      "sourceCode": "KORCHAM-WP",
+      "sourceCode": "M0026",
       "sourceUrl": "https://license.korcham.net/",
       "provenance": "approx",
       "schedules": [
@@ -709,7 +709,7 @@
       "name": "ITQ 정보기술자격(한글)",
       "agency": "한국생산성본부",
       "category": "사무-IT",
-      "sourceCode": "KPC-ITQ-HWP",
+      "sourceCode": "M0375",
       "sourceUrl": "https://license.kpc.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -739,7 +739,7 @@
       "name": "ITQ 정보기술자격(엑셀)",
       "agency": "한국생산성본부",
       "category": "사무-IT",
-      "sourceCode": "KPC-ITQ-XLS",
+      "sourceCode": "M0376",
       "sourceUrl": "https://license.kpc.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -759,7 +759,7 @@
       "name": "GTQ 그래픽기술자격 1급",
       "agency": "한국생산성본부",
       "category": "IT-디자인",
-      "sourceCode": "KPC-GTQ1",
+      "sourceCode": "M0380",
       "sourceUrl": "https://license.kpc.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -799,7 +799,7 @@
       "name": "ADsP 데이터분석 준전문가",
       "agency": "한국데이터산업진흥원",
       "category": "IT-데이터",
-      "sourceCode": "DATAQ-ADSP",
+      "sourceCode": "M0360",
       "sourceUrl": "https://www.dataq.or.kr/",
       "provenance": "scraped:2026-07-28",
       "schedules": [
@@ -829,7 +829,7 @@
       "name": "ADP 데이터분석 전문가",
       "agency": "한국데이터산업진흥원",
       "category": "IT-데이터",
-      "sourceCode": "DATAQ-ADP",
+      "sourceCode": "M0361",
       "sourceUrl": "https://www.dataq.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -849,7 +849,7 @@
       "name": "SQLD SQL 개발자",
       "agency": "한국데이터산업진흥원",
       "category": "IT-데이터",
-      "sourceCode": "DATAQ-SQLD",
+      "sourceCode": "M0362",
       "sourceUrl": "https://www.dataq.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -879,7 +879,7 @@
       "name": "SQLP SQL 전문가",
       "agency": "한국데이터산업진흥원",
       "category": "IT-데이터",
-      "sourceCode": "DATAQ-SQLP",
+      "sourceCode": "M0363",
       "sourceUrl": "https://www.dataq.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -899,7 +899,7 @@
       "name": "정보보안기사",
       "agency": "한국방송통신전파진흥원",
       "category": "IT-보안",
-      "sourceCode": "KCA-SEC",
+      "sourceCode": "M0002",
       "sourceUrl": "https://www.kca.kr/",
       "provenance": "approx",
       "schedules": [],
@@ -909,7 +909,7 @@
       "name": "리눅스마스터 2급",
       "agency": "한국정보통신인력개발센터",
       "category": "IT-보안",
-      "sourceCode": "LINUX-M2",
+      "sourceCode": "M0374",
       "sourceUrl": "https://www.ihd.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -929,7 +929,7 @@
       "name": "네트워크관리사 2급",
       "agency": "한국정보통신자격협회",
       "category": "IT-보안",
-      "sourceCode": "ICQA-NET2",
+      "sourceCode": "M0370",
       "sourceUrl": "https://www.icqa.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -949,7 +949,7 @@
       "name": "투자자산운용사",
       "agency": "금융투자협회",
       "category": "금융",
-      "sourceCode": "KOFIA-IAM",
+      "sourceCode": "M0407",
       "sourceUrl": "https://license.kofia.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -969,7 +969,7 @@
       "name": "펀드투자권유대행인",
       "agency": "금융투자협회",
       "category": "금융",
-      "sourceCode": "KOFIA-FUND",
+      "sourceCode": "M0408",
       "sourceUrl": "https://license.kofia.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -989,7 +989,7 @@
       "name": "증권투자권유대행인",
       "agency": "금융투자협회",
       "category": "금융",
-      "sourceCode": "KOFIA-SEC",
+      "sourceCode": "M0409",
       "sourceUrl": "https://license.kofia.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1009,7 +1009,7 @@
       "name": "신용분석사",
       "agency": "한국금융연수원",
       "category": "금융",
-      "sourceCode": "KBI-CREDIT",
+      "sourceCode": "M0416",
       "sourceUrl": "https://www.kbi.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1029,7 +1029,7 @@
       "name": "은행텔러",
       "agency": "한국금융연수원",
       "category": "금융",
-      "sourceCode": "KBI-TELLER",
+      "sourceCode": "M0422",
       "sourceUrl": "https://www.kbi.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1049,7 +1049,7 @@
       "name": "AFPK 재무설계사",
       "agency": "한국FPSB",
       "category": "금융",
-      "sourceCode": "FPSB-AFPK",
+      "sourceCode": "M0424",
       "sourceUrl": "https://www.fpsbkorea.org/",
       "provenance": "approx",
       "schedules": [
@@ -1069,7 +1069,7 @@
       "name": "전산세무 2급",
       "agency": "한국세무사회",
       "category": "회계-세무",
-      "sourceCode": "KACPTA-TAX2",
+      "sourceCode": "M0430",
       "sourceUrl": "https://license.kacpta.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1099,7 +1099,7 @@
       "name": "전산회계 1급",
       "agency": "한국세무사회",
       "category": "회계-세무",
-      "sourceCode": "KACPTA-ACC1",
+      "sourceCode": "M0431",
       "sourceUrl": "https://license.kacpta.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1119,7 +1119,7 @@
       "name": "재경관리사",
       "agency": "삼일회계법인",
       "category": "회계-세무",
-      "sourceCode": "SAMIL-FIN",
+      "sourceCode": "M0437",
       "sourceUrl": "https://www.samilexam.com/",
       "provenance": "approx",
       "schedules": [
@@ -1139,7 +1139,7 @@
       "name": "FAT 회계실무 1급",
       "agency": "한국공인회계사회",
       "category": "회계-세무",
-      "sourceCode": "AT-FAT1",
+      "sourceCode": "M0433",
       "sourceUrl": "https://at.kicpa.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1159,7 +1159,7 @@
       "name": "TESAT 경제이해력검증시험",
       "agency": "한국경제신문",
       "category": "경제-경영",
-      "sourceCode": "TESAT",
+      "sourceCode": "M0440",
       "sourceUrl": "https://www.tesat.or.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1189,7 +1189,7 @@
       "name": "매경TEST 경제경영이해력시험",
       "agency": "매일경제신문",
       "category": "경제-경영",
-      "sourceCode": "MK-TEST",
+      "sourceCode": "M0441",
       "sourceUrl": "https://exam.mk.co.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1209,7 +1209,7 @@
       "name": "유통관리사 2급",
       "agency": "대한상공회의소",
       "category": "유통-무역",
-      "sourceCode": "KORCHAM-DIST2",
+      "sourceCode": "M0044",
       "sourceUrl": "https://license.korcham.net/",
       "provenance": "approx",
       "schedules": [
@@ -1229,7 +1229,7 @@
       "name": "국제무역사 1급",
       "agency": "한국무역협회",
       "category": "유통-무역",
-      "sourceCode": "KITA-TRADE1",
+      "sourceCode": "M0447",
       "sourceUrl": "https://www.tradecampus.com/",
       "provenance": "approx",
       "schedules": [
@@ -1249,7 +1249,7 @@
       "name": "한자능력검정시험(2급)",
       "agency": "한국어문회",
       "category": "한자",
-      "sourceCode": "HANJA-2",
+      "sourceCode": "M0452",
       "sourceUrl": "https://www.hanja.re.kr/",
       "provenance": "approx",
       "schedules": [
@@ -1269,7 +1269,7 @@
       "name": "한자능력검정시험(3급)",
       "agency": "한국어문회",
       "category": "한자",
-      "sourceCode": "HANJA-3",
+      "sourceCode": "M0453",
       "sourceUrl": "https://www.hanja.re.kr/",
       "provenance": "approx",
       "schedules": [

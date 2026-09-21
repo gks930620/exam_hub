@@ -45,7 +45,7 @@ class ScheduleSourceCoverageTest {
 
     /**
      * 시드가 만드는 <b>모든</b> 종목코드. 마스터와 비큐넷 시드를 둘 다 본다 —
-     * 같은 시험을 서로 다른 코드로 만들기 때문이다({@link SeedCodeAlias}).
+     * 코드는 2026-09-21 에 통일했지만, 새 시드가 어긋난 코드를 들고 오면 여기서 잡힌다.
      */
     private Set<String> masterCodes() throws IOException {
         Set<String> codes = new HashSet<>();

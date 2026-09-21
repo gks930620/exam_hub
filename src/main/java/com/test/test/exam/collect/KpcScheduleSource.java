@@ -94,10 +94,9 @@ public class KpcScheduleSource extends AbstractHtmlScheduleSource {
     @Override
     public Set<String> coveredExamCodes() {
         // 비큐넷 시드가 같은 시험에 다른 코드를 붙인다 — 로컬은 시드 코드, 운영은 마스터 코드다.
-        // 둘 다 밝혀야 "일정 없어도 자동" 판정이 로컬에서도 먹는다. 자세한 사정은 SeedCodeAlias.
-        return SeedCodeAlias.plus(
-                EXAMS.values().stream().flatMap(List::stream).map(Exam::code).toList(),
-                "KPC-ITQ-HWP", "KPC-ITQ-XLS", "KPC-GTQ1");
+        // 시드 코드는 마스터 코드로 통일했다(2026-09-21) — 예전엔 같은 시험에 두 코드가 붙어 둘 다 밝혀야 했다.
+        return EXAMS.values().stream().flatMap(List::stream).map(Exam::code)
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
     }
 
     @Override

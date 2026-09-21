@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.test.test.exam.common.TimeUtil;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,6 +38,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ApproxCleanupTest {
 
+    /**
+     * <b>날짜는 전부 오늘 기준 상대값이다</b>(컨벤션 §6 "시간 의존 테스트 금지").
+     *
+     * <p>고정 날짜를 쓰면 그 날이 지나는 순간 테스트가 깨진다. 실제로 깨졌다(2026-09-21):
+     * 수집값 정리는 <b>오늘부터 이번에 본 가장 먼 시험일까지</b>만 지우는데, 픽스처의 2026-09-19 가
+     * 과거가 되면서 "지워야 한다"던 행이 안 지워졌다. 코드가 아니라 달력이 바꾼 실패다.
+     */
+    private static final LocalDate TODAY = TimeUtil.today();
+    private static final int YEAR = TODAY.getYear();
+    /** 이번에 읽어 온 회차의 시험일 — 오늘과 UPSERT_IN 사이라야 "수집 기간 안"이 된다 */
+    private static final LocalDate EXAM_DAY = TODAY.plusDays(25);
+    /** upsert 가 돌려주는 행의 시험일 */
+    private static final LocalDate UPSERT_DAY = TODAY.plusDays(30);
+
     private final ExamScheduleRepository schedules = Mockito.mock(ExamScheduleRepository.class);
     private final NotificationScheduleRepository notifications = Mockito.mock(NotificationScheduleRepository.class);
     private final DiffService diff = Mockito.mock(DiffService.class);
@@ -49,8 +65,8 @@ class ApproxCleanupTest {
 
     private ExamSchedule row(Certificate c, int round, ExamType type, ScheduleProvenance provenance) {
         return ExamSchedule.builder()
-                .certificate(c).year(2026).round(round).examType(type)
-                .examStartDate(LocalDate.of(2026, 9, 19))
+                .certificate(c).year(YEAR).round(round).examType(type)
+                .examStartDate(UPSERT_DAY)
                 .provenance(provenance).status(ScheduleStatus.ACTIVE)
                 .build();
     }
@@ -78,7 +94,7 @@ class ApproxCleanupTest {
 
     private CollectedSchedule record(int round, ExamType type) {
         return new CollectedSchedule("KCA-SEC", "정보보안기사", Series.ETC, "한국방송통신전파진흥원", "IT-보안",
-                2026, round, type, null, null, LocalDate.of(2026, 9, 14), null, null,
+                YEAR, round, type, null, null, EXAM_DAY, null, null,
                 "https://www.cq.or.kr/", ScheduleProvenance.SCRAPED);
     }
 
@@ -142,11 +158,11 @@ class ApproxCleanupTest {
     void removes_scraped_rounds_the_source_no_longer_lists() {
         Certificate c = cert(1L);
         ExamSchedule renumbered = ExamSchedule.builder()
-                .certificate(c).year(2026).round(20260914).examType(ExamType.WRITTEN)
-                .examStartDate(LocalDate.of(2026, 9, 14))
+                .certificate(c).year(YEAR).round(20260914).examType(ExamType.WRITTEN)
+                .examStartDate(EXAM_DAY)
                 .provenance(ScheduleProvenance.SCRAPED).status(ScheduleStatus.ACTIVE)
                 .build();
-        CollectedSchedule produced = record(4, ExamType.WRITTEN);   // 시험일 2026-09-14
+        CollectedSchedule produced = record(4, ExamType.WRITTEN);   // 같은 시험일 — 회차 번호만 바뀌었다
 
         CollectService service = serviceThatCollects(c, List.of(renumbered),
                 List.of(produced), List.of(row(c, 4, ExamType.WRITTEN, ScheduleProvenance.SCRAPED)));
@@ -167,19 +183,19 @@ class ApproxCleanupTest {
     @DisplayName("같은 시험일의 중복 회차는 지난 것이라도 지운다")
     void duplicate_sittings_are_removed_even_in_the_past() {
         Certificate c = cert(1L);
-        LocalDate past = LocalDate.of(2026, 1, 10);
+        LocalDate past = TODAY.minusDays(60);
         ExamSchedule oldKey = ExamSchedule.builder()
-                .certificate(c).year(2026).round(20260110).examType(ExamType.WRITTEN)
+                .certificate(c).year(YEAR).round(20260110).examType(ExamType.WRITTEN)
                 .examStartDate(past)
                 .provenance(ScheduleProvenance.SCRAPED).status(ScheduleStatus.ACTIVE)
                 .build();
         ExamSchedule real = ExamSchedule.builder()
-                .certificate(c).year(2026).round(576).examType(ExamType.WRITTEN)
+                .certificate(c).year(YEAR).round(576).examType(ExamType.WRITTEN)
                 .examStartDate(past)
                 .provenance(ScheduleProvenance.SCRAPED).status(ScheduleStatus.ACTIVE)
                 .build();
         CollectedSchedule produced = new CollectedSchedule("KCA-SEC", "정보보안기사", Series.ETC,
-                "한국방송통신전파진흥원", "IT-보안", 2026, 576, ExamType.WRITTEN,
+                "한국방송통신전파진흥원", "IT-보안", YEAR, 576, ExamType.WRITTEN,
                 null, null, past, null, null, "https://www.cq.or.kr/", ScheduleProvenance.SCRAPED);
 
         CollectService service = serviceThatCollects(c, List.of(oldKey, real),
@@ -201,11 +217,11 @@ class ApproxCleanupTest {
     void keeps_scraped_rounds_beyond_this_run() {
         Certificate c = cert(1L);
         ExamSchedule nextYear = ExamSchedule.builder()
-                .certificate(c).year(2027).round(1).examType(ExamType.WRITTEN)
-                .examStartDate(LocalDate.of(2027, 3, 7))
+                .certificate(c).year(YEAR + 1).round(1).examType(ExamType.WRITTEN)
+                .examStartDate(TODAY.plusDays(400))
                 .provenance(ScheduleProvenance.SCRAPED).status(ScheduleStatus.ACTIVE)
                 .build();
-        CollectedSchedule produced = record(4, ExamType.WRITTEN);   // 시험일 2026-09-14 까지만 봤다
+        CollectedSchedule produced = record(4, ExamType.WRITTEN);   // 이번엔 EXAM_DAY 까지만 봤다
 
         CollectService service = serviceThatCollects(c, List.of(nextYear),
                 List.of(produced), List.of(row(c, 4, ExamType.WRITTEN, ScheduleProvenance.SCRAPED)));

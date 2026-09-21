@@ -61,8 +61,8 @@ public class MkTestScheduleSource extends AbstractHtmlScheduleSource {
 
     @Override
     public Set<String> coveredExamCodes() {
-        // 비큐넷 시드가 같은 시험에 다른 코드를 붙인다 — 자세한 사정은 SeedCodeAlias.
-        return SeedCodeAlias.plus(Set.of(SOURCE_CODE), "MK-TEST");
+        // 시드 코드는 마스터 코드로 통일했다(2026-09-21) — 예전엔 같은 시험에 두 코드가 붙어 둘 다 밝혀야 했다.
+        return Set.of(SOURCE_CODE);
     }
 
     @Override
