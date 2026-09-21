@@ -51,6 +51,8 @@ public final class FavoriteDtos {
         private String scheduleState;
         private String lastExamDate;
         private String hiddenReason;
+        /** 다음 일정이 시행처에서 확인된 날짜인가. 추정치면 false — 카드가 "추정"을 붙인다 */
+        private boolean nextConfirmed;
     }
 
     /** POST /api/me/favorites 요청 */

@@ -15,7 +15,7 @@ import type { CardBadge, ScheduleState } from '../api/types';
  */
 export default function CardStatus({
   state, badge, badgeFallback = '예정', label, at, dday, lastExamDate,
-  inlineDday = false, compact = false, plain = false,
+  inlineDday = false, compact = false, plain = false, confirmed = true,
 }: {
   state: ScheduleState;
   /** 서버 CardBadge 코드 — 어휘·색은 lib/status 가 정한다 */
@@ -36,7 +36,19 @@ export default function CardStatus({
    * 배지가 있던 자리에 두 줄로 접히는 문장이 붙어 눈높이가 어긋나던 것도 같이 사라진다.
    */
   plain?: boolean;
+  /**
+   * 이 날짜가 <b>시행처에서 확인된 값인가.</b> false 면 우리가 추정한 날짜다 — "추정"을 붙인다.
+   *
+   * <p>그전엔 상세 표에만 "시행처 확인 필요"가 있었다. 정작 사람들이 보는 카드에는 아무 표시가 없어
+   * 지어낸 날짜가 확신 있는 D-day 로 보였다(19종, 2026-09-21 실측). 그 날짜를 믿고 준비하다
+   * 진짜 마감을 놓치면, 일정을 안 알려 주는 것보다 나쁘다.
+   */
+  confirmed?: boolean;
 }) {
+  /** 추정치 표시 — 날짜 옆에 조용히 붙는다. 경고가 아니라 <b>출처에 대한 사실</b>이다 */
+  const estimate = confirmed === false
+    ? <span className="est-mark" title="시행처가 아직 공고하지 않아 우리가 추정한 날짜입니다. 접수 전에 시행처에서 확인하세요.">추정</span>
+    : null;
   const dot = inlineDday && dday != null ? <> · {ddayLabel(dday)}</> : null;
 
   if (plain) {
@@ -46,7 +58,7 @@ export default function CardStatus({
       : state === 'UPCOMING' ? [badgeLabel(badge, badgeFallback), label, eventAtLabel(badge, at)].filter(Boolean).join(' · ')
       : state === 'PAST_ONLY' ? `다음 회차 미정${lastExamDate ? ` · 마지막 시험 ${lastExamDate}` : ''}`
       : '일정 미정 · 일정이 확인되면 알려 드립니다';
-    return <span className="when">{text}</span>;
+    return <span className="when">{text}{estimate && <> {estimate}</>}</span>;
   }
 
   if (state === 'ROLLING') {
@@ -63,6 +75,7 @@ export default function CardStatus({
     return (
       <>
         <span className={`k-badge ${badgeTone(badge)}`}>{badgeLabel(badge, badgeFallback)}{dot}</span>
+        {estimate}
         {!compact && label && <span className="when">{label} · {eventAtLabel(badge, at)}</span>}
       </>
     );

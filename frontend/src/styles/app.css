@@ -612,3 +612,16 @@
 .post-title { margin-top: var(--sp-2); }
 .fineprint--tight { margin: 2px 0 0; }             /* 표 칸 안 한 줄 덧붙임 */
 .fold-panel-alert { margin-bottom: var(--sp-4); }  /* 폼 위 안내 띠 */
+
+/* ── 추정 날짜 표시 (2026-09-21) ──
+   시행처가 아직 공고하지 않아 우리가 추정한 날짜라는 사실. 경고가 아니라 <b>출처에 대한 사실</b>이라
+   빨강이 아니라 조용한 회색이다 — 겁을 주는 게 아니라 "이건 확정이 아니다"만 말한다.
+   그전엔 상세 표에만 있었다. 정작 사람들이 보는 카드에는 아무 표시가 없어 지어낸 날짜가
+   확신 있는 D-day 로 보였다(19종, 실측). */
+.est-mark {
+  flex: none; font-size: var(--t-xs); font-weight: var(--w-bold);
+  color: var(--muted); border: var(--bw) dashed var(--border-strong);
+  border-radius: var(--r-sm); padding: 1px var(--sp-2); white-space: nowrap;
+  cursor: help;
+}
+.when .est-mark { margin-left: var(--sp-1); }

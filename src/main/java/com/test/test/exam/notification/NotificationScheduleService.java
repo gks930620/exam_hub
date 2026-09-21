@@ -35,14 +35,19 @@ public class NotificationScheduleService {
      */
     @Transactional
     public void recalc(ExamSchedule s, boolean scheduleChanged) {
-        // ACTIVE 가 아니면(취소/보류/완료) 대기 예약을 취소
-        if (!s.isActive()) {
+        // ACTIVE 가 아니면(취소/보류/완료) 대기 예약을 취소.
+        // <b>추정 날짜(APPROX)도 같다</b> — 지어낸 날로 "내일 접수 시작입니다" 라고 먼저 연락하면
+        // 사용자는 그 날 시행처에 가서 아무것도 못 하고, 그러고는 진짜 마감을 놓친다.
+        // 일정을 안 알려 주는 것보다 나쁘다. 화면에는 계속 보여 준다(추정이라고 표시해서) —
+        // 대략의 시기를 아는 건 도움이 되지만, 먼저 연락하는 것은 확인된 날짜에만 한다(2026-09-21).
+        if (!s.isActive() || !s.isConfirmed()) {
             repository.findByExamSchedule(s).forEach(ns -> {
                 if (ns.getStatus() == NotificationScheduleStatus.PENDING) {
                     ns.cancel();
                 }
             });
-            if (scheduleChanged) {
+            // 변경 안내는 확인된 값일 때만 — 추정치가 바뀐 건 사용자에게 알릴 사건이 아니다
+            if (scheduleChanged && s.isConfirmed()) {
                 upsertChangeAlert(s, TimeUtil.now());
             }
             return;

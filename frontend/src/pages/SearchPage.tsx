@@ -192,7 +192,7 @@ export default function SearchPage() {
                   여기 남는 건 언제쯤인지 한 줄뿐이고, 그래서 카드 841장의 줄이 전부 맞는다. */}
               <div className="foot">
                 <CardStatus state={scheduleStateOf(c)} badge={c.nextBadge} label={c.nextLabel} at={c.nextAt}
-                            dday={c.nextDday} lastExamDate={c.lastExamDate} inlineDday compact />
+                            dday={c.nextDday} lastExamDate={c.lastExamDate} confirmed={c.nextConfirmed} inlineDday compact />
               </div>
             </div>
           ))}

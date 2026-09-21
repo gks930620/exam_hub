@@ -115,7 +115,7 @@ function ExamCard({ card }: { card: FavoriteCard }) {
           <span className="when">더 이상 없음 · {card.hiddenReason}</span>
         ) : (
           <CardStatus state={card.scheduleState} badge={card.badge} badgeFallback={card.badgeLabel}
-                      label={card.eventLabel} at={card.eventAt} dday={card.dday} lastExamDate={card.lastExamDate} plain />
+                      label={card.eventLabel} at={card.eventAt} dday={card.dday} lastExamDate={card.lastExamDate} confirmed={card.nextConfirmed} plain />
         )}
       </div>
     </Link>

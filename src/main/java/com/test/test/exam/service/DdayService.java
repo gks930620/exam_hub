@@ -52,13 +52,13 @@ public class DdayService {
                     // 접수 중 → 마감까지
                     long dday = ChronoUnit.DAYS.between(today, regEnd.toLocalDate());
                     candidates.add(new NextEvent(CardBadge.REG_OPEN, "REG_CLOSING",
-                            typeLabel + " 접수 마감", regEnd, dday, s.getId()));
+                            typeLabel + " 접수 마감", regEnd, dday, s.getId(), s.isConfirmed()));
                     continue; // 이 회차는 접수 중 이벤트로 대표 (다음 시험일은 굳이 후보에 안 넣음)
                 } else if (now.isBefore(regStart)) {
                     // 마감을 아직 몰라도 시작일이 앞에 있으면 접수 예정이다 — 알림(REG_OPEN_EVE)은 이미 그렇게 간다
                     long dday = ChronoUnit.DAYS.between(today, regStart.toLocalDate());
                     candidates.add(new NextEvent(CardBadge.REG_UPCOMING, "REG_OPEN",
-                            typeLabel + " 접수 시작", regStart, dday, s.getId()));
+                            typeLabel + " 접수 시작", regStart, dday, s.getId(), s.isConfirmed()));
                 }
             }
 
@@ -70,10 +70,10 @@ public class DdayService {
                 if (today.isBefore(examStart)) {
                     long dday = ChronoUnit.DAYS.between(today, examStart);
                     candidates.add(new NextEvent(CardBadge.EXAM_UPCOMING, "EXAM",
-                            typeLabel + " 시험", examStart.atStartOfDay(), dday, s.getId()));
+                            typeLabel + " 시험", examStart.atStartOfDay(), dday, s.getId(), s.isConfirmed()));
                 } else if (!today.isAfter(examEnd)) {
                     candidates.add(new NextEvent(CardBadge.EXAM_ONGOING, "EXAM_ONGOING",
-                            typeLabel + " 시험 진행 중", examEnd.atStartOfDay(), 0, s.getId()));
+                            typeLabel + " 시험 진행 중", examEnd.atStartOfDay(), 0, s.getId(), s.isConfirmed()));
                 }
             }
 
@@ -85,7 +85,7 @@ public class DdayService {
                     && !today.isAfter(resultDate)) {
                 long dday = ChronoUnit.DAYS.between(today, resultDate);
                 candidates.add(new NextEvent(CardBadge.RESULT_PENDING, "RESULT",
-                        typeLabel + " 합격자 발표", resultDate.atStartOfDay(), dday, s.getId()));
+                        typeLabel + " 합격자 발표", resultDate.atStartOfDay(), dday, s.getId(), s.isConfirmed()));
             }
         }
 

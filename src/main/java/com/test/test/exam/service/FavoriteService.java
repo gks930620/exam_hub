@@ -66,7 +66,8 @@ public class FavoriteService {
                 e.isPresent() ? e.dday() : null,
                 summary.state().name(),
                 TimeUtil.format(summary.lastExamDate()),
-                hiddenReason);
+                hiddenReason,
+                !e.isPresent() || e.confirmed());
     }
 
     private int badgePriority(String badgeName) {

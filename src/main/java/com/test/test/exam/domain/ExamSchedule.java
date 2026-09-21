@@ -174,6 +174,17 @@ public class ExamSchedule {
     }
 
     /**
+     * 시행처에서 확인된 날짜인가. <b>추정치(APPROX)면 false.</b>
+     *
+     * <p>이 값이 갈라 놓는 것 둘: ① 알림을 먼저 보낼지(추정치로는 안 보낸다 —
+     * 지어낸 날로 "내일 접수 시작"이라고 하면 진짜 마감을 놓치게 만든다) ② 화면에 "추정"을 붙일지.
+     * 출처가 비어 있으면 확인된 것으로 보지 않는다 — 모르는 날짜를 확정으로 보여주는 게 더 위험하다.
+     */
+    public boolean isConfirmed() {
+        return provenance != null && provenance.isConfirmed();
+    }
+
+    /**
      * 날짜 순서 규칙 — 수집(DiffService)과 수기 입력(AdminScheduleController)이 <b>같은 규칙</b>을 쓴다.
      * 위반이 없으면 null, 있으면 사람이 읽을 사유.
      *

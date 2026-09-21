@@ -53,6 +53,11 @@ public final class CertificateDtos {
         private String nextBadge;
         /** PAST_ONLY 일 때 마지막 시험일 */
         private String lastExamDate;
+        /**
+         * 다음 일정이 <b>시행처에서 확인된 날짜인가.</b> 추정치면 false — 카드가 "추정"을 붙인다.
+         * 상세 표에만 표시하던 때는 카드만 보는 사람에게 닿지 않았다(2026-09-21).
+         */
+        private boolean nextConfirmed;
 
         public static Item of(Certificate c, boolean favorited) {
             return of(c, favorited, true);
@@ -75,7 +80,8 @@ public final class CertificateDtos {
                     upcoming ? TimeUtil.format(next.at()) : null,
                     upcoming ? (int) next.dday() : null,
                     upcoming ? next.badge().name() : null,
-                    lastExamDate);
+                    lastExamDate,
+                    !upcoming || next.confirmed());
         }
     }
 
@@ -198,7 +204,8 @@ public final class CertificateDtos {
                     s.getStatus().name(),
                     s.getProvenance() == null ? null : s.getProvenance().name(),
                     s.getProvenance() == null ? null : s.getProvenance().getLabel(),
-                    s.getProvenance() == null || s.getProvenance().isConfirmed());
+                    // 판정은 도메인 한 곳에서 — 출처가 비면 확정으로 보지 않는다(ExamSchedule.isConfirmed)
+                    s.isConfirmed());
         }
     }
 }

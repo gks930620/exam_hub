@@ -33,6 +33,8 @@ export interface CertItem {
   nextDday: number | null;
   nextBadge: CardBadge | null;
   lastExamDate: string | null;
+  /** 다음 일정이 시행처에서 확인된 날짜인가. false 면 우리가 추정한 값이라 화면이 '추정' 을 붙인다 */
+  nextConfirmed?: boolean;
 }
 
 export interface BrowseResponse {
@@ -109,6 +111,8 @@ export interface FavoriteCard {
    * 카드는 남는다 — 사라지면 해제할 길이 없다. 이때 "일정이 확인되면 알려 드립니다"는 거짓말이다.
    */
   hiddenReason: string | null;
+  /** 다음 일정이 시행처에서 확인된 날짜인가. false 면 우리가 추정한 값이라 화면이 '추정' 을 붙인다 */
+  nextConfirmed?: boolean;
 }
 
 export interface FavoriteListResponse {
