@@ -1,6 +1,7 @@
 package com.test.test.exam.repository;
 
 import com.test.test.exam.domain.NotificationLog;
+import com.test.test.exam.domain.NotificationResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface NotificationLogRepository extends JpaRepository<NotificationLog, Long> {
@@ -28,4 +30,28 @@ public interface NotificationLogRepository extends JpaRepository<NotificationLog
     @Modifying
     @Query("DELETE FROM NotificationLog l WHERE l.sentAt < :threshold")
     int deleteOlderThan(@Param("threshold") LocalDateTime threshold);
+
+    /**
+     * 최근 발송을 <b>채널별로</b> 센다 — 성공/실패로는 안 보이는 것을 보기 위해서다.
+     *
+     * <p>발송 체인의 마지막 {@code LogNotificationSender} 는 서버 로그에 한 줄 찍고
+     * <b>언제나 SUCCESS 를 돌려준다.</b> 그래서 채널을 안 가르면 아무도 못 받은 날도 성공률 100% 로
+     * 보인다. LOG 로 몇 건이 흘러갔는지가 이 서비스에서 가장 중요한 숫자 중 하나다.
+     *
+     * @return {채널, 건수} 배열. 건수가 0 인 채널은 아예 빠진다.
+     */
+    @Query("""
+            SELECT l.channel, COUNT(l) FROM NotificationLog l
+             WHERE l.sentAt >= :since AND l.result = :result
+             GROUP BY l.channel
+            """)
+    List<Object[]> countByChannelSince(@Param("since") LocalDateTime since,
+                                       @Param("result") NotificationResult result);
+
+    /** 최근 기간에 실패로 기록된 건수(구독 만료 포함 — 어느 쪽이든 사람에게는 안 갔다). */
+    @Query("""
+            SELECT COUNT(l) FROM NotificationLog l
+             WHERE l.sentAt >= :since AND l.result <> com.test.test.exam.domain.NotificationResult.SUCCESS
+            """)
+    long countFailedSince(@Param("since") LocalDateTime since);
 }

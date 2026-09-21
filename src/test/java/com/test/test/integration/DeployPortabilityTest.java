@@ -301,13 +301,59 @@ class DeployPortabilityTest {
             v.validate();
         }
 
+        /**
+         * 운영에서 발송 수단이 하나도 없으면 알림은 체인 끝의 LogNotificationSender 까지 흘러가고,
+         * 그건 서버 로그에 한 줄 찍고 <b>언제나 SUCCESS 를 돌려준다.</b> 통계는 100% 성공인데
+         * 받은 사람은 없다 — 이 서비스의 약속이 통째로 깨지는데 아무 신호가 없다.
+         */
+        @Test
+        @DisplayName("운영 + 발송 채널이 LOG 뿐 → 기동 중단 (성공으로 기록되지만 아무도 못 받는다)")
+        void prod_without_real_channel_fails() {
+            RailwayDeploymentValidator v = prodValidator(
+                    "jdbc:mysql://host/db", "충분히-긴-운영용-비밀키-12345678", "https://exam.example.com", "",
+                    java.util.List.of(stubSender(com.test.test.exam.domain.NotificationChannel.LOG)));
+
+            assertThatThrownBy(() -> validate(v))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("발송 채널");
+        }
+
+        @Test
+        @DisplayName("이메일이 켜져 있으면 막지 않는다")
+        void prod_with_email_channel_passes() {
+            validate(prodValidator(
+                    "jdbc:mysql://host/db", "충분히-긴-운영용-비밀키-12345678", "https://exam.example.com", "",
+                    java.util.List.of(stubSender(com.test.test.exam.domain.NotificationChannel.LOG),
+                            stubSender(com.test.test.exam.domain.NotificationChannel.EMAIL))));
+        }
+
+        private com.test.test.exam.notification.NotificationSender stubSender(
+                com.test.test.exam.domain.NotificationChannel channel) {
+            return new com.test.test.exam.notification.NotificationSender() {
+                @Override public com.test.test.exam.domain.NotificationChannel channel() { return channel; }
+                @Override public com.test.test.exam.domain.NotificationResult send(
+                        com.test.test.exam.domain.Member user,
+                        com.test.test.exam.notification.NotificationMessage message) {
+                    return com.test.test.exam.domain.NotificationResult.SUCCESS;
+                }
+            };
+        }
+
         /** prod 프로파일이 켜진 것처럼 보이는 검증기를 만든다(실제 컨텍스트를 prod 로 띄우면 DB 가 없어 못 뜬다). */
         private RailwayDeploymentValidator prodValidator(String jdbcUrl, String secret, String linkBase,
                                                          String managerPassword) {
+            // 채널 검증을 따로 보는 테스트가 아니면 이메일이 켜진 정상 배포로 둔다
+            return prodValidator(jdbcUrl, secret, linkBase, managerPassword,
+                    java.util.List.of(stubSender(com.test.test.exam.domain.NotificationChannel.EMAIL)));
+        }
+
+        private RailwayDeploymentValidator prodValidator(String jdbcUrl, String secret, String linkBase,
+                                                         String managerPassword,
+                                                         java.util.List<com.test.test.exam.notification.NotificationSender> senders) {
             org.springframework.mock.env.MockEnvironment env = new org.springframework.mock.env.MockEnvironment();
             env.setActiveProfiles("prod");
 
-            RailwayDeploymentValidator v = new RailwayDeploymentValidator(env);
+            RailwayDeploymentValidator v = new RailwayDeploymentValidator(env, senders);
             org.springframework.test.util.ReflectionTestUtils.setField(v, "datasourceUrl", jdbcUrl);
             org.springframework.test.util.ReflectionTestUtils.setField(v, "jwtSecret", secret);
             org.springframework.test.util.ReflectionTestUtils.setField(v, "linkBase", linkBase);

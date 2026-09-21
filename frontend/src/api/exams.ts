@@ -4,7 +4,7 @@ import type {
   NotifySettings, CalendarResponse, BrowseResponse, CategoryResponse,
   MeResponse, BoardItem, PostListResponse, PostDetail, CommentItem, AdminScheduleRow,
   ManagerLoginResponse, DataMapResponse, OverviewResponse, LifecycleResponse, StatsResponse,
-  CollectHealthResponse,
+  CollectHealthResponse, NotificationHealthResponse,
 } from './types';
 
 export const examApi = {
@@ -58,6 +58,9 @@ export const examApi = {
 
   /** 수집 건강 — 지금 어느 소스가 고장났나(실패·0건·멈춤) */
   adminCollectHealth: () => api.get<CollectHealthResponse>('/api/admin/collect-health'),
+
+  /** 알림 건강 — 약속이 지켜지고 있나(막힌 예약·도달 채널). 성공률이 아니라 도달을 본다 */
+  adminNotificationHealth: () => api.get<NotificationHealthResponse>("/api/admin/notification-health"),
 
   /** 시험 변천사 — 폐지·개칭된 시험이 어디로 갔나 */
   adminLifecycle: () => api.get<LifecycleResponse>('/api/admin/lifecycle'),

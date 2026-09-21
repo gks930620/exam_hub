@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { examApi } from '../api/exams';
 import { fmtAt } from '../lib/format';
 import Skeleton from '../components/Skeleton';
+import NotificationHealthPanel from '../components/NotificationHealthPanel';
 import type { CollectHealthResponse, CollectHealthRow } from '../api/types';
 
 /**
@@ -32,11 +33,15 @@ export default function AdminCollectHealth() {
       .catch((e) => setErr(e instanceof Error ? e.message : '불러오지 못했습니다.'));
   }, []);
 
-  if (err) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
-  if (!data) return <Skeleton rows={6} label="수집 상태 불러오는 중…" />;
+  // 알림과 수집은 파이프의 양끝이라 각자 불러오고 각자 실패한다 —
+  // 수집을 못 불러왔다고 알림 상태까지 감추면, 정작 급한 쪽을 못 본다.
+  if (err) return <><NotificationHealthPanel /><div className="k-alert k-alert--err" role="alert">{err}</div></>;
+  if (!data) return <><NotificationHealthPanel /><Skeleton rows={6} label="수집 상태 불러오는 중…" /></>;
 
   return (
     <>
+      <NotificationHealthPanel />
+
       <p className="fineprint fineprint--lead">
         매일 05:00 배치가 시행처를 한 번씩 읽습니다. <b>오류 없이 0건</b>이 오면 시행처가 화면을
         바꿨을 수 있어 고장으로 봅니다 — 그대로 두면 옛 일정이 계속 서비스됩니다.

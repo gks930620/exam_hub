@@ -19,7 +19,18 @@ function row(over: Partial<CollectHealthRow> = {}): CollectHealthRow {
 }
 
 describe('AdminCollectHealth', () => {
-  beforeEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    // 알림 패널은 같은 화면에 있지만 따로 불러온다 — 여기서는 관심 밖이라 조용히 성공시킨다
+    vi.spyOn(examApi, 'adminNotificationHealth').mockResolvedValue({
+      health: {
+        overdue: 0, upcoming: 0, delivered: 0, loggedOnly: 0, failed: 0, armable: 0,
+        byChannel: {}, message: '아직 나간 알림이 없습니다. 대기 중인 예약은 0건입니다.',
+        needsAttention: false,
+      },
+      liveChannels: ['EMAIL', 'LOG'], lookbackDays: 30,
+    });
+  });
 
   it('전부 정상이면 그렇다고 말한다', async () => {
     vi.spyOn(examApi, 'adminCollectHealth').mockResolvedValue({

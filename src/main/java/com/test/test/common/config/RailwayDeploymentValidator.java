@@ -1,7 +1,10 @@
 package com.test.test.common.config;
 
 import com.test.test.exam.auth.JwtProvider;
+import com.test.test.exam.domain.NotificationChannel;
 import com.test.test.exam.manager.ManagerAccountInitializer;
+import com.test.test.exam.notification.NotificationSender;
+import com.test.test.exam.notification.NotificationSenderChain;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +28,11 @@ import java.util.stream.Collectors;
  *   <li>알림 링크 주소가 localhost → 메일은 가는데 <b>링크가 죽어</b> 접수하러 갈 수 없다 → 차단</li>
  *   <li>매니저 비밀번호가 로컬용으로 짧다 → <b>운영 화면이 그대로 뚫린다</b> → 차단</li>
  *   <li>H2 콘솔이 켜져 있다 → <b>임의 SQL 실행 창</b>이 열린다 → 차단</li>
+ *   <li>발송 채널이 하나도 없다 → <b>알림이 로그로만 나가고 아무도 못 받는다</b> → 차단</li>
  * </ol>
  *
- * <p>다섯 가지 모두 "조용히 잘못 동작"하는 부류다 — 기동은 되고 로그도 멀쩡한데 데이터가 날아가거나,
- * 인증이 뚫려 있거나, 알림이 무용지물이 된다. 그래서 기동 시점에 시끄럽게 죽인다.
+ * <p>여섯 가지 모두 "조용히 잘못 동작"하는 부류다 — 기동은 되고 로그도 멀쩡한데 데이터가 날아가거나,
+ * 인증이 뚫려 있거나, 알림이 아무에게도 안 간다. 그래서 기동 시점에 시끄럽게 죽인다.
  *
  * <p>⚠️ H2 콘솔은 {@code application-prod.yml} 도 끄지만 그건 <b>prod 프로파일이 켜졌을 때만</b>이다.
  * Railway 에 올리며 {@code SPRING_PROFILES_ACTIVE} 를 빠뜨리면 나머지 설정이 맞는 한 기동은
@@ -42,6 +46,8 @@ import java.util.stream.Collectors;
 public class RailwayDeploymentValidator {
 
     private final Environment environment;
+    /** 지금 떠 있는 발송 채널을 알기 위해 받는다 — 빈이 뜨는 조건이 곧 설정이다 */
+    private final List<NotificationSender> notificationSenders;
 
     @Value("${spring.datasource.url:}")
     private String datasourceUrl;
@@ -103,6 +109,23 @@ public class RailwayDeploymentValidator {
         if (h2ConsoleEnabled) {
             errors.add("운영에서 H2 콘솔이 켜져 있습니다(임의 SQL 실행 창이 열립니다). "
                     + "SPRING_PROFILES_ACTIVE=prod 를 설정하거나 SPRING_H2_CONSOLE_ENABLED=false 로 끄세요.");
+        }
+
+        // ⑥ 발송 채널: 알림톡도 이메일도 안 켜져 있으면 발송은 체인 끝의 LogNotificationSender 까지
+        //    흘러가고, 그건 서버 로그에 한 줄 찍고 언제나 SUCCESS 를 돌려준다.
+        //    그래서 notification_log 는 성공으로 가득 차고 통계도 100% 인데 받은 사람은 없다.
+        //    이 서비스의 약속이 통째로 깨지는데 아무 신호가 없는 상태라 기동을 막는다.
+        List<String> live = notificationSenders.stream()
+                .filter(s -> !(s instanceof NotificationSenderChain))
+                .map(NotificationSender::channel)
+                .filter(c -> c != NotificationChannel.LOG)
+                .map(Enum::name)
+                .distinct()
+                .toList();
+        if (live.isEmpty()) {
+            errors.add("운영에서 실제 발송 채널이 하나도 켜져 있지 않습니다(알림이 서버 로그로만 나가고 "
+                    + "아무에게도 가지 않는데 발송 성공으로 기록됩니다). "
+                    + "MAIL_ENABLED=true 와 메일 자격증명을 설정하거나 ALIMTALK_ENABLED=true 로 켜세요.");
         }
 
         // 파일 업로드가 없어 BUCKET 검증은 대상이 아니다.

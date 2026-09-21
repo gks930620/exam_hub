@@ -276,6 +276,37 @@ export interface CollectHealthResponse {
   needsAttention: number;
 }
 
+/**
+ * 알림 건강 — 약속이 지켜지고 있나.
+ *
+ * 성공률이 아니라 <b>도달</b>을 본다. 발송 체인의 마지막 LOG 채널은 서버 로그에 한 줄 찍고
+ * 언제나 성공을 돌려주기 때문에, 성공률만 보면 아무도 못 받은 날도 100% 로 보인다.
+ */
+export interface NotificationHealth {
+  /** 발송 시각이 지났는데 아직 안 나간 예약 — 발송이 막혔다는 신호 */
+  overdue: number;
+  /** 앞으로 나갈 대기 예약 */
+  upcoming: number;
+  /** 실제로 사람에게 닿은 건수(LOG 제외) */
+  delivered: number;
+  /** 성공으로 기록됐지만 서버 로그에만 찍힌 건수 — 받은 사람은 없다 */
+  loggedOnly: number;
+  failed: number;
+  /** 알림이 걸려 있어야 할 회차 수 — 예약 0 이 정상인지 고장인지를 가른다 */
+  armable: number;
+  byChannel: Record<string, number>;
+  message: string;
+  needsAttention: boolean;
+}
+
+export interface NotificationHealthResponse {
+  health: NotificationHealth;
+  /** 지금 떠 있는 발송 채널 — LOG 뿐이면 실제 발송 수단이 없다 */
+  liveChannels: string[];
+  /** 발송 통계를 센 기간(일) */
+  lookbackDays: number;
+}
+
 export interface DataMapResponse {
   coverage: {
     totalExams: number; withSchedule: number; withoutSchedule: number; rolling: number;
@@ -285,7 +316,6 @@ export interface DataMapResponse {
   sources: DataSourceRow[];
 }
 
-/** 매니저 일정 현황 — 시험 하나의 상태 한 줄 */
 /** 매니저 현황 — 시험을 어디에 둘 것인가 */
 export type OverviewBucket = 'TODO' | 'WAITING' | 'OK' | 'ROLLING';
 /** 매니저가 지금 해야 하는 일. REVIEW_MOVE = 수집된 일정이 30일 넘게 움직여 보류(PENDING_REVIEW)된 회차가 있음 */

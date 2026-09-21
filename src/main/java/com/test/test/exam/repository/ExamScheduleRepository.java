@@ -87,4 +87,19 @@ public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long
     /** 일정이 하나라도 살아 있는 시험의 수 — 매니저 화면의 "얼마나 채워졌나". */
     @Query("SELECT COUNT(DISTINCT s.certificate.id) FROM ExamSchedule s WHERE s.status = 'ACTIVE'")
     long countDistinctCertificateWithActiveSchedule();
+
+    /**
+     * 알림이 <b>걸려 있어야 할</b> 회차 수 — 확정(추정 아님)이고 ACTIVE 이고 아직 안 지난 것.
+     *
+     * <p>알림 건강 판정에 쓴다. 예약 테이블이 비어 있을 때 그게 정상인지(보낼 게 없다) 고장인지
+     * (파생이 실패했다) 가르는 유일한 기준이다. {@code CollectService.recalc} 는 예외를 삼키고
+     * 로그만 남기기 때문에, 파생이 통째로 실패해도 수집은 성공으로 기록된다.
+     */
+    @Query("""
+            SELECT COUNT(s) FROM ExamSchedule s
+             WHERE s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+               AND s.provenance <> com.test.test.exam.domain.ScheduleProvenance.APPROX
+               AND (s.regStartAt > :now OR s.regEndAt > :now OR s.examStartDate >= :today)
+            """)
+    long countArmable(@Param("now") LocalDateTime now, @Param("today") LocalDate today);
 }

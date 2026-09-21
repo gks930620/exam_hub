@@ -625,3 +625,29 @@
   cursor: help;
 }
 .when .est-mark { margin-left: var(--sp-1); }
+
+/* ── 알림 상태 패널 (2026-09-21) ──
+   수집 표 위에 놓인다 — 결과가 먼저고 재료가 다음이다. 수집이 잘 돌아도 알림이 안 나가면
+   서비스는 아무 일도 안 한 것이다.
+   §19-2 세 단: 제목(알림) > 숫자 > 라벨. §19-3 카드 면으로 수집 표와 구별된다. */
+.nh-panel { padding: var(--sp-5); margin-bottom: var(--sp-5); }
+
+.nh-head { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; }
+.nh-title { font-size: var(--t-lg); font-weight: var(--w-bold); margin: 0; }
+.nh-sub { font-size: var(--t-xs); color: var(--muted); margin: 0; }
+
+.nh-msg { margin: var(--sp-3) 0 var(--sp-4); }
+
+/* 숫자가 주인공이라 라벨보다 크고 진하다. 0 인 항목은 아예 안 그린다(컴포넌트에서 거른다). */
+.nh-figures { display: flex; flex-wrap: wrap; gap: var(--sp-6); margin: 0 0 var(--sp-4); }
+.nh-fig { margin: 0; }
+.nh-fig dt { font-size: var(--t-xs); color: var(--muted); margin: 0 0 var(--sp-1); }
+.nh-fig dd { font-size: var(--t-xl); font-weight: var(--w-bold); margin: 0; line-height: var(--lh-tight); }
+.nh-fig.warn dd { color: var(--warn-text); }
+
+.nh-channels {
+  display: flex; align-items: center; gap: var(--sp-2);
+  flex-wrap: wrap; margin: 0; font-size: var(--t-sm);
+  padding-top: var(--sp-3); border-top: var(--bw) solid var(--border);
+}
+.nh-note { color: var(--warn-text); font-size: var(--t-xs); }
