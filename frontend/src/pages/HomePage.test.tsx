@@ -6,10 +6,11 @@ import { examApi } from '../api/exams';
 import type { FavoriteCard } from '../api/types';
 
 /**
- * 내 시험(홈) — 킷 데모 구조: 히어로(가장 급한 것 하나) → 지표 타일 → 등록한 시험 카드.
+ * 내 시험(홈) — 히어로(가장 급한 것 하나) → 등록한 시험 카드.
  *
- * <p>지표는 서버를 더 부르지 않고 관심 목록에서 센다. 숫자가 화면과 어긋나면 사용자가
- * "왜 3개라는데 카드는 2개냐"고 묻게 된다. 접수 중·이번 주 지표는 뺐다(익숙해지면 다시).
+ * <p>지표 타일(등록 N · 가장 가까운 D-n)은 뺐다(2026-09-15). 히어로와 목록 머리가 같은 숫자를
+ * 이미 말하고 있어 세 번째 자리였다 — 같은 말을 두 번 하지 않는다(설계 05 §19-6).
+ * 개수는 목록 머리 한 곳에서만 센다. 화면과 어긋나면 사용자가 "왜 3개라는데 카드는 2개냐"고 묻는다.
  *
  * <p>카드는 <b>scheduleState</b> 로 갈린다 — 일정이 없는 관심 시험이 빨간 "D-0" 으로 보이던
  * 결함(2026-09-03)을 여기서 막는다. D-day 숫자는 다가오는 일정이 있을 때만 존재한다.
@@ -61,7 +62,7 @@ function cardOf(name: string): Element {
 describe('HomePage — 내 시험', () => {
   beforeEach(() => vi.restoreAllMocks());
 
-  it('가장 급한 시험이 히어로에, 등록한 개수가 제목에 들어간다', async () => {
+  it('가장 급한 시험이 히어로에, 등록한 개수는 목록 머리에만 들어간다', async () => {
     vi.spyOn(examApi, 'favorites').mockResolvedValue({
       items: [
         card({ certificateId: 1, name: '정보처리기사', dday: 2, badge: 'REG_OPEN', badgeLabel: '접수 중' }),
@@ -73,12 +74,15 @@ describe('HomePage — 내 시험', () => {
     render(<MemoryRouter><HomePage /></MemoryRouter>);
 
     await waitFor(() => expect(screen.getByRole('heading', { level: 1 })).toBeTruthy());
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('3개');
+    // 제목은 "내 시험" — 개수는 목록 머리 한 곳에서만 말한다(§19-6)
+    expect(screen.getByRole('heading', { level: 1 }).textContent).not.toContain('3개');
+    expect(document.querySelector('.list-head')?.textContent).toContain('3개');
     // 히어로 안에 가장 급한 시험 이름
     expect(document.querySelector('.k-hero')?.textContent).toContain('정보처리기사');
   });
 
-  it('지표 타일이 목록과 같은 숫자를 센다', async () => {
+  /** 지표 타일은 히어로(가장 급한 D-n)와 목록 머리(개수)를 되풀이하던 세 번째 자리였다. */
+  it('지표 타일을 그리지 않는다 — 히어로와 목록 머리가 이미 그 숫자를 말한다', async () => {
     vi.spyOn(examApi, 'favorites').mockResolvedValue({
       items: [
         card({ certificateId: 1, dday: 2, badge: 'REG_OPEN', badgeLabel: '접수 중' }),
@@ -88,11 +92,11 @@ describe('HomePage — 내 시험', () => {
     });
 
     render(<MemoryRouter><HomePage /></MemoryRouter>);
-    await waitFor(() => expect(document.querySelector('.k-stats')).toBeTruthy());
+    await waitFor(() => expect(document.querySelectorAll('.exam-card').length).toBe(3));
 
-    const values = Array.from(document.querySelectorAll('.k-stat__value')).map((el) => el.textContent);
-    // 등록 3 · 가장 가까운 D-2 — 접수 중·이번 주는 뺐다(헷갈린다는 사용자 결정, 익숙해지면 다시)
-    expect(values).toEqual(['3', 'D-2']);
+    expect(document.querySelector('.k-stats')).toBeNull();
+    expect(document.querySelector('.k-hero')?.textContent).toContain('D-2');
+    expect(document.querySelector('.list-head')?.textContent).toContain('3개');
   });
 
   it('등록한 시험이 전부 카드로 나온다 (히어로에 올라간 것 포함)', async () => {
@@ -178,8 +182,6 @@ describe('HomePage — 내 시험', () => {
 
     expect(document.querySelector('.k-hero')?.textContent).toContain('다가오는 일정 없음');
     expect(screen.queryByText('일정 자세히 보기')).toBeNull();
-    const values = Array.from(document.querySelectorAll('.k-stat__value')).map((el) => el.textContent);
-    expect(values).toEqual(['1', '없음']);
   });
 
   /** 시험 진행 중(EXAM_ONGOING) — dday 0, eventAt 은 종료일 00:00. 시각이 아니라 "~ 종료일"로. */

@@ -15,7 +15,7 @@ import type { CardBadge, ScheduleState } from '../api/types';
  */
 export default function CardStatus({
   state, badge, badgeFallback = '예정', label, at, dday, lastExamDate,
-  inlineDday = false, compact = false,
+  inlineDday = false, compact = false, plain = false,
 }: {
   state: ScheduleState;
   /** 서버 CardBadge 코드 — 어휘·색은 lib/status 가 정한다 */
@@ -30,8 +30,24 @@ export default function CardStatus({
   inlineDday?: boolean;
   /** 목록용 — 배지 한 줄만 남긴다. 설명 줄이 접히며 만들던 들쭉날쭉함이 사라진다 */
   compact?: boolean;
+  /**
+   * 내 시험용 — 배지 없이 <b>문장 한 줄</b>. D-day 는 카드 윗줄에 크게 있고, "접수 시작"이라는 말이
+   * 상태를 이미 담고 있어 배지까지 붙이면 같은 말을 세 번 한다(설계 05 §19-6).
+   * 배지가 있던 자리에 두 줄로 접히는 문장이 붙어 눈높이가 어긋나던 것도 같이 사라진다.
+   */
+  plain?: boolean;
 }) {
   const dot = inlineDday && dday != null ? <> · {ddayLabel(dday)}</> : null;
+
+  if (plain) {
+    const text =
+      state === 'ROLLING' ? '상시시험 · 원하는 날짜에 신청하는 시험이라 정해진 일정이 없습니다'
+      // 상태 말(접수 예정·시험 진행 중)은 라벨이 못 담는다 — "1회 시험" 만으로는 진행 중인지 모른다
+      : state === 'UPCOMING' ? [badgeLabel(badge, badgeFallback), label, eventAtLabel(badge, at)].filter(Boolean).join(' · ')
+      : state === 'PAST_ONLY' ? `다음 회차 미정${lastExamDate ? ` · 마지막 시험 ${lastExamDate}` : ''}`
+      : '일정 미정 · 일정이 확인되면 알려 드립니다';
+    return <span className="when">{text}</span>;
+  }
 
   if (state === 'ROLLING') {
     return (

@@ -7,7 +7,8 @@ import type { FavoriteCard, FavoriteListResponse } from '../api/types';
 import Icon from '../components/Icon';
 import CardStatus from '../components/CardStatus';
 
-// 내 시험: 등록한 시험의 D-day. 킷 데모 구조 — 히어로(가장 급한 것 하나) → 지표 타일 → 카드.
+// 내 시험: 등록한 시험의 D-day. 히어로(가장 급한 것 하나) → 카드.
+// 지표 타일(등록 N · 가장 가까운 D-n)은 뺐다 — 히어로와 목록 머리가 같은 숫자를 이미 말한다(설계 05 §19-6).
 //
 // 카드는 scheduleState 로 갈린다. D-day 숫자는 <b>다가오는 일정이 있을 때만</b> 있다 —
 // 일정 없는 관심 시험이 빨간 "D-0" 으로 보이던 결함(2026-09-03)이 그 반대였다.
@@ -43,7 +44,7 @@ export default function HomePage() {
         <div className="k-empty state">
           <span className="big">아직 등록한 시험이 없어요</span>
           시험을 등록하면 여기에 D-day가 표시됩니다.
-          <div style={{ marginTop: 18 }}>
+          <div className="empty-cta">
             <Link to="/" className="k-btn k-btn--primary k-btn--lg">시험 찾으러 가기</Link>
           </div>
         </div>
@@ -59,7 +60,8 @@ export default function HomePage() {
     <>
       {/* 킷 데모 구조: 히어로에 큰 제목 하나 + 가장 급한 일 + 행동 */}
       <section className="k-hero my-hero">
-        <h1>{`등록한 시험 ${data.items.length}개`}</h1>
+        {/* 개수는 아래 목록 머리가 말한다 — 히어로 제목까지 같은 숫자를 적지 않는다(§19-6) */}
+        <h1>내 시험</h1>
         {lead ? (
           <p>
             <strong>{lead.name}</strong> — {lead.eventLabel} {eventAtLabel(lead.badge, lead.eventAt)} ({ddayLabel(lead.dday)})
@@ -79,20 +81,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="k-section">
-        <h2>내 시험 현황</h2>
-        <div className="k-stats">
-          <div className="k-stat">
-            <div className="k-stat__label">등록한 시험</div>
-            <div className="k-stat__value">{data.items.length}</div>
-          </div>
-          <div className="k-stat k-stat--point">
-            <div className="k-stat__label">가장 가까운 일정</div>
-            <div className="k-stat__value">{lead ? ddayLabel(lead.dday) : '없음'}</div>
-          </div>
-        </div>
-      </section>
-
       <div className="k-section list-head">
         <h2>등록한 시험 <span className="more">{data.items.length}개</span></h2>
       </div>
@@ -109,7 +97,7 @@ export default function HomePage() {
 
 function ExamCard({ card }: { card: FavoriteCard }) {
   return (
-    <Link to={`/cert/${card.certificateId}`} className="k-card k-card--hover exam-card">
+    <Link to={`/cert/${card.certificateId}`} className="k-card k-card--hover exam-card my-card">
       <div className="top">
         <h3>{card.name}</h3>
         {/* 빨간 D-day 는 7일 이내에만 — 전부 빨갛면 아무것도 급하지 않다 */}
@@ -121,14 +109,13 @@ function ExamCard({ card }: { card: FavoriteCard }) {
       </div>
       <div className="foot">
         {/* 폐지·개칭된 시험은 사유를 그대로 말한다 — "일정이 확인되면 알려 드립니다"는 지킬 수 없는 약속이다 */}
+        {/* 배지 없이 문장 한 줄 — 상태는 D-day(윗줄)와 문장 속 말이 이미 담고 있다(§19-6).
+            배지 옆에서 두 줄로 접히던 문장이 눈높이를 어긋나게 하던 것도 같이 없어진다. */}
         {card.hiddenReason ? (
-          <>
-            <span className="k-badge k-badge--warn">더 이상 없음</span>
-            <span className="when">{card.hiddenReason}</span>
-          </>
+          <span className="when">더 이상 없음 · {card.hiddenReason}</span>
         ) : (
           <CardStatus state={card.scheduleState} badge={card.badge} badgeFallback={card.badgeLabel}
-                      label={card.eventLabel} at={card.eventAt} dday={card.dday} lastExamDate={card.lastExamDate} />
+                      label={card.eventLabel} at={card.eventAt} dday={card.dday} lastExamDate={card.lastExamDate} plain />
         )}
       </div>
     </Link>
