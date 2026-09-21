@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { useAuth } from '../auth';
 import Icon from '../components/Icon';
+import Skeleton from '../components/Skeleton';
 import type { MeResponse } from '../api/types';
 
 // 내 정보 — 닉네임, 알림 받을 곳(이메일·휴대폰), 탈퇴.
@@ -27,7 +28,8 @@ export default function MePage() {
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  if (!me) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  // 첫 로딩은 스켈레톤 — 패널 세 장 자리를 먼저 잡는다(설계 05 §8)
+  if (!me) return <Skeleton kind="panel" rows={3} label="내 정보 불러오는 중…" />;
 
   async function run(fn: () => Promise<unknown>, ok: string) {
     setSaving(true); setMsg(null); setErr(null);
@@ -83,7 +85,7 @@ export default function MePage() {
           <input className="k-input" type="email" value={email} placeholder="name@example.com"
                  autoComplete="email" onChange={(e) => setEmail(e.target.value)} />
         </label>
-        <p className="fineprint" style={{ margin: '0 0 14px' }}>
+        <p className="fineprint fineprint--lead">
           지금은 알림이 이메일로만 갑니다. 비우면 알림을 받을 수 없습니다.
         </p>
         <button className="k-btn k-btn--secondary" onClick={() => run(() => examApi.changeEmail(email.trim()), '이메일을 저장했습니다.')}
@@ -91,12 +93,12 @@ export default function MePage() {
           {saving ? '저장 중…' : '이메일 저장'}
         </button>
 
-        <label className="field" style={{ marginTop: 26 }}>
+        <label className="field field--spaced">
           <span>휴대폰번호 (지금은 안 씀)</span>
           <input className="k-input" value={phone} inputMode="numeric" placeholder="010-1234-5678"
                  autoComplete="tel" onChange={(e) => setPhone(formatPhone(e.target.value))} />
         </label>
-        <p className="fineprint" style={{ margin: '0 0 14px' }}>
+        <p className="fineprint fineprint--lead">
           카카오톡 알림(알림톡)을 붙일 때 쓰려고 미리 받아 둡니다. 지금은 발송하지 않습니다.
         </p>
         <button className="k-btn k-btn--secondary" onClick={() => run(() => examApi.changePhone(phone.replace(/[^0-9]/g, '')), '번호를 저장했습니다.')}
@@ -122,7 +124,7 @@ export default function MePage() {
 
       <div className="section-head"><h2>계정 삭제</h2></div>
       <div className="k-card">
-        <p className="fineprint" style={{ margin: '0 0 14px' }}>
+        <p className="fineprint fineprint--lead">
           탈퇴하면 등록한 시험과 알림 설정이 사라집니다. 작성한 글·댓글은 남고 작성자만 가려집니다.
         </p>
         <button className="k-btn k-btn--danger" onClick={withdraw}>회원 탈퇴</button>

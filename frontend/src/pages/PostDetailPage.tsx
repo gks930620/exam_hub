@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { fmtAt } from '../lib/format';
 import { useAuth, useRequireLogin } from '../auth';
+import Skeleton from '../components/Skeleton';
 import type { CommentItem, PostDetail } from '../api/types';
 
 // 글 상세 + 댓글. 수정/삭제 버튼은 서버가 내려주는 mine 플래그로만 띄운다
@@ -77,14 +78,15 @@ export default function PostDetailPage() {
   }
 
   if (err && !post) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
-  if (!post) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  // 첫 로딩은 스켈레톤 — 본문 카드 자리를 먼저 잡는다(설계 05 §8)
+  if (!post) return <Skeleton kind="panel" rows={1} label="글 불러오는 중…" />;
 
   return (
     <>
       <div className="page-header">
         <div className="page-header__text">
           <span className="k-badge">{post.boardName}</span>
-          <h1 style={{ marginTop: 8 }}>{post.title}</h1>
+          <h1 className="post-title">{post.title}</h1>
           <p>{post.authorName} · {fmtAt(post.createdAt)} · 조회 {post.viewCount}</p>
         </div>
         {post.mine && (
@@ -108,7 +110,7 @@ export default function PostDetailPage() {
         {commentsErr ? (
           <div className="k-alert k-alert--err" role="alert">댓글을 불러오지 못했습니다: {commentsErr}</div>
         ) : comments === null ? (
-          <div className="k-empty state" role="status">댓글을 불러오는 중…</div>
+          <Skeleton rows={2} label="댓글을 불러오는 중…" />
         ) : comments.length === 0 ? (
           <div className="k-empty state">첫 댓글을 남겨 보세요.</div>
         ) : (
@@ -137,7 +139,7 @@ export default function PostDetailPage() {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
         />
-        <div className="pager-row" style={{ justifyContent: 'flex-end', marginTop: 10 }}>
+        <div className="pager-row pager-row--right">
           <button className="k-btn k-btn--primary" onClick={submitComment} disabled={busy}>
             {me ? '댓글 남기기' : '로그인하고 댓글 남기기'}
           </button>

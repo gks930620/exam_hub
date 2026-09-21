@@ -3,6 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth';
 import { api } from '../api/client';
 import Icon from '../components/Icon';
+import Skeleton from '../components/Skeleton';
 
 // 로그인 — 소셜 단독(카카오·구글). 자체 계정은 만들지 않는다(설계 08).
 //
@@ -34,7 +35,8 @@ export default function LoginPage() {
     return () => { alive = false; };
   }, []);
 
-  if (loading || !asked) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  // 첫 로딩은 스켈레톤 — 로그인 카드 자리를 먼저 잡는다(설계 05 §8)
+  if (loading || !asked) return <div className="login-wrap"><Skeleton kind="panel" rows={1} label="로그인 준비 중…" /></div>;
   // 토큰이 만료돼 튕겼다가 다른 탭에서 로그인을 마친 경우처럼, 이미 로그인된 채 돌아갈 곳을
   // 들고 왔으면 홈이 아니라 그곳으로
   if (me) return <Navigate to={from ?? '/'} replace />;
@@ -43,7 +45,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-wrap">
-      <div className="page-header" style={{ justifyContent: 'center' }}>
+      <div className="page-header page-header--center">
         <div>
           <h1>로그인</h1>
           <p>
@@ -67,7 +69,7 @@ export default function LoginPage() {
             </button>
           ))
         )}
-        <p className="fineprint" style={{ marginTop: 18 }}>
+        <p className="fineprint fineprint--after">
           시험 검색과 커뮤니티 읽기는 로그인 없이도 됩니다.
           <br />처음 로그인하면 자동으로 가입됩니다.
         </p>

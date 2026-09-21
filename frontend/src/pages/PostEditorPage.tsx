@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
+import Skeleton from '../components/Skeleton';
 import type { BoardItem } from '../api/types';
 
 // 글 쓰기·수정 한 화면. id 가 있으면 수정 모드.
@@ -78,14 +79,15 @@ export default function PostEditorPage() {
     }
   }
 
-  if (loading) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  // 첫 로딩은 스켈레톤 — 편집 폼 자리를 먼저 잡는다(설계 05 §8)
+  if (loading) return <Skeleton kind="panel" rows={1} label="글 불러오는 중…" />;
 
   if (forbidden) {
     return (
       <div className="k-empty state">
         <span className="big">본인이 작성한 글만 수정할 수 있습니다</span>
         다른 사람의 글은 읽을 수만 있습니다.
-        <div style={{ marginTop: 18 }}>
+        <div className="empty-cta">
           <Link to={`/community/posts/${id}`} className="k-btn k-btn--secondary">글로 돌아가기</Link>
         </div>
       </div>
@@ -103,11 +105,11 @@ export default function PostEditorPage() {
 
       {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
 
-      <div className="k-card" style={{ padding: 20 }}>
+      <div className="k-card">
         {!editing && (
           <div className="field" role="group" aria-label="게시판">
             <span>게시판</span>
-            <div className="chip-row" style={{ marginBottom: 0 }}>
+            <div className="chip-row chip-row--flush">
               {boards.map((b) => (
                 <button
                   key={b.code}
@@ -136,7 +138,7 @@ export default function PostEditorPage() {
                     value={content} onChange={(e) => setContent(e.target.value)} />
         </label>
 
-        <div className="pager-row" style={{ justifyContent: 'flex-end' }}>
+        <div className="pager-row pager-row--right">
           <button className="k-btn k-btn--secondary" onClick={cancel} type="button">취소</button>
           <button className="k-btn k-btn--primary" onClick={submit} disabled={busy} type="button">
             {busy ? '저장 중…' : editing ? '수정하기' : '등록하기'}

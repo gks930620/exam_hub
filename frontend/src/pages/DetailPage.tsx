@@ -45,7 +45,16 @@ export default function DetailPage() {
   }
 
   if (err && !d) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
-  if (!d) return <div className="k-empty state" role="status">불러오는 중…</div>;
+  // 첫 로딩은 스켈레톤 — 제목·히어로·표 자리를 먼저 잡아 내용이 뜰 때 화면이 튀지 않게 한다(설계 05 §8)
+  if (!d) {
+    return (
+      <div className="detail-skeleton" role="status" aria-label="시험 정보 불러오는 중">
+        <div className="k-skeleton sk-title" />
+        <div className="k-skeleton sk-hero" />
+        {Array.from({ length: 4 }, (_, i) => <div className="k-skeleton sk-row" key={i} />)}
+      </div>
+    );
+  }
 
   // "다음 회차 미정"은 살아 있는 회차가 전부 지났을 때다 — 취소된 회차만 있으면 "지났다"가 아니라 "없다"
   const active = d.schedules.filter((s) => s.status === 'ACTIVE');
@@ -72,18 +81,22 @@ export default function DetailPage() {
 
       {/* 지키지 못할 약속을 하지 않는다 — 상시시험엔 알릴 마감이 없고, 일정 없는 시험은 확인돼야 알릴 수 있다 */}
       {!d.favorited && (
-        <p className="fineprint" style={{ marginTop: -6, marginBottom: 16 }}>
+        <p className="fineprint detail-note">
           {d.rolling
             ? <>등록해 두면 <b>내 시험</b>에 모아 볼 수 있습니다.</>
             : active.length === 0
               ? <>등록해 두면 <b>내 시험</b>에 모아 두고, 일정이 확인되면 알려 드립니다.</>
-              : <>등록해 두면 <b>내 시험</b>과 캘린더에 뜨고, 원서접수 시작·마감에 알림을 보내 드립니다.</>}
+              // 지난 회차뿐이면 "접수 시작·마감 알림"은 아직 없는 접수를 약속하는 셈이다 — 다음 회차를 약속한다
+              : pastOnly
+                ? <>등록해 두면 <b>내 시험</b>에 모아 두고, 다음 회차가 확인되는 대로 알려 드립니다.</>
+                : <>등록해 두면 <b>내 시험</b>과 캘린더에 뜨고, 원서접수 시작·마감에 알림을 보내 드립니다.</>}
         </p>
       )}
 
       {pastOnly && (
         <div className="k-alert k-alert--warn">
-          <b>다음 회차 미정</b> — 등록된 일정은 모두 지났습니다. 등록해 두면 다음 회차가 확인되는 대로 알려 드립니다.
+          {/* 약속("확인되는 대로 알려 드립니다")은 위 안내문이 한다 — 여기는 사실만(§19-6) */}
+          <b>다음 회차 미정</b> — 등록된 일정은 모두 지났습니다.
         </div>
       )}
 
@@ -117,19 +130,21 @@ export default function DetailPage() {
         ) : (
           <div className="k-empty state">
             <span className="big">아직 일정이 확인되지 않았습니다</span>
-            시행처 공고가 나오면 채워집니다. 관심 등록해 두면 그때 알려 드립니다.
+            {/* "등록해 두면 알려 드립니다"는 위 안내문이 이미 말했다 — 같은 약속을 두 번 하지 않는다(§19-6) */}
+            시행처 공고가 나오면 채워집니다.
           </div>
         )
       ) : (
         <>
           {d.schedules.some((s) => s.confirmed === false) && (
-            <div className="k-alert k-alert--warn" style={{ marginBottom: 14 }}>
+            <div className="k-alert k-alert--warn detail-alert">
               <b>일부 날짜는 추정치입니다.</b> 회차 패턴으로 계산한 값이라 실제와 다를 수 있으니,
               접수 전에 시행처 공고를 꼭 확인하세요.
             </div>
           )}
-          {/* 표는 가로 스크롤 래퍼 안에만 둔다 — 390px 에서 표가 화면 밖으로 나갔다 */}
-          <div className="k-tablewrap">
+          {/* 표는 가로 스크롤 래퍼 안에만 둔다 — 390px 에서 표가 화면 밖으로 나갔다.
+              래퍼는 회색 판(카드)이다 — 흰 바탕에 선만 있는 표는 면이 안 갈린다(설계 05 §19-3) */}
+          <div className="k-card k-card--flush k-tablewrap">
             <table className="k-table data-table">
               <thead>
                 <tr>

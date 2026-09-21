@@ -4,6 +4,7 @@ import { examApi } from '../api/exams';
 import { useAuth } from '../auth';
 import type { NotifySettings } from '../api/types';
 import Icon from '../components/Icon';
+import Skeleton from '../components/Skeleton';
 
 // 알림 설정: 이벤트 유형별 on/off. 계정에 저장된다(설계 08).
 // 서버에 저장된 현재값을 먼저 읽어 초기값으로 쓴다(예전엔 무조건 전체 ON 으로 시작해 실제 상태를 잘못 보여줬다).
@@ -71,7 +72,8 @@ export default function SettingsPage() {
       )}
 
       {loadError && <div className="k-alert k-alert--err" role="alert">설정을 불러오지 못했습니다: {loadError}</div>}
-      {!s && !loadError && <div className="k-empty state" role="status">불러오는 중…</div>}
+      {/* 첫 로딩은 스켈레톤 — 설정 카드 자리를 먼저 잡는다(설계 05 §8) */}
+      {!s && !loadError && <Skeleton kind="panel" rows={1} label="설정 불러오는 중…" />}
 
       {s && (
         <>
