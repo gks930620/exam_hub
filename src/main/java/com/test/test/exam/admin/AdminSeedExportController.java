@@ -6,6 +6,9 @@ import com.test.test.exam.domain.ExamSchedule;
 import com.test.test.exam.domain.ScheduleStatus;
 import com.test.test.exam.repository.CertificateRepository;
 import com.test.test.exam.repository.ExamScheduleRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -88,18 +91,47 @@ public class AdminSeedExportController {
                 TimeUtil.today().toString(), exams.size(), total, exams));
     }
 
-    public record SeedFile(String _comment, String _why, String _prod, String _caution, String _howToRegenerate,
-                           String collectedAt, int count, int scheduleCount, List<SeedExam> exams) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SeedFile {
+        private String _comment;
+        private String _why;
+        private String _prod;
+        private String _caution;
+        private String _howToRegenerate;
+        private String collectedAt;
+        private int count;
+        private int scheduleCount;
+        private List<SeedExam> exams;
     }
 
-    public record SeedExam(String name, String sourceCode, String agency, String category,
-                           List<SeedSchedule> schedules) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SeedExam {
+        private String name;
+        private String sourceCode;
+        private String agency;
+        private String category;
+        private List<SeedSchedule> schedules;
     }
 
-    public record SeedSchedule(int year, int round, String examType,
-                               String regStartAt, String regEndAt,
-                               String examStartDate, String examEndDate, String resultDate,
-                               String provenance, String sourceUrl) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SeedSchedule {
+        private int year;
+        private int round;
+        private String examType;
+        private String regStartAt;
+        private String regEndAt;
+        private String examStartDate;
+        private String examEndDate;
+        private String resultDate;
+        private String provenance;
+        private String sourceUrl;
+
         static SeedSchedule of(ExamSchedule s) {
             return new SeedSchedule(
                     s.getYear(), s.getRound(), s.getExamType().name(),

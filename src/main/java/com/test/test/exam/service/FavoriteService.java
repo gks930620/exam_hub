@@ -41,8 +41,8 @@ public class FavoriteService {
         List<FavoriteDtos.Card> cards = favorites.stream()
                 .map(f -> toCard(f.getCertificate()))
                 .sorted(Comparator
-                        .comparingInt((FavoriteDtos.Card c) -> badgePriority(c.badge()))
-                        .thenComparing(FavoriteDtos.Card::dday, Comparator.nullsLast(Comparator.naturalOrder())))
+                        .comparingInt((FavoriteDtos.Card c) -> badgePriority(c.getBadge()))
+                        .thenComparing(FavoriteDtos.Card::getDday, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
 
         return new FavoriteDtos.ListResponse(cards);
@@ -150,7 +150,7 @@ public class FavoriteService {
             addIfInMonth(events, s.getResultDate(),
                     monthStart, monthEnd, "RESULT", cid, name, typeLabel + " 발표");
         }
-        events.sort(Comparator.comparing(MeDtos.CalendarEvent::date));
+        events.sort(Comparator.comparing(MeDtos.CalendarEvent::getDate));
         return new MeDtos.CalendarResponse(events);
     }
 

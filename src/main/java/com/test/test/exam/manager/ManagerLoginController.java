@@ -3,6 +3,10 @@ package com.test.test.exam.manager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +34,7 @@ public class ManagerLoginController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request,
                                                HttpServletRequest http) {
         return ResponseEntity.ok(new LoginResponse(
-                managerLoginService.login(request.username(), request.password(), http.getRemoteAddr())));
+                managerLoginService.login(request.getUsername(), request.getPassword(), http.getRemoteAddr())));
     }
 
     /**
@@ -42,15 +46,28 @@ public class ManagerLoginController {
         return ResponseEntity.ok(new AvailabilityResponse(managerLoginService.isConfigured()));
     }
 
-    public record LoginRequest(
-            @NotBlank(message = "아이디를 입력하세요.") String username,
-            @NotBlank(message = "비밀번호를 입력하세요.") String password
-    ) {
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginRequest {
+        @NotBlank(message = "아이디를 입력하세요.")
+        private String username;
+        @NotBlank(message = "비밀번호를 입력하세요.")
+        private String password;
     }
 
-    public record LoginResponse(String token) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginResponse {
+        private String token;
     }
 
-    public record AvailabilityResponse(boolean configured) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AvailabilityResponse {
+        private boolean configured;
     }
 }

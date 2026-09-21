@@ -16,6 +16,10 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -89,21 +93,21 @@ public class AdminScheduleController {
     @PostMapping
     @Transactional
     public ResponseEntity<AdminDtos.ScheduleRow> upsert(@Valid @RequestBody AdminDtos.UpsertRequest req) {
-        Certificate cert = certificateRepository.findById(req.certificateId())
+        Certificate cert = certificateRepository.findById(req.getCertificateId())
                 .orElseThrow(() -> new EntityNotFoundException("시험을 찾을 수 없습니다."));
 
         validate(req);
 
-        ExamType type = parseType(req.examType());
+        ExamType type = parseType(req.getExamType());
         Optional<ExamSchedule> found = examScheduleRepository
-                .findByCertificateAndYearAndRoundAndExamType(cert, req.year(), req.round(), type);
+                .findByCertificateAndYearAndRoundAndExamType(cert, req.getYear(), req.getRound(), type);
         boolean changed = found.isPresent()
                 && (!found.get().isActive()
-                || found.get().hasDifferentDates(req.regStartAt(), req.regEndAt(),
-                req.examStartDate(), req.examEndDate(), req.resultDate()));
+                || found.get().hasDifferentDates(req.getRegStartAt(), req.getRegEndAt(),
+                req.getExamStartDate(), req.getExamEndDate(), req.getResultDate()));
 
         ExamSchedule schedule = found.orElseGet(() -> ExamSchedule.builder()
-                .certificate(cert).year(req.year()).round(req.round()).examType(type)
+                .certificate(cert).year(req.getYear()).round(req.getRound()).examType(type)
                 .status(ScheduleStatus.ACTIVE)
                 .build());
 
@@ -113,9 +117,9 @@ public class AdminScheduleController {
         // (수집값이 여전히 다르면 다음 수집이 다시 세운다)
         schedule.clearSourceConflict();
         schedule.applyFrom(
-                req.regStartAt(), req.regEndAt(),
-                req.examStartDate(), req.examEndDate(), req.resultDate(),
-                req.sourceUrl(), "MANUAL", ScheduleStatus.ACTIVE, TimeUtil.now());
+                req.getRegStartAt(), req.getRegEndAt(),
+                req.getExamStartDate(), req.getExamEndDate(), req.getResultDate(),
+                req.getSourceUrl(), "MANUAL", ScheduleStatus.ACTIVE, TimeUtil.now());
 
         ExamSchedule saved = examScheduleRepository.save(schedule);
 
@@ -123,7 +127,7 @@ public class AdminScheduleController {
         notificationScheduleService.recalc(saved, changed);
 
         log.info("[Admin] 수기 일정 저장 cert={} {}년 {}회 {} ({})",
-                cert.getName(), req.year(), req.round(), type, found.isPresent() ? (changed ? "변경" : "동일") : "신규");
+                cert.getName(), req.getYear(), req.getRound(), type, found.isPresent() ? (changed ? "변경" : "동일") : "신규");
         return ResponseEntity.status(HttpStatus.CREATED).body(AdminDtos.ScheduleRow.of(saved, cert));
     }
 
@@ -145,12 +149,12 @@ public class AdminScheduleController {
 
     /** 날짜가 하나는 있어야 하고, 순서 규칙은 수집과 같은 것(ExamSchedule)을 쓴다. */
     private void validate(AdminDtos.UpsertRequest r) {
-        if (r.regStartAt() == null && r.regEndAt() == null
-                && r.examStartDate() == null && r.examEndDate() == null && r.resultDate() == null) {
+        if (r.getRegStartAt() == null && r.getRegEndAt() == null
+                && r.getExamStartDate() == null && r.getExamEndDate() == null && r.getResultDate() == null) {
             throw new BusinessRuleException("날짜를 하나 이상 입력하세요. 연도·회차만 있는 행은 일정이 아닙니다.");
         }
-        String violation = ExamSchedule.dateOrderViolation(r.regStartAt(), r.regEndAt(),
-                r.examStartDate(), r.examEndDate(), r.resultDate());
+        String violation = ExamSchedule.dateOrderViolation(r.getRegStartAt(), r.getRegEndAt(),
+                r.getExamStartDate(), r.getExamEndDate(), r.getResultDate());
         if (violation != null) {
             throw new BusinessRuleException(violation);
         }
@@ -170,34 +174,55 @@ public class AdminScheduleController {
         private AdminDtos() {
         }
 
-        public record UpsertRequest(
-                @NotNull(message = "시험을 선택하세요.") Long certificateId,
-                @NotNull(message = "연도를 입력하세요.")
-                @Min(value = 2000, message = "연도는 2000~2100 사이여야 합니다.")
-                @Max(value = 2100, message = "연도는 2000~2100 사이여야 합니다.")
-                Integer year,
-                @NotNull(message = "회차를 입력하세요.")
-                @Min(value = 1, message = "회차는 1 이상이어야 합니다.")
-                Integer round,
-                @NotBlank(message = "구분(WRITTEN/PRACTICAL)을 입력하세요.") String examType,
-                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime regStartAt,
-                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime regEndAt,
-                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate examStartDate,
-                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate examEndDate,
-                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate resultDate,
-                String sourceUrl
-        ) {
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class UpsertRequest {
+            @NotNull(message = "시험을 선택하세요.")
+            private Long certificateId;
+            @NotNull(message = "연도를 입력하세요.")
+            @Min(value = 2000, message = "연도는 2000~2100 사이여야 합니다.")
+            @Max(value = 2100, message = "연도는 2000~2100 사이여야 합니다.")
+            private Integer year;
+            @NotNull(message = "회차를 입력하세요.")
+            @Min(value = 1, message = "회차는 1 이상이어야 합니다.")
+            private Integer round;
+            @NotBlank(message = "구분(WRITTEN/PRACTICAL)을 입력하세요.")
+            private String examType;
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            private LocalDateTime regStartAt;
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            private LocalDateTime regEndAt;
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            private LocalDate examStartDate;
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            private LocalDate examEndDate;
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            private LocalDate resultDate;
+            private String sourceUrl;
         }
 
-        public record ScheduleRow(
-                Long id, Long certificateId, String certificateName,
-                int year, int round, String examType,
-                String regStartAt, String regEndAt,
-                String examStartDate, String examEndDate, String resultDate,
-                String status, String sourceUrl,
-                /** 수집이 본 날짜가 이 행과 다르면 그 내용(사람이 읽는 한 줄). 같거나 수기가 아니면 null */
-                String sourceConflict
-        ) {
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class ScheduleRow {
+            private Long id;
+            private Long certificateId;
+            private String certificateName;
+            private int year;
+            private int round;
+            private String examType;
+            private String regStartAt;
+            private String regEndAt;
+            private String examStartDate;
+            private String examEndDate;
+            private String resultDate;
+            private String status;
+            private String sourceUrl;
+            /** 수집이 본 날짜가 이 행과 다르면 그 내용(사람이 읽는 한 줄). 같거나 수기가 아니면 null */
+            private String sourceConflict;
+
             /** 시험은 호출부가 이미 갖고 있다 — 지연 로딩을 건드리지 않으려고 받아 쓴다. */
             public static ScheduleRow of(ExamSchedule s, Certificate cert) {
                 return new ScheduleRow(

@@ -51,11 +51,11 @@ class DataSourceCatalogTest {
     void every_auto_row_is_backed_by_a_live_source() {
         Set<String> covered = liveCoverage();
         for (DataSourceCatalog.Entry e : DataSourceCatalog.entries()) {
-            if (e.mode() != DataSourceCatalog.Mode.AUTO) {
+            if (e.getMode() != DataSourceCatalog.Mode.AUTO) {
                 continue;
             }
-            assertTrue(AgencyMatcher.matches(e.sourceName(), covered),
-                    "지도는 '자동'이라는데 맡은 소스가 없다: " + e.group() + " / " + e.sourceName() + " — 살아 있는 기관 " + covered);
+            assertTrue(AgencyMatcher.matches(e.getSourceName(), covered),
+                    "지도는 '자동'이라는데 맡은 소스가 없다: " + e.getGroup() + " / " + e.getSourceName() + " — 살아 있는 기관 " + covered);
         }
     }
 
@@ -64,8 +64,8 @@ class DataSourceCatalogTest {
     void every_live_agency_appears_as_auto_in_catalog() {
         Set<String> autoNames = new HashSet<>();
         for (DataSourceCatalog.Entry e : DataSourceCatalog.entries()) {
-            if (e.mode() == DataSourceCatalog.Mode.AUTO) {
-                autoNames.add(e.sourceName());
+            if (e.getMode() == DataSourceCatalog.Mode.AUTO) {
+                autoNames.add(e.getSourceName());
             }
         }
         for (ScheduleSource s : sources) {
@@ -80,11 +80,11 @@ class DataSourceCatalogTest {
     @DisplayName("자동(대기 중) 행은 크롤링 예정 기관이어야 한다 — 일정 없음 이유 판정과 같은 목록")
     void auto_pending_rows_match_crawl_planned_agencies() {
         for (DataSourceCatalog.Entry e : DataSourceCatalog.entries()) {
-            if (e.mode() != DataSourceCatalog.Mode.AUTO_PENDING) {
+            if (e.getMode() != DataSourceCatalog.Mode.AUTO_PENDING) {
                 continue;
             }
-            assertTrue(AgencyMatcher.matches(e.sourceName(), NoScheduleReason.CRAWL_PLANNED_AGENCIES),
-                    "지도는 '자동(대기 중)'인데 일정 없음 이유는 수기라고 한다: " + e.sourceName());
+            assertTrue(AgencyMatcher.matches(e.getSourceName(), NoScheduleReason.CRAWL_PLANNED_AGENCIES),
+                    "지도는 '자동(대기 중)'인데 일정 없음 이유는 수기라고 한다: " + e.getSourceName());
         }
     }
 
@@ -93,12 +93,12 @@ class DataSourceCatalogTest {
     void no_exam_is_listed_twice() {
         Set<String> seen = new HashSet<>();
         for (DataSourceCatalog.Entry e : DataSourceCatalog.entries()) {
-            for (String exam : e.exams().split(",")) {
+            for (String exam : e.getExams().split(",")) {
                 String key = exam.replaceAll("\\s+", "").toLowerCase();
                 if (key.isBlank()) {
                     continue;
                 }
-                assertTrue(seen.add(key), "두 행에 실린 시험: " + exam.trim() + " (" + e.group() + ")");
+                assertTrue(seen.add(key), "두 행에 실린 시험: " + exam.trim() + " (" + e.getGroup() + ")");
             }
         }
     }

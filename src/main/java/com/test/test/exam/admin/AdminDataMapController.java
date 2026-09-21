@@ -3,6 +3,9 @@ package com.test.test.exam.admin;
 import com.test.test.exam.collect.ScheduleSource;
 import com.test.test.exam.repository.CertificateRepository;
 import com.test.test.exam.repository.ExamScheduleRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,33 +78,51 @@ public class AdminDataMapController {
      * 적재 현황 한 줄. <b>일정이 없는 시험 수</b>가 곧 매니저가 할 일의 크기다 —
      * 이 서비스는 "언제 접수하는지"를 알려주는 게 존재 이유라, 이름만 있는 시험은 반쪽이다.
      */
-    public record Coverage(long totalExams, long withSchedule, long withoutSchedule,
-                           /** 상시·예약제 — 일정 대상 아님 */ long rolling,
-                           /** 일정 없음 중 사람이 넣어야 하는 것 */ long manualNeeded,
-                           /** 일정 없음 중 큐넷 공고 전 — 자동 */ long announcementPending,
-                           /** 일정 없음 중 스크래퍼 붙일 예정 — 자동 */ long crawlPlanned) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Coverage {
+        private long totalExams;
+        private long withSchedule;
+        private long withoutSchedule;
+        /** 상시·예약제 — 일정 대상 아님 */
+        private long rolling;
+        /** 일정 없음 중 사람이 넣어야 하는 것 */
+        private long manualNeeded;
+        /** 일정 없음 중 큐넷 공고 전 — 자동 */
+        private long announcementPending;
+        /** 일정 없음 중 스크래퍼 붙일 예정 — 자동 */
+        private long crawlPlanned;
     }
 
-    public record SourceRow(
-            String group,
-            String exams,
-            String mode,
-            String modeLabel,
-            String modeGuide,
-            String sourceName,
-            String sourceUrl,
-            String checkPath,
-            String frequency,
-            String note
-    ) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SourceRow {
+        private String group;
+        private String exams;
+        private String mode;
+        private String modeLabel;
+        private String modeGuide;
+        private String sourceName;
+        private String sourceUrl;
+        private String checkPath;
+        private String frequency;
+        private String note;
+
         static SourceRow of(DataSourceCatalog.Entry e) {
             return new SourceRow(
-                    e.group(), e.exams(),
-                    e.mode().name(), e.mode().getLabel(), e.mode().getGuide(),
-                    e.sourceName(), e.sourceUrl(), e.checkPath(), e.frequency(), e.note());
+                    e.getGroup(), e.getExams(),
+                    e.getMode().name(), e.getMode().getLabel(), e.getMode().getGuide(),
+                    e.getSourceName(), e.getSourceUrl(), e.getCheckPath(), e.getFrequency(), e.getNote());
         }
     }
 
-    public record DataMapResponse(Coverage coverage, List<SourceRow> sources) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DataMapResponse {
+        private Coverage coverage;
+        private List<SourceRow> sources;
     }
 }

@@ -72,10 +72,10 @@ public class CommunityService {
     @Transactional
     public CommunityDtos.PostDetail create(Member author, CommunityDtos.CreatePostRequest req) {
         Post post = postRepository.save(Post.builder()
-                .board(Board.from(req.boardCode()))
+                .board(Board.from(req.getBoardCode()))
                 .member(author)
-                .title(req.title().trim())
-                .content(req.content())
+                .title(req.getTitle().trim())
+                .content(req.getContent())
                 .build());
         return CommunityDtos.PostDetail.of(post, author);
     }
@@ -85,7 +85,7 @@ public class CommunityService {
         Post post = postRepository.findByIdAndDeletedFalse(postId)
                 .orElseThrow(() -> new EntityNotFoundException("글을 찾을 수 없습니다."));
         requireOwner(post.isWrittenBy(editor), editor);
-        post.edit(req.title().trim(), req.content());
+        post.edit(req.getTitle().trim(), req.getContent());
         return CommunityDtos.PostDetail.of(post, editor);
     }
 
@@ -119,7 +119,7 @@ public class CommunityService {
                 .orElseThrow(() -> new EntityNotFoundException("글을 찾을 수 없습니다."));
 
         Comment comment = commentRepository.save(Comment.builder()
-                .post(post).member(author).content(req.content().trim()).build());
+                .post(post).member(author).content(req.getContent().trim()).build());
         post.increaseComment();   // 목록에서 매번 세지 않으려고 들고 있는 값
         return CommunityDtos.CommentItem.of(comment, author);
     }

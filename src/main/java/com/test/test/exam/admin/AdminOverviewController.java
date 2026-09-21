@@ -11,6 +11,9 @@ import com.test.test.exam.repository.CertificateRepository;
 import com.test.test.exam.repository.ExamScheduleRepository;
 import com.test.test.exam.service.DdayService;
 import com.test.test.exam.service.NextEvent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -112,11 +115,11 @@ public class AdminOverviewController {
         String cat = category == null ? "" : category.trim();
 
         List<Row> rows = allRows.stream()
-                .filter(r -> q.isEmpty() || r.certificateName().toLowerCase().contains(q))
-                .filter(r -> cat.isEmpty() || cat.equals(r.category()))
-                .filter(r -> bucket == null || bucket.isBlank() || bucket.equals(r.bucket()))
-                .filter(r -> action == null || action.isBlank() || action.equals(r.action()))
-                .sorted(Comparator.comparingInt(Row::sortKey).thenComparing(Row::certificateName))
+                .filter(r -> q.isEmpty() || r.getCertificateName().toLowerCase().contains(q))
+                .filter(r -> cat.isEmpty() || cat.equals(r.getCategory()))
+                .filter(r -> bucket == null || bucket.isBlank() || bucket.equals(r.getBucket()))
+                .filter(r -> action == null || action.isBlank() || action.equals(r.getAction()))
+                .sorted(Comparator.comparingInt(Row::getSortKey).thenComparing(Row::getCertificateName))
                 .toList();
 
         int from = Math.min(page * size, rows.size());
@@ -124,9 +127,9 @@ public class AdminOverviewController {
 
         return ResponseEntity.ok(new OverviewResponse(
                 rows.subList(from, to), rows.size(), page,
-                count(allRows, Row::bucket),
-                count(allRows.stream().filter(r -> r.action() != null).toList(), Row::action),
-                count(allRows.stream().filter(r -> r.waitingReason() != null).toList(), Row::waitingReason)));
+                count(allRows, Row::getBucket),
+                count(allRows.stream().filter(r -> r.getAction() != null).toList(), Row::getAction),
+                count(allRows.stream().filter(r -> r.getWaitingReason() != null).toList(), Row::getWaitingReason)));
     }
 
     /** 지금 떠 있는 소스들이 맡는 기관의 합집합. */
@@ -304,46 +307,54 @@ public class AdminOverviewController {
                 sortKey);
     }
 
-    public record Row(
-            Long certificateId,
-            String certificateName,
-            String category,
-            String agency,
-            /** 판정에 넣은 회차 수(ACTIVE + PENDING_REVIEW) */
-            int scheduleCount,
-            /** AUTO | CRAWL_PLANNED | MANUAL | ROLLING */
-            String source,
-            String sourceLabel,
-            /** NONE | PAST_ONLY | UPCOMING */
-            String freshness,
-            boolean needsReview,
-            /** 할 일. 없으면 null — FIRST_INPUT | REVIEW_MOVE | NEXT_ROUND | VERIFY | CHECK_SOURCE */
-            String action,
-            String actionLabel,
-            /** 할 일은 아니고 기다리면 되는 이유. 없으면 null */
-            String waitingReason,
-            String waitingLabel,
-            /** TODO | WAITING | OK | ROLLING */
-            String bucket,
-            /** 마지막 시험일과 그 회차 — 다음 회차를 넣을 때 "어디까지 넣었더라"의 답 */
-            String lastExamDate,
-            String lastLabel,
-            Integer daysSinceLast,
-            /** 앞으로의 대표 이벤트(사용자 화면과 같은 계산) */
-            String nextLabel,
-            String nextAt,
-            Integer nextDday,
-            String nextBadge,
-            int sortKey
-    ) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Row {
+        private Long certificateId;
+        private String certificateName;
+        private String category;
+        private String agency;
+        /** 판정에 넣은 회차 수(ACTIVE + PENDING_REVIEW) */
+        private int scheduleCount;
+        /** AUTO | CRAWL_PLANNED | MANUAL | ROLLING */
+        private String source;
+        private String sourceLabel;
+        /** NONE | PAST_ONLY | UPCOMING */
+        private String freshness;
+        private boolean needsReview;
+        /** 할 일. 없으면 null — FIRST_INPUT | REVIEW_MOVE | NEXT_ROUND | VERIFY | CHECK_SOURCE */
+        private String action;
+        private String actionLabel;
+        /** 할 일은 아니고 기다리면 되는 이유. 없으면 null */
+        private String waitingReason;
+        private String waitingLabel;
+        /** TODO | WAITING | OK | ROLLING */
+        private String bucket;
+        /** 마지막 시험일과 그 회차 — 다음 회차를 넣을 때 "어디까지 넣었더라"의 답 */
+        private String lastExamDate;
+        private String lastLabel;
+        private Integer daysSinceLast;
+        /** 앞으로의 대표 이벤트(사용자 화면과 같은 계산) */
+        private String nextLabel;
+        private String nextAt;
+        private Integer nextDday;
+        private String nextBadge;
+        private int sortKey;
     }
 
-    public record OverviewResponse(List<Row> items, int totalElements, int page,
-                                   /** TODO/WAITING/OK/ROLLING 별 개수 — 필터와 무관 */
-                                   Map<String, Long> bucketCounts,
-                                   /** 할 일 안의 행동별 개수 */
-                                   Map<String, Long> actionCounts,
-                                   /** 대기 안의 이유별 개수 */
-                                   Map<String, Long> waitingCounts) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OverviewResponse {
+        private List<Row> items;
+        private int totalElements;
+        private int page;
+        /** TODO/WAITING/OK/ROLLING 별 개수 — 필터와 무관 */
+        private Map<String, Long> bucketCounts;
+        /** 할 일 안의 행동별 개수 */
+        private Map<String, Long> actionCounts;
+        /** 대기 안의 이유별 개수 */
+        private Map<String, Long> waitingCounts;
     }
 }

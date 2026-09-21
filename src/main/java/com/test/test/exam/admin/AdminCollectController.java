@@ -4,6 +4,10 @@ import com.test.test.exam.collect.CollectService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,17 +37,25 @@ public class AdminCollectController {
 
     @PostMapping
     public ResponseEntity<CollectResponse> collect(@Valid @RequestBody CollectRequest request) {
-        log.info("[매니저] 종목 재수집 요청 — {}종", request.sourceCodes().size());
-        collectService.collectByCodes(request.sourceCodes());
-        return ResponseEntity.ok(new CollectResponse(request.sourceCodes().size()));
+        log.info("[매니저] 종목 재수집 요청 — {}종", request.getSourceCodes().size());
+        collectService.collectByCodes(request.getSourceCodes());
+        return ResponseEntity.ok(new CollectResponse(request.getSourceCodes().size()));
     }
 
-    public record CollectRequest(
-            @NotEmpty(message = "다시 받을 종목코드를 지정하세요.")
-            @Size(max = 650, message = "한 번에 650종까지만 — 전량은 05:00 배치가 합니다.")
-            List<String> sourceCodes) {
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CollectRequest {
+        @NotEmpty(message = "다시 받을 종목코드를 지정하세요.")
+        @Size(max = 650, message = "한 번에 650종까지만 — 전량은 05:00 배치가 합니다.")
+        private List<String> sourceCodes;
     }
 
-    public record CollectResponse(int requested) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CollectResponse {
+        private int requested;
     }
 }

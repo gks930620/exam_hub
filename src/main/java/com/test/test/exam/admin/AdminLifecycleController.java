@@ -2,6 +2,9 @@ package com.test.test.exam.admin;
 
 import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.repository.CertificateRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,21 +35,24 @@ public class AdminLifecycleController {
                 .map(Row::of)
                 .toList();
 
-        long unverified = rows.stream().filter(r -> "UNVERIFIED".equals(r.lifecycle())).count();
+        long unverified = rows.stream().filter(r -> "UNVERIFIED".equals(r.getLifecycle())).count();
         return ResponseEntity.ok(new LifecycleResponse(rows, unverified));
     }
 
-    public record Row(
-            Long certificateId,
-            String name,
-            String category,
-            String lifecycle,
-            String lifecycleLabel,
-            /** 이름이 바뀐 경우 새 이름 */
-            String supersededBy,
-            /** 왜 이 상태인지 — 근거가 없으면 나중에 아무도 판단을 못 한다 */
-            String note
-    ) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Row {
+        private Long certificateId;
+        private String name;
+        private String category;
+        private String lifecycle;
+        private String lifecycleLabel;
+        /** 이름이 바뀐 경우 새 이름 */
+        private String supersededBy;
+        /** 왜 이 상태인지 — 근거가 없으면 나중에 아무도 판단을 못 한다 */
+        private String note;
+
         static Row of(Certificate c) {
             return new Row(c.getId(), c.getName(), c.getCategory(),
                     c.getLifecycle().name(), c.getLifecycle().getLabel(),
@@ -58,6 +64,11 @@ public class AdminLifecycleController {
      * @param needsCheck 확인이 필요한 건수 — "큐넷에 없다"만으로는 폐지라 단정할 수 없다.
      *                   컴퓨터활용능력처럼 시행처가 큐넷이 아니라서 없는 것도 있다.
      */
-    public record LifecycleResponse(List<Row> items, long needsCheck) {
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LifecycleResponse {
+        private List<Row> items;
+        private long needsCheck;
     }
 }

@@ -37,7 +37,7 @@ public class MeController {
             @CurrentMember Member member,
             @Valid @RequestBody MeDtos.UpdateProfileRequest request) {
         return ResponseEntity.ok(MeDtos.MemberResponse.of(
-                memberService.changeNickname(member, request.nickname())));
+                memberService.changeNickname(member, request.getNickname())));
     }
 
     /** 알림 받을 이메일 등록·변경 — 카카오 로그인은 이메일을 안 주므로 직접 받는다 */
@@ -46,7 +46,7 @@ public class MeController {
             @CurrentMember Member member,
             @Valid @RequestBody MeDtos.UpdateEmailRequest request) {
         return ResponseEntity.ok(MeDtos.MemberResponse.of(
-                memberService.changeEmail(member, request.email())));
+                memberService.changeEmail(member, request.getEmail())));
     }
 
     /** 알림톡 수신 번호 등록·변경 — 이게 있어야 카톡으로 알림이 간다 */
@@ -55,7 +55,7 @@ public class MeController {
             @CurrentMember Member member,
             @Valid @RequestBody MeDtos.UpdatePhoneRequest request) {
         return ResponseEntity.ok(MeDtos.MemberResponse.of(
-                memberService.changePhoneNumber(member, request.phoneNumber())));
+                memberService.changePhoneNumber(member, request.getPhoneNumber())));
     }
 
     /** 회원 탈퇴 — 글·댓글은 남고 작성자 표기만 "탈퇴한 사용자"가 된다 */
@@ -76,7 +76,7 @@ public class MeController {
     public ResponseEntity<FavoriteDtos.CreateResponse> addFavorite(
             @CurrentMember Member member,
             @Valid @RequestBody FavoriteDtos.CreateRequest request) {
-        FavoriteDtos.CreateResponse res = favoriteService.addFavorite(member, request.certificateId());
+        FavoriteDtos.CreateResponse res = favoriteService.addFavorite(member, request.getCertificateId());
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
@@ -107,7 +107,7 @@ public class MeController {
             @CurrentMember Member member,
             @Valid @RequestBody MeDtos.UpdateNotifySettingsRequest request) {
         memberService.updateNotifySettings(member,
-                request.notifyReg(), request.notifyExam(), request.notifyChange());
+                request.getNotifyReg(), request.getNotifyExam(), request.getNotifyChange());
         return ResponseEntity.ok(new MeDtos.NotifySettings(
                 member.isNotifyReg(), member.isNotifyExam(), member.isNotifyChange()));
     }

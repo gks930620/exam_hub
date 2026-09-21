@@ -668,15 +668,15 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
 
         assertFalse(entries.isEmpty(), "출처 목록이 비었다");
         for (DataSourceCatalog.Entry e : entries) {
-            assertTrue(e.sourceUrl().startsWith("https://"),
-                    e.group() + " 의 원본 주소가 https 가 아니다: " + e.sourceUrl());
-            assertFalse(e.group().isBlank(), "묶음 이름이 비었다");
-            assertFalse(e.exams().isBlank(), e.group() + " 의 시험 목록이 비었다");
-            assertFalse(e.sourceName().isBlank(), e.group() + " 의 시행처가 비었다");
+            assertTrue(e.getSourceUrl().startsWith("https://"),
+                    e.getGroup() + " 의 원본 주소가 https 가 아니다: " + e.getSourceUrl());
+            assertFalse(e.getGroup().isBlank(), "묶음 이름이 비었다");
+            assertFalse(e.getExams().isBlank(), e.getGroup() + " 의 시험 목록이 비었다");
+            assertFalse(e.getSourceName().isBlank(), e.getGroup() + " 의 시행처가 비었다");
         }
 
         // 수기 항목이 하나도 없으면 이 화면을 만든 이유가 없다
-        assertTrue(entries.stream().anyMatch(e -> e.mode() == DataSourceCatalog.Mode.MANUAL),
+        assertTrue(entries.stream().anyMatch(e -> e.getMode() == DataSourceCatalog.Mode.MANUAL),
                 "수기 입력 대상이 하나도 없다");
     }
 

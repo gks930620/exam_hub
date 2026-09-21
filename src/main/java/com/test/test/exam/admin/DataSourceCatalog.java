@@ -58,16 +58,18 @@ public final class DataSourceCatalog {
      * @param frequency  회차 빈도 — 얼마나 자주 확인해야 하는지의 기준
      * @param note       주의사항
      */
-    public record Entry(
-            String group,
-            String exams,
-            Mode mode,
-            String sourceName,
-            String sourceUrl,
-            String checkPath,
-            String frequency,
-            String note
-    ) {
+    @lombok.Getter
+    @lombok.NoArgsConstructor
+    @lombok.AllArgsConstructor
+    public static class Entry {
+        private String group;
+        private String exams;
+        private Mode mode;
+        private String sourceName;
+        private String sourceUrl;
+        private String checkPath;
+        private String frequency;
+        private String note;
     }
 
     /**
