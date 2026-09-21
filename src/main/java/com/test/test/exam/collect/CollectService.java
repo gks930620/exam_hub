@@ -58,7 +58,7 @@ public class CollectService {
     public void collectAll() {
         for (ScheduleSource source : batchSources(s -> true)) {
             try {
-                runSource(source, source.fetchAll());
+                runSource(source, source.fetchAll(), false);
             } catch (Exception e) {
                 log.error("[Collect] source={} 수집 실패 — 다른 소스는 계속합니다: {}",
                         source.sourceId(), e.toString());
@@ -83,7 +83,7 @@ public class CollectService {
         log.info("[Collect] 파일 시드만 적재 — 네트워크 호출 없음 (소스 {}개)", offline.size());
         for (ScheduleSource source : offline) {
             try {
-                runSource(source, source.fetchAll());
+                runSource(source, source.fetchAll(), false);
             } catch (Exception e) {
                 log.error("[Collect] source={} 시드 적재 실패 — 다른 소스는 계속합니다: {}",
                         source.sourceId(), e.toString());
@@ -146,7 +146,8 @@ public class CollectService {
                         || !java.util.Collections.disjoint(sourceCodes, s.coveredExamCodes())
                         || AgencyMatcher.matchesAny(agencies, s.coveredAgencies()))) {
             try {
-                runSource(source, source.fetchByCertificateCodes(sourceCodes));
+                // 부분 수집이다 — 이 소스가 맡는 종목이 대상에 없으면 0건이 정상이라 건강 판정에서 뺀다
+                runSource(source, source.fetchByCertificateCodes(sourceCodes), true);
             } catch (Exception e) {
                 log.error("[Collect] source={} {} 실패 — 다른 소스는 계속합니다: {}",
                         source.sourceId(), what, e.toString());
@@ -163,9 +164,9 @@ public class CollectService {
                 .toList();
     }
 
-    private void runSource(ScheduleSource source, List<CollectedSchedule> input) {
+    private void runSource(ScheduleSource source, List<CollectedSchedule> input, boolean partial) {
         List<CollectedSchedule> records = withoutSeedGuesses(source, input);
-        CrawlLog crawlLog = CrawlLog.start(source.sourceId());
+        CrawlLog crawlLog = CrawlLog.start(source.sourceId(), partial);
         int neu = 0, updated = 0, skipped = 0, pending = 0;
         Set<Long> touched = new java.util.LinkedHashSet<>();
         Set<String> confirmed = new java.util.HashSet<>();

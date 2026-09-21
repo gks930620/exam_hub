@@ -254,6 +254,28 @@ export interface DataSourceRow {
   note: string;
 }
 
+/** 수집 소스 하나의 건강 상태 — OK | FAILED | EMPTY(0건) | STALE(멈춤) | NEVER_RAN */
+export type CollectHealthState = 'OK' | 'FAILED' | 'EMPTY' | 'STALE' | 'NEVER_RAN';
+
+export interface CollectHealthRow {
+  source: string;
+  state: CollectHealthState;
+  stateLabel: string;
+  /** 매니저가 읽을 한 줄 — 무엇이 문제고 어디를 보면 되는지 */
+  message: string;
+  lastRunAt: string | null;
+  fetched: number;
+  consecutiveFailures: number;
+  /** 손봐야 하는가 — 화면이 이 값으로 경고 띠를 띄우고 위로 올린다 */
+  needsAttention: boolean;
+}
+
+export interface CollectHealthResponse {
+  items: CollectHealthRow[];
+  total: number;
+  needsAttention: number;
+}
+
 export interface DataMapResponse {
   coverage: {
     totalExams: number; withSchedule: number; withoutSchedule: number; rolling: number;

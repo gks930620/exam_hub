@@ -15,6 +15,7 @@ import AdminPage from './pages/AdminPage';
 import AdminTodo from './pages/AdminTodo';
 import AdminSources from './pages/AdminSources';
 import AdminLifecyclePage from './pages/AdminLifecyclePage';
+import AdminCollectHealth from './pages/AdminCollectHealth';
 import ManagerLoginPage from './pages/ManagerLoginPage';
 import { useAuth } from './auth';
 import { applyTheme, isDark, readTheme, type ThemeSetting } from './theme';
@@ -130,6 +131,7 @@ export default function App() {
             <Route path="/admin" element={<RequireAdmin><AdminPage /></RequireAdmin>}>
               <Route index element={<AdminTodo />} />
               <Route path="sources" element={<AdminSources />} />
+              <Route path="health" element={<AdminCollectHealth />} />
               <Route path="lifecycle" element={<AdminLifecyclePage />} />
             </Route>
 

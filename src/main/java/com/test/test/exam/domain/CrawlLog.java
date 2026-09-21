@@ -52,11 +52,27 @@ public class CrawlLog {
     @Column(name = "error_message", length = 1000)
     private String errorMessage;
 
+    /**
+     * 종목을 지정해 돌린 <b>부분 수집</b>인가(매니저 재수집·임박 재확인). 전체 배치면 false.
+     *
+     * <p>이게 없으면 수집 건강 판정이 거짓 경보를 낸다. 부분 수집은 그 소스가 맡는 종목이
+     * 대상에 없으면 <b>0건이 정상</b>이다 — 큐넷 API 는 4자리 종목코드가 없으면 아예 호출하지
+     * 않는다(호출 낭비를 막으려고). 그 0건을 전체 배치의 0건과 같게 보면 "고장"이라고 뜬다.
+     * 거짓 경보는 경보가 없는 것보다 나쁘다 — 매니저가 경고를 무시하게 된다(2026-09-21 실측).
+     */
+    @Column(name = "partial")
+    private boolean partial;
+
     public static CrawlLog start(String source) {
+        return start(source, false);
+    }
+
+    public static CrawlLog start(String source, boolean partial) {
         return CrawlLog.builder()
                 .source(source)
                 .startedAt(TimeUtil.now())
                 .success(false)
+                .partial(partial)
                 .build();
     }
 

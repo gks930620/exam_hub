@@ -13,6 +13,7 @@ import Icon, { type IconName } from '../components/Icon';
 const ITEMS: { to: string; end: boolean; icon: IconName; label: string; hint: string }[] = [
   { to: '/admin', end: true, icon: 'list', label: '할 일', hint: '무엇을 채워야 하나' },
   { to: '/admin/sources', end: false, icon: 'layers', label: '수집 지도', hint: '뭐가 자동인가' },
+  { to: '/admin/health', end: false, icon: 'settings', label: '수집 상태', hint: '뭐가 고장났나' },
   { to: '/admin/lifecycle', end: false, icon: 'clock', label: '변천사', hint: '폐지·개칭' },
 ];
 

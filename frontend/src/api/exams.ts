@@ -4,6 +4,7 @@ import type {
   NotifySettings, CalendarResponse, BrowseResponse, CategoryResponse,
   MeResponse, BoardItem, PostListResponse, PostDetail, CommentItem, AdminScheduleRow,
   ManagerLoginResponse, DataMapResponse, OverviewResponse, LifecycleResponse, StatsResponse,
+  CollectHealthResponse,
 } from './types';
 
 export const examApi = {
@@ -54,6 +55,9 @@ export const examApi = {
 
   /** 매니저용 데이터 지도 — 뭐가 자동이고 뭐가 수기인지 + 원본 사이트 */
   adminDataMap: () => api.get<DataMapResponse>('/api/admin/data-map'),
+
+  /** 수집 건강 — 지금 어느 소스가 고장났나(실패·0건·멈춤) */
+  adminCollectHealth: () => api.get<CollectHealthResponse>('/api/admin/collect-health'),
 
   /** 시험 변천사 — 폐지·개칭된 시험이 어디로 갔나 */
   adminLifecycle: () => api.get<LifecycleResponse>('/api/admin/lifecycle'),
