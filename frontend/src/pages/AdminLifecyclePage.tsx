@@ -12,7 +12,7 @@ import AdminLifecycle from './AdminLifecycle';
 export default function AdminLifecyclePage() {
   return (
     <>
-      <p className="fineprint" style={{ margin: '0 0 18px' }}>
+      <p className="fineprint fineprint--lead">
         폐지·개칭이 <b>확정된</b> 시험은 검색에 나오지 않습니다. <b>확인 필요</b>는 판단 전이라
         검색에서 빠지지 않았습니다 — 시행처를 보고 판정하는 것 말고는 손댈 일이 없고,
         "그 시험 왜 없냐"는 물음에 답할 때 봅니다.

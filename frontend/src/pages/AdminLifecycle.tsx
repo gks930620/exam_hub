@@ -24,33 +24,33 @@ export default function AdminLifecycle() {
   if (err) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
   if (!data) return <div className="day-list" role="status" aria-label="변천사 불러오는 중">{Array.from({ length: 4 }, (_, i) => <div className="k-skeleton row-skeleton" key={i} />)}</div>;
   if (data.items.length === 0) {
-    return <p className="fineprint" style={{ margin: 0 }}>목록에서 뺀 시험이 없습니다.</p>;
+    return <p className="fineprint fineprint--flush">목록에서 뺀 시험이 없습니다.</p>;
   }
 
   return (
     <>
-      <button className="k-btn k-btn--secondary" style={{ width: '100%', justifyContent: 'flex-start' }}
+      <button className="k-btn k-btn--secondary fold-toggle"
               onClick={() => setOpen((v) => !v)}>
         목록에서 뺀 시험 {data.items.length}건
         {data.needsCheck > 0 && (
-          <span className="k-badge k-badge--warn" style={{ marginLeft: 10 }}>확인 필요 {data.needsCheck}</span>
+          <span className="k-badge k-badge--warn">확인 필요 {data.needsCheck}</span>
         )}
-        <span style={{ marginLeft: 'auto' }}><Icon name={open ? 'chevronDown' : 'chevronRight'} size={16} /></span>
+        <span className="caret"><Icon name={open ? 'chevronDown' : 'chevronRight'} size={16} /></span>
       </button>
 
       {open && (
-        <div className="k-card" style={{ padding: 18, marginTop: 10 }}>
-          <p className="fineprint" style={{ margin: '0 0 14px' }}>
+        <div className="k-card fold-panel">
+          <p className="fineprint">
             폐지·개칭이 확정됐거나 <b>우리가 다루지 못하는</b> 시험은 <b>검색·목록에서 빠져 있습니다</b>
             (오지 않을 접수를 기다리게 두지 않으려고). 기록은 여기 남아 있어서 "왜 없어졌는지" 답할 수 있습니다.
           </p>
-          <div className="k-alert" style={{ marginBottom: 16 }}>
+          <div className="k-alert">
             <span>
               <b>다루지 않음</b>은 <b>폐지가 아닙니다</b>. 시험은 지금도 치르는데 시행처가 일정을 공개하는
               곳을 못 찾아 뺀 것입니다. 근거는 오른쪽 칸에 있고, 시행처 사이트가 확인되면 되돌릴 수 있습니다.
             </span>
           </div>
-          <div className="k-alert k-alert--warn" style={{ marginBottom: 16 }}>
+          <div className="k-alert k-alert--warn">
             <span>
               <b>확인 필요</b>가 붙은 것은 <b>큐넷 목록에 없다는 것만</b> 확인된 상태라 <b>아직 검색에 나옵니다</b>.
               시행처가 큐넷이 아니라서 없는 것일 수도 있습니다 —
@@ -69,15 +69,15 @@ export default function AdminLifecycle() {
                   <tr key={r.certificateId}>
                     <td>
                       <b>{r.name}</b>
-                      {r.category && <div style={{ fontSize: 12, color: 'var(--muted)' }}>{r.category}</div>}
+                      {r.category && <div className="cell-sub">{r.category}</div>}
                     </td>
                     <td>
                       <span className={`k-badge${r.lifecycle === 'UNVERIFIED' ? ' k-badge--warn' : r.lifecycle === 'EXCLUDED' ? ' k-badge--point' : ''}`}>
                         {r.lifecycleLabel}
                       </span>
                     </td>
-                    <td style={{ fontSize: 13 }}>{r.supersededBy ?? '—'}</td>
-                    <td style={{ fontSize: 12.5, color: 'var(--muted)' }}>{r.note ?? '—'}</td>
+                    <td className="cell-detail">{r.supersededBy ?? '—'}</td>
+                    <td className="cell-sub">{r.note ?? '—'}</td>
                   </tr>
                 ))}
               </tbody>

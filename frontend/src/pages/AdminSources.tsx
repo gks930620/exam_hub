@@ -9,7 +9,7 @@ import AdminDataMap from './AdminDataMap';
 export default function AdminSources() {
   return (
     <>
-      <p className="fineprint" style={{ margin: '0 0 18px' }}>
+      <p className="fineprint fineprint--lead">
         <b>수기 입력</b>으로 표시된 것만 직접 넣습니다. <b>자동 수집</b>은 손대면 다음 수집에 덮어써집니다.
         직접 넣는 건 <b>할 일</b> 탭의 [넣기]에서 합니다. 각 갈래를 펼치면 어느 사이트의 어느 화면을 봐야 하는지와 원본 링크가 있습니다.
       </p>

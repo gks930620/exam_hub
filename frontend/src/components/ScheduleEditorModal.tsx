@@ -141,12 +141,12 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
           {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
           {msg && <div className="k-alert k-alert--ok" role="status">{msg}</div>}
 
-          <div className="k-section" style={{ marginBottom: 16 }}>
+          <div className="k-section sched-block">
             <h2>등록된 일정 {rows ? `${rows.length}건` : ''}</h2>
             {rows === null ? (
-              <div className="k-skeleton" style={{ height: 40 }} role="status" aria-label="불러오는 중" />
+              <div className="k-skeleton sk-line" role="status" aria-label="등록된 일정 불러오는 중" />
             ) : rows.length === 0 ? (
-              <p className="fineprint" style={{ margin: 0 }}>아직 없습니다. 아래에 첫 회차를 넣으세요.</p>
+              <p className="fineprint fineprint--flush">아직 없습니다. 아래에 첫 회차를 넣으세요.</p>
             ) : (
               <>
                 <div className="k-tablewrap">
@@ -166,7 +166,7 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
                             {r.examStartDate ?? '-'}
                             {/* 매니저 값은 그대로 두고, 시행처가 뭐라고 하는지만 알려 준다 */}
                             {r.sourceConflict && (
-                              <div className="fineprint" style={{ margin: '2px 0 0' }}>
+                              <div className="fineprint fineprint--tight">
                                 시행처: {r.sourceConflict}
                               </div>
                             )}
@@ -182,13 +182,13 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
                   </table>
                 </div>
                 {conflicted && (
-                  <p className="fineprint" style={{ margin: '10px 0 0' }}>
+                  <p className="fineprint fineprint--after">
                     <b>수집값 다름</b>은 매니저가 넣은 값을 자동 수집이 덮지 않은 것입니다 — 사람이 넣은 값이 이깁니다.
                     공고를 보고 <b>맞는 쪽으로 다시 저장</b>하면 표시가 사라집니다(수집값이 맞다면 그 날짜로 저장하세요).
                   </p>
                 )}
                 {pending && (
-                  <p className="fineprint" style={{ margin: '10px 0 0' }}>
+                  <p className="fineprint fineprint--after">
                     <b>보류 회차</b>는 수집된 일정이 30일 넘게 움직인 것입니다. 공고와 대조해 저장하면 풀립니다
                     (같은 연도·회차·구분으로 넣으면 덮어씁니다).
                   </p>
@@ -197,9 +197,9 @@ export default function ScheduleEditorModal({ certificateId, name, onClose, onSa
             )}
           </div>
 
-          <div className="k-section" style={{ marginBottom: 0 }}>
+          <div className="k-section sched-block">
             <h2>넣기 / 고치기</h2>
-            <p className="fineprint" style={{ margin: '0 0 12px' }}>
+            <p className="fineprint fineprint--lead">
               같은 <b>연도·회차·구분</b>이 이미 있으면 덮어씁니다. 시행처 공고를 보면서 옮겨 적으세요.
             </p>
             <div className="form-grid">

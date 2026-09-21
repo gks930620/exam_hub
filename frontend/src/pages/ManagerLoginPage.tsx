@@ -48,18 +48,18 @@ export default function ManagerLoginPage() {
     <div className="login-wrap">
       <div className="login-card">
         <h1>매니저 로그인</h1>
-        <p className="fineprint" style={{ margin: '6px 0 22px' }}>
+        <p className="fineprint fineprint--lead">
           운영자 전용입니다. 일반 이용자는 <Link to="/login">이쪽</Link>에서 로그인하세요.
         </p>
 
         {/* 로그인 전에 누구나 여는 화면이라 서버 설정 방법은 적지 않는다 — 절차는 운영 문서에 있다(QA 2026-09-03) */}
         {configured === false && (
-          <div className="k-alert k-alert--warn" style={{ marginBottom: 16 }}>
+          <div className="k-alert k-alert--warn fold-panel-alert">
             <b>매니저 계정이 아직 없습니다.</b> 서버 담당자에게 문의하세요.
           </div>
         )}
         {/* 5회 실패로 잠기면(429) 서버 문장을 그대로 보여준다 — 몇 분 뒤 다시 하라는 말까지 서버가 준다 */}
-        {err && <div className="k-alert k-alert--err" role="alert" style={{ marginBottom: 16 }}>{err}</div>}
+        {err && <div className="k-alert k-alert--err fold-panel-alert" role="alert">{err}</div>}
 
         <form onSubmit={submit}>
           <label className="field">
@@ -72,7 +72,7 @@ export default function ManagerLoginPage() {
             <input className="k-input" type="password" value={password} autoComplete="current-password"
                    onChange={(e) => setPassword(e.target.value)} />
           </label>
-          <button className="k-btn k-btn--primary k-btn--lg" type="submit" style={{ width: '100%' }}
+          <button className="k-btn k-btn--primary k-btn--lg k-btn--block" type="submit"
                   disabled={busy || !username.trim() || !password}>
             {busy ? '확인 중…' : '로그인'}
           </button>

@@ -44,18 +44,18 @@ export default function AdminDataMap() {
   return (
     <>
       {grouped.map(({ mode, rows }) => (
-        <div key={mode} style={{ marginBottom: 18 }}>
-          <button className="k-btn k-btn--secondary" style={{ width: '100%', justifyContent: 'flex-start' }}
+        <div key={mode} className="fold-group">
+          <button className="k-btn k-btn--secondary fold-toggle"
                   onClick={() => setOpen(open === mode ? null : mode)}>
-            <span className={`k-badge ${MODE_TONE[mode]}`} style={{ marginRight: 10 }}>
+            <span className={`k-badge ${MODE_TONE[mode]}`}>
               {rows[0].modeLabel}
             </span>
             {rows.length}갈래 <Icon name={open === mode ? 'chevronDown' : 'chevronRight'} size={16} />
           </button>
 
           {open === mode && (
-            <div className="k-card" style={{ padding: 18, marginTop: 10 }}>
-              <p className="fineprint" style={{ margin: '0 0 16px' }}>{rows[0].modeGuide}</p>
+            <div className="k-card fold-panel">
+              <p className="fineprint">{rows[0].modeGuide}</p>
               {rows.map((r) => <SourceCard key={r.group + r.exams} row={r} />)}
             </div>
           )}
@@ -67,24 +67,23 @@ export default function AdminDataMap() {
 
 function SourceCard({ row }: { row: DataSourceRow }) {
   return (
-    <div style={{ padding: '14px 0', borderTop: '1px solid var(--border)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+    <div className="source-row">
+      <div className="source-row__head">
         <div>
           <b>{row.group}</b>
-          <span style={{ color: 'var(--muted)', fontSize: 13 }}> · {row.exams}</span>
+          <span className="source-row__exams"> · {row.exams}</span>
         </div>
         <span className="k-chip">{row.frequency}</span>
       </div>
 
-      <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 8, lineHeight: 1.8 }}>
+      <div className="source-row__meta">
         <div>시행처 — {row.sourceName}</div>
         {row.checkPath !== '—' && <div>어디를 보나 — {row.checkPath}</div>}
-        {row.note && <div style={{ color: 'var(--muted)' }}>{row.note}</div>}
+        {row.note && <div>{row.note}</div>}
       </div>
 
       {row.mode !== 'EXCLUDED' && (
-        <a className="k-btn k-btn--secondary" href={row.sourceUrl} target="_blank" rel="noreferrer"
-           style={{ marginTop: 10 }}>
+        <a className="k-btn k-btn--secondary source-row__link" href={row.sourceUrl} target="_blank" rel="noreferrer">
           원본 사이트 열기 <Icon name="external" size={16} />
         </a>
       )}

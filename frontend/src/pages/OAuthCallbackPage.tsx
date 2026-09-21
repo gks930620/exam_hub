@@ -26,7 +26,7 @@ export default function OAuthCallbackPage() {
       <div className="k-empty state">
         <span className="big">로그인을 마치지 못했습니다</span>
         토큰을 받지 못했습니다. 다시 시도해 주세요.
-        <div style={{ marginTop: 18 }}>
+        <div className="empty-cta">
           <button className="k-btn k-btn--primary" onClick={() => navigate('/login', { replace: true })}>
             로그인으로 돌아가기
           </button>

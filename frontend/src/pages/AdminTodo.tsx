@@ -35,7 +35,7 @@ export default function AdminTodo() {
           <div className="k-bar cover-bar" aria-hidden="true">
             <span style={{ width: `${pct ?? 0}%` }} />
           </div>
-          <p className="fineprint" style={{ margin: '10px 0 0' }}>
+          <p className="fineprint fineprint--after">
             일정이 없는 {c.withoutSchedule.toLocaleString()}종은 사용자에게 <b>일정 미정</b>으로 보입니다.
             {c.rolling > 0 && <> 상시·예약제 {c.rolling.toLocaleString()}종은 일정이라는 것이 없어 뺐습니다.</>}
             {' '}무엇을 해야 하는지는 아래 <b>할 일</b>에 있습니다.

@@ -109,17 +109,17 @@ export default function AdminOverview() {
         </div>
       )}
 
-      <div className="k-tabs" role="tablist" style={{ marginBottom: 10 }}>
+      <div className="k-tabs admin-tabs" role="tablist">
         {BUCKETS.map((b) => (
           <button key={b.key} role="tab" aria-selected={bucket === b.key}
                   onClick={() => { setBucket(b.key); setAction(''); setPage(0); }}>
-            {b.label}{data && <span style={{ marginLeft: 6, opacity: .7 }}>{bc[b.key] ?? 0}</span>}
+            {b.label}{data && <span className="cnt">{bc[b.key] ?? 0}</span>}
           </button>
         ))}
       </div>
-      {hint && <p className="fineprint" style={{ margin: '0 0 14px' }}>{hint}</p>}
+      {hint && <p className="fineprint admin-hint">{hint}</p>}
 
-      <div className="searchbar" style={{ marginBottom: 14 }}>
+      <div className="searchbar admin-search">
         <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
         <input className="k-input" placeholder="시험명으로 좁히기" aria-label="시험명으로 좁히기"
                value={q} onChange={(e) => setQ(e.target.value)} />
@@ -155,9 +155,9 @@ export default function AdminOverview() {
             </table>
           </div>
 
-          <div className="pager-row" style={{ justifyContent: 'flex-start' }}>
+          <div className="pager-row pager-row--left">
             <Pagination page={page} totalPages={totalPages} onChange={setPage} />
-            <span className="fineprint" style={{ margin: 0 }}>
+            <span className="fineprint fineprint--flush">
               {data.totalElements.toLocaleString()}종 중 {page * PAGE_SIZE + 1}–{page * PAGE_SIZE + data.items.length}
             </span>
           </div>
@@ -178,7 +178,7 @@ function RowView({ row, onEdit }: { row: OverviewRow; onEdit: () => void }) {
     <tr>
       <td>
         <b>{row.certificateName}</b>
-        {row.agency && <div style={{ fontSize: 12, color: 'var(--muted)' }}>{row.agency}</div>}
+        {row.agency && <div className="cell-sub">{row.agency}</div>}
       </td>
       <td><span className="k-badge">{row.sourceLabel}</span></td>
       <td>
@@ -192,16 +192,16 @@ function RowView({ row, onEdit }: { row: OverviewRow; onEdit: () => void }) {
           <span className={`k-badge ${badgeTone(row.nextBadge)}`}>{badgeLabel(row.nextBadge, '예정')}</span>
         )}
       </td>
-      <td style={{ fontSize: 13 }}>
+      <td className="cell-detail">
         {row.freshness === 'UPCOMING' && row.nextLabel ? (
           <>
             {row.nextLabel} <span className="k-muted">{fmtAt(row.nextAt)}</span>
-            {row.nextDday != null && <b style={{ marginLeft: 6 }}>D-{row.nextDday}</b>}
+            {row.nextDday != null && <b>D-{row.nextDday}</b>}
           </>
         ) : row.lastLabel ? (
           <>
             {row.lastLabel} <span className="k-muted">{row.lastExamDate}</span>
-            {row.daysSinceLast != null && <span className="k-dim" style={{ marginLeft: 6 }}>{row.daysSinceLast}일 지남</span>}
+            {row.daysSinceLast != null && <span className="k-dim">{row.daysSinceLast}일 지남</span>}
           </>
         ) : (
           <span className="k-dim">—</span>
