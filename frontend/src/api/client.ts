@@ -63,6 +63,37 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   return data as T;
 }
 
+/**
+ * 파일을 받아 내려받기를 띄운다.
+ *
+ * <p>인증이 걸린 주소라 {@code <a href>} 로는 못 받는다 — 토큰이 안 실린다. 그래서 직접 받아
+ * 브라우저에 넘긴다. 서버가 준 파일 이름을 그대로 쓰고, 다 쓴 임시 주소는 바로 놓아 준다.
+ */
+export async function downloadFile(path: string, filename: string): Promise<void> {
+  const headers: Record<string, string> = {};
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(BASE + path, { headers });
+  if (!res.ok) {
+    if (res.status === 401) {
+      clearToken();
+      window.dispatchEvent(new Event(UNAUTHENTICATED_EVENT));
+    }
+    throw new ApiError(res.status, `내려받지 못했습니다 (${res.status})`);
+  }
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 export const api = {
   get: <T>(path: string) => request<T>('GET', path),
   post: <T>(path: string, body?: unknown) => request<T>('POST', path, body),

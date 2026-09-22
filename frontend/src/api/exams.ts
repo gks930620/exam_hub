@@ -1,4 +1,4 @@
-import { api } from './client';
+import { api, downloadFile } from './client';
 import type {
   DetailResponse, FavoriteListResponse,
   NotifySettings, CalendarResponse, BrowseResponse, CategoryResponse,
@@ -38,6 +38,13 @@ export const examApi = {
 
   saveNotifySettings: (s: NotifySettings) =>
     api.put<NotifySettings>('/api/me/notify-settings', s),
+
+  /**
+   * 내 시험 일정을 달력 파일(.ics)로 받는다.
+   *
+   * 우리 메일이 스팸함에 빠져도 휴대폰 달력 알림은 울린다 — 약속을 지키는 두 번째 줄이다.
+   */
+  downloadCalendar: () => downloadFile('/api/me/calendar.ics', 'exam-hub.ics'),
 
   /** 내가 받은 알림 목록 — "나한테 뭘 보냈다는 건지" */
   notificationHistory: () =>
@@ -97,9 +104,11 @@ export const examApi = {
 
   boards: () => api.get<{ items: BoardItem[] }>('/api/community/boards'),
 
-  posts: (params: { board?: string; page?: number; size?: number }) => {
+  posts: (params: { board?: string; query?: string; page?: number; size?: number }) => {
     const q = new URLSearchParams();
     if (params.board) q.set('board', params.board);
+    // 제목·본문에서 찾는다 — 사람들은 제목이 아니라 안에 있던 말을 기억한다
+    if (params.query) q.set('query', params.query);
     q.set('page', String(params.page ?? 0));
     q.set('size', String(params.size ?? 20));
     return api.get<PostListResponse>(`/api/community/posts?${q.toString()}`);

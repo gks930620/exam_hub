@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { fmtAt } from '../lib/format';
@@ -7,9 +7,14 @@ import type { BoardItem, PostSummary } from '../api/types';
 import Icon from '../components/Icon';
 
 // 커뮤니티 글 목록 — 읽기는 누구나, 쓰기는 로그인(설계 08).
+//
+// 검색어는 주소(q)에 산다 — 글을 보고 돌아와도, 링크를 공유해도 같은 화면이다.
+// 글이 쌓이면 "그때 그 글"을 다시 못 찾는다. 더 보기를 스무 번 누르는 것 말고 길이 없었다.
+const DEBOUNCE_MS = 300;
 export default function CommunityPage() {
   const [params, setParams] = useSearchParams();
   const board = params.get('board') ?? '';
+  const query = (params.get('q') ?? '').trim();
   const navigate = useNavigate();
   const { me } = useAuth();
   const requireLogin = useRequireLogin();
@@ -22,6 +27,12 @@ export default function CommunityPage() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [input, setInput] = useState(query);
+  const debounce = useRef<number>();
+
+  // 뒤로가기 등으로 주소가 바뀌면 입력칸을 맞춘다
+  useEffect(() => { setInput(query); }, [query]);
+  useEffect(() => () => window.clearTimeout(debounce.current), []);
 
   useEffect(() => {
     examApi.boards().then((r) => setBoards(r.items)).catch(() => { /* 필터 없이도 목록은 보여준다 */ });
@@ -29,7 +40,7 @@ export default function CommunityPage() {
 
   useEffect(() => {
     setLoading(true);
-    examApi.posts({ board: board || undefined, page: 0, size: 20 })
+    examApi.posts({ board: board || undefined, query: query || undefined, page: 0, size: 20 })
       .then((r) => {
         setItems(r.items);
         setTotal(r.totalElements);
@@ -39,12 +50,14 @@ export default function CommunityPage() {
       })
       .catch((e: Error) => setErr(e.message))
       .finally(() => setLoading(false));
-  }, [board]);
+  }, [board, query]);
 
   async function more() {
     setLoadingMore(true);
     try {
-      const r = await examApi.posts({ board: board || undefined, page: page + 1, size: 20 });
+      const r = await examApi.posts({
+        board: board || undefined, query: query || undefined, page: page + 1, size: 20,
+      });
       setItems((prev) => [...prev, ...r.items]);
       setPage(r.page);
       setErr(null);
@@ -54,6 +67,20 @@ export default function CommunityPage() {
     } finally {
       setLoadingMore(false);
     }
+  }
+
+  // 글자마다 뒤로가기 기록이 쌓이지 않게 replace. 지우면 바로 반영한다.
+  function onInput(value: string) {
+    setInput(value);
+    window.clearTimeout(debounce.current);
+    const next = value.trim();
+    debounce.current = window.setTimeout(() => {
+      setParams((prev) => {
+        const p = new URLSearchParams(prev);
+        if (next) p.set('q', next); else p.delete('q');
+        return p;
+      }, { replace: true });
+    }, next ? DEBOUNCE_MS : 0);
   }
 
   function write() {
@@ -92,10 +119,21 @@ export default function CommunityPage() {
         ))}
       </div>
 
+      <div className="searchbar community-search">
+        <span className="ico" aria-hidden="true"><Icon name="search" size={18} /></span>
+        <input
+          className="k-input"
+          placeholder="글 내용으로 찾기"
+          value={input}
+          onChange={(e) => onInput(e.target.value)}
+          aria-label="글 검색"
+        />
+      </div>
+
       {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
 
       <div className="section-head">
-        <h2>{boards.find((b) => b.code === board)?.name ?? '전체 글'}</h2>
+        <h2>{query ? `‘${query}’ 검색 결과` : (boards.find((b) => b.code === board)?.name ?? '전체 글')}</h2>
         <span className="more">{total.toLocaleString()}개</span>
       </div>
 

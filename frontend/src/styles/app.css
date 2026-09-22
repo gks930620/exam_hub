@@ -710,3 +710,9 @@
   .exam-info dl > div { flex-direction: column; gap: var(--sp-1); }
   .exam-info dt { flex: none; }
 }
+
+/* 내 달력에 넣기 — 달 이동 줄 오른쪽 끝으로 민다 */
+.cal-export { margin-left: auto; }
+
+/* 커뮤니티 검색 — 게시판 칩 줄 바로 아래 한 줄 */
+.community-search { margin: var(--sp-4) 0 var(--sp-5); max-width: 32rem; }

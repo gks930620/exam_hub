@@ -30,9 +30,11 @@ public class CommunityController {
     @GetMapping("/posts")
     public ResponseEntity<CommunityDtos.PostListResponse> list(
             @RequestParam(required = false) String board,
+            /* 제목·본문에서 찾을 말. 비면 전체 */
+            @RequestParam(required = false) String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(communityService.list(board, page, size));
+        return ResponseEntity.ok(communityService.list(board, query, page, size));
     }
 
     @GetMapping("/posts/{id}")

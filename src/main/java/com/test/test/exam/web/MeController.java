@@ -7,6 +7,7 @@ import com.test.test.exam.domain.Member;
 
 import java.util.Map;
 import com.test.test.exam.notification.NotificationHistoryService;
+import com.test.test.exam.service.IcsCalendar;
 import com.test.test.exam.notification.TestNotificationService;
 import com.test.test.exam.service.FavoriteService;
 import com.test.test.exam.web.dto.FavoriteDtos;
@@ -116,6 +117,22 @@ public class MeController {
                 request.getNotifyReg(), request.getNotifyExam(), request.getNotifyChange());
         return ResponseEntity.ok(new MeDtos.NotifySettings(
                 member.isNotifyReg(), member.isNotifyExam(), member.isNotifyChange()));
+    }
+
+    /**
+     * 내 시험 일정을 <b>내 달력에 넣을 수 있는 파일</b>로 내려받는다.
+     *
+     * <p>우리는 메일로 알려 주지만 사람들이 실제로 일정을 보는 곳은 자기 휴대폰 달력이다.
+     * 거기 넣어 두면 우리 메일이 스팸함에 빠져도 알림이 울린다 — <b>약속을 지키는 두 번째 줄</b>이다.
+     *
+     * <p>구글·애플·아웃룩이 다 읽는 표준(.ics)이라 연동을 따로 붙일 필요가 없다.
+     */
+    @GetMapping(value = "/calendar.ics", produces = "text/calendar;charset=UTF-8")
+    public ResponseEntity<String> calendarIcs(@CurrentMember Member member) {
+        String ics = IcsCalendar.render(favoriteService.upcomingEvents(member));
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"exam-hub.ics\"")
+                .body(ics);
     }
 
     /**

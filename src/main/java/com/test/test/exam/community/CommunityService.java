@@ -43,6 +43,16 @@ public class CommunityService {
 
     @Transactional(readOnly = true)
     public CommunityDtos.PostListResponse list(String boardCode, int page, int size) {
+        return list(boardCode, null, page, size);
+    }
+
+    /**
+     * @param query 제목·본문에서 찾을 말. 비면 전체.
+     *              글이 쌓이면 "그때 그 글"을 다시 못 찾아서 붙였다 — 더 보기를 스무 번 누르는
+     *              것 말고는 길이 없었다. 본문까지 보는 이유는 사람들이 제목이 아니라
+     *              <b>안에 있던 말</b>을 기억해서다.
+     */
+    public CommunityDtos.PostListResponse list(String boardCode, String query, int page, int size) {
         if (page < 0) {
             throw new BusinessRuleException("page 는 0 이상이어야 합니다.");
         }
@@ -51,9 +61,19 @@ public class CommunityService {
         }
         PageRequest pageable = PageRequest.of(page, size);
 
-        Page<Post> found = (boardCode == null || boardCode.isBlank())
-                ? postRepository.findByDeletedFalseOrderByCreatedAtDesc(pageable)
-                : postRepository.findByBoardAndDeletedFalseOrderByCreatedAtDesc(Board.from(boardCode), pageable);
+        Board board = (boardCode == null || boardCode.isBlank()) ? null : Board.from(boardCode);
+        String q = query == null ? "" : query.trim();
+
+        Page<Post> found;
+        if (!q.isEmpty()) {
+            found = board == null
+                    ? postRepository.search(q, pageable)
+                    : postRepository.searchInBoard(q, board, pageable);
+        } else if (board == null) {
+            found = postRepository.findByDeletedFalseOrderByCreatedAtDesc(pageable);
+        } else {
+            found = postRepository.findByBoardAndDeletedFalseOrderByCreatedAtDesc(board, pageable);
+        }
 
         return new CommunityDtos.PostListResponse(
                 found.getContent().stream().map(CommunityDtos.PostSummary::of).collect(Collectors.toList()),

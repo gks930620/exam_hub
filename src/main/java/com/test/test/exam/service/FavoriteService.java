@@ -135,6 +135,35 @@ public class FavoriteService {
 
         LocalDate monthStart = LocalDate.of(year, month, 1);
         LocalDate monthEnd = monthStart.withDayOfMonth(monthStart.lengthOfMonth());
+        return new MeDtos.CalendarResponse(eventsBetween(schedules, nameById, monthStart, monthEnd));
+    }
+
+    /**
+     * 앞으로 올 내 시험 일정 전부 — 달력 파일(.ics)로 내보낼 때 쓴다.
+     *
+     * <p>달 단위가 아니라 <b>한 파일에 다</b> 담는다. 달마다 따로 받게 하면 아무도 안 쓴다.
+     * 지난 일정은 넣지 않는다 — 달력을 지난 항목으로 채우면 방해만 된다.
+     */
+    @Transactional(readOnly = true)
+    public List<MeDtos.CalendarEvent> upcomingEvents(Member user) {
+        List<Long> favoriteIds = favoriteRepository.findCertificateIdsByMemberId(user.getId());
+        if (favoriteIds.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, String> nameById = certificateRepository.findAllById(favoriteIds).stream()
+                .filter(Certificate::isVisibleToUsers)
+                .collect(Collectors.toMap(Certificate::getId, Certificate::getName));
+        if (nameById.isEmpty()) {
+            return List.of();
+        }
+        List<ExamSchedule> schedules = examScheduleRepository
+                .findByCertificateIdInAndStatus(List.copyOf(nameById.keySet()), ScheduleStatus.ACTIVE);
+        return eventsBetween(schedules, nameById, TimeUtil.today(), TimeUtil.today().plusYears(2));
+    }
+
+    private List<MeDtos.CalendarEvent> eventsBetween(List<ExamSchedule> schedules,
+                                                     Map<Long, String> nameById,
+                                                     LocalDate monthStart, LocalDate monthEnd) {
 
         List<MeDtos.CalendarEvent> events = new ArrayList<>();
         for (ExamSchedule s : schedules) {
@@ -152,7 +181,7 @@ public class FavoriteService {
                     monthStart, monthEnd, "RESULT", cid, name, typeLabel + " 발표");
         }
         events.sort(Comparator.comparing(MeDtos.CalendarEvent::getDate));
-        return new MeDtos.CalendarResponse(events);
+        return events;
     }
 
     private void addIfInMonth(List<MeDtos.CalendarEvent> out, LocalDate date,

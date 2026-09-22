@@ -9,6 +9,8 @@ import Icon from '../components/Icon';
 export default function CalendarPage() {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [events, setEvents] = useState<CalendarEvent[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -24,6 +26,22 @@ export default function CalendarPage() {
       .catch((e: Error) => { if (alive) setErr(e.message); });
     return () => { alive = false; };
   }, [year, month, attempt]);
+
+  /**
+   * 내 달력에 넣는다. 우리 메일이 스팸함에 빠져도 휴대폰 알림은 울린다 —
+   * 알림 하나에만 기대지 않는다.
+   */
+  async function exportIcs() {
+    setExporting(true);
+    setExportError(null);
+    try {
+      await examApi.downloadCalendar();
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : '내려받지 못했습니다.');
+    } finally {
+      setExporting(false);
+    }
+  }
 
   function move(delta: number) {
     let m = month + delta, y = year;
@@ -45,7 +63,13 @@ export default function CalendarPage() {
         <button className="k-btn k-btn--secondary" onClick={() => move(-1)}>‹ 이전</button>
         <strong>{year}년 {month}월</strong>
         <button className="k-btn k-btn--secondary" onClick={() => move(1)}>다음 ›</button>
+        {/* 한 달이 아니라 앞으로 올 일정 전부 — 달마다 따로 받게 하면 아무도 안 쓴다 */}
+        <button className="k-btn k-btn--ghost k-btn--sm cal-export"
+                onClick={exportIcs} disabled={exporting}>
+          {exporting ? '만드는 중…' : '내 달력에 넣기'}
+        </button>
       </div>
+      {exportError && <p className="k-help k-help--err" role="status">{exportError}</p>}
 
       {err ? (
         <div className="k-alert k-alert--err" role="alert">
