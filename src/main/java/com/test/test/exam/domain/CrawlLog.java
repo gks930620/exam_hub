@@ -59,9 +59,20 @@ public class CrawlLog {
      * 대상에 없으면 <b>0건이 정상</b>이다 — 큐넷 API 는 4자리 종목코드가 없으면 아예 호출하지
      * 않는다(호출 낭비를 막으려고). 그 0건을 전체 배치의 0건과 같게 보면 "고장"이라고 뜬다.
      * 거짓 경보는 경보가 없는 것보다 나쁘다 — 매니저가 경고를 무시하게 된다(2026-09-21 실측).
+     *
+     * <p><b>왜 {@code Boolean} 인가</b>: 이 칸은 나중에 추가했다. {@code ddl-auto: update} 는 칸만
+     * 붙이고 기존 행은 건드리지 않아서 <b>옛 행이 전부 NULL</b> 이다. 원시 {@code boolean} 으로
+     * 두면 그 행을 읽는 순간 터진다 —
+     * {@code Null value was assigned to a property of primitive type} (2026-09-22 실측,
+     * 매니저 수집 상태 화면이 500 이었다). 없으면 전체 수집으로 본다.
      */
     @Column(name = "partial")
-    private boolean partial;
+    private Boolean partial;
+
+    /** 옛 행은 비어 있다 — 없으면 전체 수집. */
+    public boolean isPartial() {
+        return partial != null && partial;
+    }
 
     public static CrawlLog start(String source) {
         return start(source, false);

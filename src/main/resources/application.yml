@@ -188,6 +188,9 @@ app:
   link-base: ${APP_LINK_BASE:${APP_PUBLIC_BASE_URL:${APP_BASE_URL:http://localhost:8101}}}
   oauth:
     redirect-uri: ${APP_OAUTH_REDIRECT_URI:/oauth/callback}   # 단일 서버라 기본은 같은 출처
+  # 고장 경보를 받을 주소. 매일 06:00 에 수집·알림을 보고 <b>문제가 있을 때만</b> 한 통 간다.
+  # 비워 두면 안 보낸다 — 대신 못 보냈다는 사실을 로그에 남긴다(조용히 넘어가지 않는다).
+  operator-email: ${ALERT_EMAIL:}
 
 # ===== SMTP =====
 # 이메일 알림을 켤 때만 채운다. Gmail 은 앱 비밀번호, AWS SES 는 SMTP 자격증명.

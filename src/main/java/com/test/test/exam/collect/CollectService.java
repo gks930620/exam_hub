@@ -371,7 +371,9 @@ public class CollectService {
         crawlLogRepository.save(crawlLog);
 
         if (prevFailed) {
-            // TODO(v2): 관리자 이메일/알림톡. 현재는 로그 경보(운영 주 1회 crawl_log 점검으로 커버).
+            // 사람에게 닿는 경보는 OperatorAlertScheduler 가 매일 06:00 에 한 통으로 묶어 보낸다
+            // (/admin/health 와 같은 판정 — HealthService). 여기서 소스마다 메일을 쏘면 8곳이 동시에
+            // 깨진 날 여덟 통이 오고, 그러면 곧 안 읽게 된다. 여기는 그 근거가 될 기록만 남긴다.
             log.error("[ADMIN-ALERT] 수집 2회 연속 실패 source={} — 소스 점검 필요. 기존 데이터로 서비스는 지속됩니다.",
                     source.sourceId());
         }
