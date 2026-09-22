@@ -102,4 +102,16 @@ public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long
                AND (s.regStartAt > :now OR s.regEndAt > :now OR s.examStartDate >= :today)
             """)
     long countArmable(@Param("now") LocalDateTime now, @Param("today") LocalDate today);
+
+    /**
+     * 이 시험이 치르는 구분(필기·실기) — 알림 문안이 "필기"를 붙일지 정하는 데 쓴다.
+     *
+     * <p>회차를 통째로 읽지 않는 이유: 발송 배치가 건마다 부른다(상한 500).
+     * <b>상태로 거르지 않는다</b> — 지난 회차도 취소된 회차도 "이 시험은 실기가 있다"는 사실이다.
+     */
+    @Query("""
+            SELECT DISTINCT s.examType FROM ExamSchedule s
+             WHERE s.certificate.id = :certificateId AND s.examType IS NOT NULL
+            """)
+    List<ExamType> findDistinctExamTypes(@Param("certificateId") Long certificateId);
 }

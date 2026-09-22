@@ -90,6 +90,11 @@ export interface DetailResponse {
   /** 상시·예약제 — 일정 표 대신 "원하는 날짜에 신청" 안내를 보여준다 */
   rolling: boolean;
   nextEvent: EventDto | null;
+  /**
+   * 이 시험이 필기·실기를 따로 치르는가 — 구분을 보여줄지 정한다.
+   * 회차 목록만 보고 정하면 연도 필터에 흔들리므로(그 해에 실기가 없으면 사라진다) 서버가 정해 준다.
+   */
+  splitsByExamType: boolean;
   schedules: ScheduleDto[];
 }
 

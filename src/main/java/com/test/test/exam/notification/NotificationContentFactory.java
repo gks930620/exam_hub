@@ -35,7 +35,7 @@ public class NotificationContentFactory {
         // 그대로 메일에 나간다 — 화면은 2026-09-08 에 감췄는데 여기만 남아 있었다.
         // 받는 사람은 "20261011회"를 보고 우리가 잘못 읽었다고 생각하고, 같이 적힌 날짜도 의심한다.
         // 구분이 비어 있어도 roundLabel() 은 죽지 않는다(직접 getLabel() 하면 NPE 로 그 건이 막힌다).
-        String roundType = s.roundLabel();
+        String roundType = s.roundLabel(ref.isWithExamType());
         // 회차도 구분도 없는 시험(토플 등)은 roundType 이 빈 문자열이다 — 앞 공백을 남기지 않는다.
         String prefix = roundType.isBlank() ? "" : roundType + " ";
 
@@ -109,5 +109,10 @@ public class NotificationContentFactory {
     public static class NotificationSchedule_Ref {
         private ExamSchedule schedule;
         private NotificationEventType eventType;
+        /**
+         * 문구에 필기/실기를 붙일지. 이 시험이 두 종류를 실제로 치를 때만 붙인다 —
+         * 여기서는 회차 하나만 보이므로 배치가 형제 회차를 보고 정해서 넘겨 준다.
+         */
+        private boolean withExamType;
     }
 }

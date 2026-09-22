@@ -33,6 +33,17 @@ public class DdayService {
      * 그 접수를 놓치는 것이 더 큰 손해다 — 이 서비스의 약속은 "접수 마감을 놓치지 않게"다.
      */
     public NextEvent computeNextEvent(List<ExamSchedule> schedules) {
+        // 부르는 쪽이 그 시험의 회차를 다 넘겨주므로 여기서 구분 여부를 알 수 있다.
+        return computeNextEvent(schedules, ExamSchedule.splitsByExamType(schedules));
+    }
+
+    /**
+     * @param withExamType 문구에 필기/실기를 붙일지. 그 시험이 두 종류를 <b>실제로</b> 치를 때만 붙인다 —
+     *                     토익스피킹에 "필기 접수 마감"이라고 쓰면 틀린 말이다
+     *                     ({@link ExamSchedule#splitsByExamType}). 판단은 지난·취소 회차까지 넣은
+     *                     <b>전체 목록</b>으로 해야 해서 따로 받는다.
+     */
+    public NextEvent computeNextEvent(List<ExamSchedule> schedules, boolean withExamType) {
         LocalDateTime now = TimeUtil.now();
         LocalDate today = now.toLocalDate();
 
@@ -42,7 +53,10 @@ public class DdayService {
             if (!s.isActive()) {
                 continue;
             }
-            String typeLabel = s.roundLabel();
+            // 회차도 구분도 없는 시험(토익스피킹·TOEIC Bridge 등)은 앞에 붙일 말이 없다.
+            // 그대로 이어 붙이면 카드에 " 접수 마감" 처럼 공백으로 시작하는 문구가 뜬다(실측).
+            String prefix = s.roundLabel(withExamType);
+            String typeLabel = prefix.isBlank() ? "" : prefix + " ";
 
             LocalDateTime regStart = s.getRegStartAt();
             LocalDateTime regEnd = s.getRegEndAt();
@@ -52,13 +66,13 @@ public class DdayService {
                     // 접수 중 → 마감까지
                     long dday = ChronoUnit.DAYS.between(today, regEnd.toLocalDate());
                     candidates.add(new NextEvent(CardBadge.REG_OPEN, "REG_CLOSING",
-                            typeLabel + " 접수 마감", regEnd, dday, s.getId(), s.isConfirmed()));
+                            typeLabel + "접수 마감", regEnd, dday, s.getId(), s.isConfirmed()));
                     continue; // 이 회차는 접수 중 이벤트로 대표 (다음 시험일은 굳이 후보에 안 넣음)
                 } else if (now.isBefore(regStart)) {
                     // 마감을 아직 몰라도 시작일이 앞에 있으면 접수 예정이다 — 알림(REG_OPEN_EVE)은 이미 그렇게 간다
                     long dday = ChronoUnit.DAYS.between(today, regStart.toLocalDate());
                     candidates.add(new NextEvent(CardBadge.REG_UPCOMING, "REG_OPEN",
-                            typeLabel + " 접수 시작", regStart, dday, s.getId(), s.isConfirmed()));
+                            typeLabel + "접수 시작", regStart, dday, s.getId(), s.isConfirmed()));
                 }
             }
 
@@ -70,10 +84,10 @@ public class DdayService {
                 if (today.isBefore(examStart)) {
                     long dday = ChronoUnit.DAYS.between(today, examStart);
                     candidates.add(new NextEvent(CardBadge.EXAM_UPCOMING, "EXAM",
-                            typeLabel + " 시험", examStart.atStartOfDay(), dday, s.getId(), s.isConfirmed()));
+                            typeLabel + "시험", examStart.atStartOfDay(), dday, s.getId(), s.isConfirmed()));
                 } else if (!today.isAfter(examEnd)) {
                     candidates.add(new NextEvent(CardBadge.EXAM_ONGOING, "EXAM_ONGOING",
-                            typeLabel + " 시험 진행 중", examEnd.atStartOfDay(), 0, s.getId(), s.isConfirmed()));
+                            typeLabel + "시험 진행 중", examEnd.atStartOfDay(), 0, s.getId(), s.isConfirmed()));
                 }
             }
 
@@ -85,7 +99,7 @@ public class DdayService {
                     && !today.isAfter(resultDate)) {
                 long dday = ChronoUnit.DAYS.between(today, resultDate);
                 candidates.add(new NextEvent(CardBadge.RESULT_PENDING, "RESULT",
-                        typeLabel + " 합격자 발표", resultDate.atStartOfDay(), dday, s.getId(), s.isConfirmed()));
+                        typeLabel + "합격자 발표", resultDate.atStartOfDay(), dday, s.getId(), s.isConfirmed()));
             }
         }
 
@@ -119,7 +133,10 @@ public class DdayService {
                 .filter(ExamSchedule::isActive)
                 .filter(ExamSchedule::hasAnyDate)
                 .toList();
-        NextEvent next = dated.isEmpty() ? NextEvent.none() : computeNextEvent(dated);
+        // 구분 여부는 거르기 <b>전</b> 목록으로 본다 — 실기가 전부 지났거나 취소됐어도
+        // 그 시험은 여전히 실기가 있는 시험이다.
+        boolean withExamType = ExamSchedule.splitsByExamType(schedules);
+        NextEvent next = dated.isEmpty() ? NextEvent.none() : computeNextEvent(dated, withExamType);
         ScheduleState state = cert.isRollingAdmission() ? ScheduleState.ROLLING
                 : dated.isEmpty() ? ScheduleState.NONE
                 : next.isPresent() ? ScheduleState.UPCOMING

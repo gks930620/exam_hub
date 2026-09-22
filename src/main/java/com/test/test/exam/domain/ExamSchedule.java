@@ -162,11 +162,55 @@ public class ExamSchedule {
 
     /**
      * 화면에 쓰는 회차 표기 — {@code "576회 필기"}, 회차가 없는 시험이면 {@code "필기"}.
-     * D-day·캘린더가 <b>같은 문구</b>를 쓰도록 여기 한 곳에 둔다.
+     * D-day·캘린더·알림 문안이 <b>같은 문구</b>를 쓰도록 여기 한 곳에 둔다.
+     *
+     * <p>구분을 붙일지는 <b>그 시험이 실제로 두 종류를 치르는지</b>로 정한다
+     * ({@link #splitsByExamType}) — 부르는 쪽이 그 시험의 회차 전체를 갖고 있어서 안다.
      */
+    public String roundLabel(boolean withExamType) {
+        String type = (!withExamType || examType == null) ? "" : examType.getLabel();
+        if (!hasPublishedRound()) {
+            return type;
+        }
+        return type.isBlank() ? round + "회" : round + "회 " + type;
+    }
+
+    /** 부르는 쪽이 회차 목록을 모를 때 — 구분을 그대로 붙인다. */
     public String roundLabel() {
-        String type = examType == null ? "" : examType.getLabel();
-        return hasPublishedRound() ? round + "회 " + type : type;
+        return roundLabel(true);
+    }
+
+    /**
+     * 이 시험이 <b>필기와 실기를 따로 치르는가</b>.
+     *
+     * <p>2026-09-22 전수 실측: 공개 841종 중 <b>206종</b>이 실기가 하나도 없는데 "필기"를 달고
+     * 있었다(어학 47 · 국가전문자격 99 · 금융 19 · 보건의료 17 …). 이 시험들에는 그런 구분이
+     * 없다 — 토익스피킹에 "필기 접수 마감"이라고 쓰면 틀린 말이다. 반대로 국가기술자격은 거의
+     * 전부가 둘 다 갖고(건설 98종 중 95종), 거기서는 필기 접수와 실기 접수가 다른 날이라 빠지면 안 된다.
+     *
+     * <p>카테고리 목록을 손으로 들고 있으면 새 시험이 들어올 때마다 낡는다. 그래서 데이터가 정한다 —
+     * 회차 번호를 다루는 방식({@link #hasPublishedRound})과 같은 원칙이다.
+     *
+     * <p><b>상태로 거르지 않는다</b> — 지난 회차도 취소된 회차도 "이 시험은 실기가 있다"는 사실이다.
+     */
+    public static boolean splitsByExamType(java.util.Collection<ExamSchedule> schedules) {
+        if (schedules == null || schedules.isEmpty()) {
+            return false;
+        }
+        return splitsByExamTypes(schedules.stream().map(ExamSchedule::getExamType).toList());
+    }
+
+    /**
+     * 같은 규칙, 구분값만 받는 판(알림 배치용).
+     *
+     * <p>회차 하나를 보낼 때마다 그 시험의 회차를 통째로 읽을 필요는 없어서 구분값만 묻는다.
+     * 규칙을 두 군데 적으면 한쪽이 조용히 달라지므로 판단은 여기 한 곳에서만 한다.
+     */
+    public static boolean splitsByExamTypes(java.util.Collection<ExamType> types) {
+        if (types == null || types.isEmpty()) {
+            return false;
+        }
+        return types.stream().filter(java.util.Objects::nonNull).distinct().count() > 1;
     }
 
     public boolean isActive() {

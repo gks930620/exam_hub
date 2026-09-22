@@ -150,6 +150,13 @@ public final class CertificateDtos {
         /** 상시·예약제 — 일정 표 대신 "원하는 날짜에 신청" 안내를 보여준다 */
         private boolean rolling;
         private EventDto nextEvent;
+        /**
+         * 이 시험이 필기·실기를 <b>따로</b> 치르는가 — 화면이 구분을 보여줄지 정하는 값.
+         *
+         * <p>화면이 회차 목록만 보고 정하면 연도 필터에 흔들린다(그 해에 실기가 없으면 사라진다).
+         * 판단은 연도로 거르기 전 전체로 해야 해서 서버가 정해 내려준다.
+         */
+        private boolean splitsByExamType;
         private List<ScheduleDto> schedules;
     }
 

@@ -151,6 +151,10 @@ public class CertificateService {
 
         // 다음 이벤트는 ACTIVE 회차만으로 계산한다(DdayService 가 걸러 준다)
         NextEvent next = ddayService.computeNextEvent(schedules);
+
+        // 구분(필기/실기)을 보여줄지는 연도로 거르기 전 전체로 본다 —
+        // 그 해에 실기가 없다고 구분이 사라지면 화면이 해마다 달라 보인다.
+        boolean splitsByExamType = ExamSchedule.splitsByExamType(schedules);
         boolean favorited = memberId != null
                 && userFavoriteRepository.existsByMemberIdAndCertificateId(memberId, cert.getId());
 
@@ -175,7 +179,8 @@ public class CertificateService {
 
         return new CertificateDtos.DetailResponse(
                 cert.getId(), cert.getName(), cert.getCategory(), cert.getAgency(), sourceUrl, collectedAt,
-                favorited, cert.isRollingAdmission(), CertificateDtos.EventDto.of(next), scheduleDtos);
+                favorited, cert.isRollingAdmission(), CertificateDtos.EventDto.of(next),
+                splitsByExamType, scheduleDtos);
     }
 
     private List<CertificateDtos.Item> toItems(List<Certificate> certs, Long memberId) {

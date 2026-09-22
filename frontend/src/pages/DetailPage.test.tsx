@@ -16,7 +16,7 @@ function detail(over: Partial<DetailResponse> = {}): DetailResponse {
   return {
     id: 2, name: '전기기사', category: '국가기술자격-전기전자', agency: '한국산업인력공단',
     sourceUrl: null, collectedAt: null, favorited: false, rolling: false,
-    nextEvent: null, schedules: [],
+    nextEvent: null, splitsByExamType: true, schedules: [],
     ...over,
   };
 }
@@ -178,5 +178,34 @@ describe('DetailPage — 문구와 회차 표', () => {
 
     await screen.findByText('전기기사');
     expect(document.querySelector('.k-tablewrap > table')).toBeTruthy();
+  });
+
+  /**
+   * 2026-09-22 전수 실측: 공개 841종 중 206종이 실기가 하나도 없는데 "필기"를 달고 있었다
+   * (어학 47 · 국가전문자격 99 · 금융 19 · 보건의료 17 …). 토익스피킹 회차에 "필기"라고
+   * 쓰는 건 그냥 틀린 말이다. 없는 구분을 지어내느니 안 쓰는 편이 낫다.
+   */
+  it('한 종류만 치르는 시험이면 회차에 구분을 붙이지 않는다', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({
+      splitsByExamType: false, schedules: [sched()],
+    }));
+
+    mockAuth(null);
+    renderDetail();
+
+    const cell = await screen.findByText(/2026년/);
+    expect(cell.textContent).not.toContain('필기');
+  });
+
+  it('필기·실기를 둘 다 치르면 구분을 보여준다 — 접수일이 서로 다르다', async () => {
+    vi.spyOn(examApi, 'detail').mockResolvedValue(detail({
+      splitsByExamType: true, schedules: [sched()],
+    }));
+
+    mockAuth(null);
+    renderDetail();
+
+    const cell = await screen.findByText(/2026년/);
+    expect(cell.textContent).toContain('필기');
   });
 });

@@ -49,9 +49,14 @@ class NotificationContentTest {
                 .build();
     }
 
+    /** 기본은 구분을 붙이는 쪽 — 필기·실기를 둘 다 치르는 시험을 가정한다. */
     private String body(Integer round, ExamType type, NotificationEventType event) {
+        return body(round, type, event, true);
+    }
+
+    private String body(Integer round, ExamType type, NotificationEventType event, boolean withExamType) {
         return factory.build(new NotificationContentFactory.NotificationSchedule_Ref(
-                schedule(round, type), event)).getBody();
+                schedule(round, type), event, withExamType)).getBody();
     }
 
     /** 날짜를 회차 자리에 넣은 멱등 키 — 시행처가 그렇게 부르지 않는다. */
@@ -99,8 +104,38 @@ class NotificationContentTest {
         s.changeStatus(ScheduleStatus.CANCELED);
 
         String b = factory.build(new NotificationContentFactory.NotificationSchedule_Ref(
-                s, NotificationEventType.SCHEDULE_CHANGED)).getBody();
+                s, NotificationEventType.SCHEDULE_CHANGED, true)).getBody();
 
         assertThat(b).contains("취소");
+    }
+
+    /**
+     * 실기가 없는 시험에 "필기"를 붙이면 그냥 틀린 말이다. 2026-09-22 전수 실측으로 206종이 그랬다.
+     * 메일은 사용자와 만나는 거의 유일한 접점이라, 여기 적힌 말이 사실이 아니면 날짜까지 의심받는다.
+     */
+    @Test
+    @DisplayName("한 종류만 치르는 시험 메일에는 필기라고 쓰지 않는다")
+    void single_type_exam_is_not_called_written() {
+        String b = body(3, ExamType.WRITTEN, NotificationEventType.REG_CLOSE_EVE, false);
+
+        assertThat(b).doesNotContain("필기");
+        assertThat(b).contains("3회");
+        assertThat(b).contains("접수 마감");
+    }
+
+    @Test
+    @DisplayName("둘 다 치르는 시험은 그대로 구분해 쓴다 — 접수일이 서로 다르다")
+    void split_exam_keeps_the_label() {
+        assertThat(body(3, ExamType.PRACTICAL, NotificationEventType.REG_CLOSE_EVE, true))
+                .contains("3회 실기");
+    }
+
+    /** 회차도 구분도 없는 시험은 남길 말이 없다 — 앞 공백으로 시작하면 안 된다. */
+    @Test
+    @DisplayName("쓸 말이 없으면 공백으로 시작하지 않는다")
+    void nothing_to_prefix_leaves_no_gap() {
+        String b = body(20261011, ExamType.WRITTEN, NotificationEventType.REG_CLOSE_EVE, false);
+
+        assertThat(b).startsWith("접수 마감");
     }
 }

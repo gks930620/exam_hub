@@ -9,6 +9,7 @@ import com.test.test.exam.domain.NotificationResult;
 import com.test.test.exam.domain.NotificationSchedule;
 import com.test.test.exam.domain.NotificationScheduleStatus;
 import com.test.test.exam.domain.ScheduleStatus;
+import com.test.test.exam.repository.ExamScheduleRepository;
 import com.test.test.exam.repository.NotificationLogRepository;
 import com.test.test.exam.repository.NotificationScheduleRepository;
 import com.test.test.exam.repository.UserFavoriteRepository;
@@ -32,6 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificationDispatchWorker {
 
+    private final ExamScheduleRepository examScheduleRepository;
     private final NotificationScheduleRepository notificationScheduleRepository;
     private final NotificationLogRepository notificationLogRepository;
     private final UserFavoriteRepository userFavoriteRepository;
@@ -57,8 +59,16 @@ public class NotificationDispatchWorker {
         }
 
         NotificationEventType.ToggleTarget target = ns.getEventType().getToggleTarget();
+
+        // 문구에 "필기/실기"를 붙일지는 그 시험이 두 종류를 실제로 치를 때만이다 —
+        // 토익스피킹에 "필기 접수 마감"이라고 쓰면 틀린 말이다. 여기서는 회차 하나만 보이므로
+        // 형제 회차를 한 번 읽어 정한다(배치 상한이 500건이라 감당할 비용이다).
+        boolean withExamType = ExamSchedule.splitsByExamTypes(
+                examScheduleRepository.findDistinctExamTypes(schedule.getCertificate().getId()));
+
         NotificationMessage message = contentFactory.build(
-                new NotificationContentFactory.NotificationSchedule_Ref(schedule, ns.getEventType()));
+                new NotificationContentFactory.NotificationSchedule_Ref(
+                        schedule, ns.getEventType(), withExamType));
 
         List<Member> favoritedUsers = userFavoriteRepository
                 .findUsersByCertificateId(schedule.getCertificate().getId());

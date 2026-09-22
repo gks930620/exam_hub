@@ -160,7 +160,9 @@ export default function DetailPage() {
                   return (
                     <tr key={s.id} className={s.status === 'CANCELED' ? 'is-canceled' : undefined}>
                       <td className="round">
-                        {roundLabel(s.year, s.round)} · {TYPE_LABEL[s.examType] ?? s.examType}
+                        {/* 구분은 그 시험이 필기·실기를 실제로 따로 치를 때만 — 없는 구분을 지어내지 않는다 */}
+                        {roundLabel(s.year, s.round)}
+                        {d.splitsByExamType && <> · {TYPE_LABEL[s.examType] ?? s.examType}</>}
                         {badge && <> <span className={`k-badge ${badge.tone}`}>{badge.label}</span></>}
                         {/* 추정치를 확정처럼 보여주면 "마감을 놓치지 않게 해준다"는 약속을 스스로 깬다 */}
                         {s.confirmed === false && (
