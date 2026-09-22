@@ -165,11 +165,18 @@ public class FavoriteService {
                                                      Map<Long, String> nameById,
                                                      LocalDate monthStart, LocalDate monthEnd) {
 
+        // 구분(필기/실기)은 <b>시험마다</b> 따로 본다 — 실기를 치르지도 않는 시험에 "필기"를 붙이면
+        // 틀린 말이고(206종, 2026-09-22 실측), 카드·메일과 다른 말을 하게 된다.
+        // 한 사실을 화면마다 다르게 부르면 사용자는 둘 중 어느 쪽도 못 믿는다.
+        Map<Long, Boolean> splitByCert = schedules.stream()
+                .collect(Collectors.groupingBy(x -> x.getCertificate().getId(),
+                        Collectors.collectingAndThen(Collectors.toList(), ExamSchedule::splitsByExamType)));
+
         List<MeDtos.CalendarEvent> events = new ArrayList<>();
         for (ExamSchedule s : schedules) {
             Long cid = s.getCertificate().getId();
             String name = nameById.getOrDefault(cid, "");
-            String typeLabel = s.roundLabel();
+            String typeLabel = s.roundLabel(Boolean.TRUE.equals(splitByCert.get(cid)));
 
             addIfInMonth(events, s.getRegStartAt() == null ? null : s.getRegStartAt().toLocalDate(),
                     monthStart, monthEnd, "REG_START", cid, name, typeLabel + " 접수 시작");

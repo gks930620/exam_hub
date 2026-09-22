@@ -1,10 +1,12 @@
 package com.test.test.exam.notification;
 
 import com.test.test.exam.common.TimeUtil;
+import com.test.test.exam.domain.ExamSchedule;
 import com.test.test.exam.domain.NotificationChannel;
 import com.test.test.exam.domain.NotificationEventType;
 import com.test.test.exam.domain.NotificationLog;
 import com.test.test.exam.domain.NotificationResult;
+import com.test.test.exam.repository.ExamScheduleRepository;
 import com.test.test.exam.repository.NotificationLogRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +16,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <b>나한테 뭘 보냈다는 건지</b> 보여준다.
@@ -35,11 +39,25 @@ public class NotificationHistoryService {
     static final int LIMIT = 50;
 
     private final NotificationLogRepository notificationLogRepository;
+    private final ExamScheduleRepository examScheduleRepository;
 
     @Transactional(readOnly = true)
     public List<Item> recent(Long memberId) {
-        return notificationLogRepository.findRecentByMember(memberId, PageRequest.of(0, LIMIT))
-                .stream().map(Item::from).toList();
+        List<NotificationLog> logs =
+                notificationLogRepository.findRecentByMember(memberId, PageRequest.of(0, LIMIT));
+
+        // 구분(필기/실기)은 그 시험이 두 종류를 실제로 치를 때만 붙인다. 목록에 같은 시험이 여러 번
+        // 나오므로 시험마다 한 번만 물어본다 — 줄마다 물으면 N+1 이다.
+        // 카드·메일과 다른 말을 하면 사용자는 어느 쪽도 못 믿는다(2026-09-23 에 여기만 빠져 있었다).
+        Map<Long, Boolean> splitByCert = new HashMap<>();
+        for (NotificationLog l : logs) {
+            Long certId = l.getNotificationSchedule().getExamSchedule().getCertificate().getId();
+            splitByCert.computeIfAbsent(certId, id -> ExamSchedule.splitsByExamTypes(
+                    examScheduleRepository.findDistinctExamTypes(id)));
+        }
+
+        return logs.stream().map(l -> Item.from(l, Boolean.TRUE.equals(splitByCert.get(
+                l.getNotificationSchedule().getExamSchedule().getCertificate().getId())))).toList();
     }
 
     @Getter
@@ -60,13 +78,13 @@ public class NotificationHistoryService {
          */
         private boolean delivered;
 
-        public static Item from(NotificationLog l) {
+        public static Item from(NotificationLog l, boolean withExamType) {
             var schedule = l.getNotificationSchedule().getExamSchedule();
             boolean delivered = l.getResult() == NotificationResult.SUCCESS
                     && l.getChannel() != NotificationChannel.LOG;
             return new Item(
                     schedule.getCertificate().getName(),
-                    schedule.roundLabel(),
+                    schedule.roundLabel(withExamType),
                     label(l.getNotificationSchedule().getEventType()),
                     TimeUtil.format(l.getSentAt()),
                     l.getChannel().name(),
