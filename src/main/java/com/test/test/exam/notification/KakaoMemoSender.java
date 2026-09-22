@@ -95,7 +95,7 @@ public class KakaoMemoSender implements NotificationSender {
                     .retrieve()
                     .toBodilessEntity();
 
-            log.info("[카톡메모] 발송 member={} title=\"{}\"", member.getId(), message.title());
+            log.info("[카톡메모] 발송 member={} title=\"{}\"", member.getId(), message.getTitle());
             return NotificationResult.SUCCESS;
         } catch (Exception e) {
             log.warn("[카톡메모] 발송 실패 member={}: {}", member.getId(), e.toString());
@@ -105,12 +105,12 @@ public class KakaoMemoSender implements NotificationSender {
 
     /** 카카오 기본 템플릿(text). 알림톡과 달리 사전 심사가 없어 문구를 자유롭게 쓴다. */
     private Map<String, Object> templateObject(NotificationMessage message) {
-        Map<String, String> data = message.data() == null ? Map.of() : message.data();
+        Map<String, String> data = message.getData() == null ? Map.of() : message.getData();
         String link = linkBase + "/cert/" + data.getOrDefault("certificateId", "");
 
         return Map.of(
                 "object_type", "text",
-                "text", message.title() + "\n\n" + message.body(),
+                "text", message.getTitle() + "\n\n" + message.getBody(),
                 "link", Map.of("web_url", link, "mobile_web_url", link),
                 "button_title", "일정 확인하기");
     }

@@ -945,8 +945,8 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
         assertEquals(ScheduleStatus.CANCELED, canceled.getStatus());
         NotificationMessage msg = contentFactory.build(
                 new NotificationContentFactory.NotificationSchedule_Ref(canceled, NotificationEventType.SCHEDULE_CHANGED));
-        assertTrue(msg.title().contains("취소"), "취소인데 문구가 '변경'이라고만 한다: " + msg.title());
-        assertEquals("/cert/" + cert.getId(), msg.data().get("route"), "알림 링크가 옛 주소다");
+        assertTrue(msg.getTitle().contains("취소"), "취소인데 문구가 '변경'이라고만 한다: " + msg.getTitle());
+        assertEquals("/cert/" + cert.getId(), msg.getData().get("route"), "알림 링크가 옛 주소다");
     }
 
     // ===== 수기 저장의 변경 알림 =====

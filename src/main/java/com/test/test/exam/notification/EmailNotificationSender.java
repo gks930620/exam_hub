@@ -66,11 +66,11 @@ public class EmailNotificationSender implements NotificationSender {
             MimeMessageHelper helper = new MimeMessageHelper(mime, false, "UTF-8");
             helper.setFrom(from, fromName);
             helper.setTo(member.getEmail());
-            helper.setSubject(message.title());
+            helper.setSubject(message.getTitle());
             helper.setText(body(member, message), true);
             mailSender.send(mime);
 
-            log.info("[Email] 발송 member={} subject=\"{}\"", member.getId(), message.title());
+            log.info("[Email] 발송 member={} subject=\"{}\"", member.getId(), message.getTitle());
             return NotificationResult.SUCCESS;
         } catch (MailException | jakarta.mail.MessagingException | UnsupportedEncodingException e) {
             log.error("[Email] 발송 실패 member={}: {}", member.getId(), e.toString());
@@ -83,7 +83,7 @@ public class EmailNotificationSender implements NotificationSender {
      * 알림 메일은 한 문단 + 링크가 전부다.
      */
     private String body(Member member, NotificationMessage message) {
-        Map<String, String> data = message.data() == null ? Map.of() : message.data();
+        Map<String, String> data = message.getData() == null ? Map.of() : message.getData();
         String certId = data.getOrDefault("certificateId", "");
         // app.link-base 를 써야 로컬(8101)·운영이 각자 자기 주소로 간다.
         // 여기를 하드코딩하면 메일 속 버튼이 아무 데도 닿지 않는다.
@@ -104,6 +104,6 @@ public class EmailNotificationSender implements NotificationSender {
                     본 알림은 참고용입니다 — 최종 일정은 시행처에서 확인하세요.
                   </p>
                 </div>
-                """.formatted(message.title(), message.body(), link, member.getNickname());
+                """.formatted(message.getTitle(), message.getBody(), link, member.getNickname());
     }
 }

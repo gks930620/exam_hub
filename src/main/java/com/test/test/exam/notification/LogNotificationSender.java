@@ -23,7 +23,7 @@ public class LogNotificationSender implements NotificationSender {
     @Override
     public NotificationResult send(Member user, NotificationMessage message) {
         log.info("[PUSH:LOG] member={} title=\"{}\" body=\"{}\" data={}",
-                user.getNickname(), message.title(), message.body(), message.data());
+                user.getNickname(), message.getTitle(), message.getBody(), message.getData());
         return NotificationResult.SUCCESS;
     }
 }

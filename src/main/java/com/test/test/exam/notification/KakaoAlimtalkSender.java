@@ -86,7 +86,7 @@ public class KakaoAlimtalkSender implements NotificationSender {
 
         String templateId = resolveTemplateId(message);
         if (templateId == null || templateId.isBlank()) {
-            log.warn("[알림톡] 템플릿 코드 미설정 — 승인 후 설정에 넣어야 한다. message=\"{}\"", message.title());
+            log.warn("[알림톡] 템플릿 코드 미설정 — 승인 후 설정에 넣어야 한다. message=\"{}\"", message.getTitle());
             return NotificationResult.FAILED;
         }
 
@@ -129,18 +129,18 @@ public class KakaoAlimtalkSender implements NotificationSender {
      * 하나라도 어긋나면 발송이 거부된다.
      */
     private Map<String, String> variables(Member member, NotificationMessage message) {
-        Map<String, String> data = message.data() == null ? Map.of() : message.data();
+        Map<String, String> data = message.getData() == null ? Map.of() : message.getData();
         Map<String, String> vars = new LinkedHashMap<>();
         vars.put("#{닉네임}", member.getNickname());
-        vars.put("#{시험명}", data.getOrDefault("certificateName", message.title()));
+        vars.put("#{시험명}", data.getOrDefault("certificateName", message.getTitle()));
         vars.put("#{일정}", data.getOrDefault("eventAt", ""));
-        vars.put("#{안내}", message.body());
+        vars.put("#{안내}", message.getBody());
         return vars;
     }
 
     /** 이벤트 유형에 맞는 승인 템플릿 코드를 설정에서 찾는다. */
     private String resolveTemplateId(NotificationMessage message) {
-        String eventType = message.data() == null ? null : message.data().get("eventType");
+        String eventType = message.getData() == null ? null : message.getData().get("eventType");
         AlimtalkTemplate template = AlimtalkTemplate.REG_CLOSING;
         if (eventType != null) {
             try {
