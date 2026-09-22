@@ -686,3 +686,27 @@
 .notif-list li:last-child { border-bottom: 0; }
 .notif-list .ev { color: var(--muted); }
 .notif-list .when { font-size: var(--t-sm); color: var(--muted); white-space: nowrap; }
+
+/* ── 시험 정보 (2026-09-22) ──
+   날짜가 아닌 정보. 그전에는 상세에 회차 표밖에 없어 "이 시험 볼까"를 여기서 못 정하고
+   큐넷으로 나갔다. 없는 칸은 아예 안 그린다 — 빈 칸을 늘어놓으면 정보가 없어 보인다. */
+.exam-info { margin: var(--sp-6) 0; }
+.exam-info h2 {
+  font-size: var(--t-lg); font-weight: var(--w-bold); margin: 0 0 var(--sp-3);
+}
+.exam-info dl { margin: 0; }
+.exam-info dl > div {
+  display: flex; gap: var(--sp-4); align-items: baseline;
+  padding: var(--sp-3) 0; border-bottom: var(--bw) solid var(--border);
+}
+.exam-info dl > div:last-child { border-bottom: 0; }
+.exam-info dt {
+  flex: 0 0 5.5rem; font-size: var(--t-sm); color: var(--muted); margin: 0;
+}
+.exam-info dd { margin: 0; flex: 1 1 auto; min-width: 0; line-height: var(--lh); }
+.exam-info .raw { margin: 0; white-space: pre-wrap; line-height: var(--lh); }
+.exam-info .fineprint { margin-top: var(--sp-3); }
+@media (max-width: 768px) {
+  .exam-info dl > div { flex-direction: column; gap: var(--sp-1); }
+  .exam-info dt { flex: none; }
+}

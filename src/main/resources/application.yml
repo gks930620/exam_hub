@@ -126,6 +126,15 @@ qnet:
     key: ${QNET_API_KEY:}          # 공공데이터포털 서비스키(Encoding 키) — 발급 후 주입
     base-url: https://apis.data.go.kr/B490007/qualExamSchd
 
+  # ── 시험 상세 정보(응시료·시험과목·검정방법·합격기준) ──
+  # 일정과 다른 API 두 개(#3 응시수수료 · #5 종목별 자격정보)를 쓴다. 둘 다 종목코드 하나씩이라
+  # 전량이면 1,000콜이 넘는데, 일정 수집이 이미 매일 613콜을 쓴다. 한도가 계정당인지
+  # 오퍼레이션당인지 문서마다 다르게 적혀 있어서, 모르는 채로 한 번에 다 부르면 그날 일정 수집까지
+  # 같이 죽는다. 그래서 한 번에 batch-size 만큼만 받고 매달 조금씩 채운다(이 정보는 거의 안 변한다).
+  info:
+    enabled: ${QNET_INFO_ENABLED:false}
+    batch-size: ${QNET_INFO_BATCH_SIZE:50}
+
 # 기동 시 네트워크 수집(큐넷 613콜 + 스크래퍼 8곳)을 돌릴지. 기본 false — 파일 시드(스냅샷·비큐넷·데모)만 읽는다.
 # 예전엔 "큐넷이 꺼져 있으면 돌린다"였는데, .env 없는 새 환경에서 첫 기동에 시행처 8곳을 실호출했다.
 # 지금 당장 받아야 하면: ./gradlew bootRun --args="--collect.on-startup=true"

@@ -2,6 +2,7 @@ package com.test.test.exam.web.dto;
 
 import com.test.test.exam.common.TimeUtil;
 import com.test.test.exam.domain.Certificate;
+import com.test.test.exam.domain.CertificateDetail;
 import com.test.test.exam.domain.ExamSchedule;
 import com.test.test.exam.service.NextEvent;
 import lombok.AllArgsConstructor;
@@ -157,6 +158,13 @@ public final class CertificateDtos {
          * 판단은 연도로 거르기 전 전체로 해야 해서 서버가 정해 내려준다.
          */
         private boolean splitsByExamType;
+        /**
+         * 날짜가 아닌 정보 — 응시료·시험과목·검정방법·합격기준. <b>없으면 null</b>.
+         *
+         * <p>큐넷 시험만 채워진다. 비큐넷은 이 정보를 어디서 얻을지 아직 조사된 바가 없어서
+         * 비어 있는 것이 정상이다 — 화면이 빈 칸을 만들지 않도록 통째로 null 을 준다.
+         */
+        private ExamInfoDto examInfo;
         private List<ScheduleDto> schedules;
     }
 
@@ -213,6 +221,44 @@ public final class CertificateDtos {
                     s.getProvenance() == null ? null : s.getProvenance().getLabel(),
                     // 판정은 도메인 한 곳에서 — 출처가 비면 확정으로 보지 않는다(ExamSchedule.isConfirmed)
                     s.isConfirmed());
+        }
+    }
+
+    /**
+     * 시험의 날짜가 아닌 정보.
+     *
+     * <p>큐넷이 이 정보를 구조화해서 주지 않아 원문을 갈라 담는다. <b>못 가른 칸은 null 이고
+     * 원문({@code acquisitionRaw})은 남는다</b> — 화면이 조각이 없으면 원문을 보여주면 된다.
+     * 억지로 채운 값은 틀린 값이고, 틀린 응시료는 없는 응시료보다 나쁘다.
+     */
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ExamInfoDto {
+        /** 필기 응시료(원). 모르면 null — 0 이 아니다 */
+        private Integer feeWritten;
+        private Integer feePractical;
+        /** 응시료 원문 — 숫자로 못 가른 시험이 있다 */
+        private String feeRaw;
+        /** 관련학과. <b>응시자격이 아니다</b> — 큐넷 API 에 응시자격은 없다 */
+        private String relatedMajor;
+        private String subjects;
+        private String examMethod;
+        private String passStandard;
+        /** 취득방법 원문. 조각을 못 가른 시험은 이것만 있다 */
+        private String acquisitionRaw;
+        /** 언제 받아온 정보인지 — 오래된 값을 최신처럼 보여주지 않는다 */
+        private String collectedAt;
+
+        public static ExamInfoDto from(CertificateDetail d) {
+            if (d == null || !d.hasAnything()) {
+                return null;   // 보여줄 것이 없으면 화면이 칸을 만들지 않게 통째로 비운다
+            }
+            return new ExamInfoDto(
+                    d.getFeeWritten(), d.getFeePractical(), d.getFeeRaw(),
+                    d.getRelatedMajor(), d.getSubjects(), d.getExamMethod(),
+                    d.getPassStandard(), d.getAcquisitionRaw(),
+                    TimeUtil.format(d.getCollectedAt()));
         }
     }
 }

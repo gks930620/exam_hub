@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { fmtAt as fmt } from '../lib/format';
 import { roundLabel } from '../lib/status';
+import ExamInfo from '../components/ExamInfo';
 import { useAuth, useRequireLogin } from '../auth';
 import type { DetailResponse, ScheduleStatus } from '../api/types';
 import Icon from '../components/Icon';
@@ -144,7 +145,10 @@ export default function DetailPage() {
           )}
           {/* 표는 가로 스크롤 래퍼 안에만 둔다 — 390px 에서 표가 화면 밖으로 나갔다.
               래퍼는 회색 판(카드)이다 — 흰 바탕에 선만 있는 표는 면이 안 갈린다(설계 05 §19-3) */}
-          <div className="k-card k-card--flush k-tablewrap">
+          {/* 날짜만으로는 '이 시험 볼까'를 정할 수 없다 — 표 앞에 둔다 */}
+      <ExamInfo info={d.examInfo} />
+
+      <div className="k-card k-card--flush k-tablewrap">
             <table className="k-table data-table">
               <thead>
                 <tr>

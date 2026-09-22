@@ -95,7 +95,29 @@ export interface DetailResponse {
    * 회차 목록만 보고 정하면 연도 필터에 흔들리므로(그 해에 실기가 없으면 사라진다) 서버가 정해 준다.
    */
   splitsByExamType: boolean;
+  /** 날짜가 아닌 정보 — 아직 안 받은 시험은 null 이고 그게 정상이다 */
+  examInfo: ExamInfo | null;
   schedules: ScheduleDto[];
+}
+
+/**
+ * 시험의 날짜가 아닌 정보 — 응시료·시험과목·검정방법·합격기준.
+ *
+ * 큐넷이 덩어리 글로 줘서 못 가르는 칸이 있다. 그때는 null 이고 `acquisitionRaw` 만 남는다 —
+ * 억지로 채운 값은 틀린 값이고, 틀린 응시료는 없는 응시료보다 나쁘다.
+ */
+export interface ExamInfo {
+  /** 필기 응시료(원). 모르면 null — 0 이 아니다 */
+  feeWritten: number | null;
+  feePractical: number | null;
+  feeRaw: string | null;
+  /** 관련학과. <b>응시자격이 아니다</b> */
+  relatedMajor: string | null;
+  subjects: string | null;
+  examMethod: string | null;
+  passStandard: string | null;
+  acquisitionRaw: string | null;
+  collectedAt: string | null;
 }
 
 export interface FavoriteCard {

@@ -7,6 +7,7 @@ import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.domain.ExamSchedule;
 import com.test.test.exam.domain.ScheduleStatus;
 import com.test.test.exam.repository.CertificateRepository;
+import com.test.test.exam.repository.CertificateDetailRepository;
 import com.test.test.exam.repository.ExamScheduleRepository;
 import com.test.test.exam.repository.UserFavoriteRepository;
 import com.test.test.exam.web.dto.CertificateDtos;
@@ -47,6 +48,7 @@ public class CertificateService {
 
     private final CertificateRepository certificateRepository;
     private final ExamScheduleRepository examScheduleRepository;
+    private final CertificateDetailRepository certificateDetailRepository;
     private final UserFavoriteRepository userFavoriteRepository;
     private final DdayService ddayService;
 
@@ -179,6 +181,10 @@ public class CertificateService {
         // 구분(필기/실기)을 보여줄지는 연도로 거르기 전 전체로 본다 —
         // 그 해에 실기가 없다고 구분이 사라지면 화면이 해마다 달라 보인다.
         boolean splitsByExamType = ExamSchedule.splitsByExamType(schedules);
+
+        // 날짜가 아닌 정보(응시료·과목·합격기준). 아직 안 받은 시험은 null 이고 그게 정상이다.
+        CertificateDtos.ExamInfoDto examInfo = CertificateDtos.ExamInfoDto.from(
+                certificateDetailRepository.findByCertificateId(cert.getId()).orElse(null));
         boolean favorited = memberId != null
                 && userFavoriteRepository.existsByMemberIdAndCertificateId(memberId, cert.getId());
 
@@ -204,7 +210,7 @@ public class CertificateService {
         return new CertificateDtos.DetailResponse(
                 cert.getId(), cert.getName(), cert.getCategory(), cert.getAgency(), sourceUrl, collectedAt,
                 favorited, cert.isRollingAdmission(), CertificateDtos.EventDto.of(next),
-                splitsByExamType, scheduleDtos);
+                splitsByExamType, examInfo, scheduleDtos);
     }
 
     private List<CertificateDtos.Item> toItems(List<Certificate> certs, Long memberId) {
