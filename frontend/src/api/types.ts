@@ -402,3 +402,19 @@ export interface TestNotificationResult {
   delivered: boolean;
   message: string;
 }
+
+/**
+ * 내가 받은 알림 한 줄.
+ *
+ * `delivered` 는 성공이 아니라 <b>도달</b>이다 — 서버 로그로만 나간 건은 false 다.
+ * 성공으로만 세면 아무도 못 받은 날도 100% 로 보인다.
+ */
+export interface NotificationHistoryItem {
+  certificateName: string;
+  /** 몇 회 무슨 시험인지. 회차도 구분도 없는 시험이면 빈 문자열 */
+  round: string;
+  eventLabel: string;
+  sentAt: string;
+  channel: string;
+  delivered: boolean;
+}

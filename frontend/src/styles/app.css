@@ -668,3 +668,21 @@
   display: flex; align-items: center; gap: var(--sp-3);
   flex-wrap: wrap; margin: var(--sp-5) 0 var(--sp-3);
 }
+
+/* ── 최근 보낸 알림 (2026-09-22) ──
+   "나한테 뭘 보냈다는 건지"를 사용자가 직접 본다. 위의 확인 메일 버튼과 짝이라
+   둘이 어긋나면 접수를 놓치기 전에 알아챈다. */
+.notif-history { margin-top: var(--sp-8); }
+.notif-history h2 {
+  font-size: var(--t-lg); font-weight: var(--w-bold);
+  margin: 0 0 var(--sp-3);
+}
+.notif-list { list-style: none; margin: 0; padding: 0; }
+.notif-list li {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--sp-4); flex-wrap: wrap;
+  padding: var(--sp-3) 0; border-bottom: var(--bw) solid var(--border);
+}
+.notif-list li:last-child { border-bottom: 0; }
+.notif-list .ev { color: var(--muted); }
+.notif-list .when { font-size: var(--t-sm); color: var(--muted); white-space: nowrap; }

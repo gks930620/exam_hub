@@ -2,6 +2,7 @@ package com.test.test.exam.repository;
 
 import com.test.test.exam.domain.NotificationLog;
 import com.test.test.exam.domain.NotificationResult;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -54,4 +55,20 @@ public interface NotificationLogRepository extends JpaRepository<NotificationLog
              WHERE l.sentAt >= :since AND l.result <> com.test.test.exam.domain.NotificationResult.SUCCESS
             """)
     long countFailedSince(@Param("since") LocalDateTime since);
+
+    /**
+     * 내가 받은 발송 이력 — 최근 것부터.
+     *
+     * <p>화면이 "언제 어떤 시험으로 무엇을 보냈나"를 한 줄씩 보여준다. 회차와 시험을 같이 읽어야 해서
+     * {@code join fetch} 로 한 번에 가져온다 — 목록마다 다시 물으면 N+1 이다.
+     */
+    @Query("""
+            SELECT l FROM NotificationLog l
+              JOIN FETCH l.notificationSchedule ns
+              JOIN FETCH ns.examSchedule es
+              JOIN FETCH es.certificate
+             WHERE l.member.id = :memberId
+             ORDER BY l.sentAt DESC
+            """)
+    List<NotificationLog> findRecentByMember(@Param("memberId") Long memberId, Pageable pageable);
 }

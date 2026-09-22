@@ -4,7 +4,7 @@ import type {
   NotifySettings, CalendarResponse, BrowseResponse, CategoryResponse,
   MeResponse, BoardItem, PostListResponse, PostDetail, CommentItem, AdminScheduleRow,
   ManagerLoginResponse, DataMapResponse, OverviewResponse, LifecycleResponse, StatsResponse,
-  CollectHealthResponse, NotificationHealthResponse, TestNotificationResult,
+  CollectHealthResponse, NotificationHealthResponse, TestNotificationResult, NotificationHistoryItem,
 } from './types';
 
 export const examApi = {
@@ -38,6 +38,10 @@ export const examApi = {
 
   saveNotifySettings: (s: NotifySettings) =>
     api.put<NotifySettings>('/api/me/notify-settings', s),
+
+  /** 내가 받은 알림 목록 — "나한테 뭘 보냈다는 건지" */
+  notificationHistory: () =>
+    api.get<{ items: NotificationHistoryItem[] }>('/api/me/notifications'),
 
   /** 확인 메일 한 통 — 내 주소로 진짜 오는지 지금 눌러 본다 */
   sendTestNotification: () =>

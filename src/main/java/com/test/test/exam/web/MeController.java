@@ -4,6 +4,9 @@ import com.test.test.common.exception.BusinessRuleException;
 import com.test.test.exam.auth.CurrentMember;
 import com.test.test.exam.auth.MemberService;
 import com.test.test.exam.domain.Member;
+
+import java.util.Map;
+import com.test.test.exam.notification.NotificationHistoryService;
 import com.test.test.exam.notification.TestNotificationService;
 import com.test.test.exam.service.FavoriteService;
 import com.test.test.exam.web.dto.FavoriteDtos;
@@ -26,6 +29,7 @@ public class MeController {
     private final FavoriteService favoriteService;
     private final MemberService memberService;
     private final TestNotificationService testNotificationService;
+    private final NotificationHistoryService notificationHistoryService;
 
     /** 내 정보 */
     @GetMapping
@@ -127,6 +131,20 @@ public class MeController {
     public ResponseEntity<TestNotificationService.Result> sendTestNotification(
             @CurrentMember Member member) {
         return ResponseEntity.ok(testNotificationService.send(member));
+    }
+
+    /**
+     * 내가 받은 알림 목록 — <b>"나한테 뭘 보냈다는 건지"</b>.
+     *
+     * <p>확인 메일 버튼과 짝이다. 그 버튼은 "지금 보내면 오나"를, 이 목록은 "그동안 뭘 보냈나"를
+     * 답한다. 둘이 어긋나면(보냈다는데 받은 게 없으면) 접수를 놓치기 전에 알아챈다.
+     *
+     * <p>{@code delivered} 는 성공이 아니라 <b>도달</b>이다 — 서버 로그로만 나간 건은 false 다.
+     */
+    @GetMapping("/notifications")
+    public ResponseEntity<Map<String, Object>> notifications(@CurrentMember Member member) {
+        return ResponseEntity.ok(Map.of(
+                "items", notificationHistoryService.recent(member.getId())));
     }
 
     /**

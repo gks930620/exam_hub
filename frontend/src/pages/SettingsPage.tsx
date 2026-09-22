@@ -5,6 +5,7 @@ import { useAuth } from '../auth';
 import type { NotifySettings } from '../api/types';
 import Icon from '../components/Icon';
 import Skeleton from '../components/Skeleton';
+import NotificationHistory from '../components/NotificationHistory';
 
 // 알림 설정: 이벤트 유형별 on/off. 계정에 저장된다(설계 08).
 // 서버에 저장된 현재값을 먼저 읽어 초기값으로 쓴다(예전엔 무조건 전체 ON 으로 시작해 실제 상태를 잘못 보여줬다).
@@ -145,6 +146,9 @@ export default function SettingsPage() {
             {/* 발송 시점에 켜져 있는지로 판단한다 — 지난 알림은 나중에 켜도 오지 않는다(2026-09-08) */}
             {' '}끈 동안 지나간 알림은 <b>다시 켜도 오지 않습니다</b> — 알림은 보내는 시점의 설정을 따릅니다.
           </p>
+
+          {/* 위 버튼이 '지금 보내면 오나', 이 목록이 '그동안 뭘 보냈나' — 둘이 어긋나면 접수 전에 안다 */}
+          <NotificationHistory />
         </>
       )}
     </>
