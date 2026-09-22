@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,4 +109,63 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
     /** 상시·예약제 — "일정"이 없는 시험. 채울 대상에서 빼고 따로 센다. */
     @Query("SELECT COUNT(c) FROM Certificate c WHERE c.rollingAdmission = true AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)")
     long countVisibleRolling();
+
+    /**
+     * <b>지금 접수 중인</b> 시험 — 마감이 급한 것부터.
+     *
+     * <p>조건은 {@code ExamScheduleRepository.countCertificatesWithOpenRegistration} 과 <b>같아야 한다.</b>
+     * 칩에 "접수 중 232"라고 써 놓고 눌렀을 때 다른 수가 나오면 둘 중 무엇을 믿어야 할지 알 수 없다.
+     *
+     * <p>정렬은 그 시험에서 <b>가장 먼저 닫히는 접수의 마감</b> 기준이다. 이 목록의 쓸모가
+     * 순서에 있어서다 — 이번 주에 마감되는 것을 찾으러 온 사람이 인기순 232개를 넘기면 안 된다.
+     */
+    @Query("""
+            SELECT c FROM Certificate c
+             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')))
+               AND (:category = '' OR c.category = :category)
+               AND c.rollingAdmission = false
+               AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
+               AND EXISTS (SELECT 1 FROM ExamSchedule s
+                            WHERE s.certificate = c
+                              AND s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+                              AND s.regStartAt <= :now AND s.regEndAt >= :now)
+             ORDER BY (SELECT MIN(s2.regEndAt) FROM ExamSchedule s2
+                        WHERE s2.certificate = c
+                          AND s2.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+                          AND s2.regStartAt <= :now AND s2.regEndAt >= :now) ASC, c.name ASC
+            """)
+    Page<Certificate> browseOpen(@Param("q") String q, @Param("category") String category,
+                                 @Param("now") LocalDateTime now, Pageable pageable);
+
+    /**
+     * <b>접수가 곧 시작되는</b> 시험 — 시작이 가까운 것부터.
+     *
+     * <p>조건은 {@code ExamScheduleRepository.countCertificatesWithRegistrationOpening} 과 같다.
+     *
+     * <p><b>이미 접수 중인 시험은 뺀다.</b> 한 회차는 열려 있고 다른 회차가 곧 열리는 시험이 있는데
+     * (HSK 등), 카드는 가장 가까운 사건을 보여주므로 목록이 D-1 · D-15 · D-2 처럼 뒤죽박죽으로
+     * 보인다(2026-09-22 실측). 이미 열렸으면 "지금 접수 중"이지 "곧 시작"이 아니다.
+     */
+    @Query("""
+            SELECT c FROM Certificate c
+             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')))
+               AND (:category = '' OR c.category = :category)
+               AND c.rollingAdmission = false
+               AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
+               AND EXISTS (SELECT 1 FROM ExamSchedule s
+                            WHERE s.certificate = c
+                              AND s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+                              AND s.regStartAt > :from AND s.regStartAt <= :to)
+               AND NOT EXISTS (SELECT 1 FROM ExamSchedule o
+                                WHERE o.certificate = c
+                                  AND o.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+                                  AND o.regStartAt <= :from AND o.regEndAt >= :from)
+             ORDER BY (SELECT MIN(s2.regStartAt) FROM ExamSchedule s2
+                        WHERE s2.certificate = c
+                          AND s2.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+                          AND s2.regStartAt > :from AND s2.regStartAt <= :to) ASC, c.name ASC
+            """)
+    Page<Certificate> browseSoon(@Param("q") String q, @Param("category") String category,
+                                 @Param("from") LocalDateTime from, @Param("to") LocalDateTime to,
+                                 Pageable pageable);
 }

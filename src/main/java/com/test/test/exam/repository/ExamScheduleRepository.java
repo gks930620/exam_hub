@@ -73,13 +73,23 @@ public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long
             """)
     long countCertificatesWithOpenRegistration(@Param("now") LocalDateTime now);
 
-    /** 접수가 곧 시작되는 시험 수 — 첫 화면 지표. */
+    /**
+     * 접수가 곧 시작되는 시험 수 — 첫 화면 지표이자 "곧 접수 시작" 칩의 모집단.
+     *
+     * <p><b>이미 접수 중인 시험은 뺀다.</b> 두 칩이 겹치면 같은 시험이 양쪽에 세어지고,
+     * 카드가 보여주는 사건(가장 가까운 것)과 목록 정렬 기준이 달라져 순서가 깨져 보인다.
+     * 이미 열렸으면 "지금 접수 중"이지 "곧 시작"이 아니다(2026-09-22).
+     */
     @Query("""
             SELECT COUNT(DISTINCT s.certificate.id) FROM ExamSchedule s
             WHERE s.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
               AND s.regStartAt > :from AND s.regStartAt <= :to
               AND s.certificate.rollingAdmission = false
               AND s.certificate.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
+              AND NOT EXISTS (SELECT 1 FROM ExamSchedule o
+                               WHERE o.certificate = s.certificate
+                                 AND o.status = com.test.test.exam.domain.ScheduleStatus.ACTIVE
+                                 AND o.regStartAt <= :from AND o.regEndAt >= :from)
             """)
     long countCertificatesWithRegistrationOpening(@Param("from") LocalDateTime from,
                                                   @Param("to") LocalDateTime to);

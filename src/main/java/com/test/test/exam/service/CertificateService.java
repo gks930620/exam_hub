@@ -81,6 +81,17 @@ public class CertificateService {
     @Transactional(readOnly = true)
     public CertificateDtos.BrowseResponse browse(String query, String category,
                                                  int page, int size, Long memberId) {
+        return browse(query, category, null, page, size, memberId);
+    }
+
+    /**
+     * @param state 무엇만 볼지. {@code null} 이면 전체(인기순) — 예전과 같다.
+     *              {@code OPEN}·{@code SOON} 이면 그 상태만, 그리고 <b>급한 것부터</b> 나온다.
+     *              정렬을 따로 고르게 하지 않는 이유는 상태가 이미 무엇이 급한지를 담고 있어서다.
+     */
+    @Transactional(readOnly = true)
+    public CertificateDtos.BrowseResponse browse(String query, String category, BrowseState state,
+                                                 int page, int size, Long memberId) {
         if (page < 0) {
             throw new BusinessRuleException("page 는 0 이상이어야 합니다.");
         }
@@ -90,10 +101,23 @@ public class CertificateService {
 
         // 조건 없음을 빈 문자열로 표현한다. (":param IS NULL" 관용구는 Hibernate 가
         //  파라미터 타입을 못 잡아 조건 전체가 어긋난다 — 실제로 분류 필터가 빈 결과를 냈다)
-        Page<Certificate> found = certificateRepository.browse(
-                blankToEmpty(query), blankToEmpty(category),
-                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "favoriteCount")
-                        .and(Sort.by(Sort.Direction.ASC, "name"))));
+        String q = blankToEmpty(query);
+        String cat = blankToEmpty(category);
+        LocalDateTime now = TimeUtil.now();
+
+        // 상태를 고르면 정렬도 따라간다. 상태별 질의는 ORDER BY 를 자기가 들고 있어서
+        // Pageable 에 Sort 를 얹지 않는다(얹으면 두 정렬이 겹쳐 순서가 어긋난다).
+        Page<Certificate> found;
+        if (state == BrowseState.OPEN) {
+            found = certificateRepository.browseOpen(q, cat, now, PageRequest.of(page, size));
+        } else if (state == BrowseState.SOON) {
+            found = certificateRepository.browseSoon(q, cat, now,
+                    now.plusDays(BrowseState.SOON_DAYS), PageRequest.of(page, size));
+        } else {
+            found = certificateRepository.browse(q, cat,
+                    PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "favoriteCount")
+                            .and(Sort.by(Sort.Direction.ASC, "name"))));
+        }
 
         return new CertificateDtos.BrowseResponse(
                 toItems(found.getContent(), memberId),

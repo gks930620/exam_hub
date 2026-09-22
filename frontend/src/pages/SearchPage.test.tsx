@@ -72,7 +72,7 @@ describe('SearchPage', () => {
     expect(screen.getByText('전기기사')).toBeInTheDocument();
     expect(screen.getByText('480개')).toBeInTheDocument();
     // 한 쪽 48개 — 24개씩 35번 "더 보기"를 누르던 것을 번호 페이징으로 바꿨다
-    expect(examApi.browse).toHaveBeenCalledWith({ query: undefined, category: undefined, page: 0, size: 48 });
+    expect(examApi.browse).toHaveBeenCalledWith({ query: undefined, category: undefined, state: undefined, page: 0, size: 48 });
   });
 
   it('일정이 없는 시험은 "일정 미정"으로 표시된다', async () => {
@@ -277,5 +277,68 @@ describe('SearchPage', () => {
 
     expect(await screen.findByText(/분류를 불러오지 못했습니다/)).toBeTruthy();
     expect(screen.getByText('정보처리기사')).toBeTruthy();
+  });
+
+  /**
+   * 이 서비스의 약속은 "접수 마감을 놓치지 않게"인데, 2026-09-22 실측으로 232종이 접수 중이고
+   * 그중 6종이 그 주에 마감인데도 <b>그 6종을 찾을 방법이 없었다.</b> 841종을 인기순으로
+   * 훑는 것이 전부였다. 서버는 그 숫자를 이미 세고 있었고 어느 화면도 부르지 않았다.
+   */
+  it('상태 칩으로 지금 접수 중인 것만 볼 수 있다', async () => {
+    vi.spyOn(examApi, 'browse').mockResolvedValue(page([item()]));
+
+    renderAt();
+    await screen.findByText('정보처리기사');
+
+    fireEvent.click(screen.getByRole('button', { name: /지금 접수 중/ }));
+
+    await waitFor(() => expect(paramsOf().get('state')).toBe('OPEN'));
+    expect(examApi.browse).toHaveBeenLastCalledWith(
+      expect.objectContaining({ state: 'OPEN' }));
+  });
+
+  it('주소에 적힌 상태로 들어오면 그 칩이 눌린 채로 시작한다', async () => {
+    vi.spyOn(examApi, 'browse').mockResolvedValue(page([item()]));
+
+    renderAt('/?state=OPEN');
+    await screen.findByText('정보처리기사');
+
+    expect(screen.getByRole('button', { name: /지금 접수 중/ }))
+      .toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: /^전체$/ }))
+      .toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('같은 칩을 다시 누르면 전체로 돌아온다', async () => {
+    vi.spyOn(examApi, 'browse').mockResolvedValue(page([item()]));
+
+    renderAt('/?state=OPEN');
+    await screen.findByText('정보처리기사');
+
+    fireEvent.click(screen.getByRole('button', { name: /지금 접수 중/ }));
+
+    await waitFor(() => expect(paramsOf().get('state')).toBeNull());
+  });
+
+  /** 3쪽을 보다가 좁히면 결과가 3쪽보다 적을 수 있다 — 빈 화면이 뜬다. */
+  it('상태를 바꾸면 첫 쪽으로 돌아간다', async () => {
+    vi.spyOn(examApi, 'browse').mockResolvedValue(page([item()], { totalPages: 9 }));
+
+    renderAt('/?page=3');
+    await screen.findByText('정보처리기사');
+
+    fireEvent.click(screen.getByRole('button', { name: /지금 접수 중/ }));
+
+    await waitFor(() => expect(paramsOf().get('page')).toBeNull());
+  });
+
+  /** 칩에 숫자를 달면 분류를 고를 때 목록 수와 어긋난다 — 숫자는 목록 머리글 한 곳에만 둔다. */
+  it('무엇을 보고 있는지 목록 머리글이 말해 준다', async () => {
+    vi.spyOn(examApi, 'browse').mockResolvedValue(page([item()], { totalElements: 232 }));
+
+    renderAt('/?state=OPEN');
+
+    expect(await screen.findByRole('heading', { name: /지금 접수 중/ })).toBeInTheDocument();
+    expect(screen.getByText('232개')).toBeInTheDocument();
   });
 });

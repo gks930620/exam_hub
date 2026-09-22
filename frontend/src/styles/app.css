@@ -651,3 +651,12 @@
   padding-top: var(--sp-3); border-top: var(--bw) solid var(--border);
 }
 .nh-note { color: var(--warn-text); font-size: var(--t-xs); }
+
+/* ── 상태 칩 (2026-09-22) ──
+   "지금 접수 중"만 보는 길. 이 서비스의 약속이 접수 마감인데 그때까지 841종을 인기순으로
+   훑는 것이 전부였다. 히어로 바로 아래 한 줄 — 검색을 하기 전에 눈에 들어와야 한다.
+   숫자는 안 붙인다: 분류를 같이 걸면 전체 기준 숫자와 목록 수가 어긋난다. */
+.state-chips {
+  display: flex; gap: var(--sp-2); flex-wrap: wrap;
+  margin: calc(var(--sp-5) * -1) 0 var(--sp-5);
+}

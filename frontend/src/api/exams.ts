@@ -9,10 +9,12 @@ import type {
 
 export const examApi = {
   /** 전체 둘러보기 — 검색어 없이도, 일정 없는 시험도 포함해 페이지 단위로 가져온다(서버 상한 100). */
-  browse: (params: { query?: string; category?: string; page?: number; size?: number }) => {
+  browse: (params: { query?: string; category?: string; state?: string; page?: number; size?: number }) => {
     const q = new URLSearchParams();
     if (params.query) q.set('query', params.query);
     if (params.category) q.set('category', params.category);
+    // OPEN(지금 접수 중) · SOON(곧 접수). 서버가 그 상태만 걸러 주고 급한 것부터 정렬한다.
+    if (params.state) q.set('state', params.state);
     q.set('page', String(params.page ?? 0));
     q.set('size', String(params.size ?? 24));
     return api.get<BrowseResponse>(`/api/certificates/browse?${q.toString()}`);

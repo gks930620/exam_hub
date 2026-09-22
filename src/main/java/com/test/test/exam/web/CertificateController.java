@@ -2,6 +2,7 @@ package com.test.test.exam.web;
 
 import com.test.test.exam.auth.CurrentMember;
 import com.test.test.exam.domain.Member;
+import com.test.test.exam.service.BrowseState;
 import com.test.test.exam.service.CertificateService;
 import com.test.test.exam.web.dto.CertificateDtos;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +35,13 @@ public class CertificateController {
     public ResponseEntity<CertificateDtos.BrowseResponse> browse(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String category,
+            /* OPEN(지금 접수 중) · SOON(일주일 안에 접수 시작). 없으면 전체 */
+            @RequestParam(required = false) String state,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "24") int size,
             @CurrentMember(required = false) Member member) {
-        return ResponseEntity.ok(
-                certificateService.browse(query, category, page, size, idOf(member)));
+        return ResponseEntity.ok(certificateService.browse(
+                query, category, BrowseState.from(state), page, size, idOf(member)));
     }
 
     /** 분류 목록(+종목 수) — 시험 찾기 화면의 필터 칩. */

@@ -15,7 +15,24 @@ import CardStatus from '../components/CardStatus';
 const PAGE_SIZE = 48;
 const DEBOUNCE_MS = 300;
 
-type Patch = { q?: string | null; cat?: string | null; page?: number | null };
+/**
+ * 상태로 좁히기 — 이 서비스의 약속이 "접수 마감을 놓치지 않게"인데, 그전에는 841종을
+ * 인기순으로 훑는 길밖에 없었다. 2026-09-22 실측으로 232종이 접수 중이고 그중 6종이 그 주에
+ * 마감이었는데 그 6종을 찾을 방법이 없었다.
+ *
+ * <b>칩에 숫자를 달지 않는다.</b> 분류나 검색어를 같이 걸면 전체 기준 숫자와 목록 수가 어긋난다 —
+ * 두 숫자가 다르면 어느 쪽을 믿어야 할지 알 수 없다. 숫자는 목록 머리글 한 곳에만 둔다.
+ *
+ * 정렬을 따로 고르게 하지도 않는다. 상태가 이미 무엇이 급한지를 담고 있어서
+ * 서버가 접수 중이면 마감순, 곧 접수면 시작순으로 준다(설계 05 §19-6 덜어내기).
+ */
+const STATE_CHIPS = [
+  { value: '', label: '전체' },
+  { value: 'OPEN', label: '지금 접수 중' },
+  { value: 'SOON', label: '곧 접수 시작' },
+] as const;
+
+type Patch = { q?: string | null; cat?: string | null; state?: string | null; page?: number | null };
 
 export default function SearchPage() {
   const { me } = useAuth();
@@ -23,6 +40,7 @@ export default function SearchPage() {
   const [params, setParams] = useSearchParams();
   const q = (params.get('q') ?? '').trim();
   const cat = params.get('cat') ?? '';
+  const state = params.get('state') ?? '';
   // 주소는 사람이 보는 것이라 1부터, 서버는 0부터
   const page = Math.max(0, (Number(params.get('page')) || 1) - 1);
 
@@ -50,19 +68,19 @@ export default function SearchPage() {
     // 요청은 순서대로 돌아오지 않는다 — 먼저 보낸 느린 응답이 나중에 와서 새 결과를 덮으면 안 된다
     const my = ++seq.current;
     setLoading(true);
-    examApi.browse({ query: q || undefined, category: cat || undefined, page, size: PAGE_SIZE })
+    examApi.browse({ query: q || undefined, category: cat || undefined, state: state || undefined, page, size: PAGE_SIZE })
       .then((r) => {
         if (my !== seq.current) return;
         setData(r);
         setErr(null);
-        if (!q && !cat) setGrandTotal(r.totalElements);
+        if (!q && !cat && !state) setGrandTotal(r.totalElements);
       })
       .catch((e: unknown) => {
         if (my !== seq.current) return;
         setErr(e instanceof Error ? e.message : '목록을 불러오지 못했습니다.');
       })
       .finally(() => { if (my === seq.current) setLoading(false); });
-  }, [q, cat, page]);
+  }, [q, cat, state, page]);
 
   function update(patch: Patch, replace = false) {
     setParams((prev) => {
@@ -151,10 +169,21 @@ export default function SearchPage() {
         </div>
       </section>
 
+      {/* 같은 칩을 다시 누르면 전체로 — 끄는 법을 따로 배우지 않아도 된다 */}
+      <div className="state-chips" role="group" aria-label="상태로 좁히기">
+        {STATE_CHIPS.map((c) => (
+          <button key={c.value || 'all'} type="button" className="k-chip"
+                  aria-pressed={state === c.value}
+                  onClick={() => update({ state: (state === c.value ? null : c.value) || null, page: null })}>
+            {c.label}
+          </button>
+        ))}
+      </div>
+
       {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
 
       <div className="k-section list-head" ref={listTop}>
-        <h2>{q ? `‘${q}’ 검색 결과` : cat || '전체 시험'} <span className="more">{total.toLocaleString()}개</span></h2>
+        <h2>{headingFor(q, cat, state)} <span className="more">{total.toLocaleString()}개</span></h2>
       </div>
 
       {/* 첫 로딩은 스켈레톤으로 자리를 미리 잡는다 — 한 화면분(6장)만. 48개를 다 깔면 화면이 맥동한다(설계 05 §8) */}
@@ -249,6 +278,19 @@ function EmptyResult({ q, cat, onReset }: {
  * 분류 38개를 드롭다운에 그냥 쏟으면 개수 순으로 섞여 훑기 어렵다.
  * 접두어(국가기술자격 / 어학 / IT …)로 묶고 그 안은 가나다순 — 묶음도 가나다순, 접두어 없는 것은 맨 뒤.
  */
+/**
+ * 지금 무엇을 보고 있나 — 한 줄로. 좁힌 조건이 제목에 안 보이면 사용자는 목록이 왜 짧은지 모른다.
+ * 숫자는 이 줄 하나가 들고 있다(칩에는 안 붙인다 — 조건이 걸리면 어긋난다).
+ */
+function headingFor(q: string, cat: string, state: string): string {
+  const what = state === 'OPEN' ? '지금 접수 중'
+    : state === 'SOON' ? '곧 접수 시작'
+    : null;
+  if (q) return what ? `‘${q}’ 검색 결과 · ${what}` : `‘${q}’ 검색 결과`;
+  if (cat) return what ? `${cat} · ${what}` : cat;
+  return what ?? '전체 시험';
+}
+
 function groupCategories(cats: CategoryItem[]): { label: string; items: CategoryItem[] }[] {
   const groups = new Map<string, CategoryItem[]>();
   for (const c of cats) {
