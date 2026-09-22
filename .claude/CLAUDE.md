@@ -37,7 +37,7 @@ Spring Boot 백엔드(REST API) + **React CSR 웹 프런트** 프로젝트입니
 |---|---|---|---|
 | 백엔드 (REST API) | Spring Boot 3.3 (Gradle, Java 17, JPA) | 저장소 루트 (`src/`) — 패키지 `com.test.test`, 도메인 `com.test.test.exam.*` | `./gradlew test` |
 | 웹 프런트 | **React + Vite + TypeScript (CSR)** | `frontend/` | `npm test` / `npm run build` |
-| 배포 | Railway | 절차: `.claude/skills/railway-deploy/SKILL.md`(**아직 뼈대만** — 환경변수 목록은 `진행사항/02_내가_할일.md`) | — |
+| 배포 | Railway | 절차: `.claude/skills/railway-deploy/SKILL.md`(**채움 2026-09-22** — 환경변수 목록만 `진행사항/02_내가_할일.md` §4) | — |
 | ~~앱~~ | ~~Flutter~~ | **삭제됨(2026-07-30)** — 웹 전용, 앱 미개발 | — |
 | ~~SSR 웹~~ | ~~Thymeleaf pSEO~~ | **제거됨 — CSR 전환(2026-07-29). SEO는 추후 Next.js** | — |
 

@@ -114,6 +114,12 @@ tasks.named('processResources') {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+	// Dockerfile 은 자바 소스가 아니라서 Gradle 이 변경을 모른다 — 그대로 두면 이 파일만 고쳤을 때
+	// DockerBuildContextTest 가 UP-TO-DATE 로 건너뛰어 '성공' 으로 보인다(2026-09-22 실측).
+	// 검사 대상을 입력으로 밝혀 두면 바뀔 때마다 다시 돈다.
+	inputs.file("$projectDir/Dockerfile").withPropertyName('dockerfile')
+			.withPathSensitivity(PathSensitivity.RELATIVE)
 }
 
 // 운영 DB 에 매니저를 직접 INSERT 할 때 쓸 비밀번호 해시를 찍는다.

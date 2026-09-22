@@ -10,11 +10,20 @@
 # ===== Stage 1: 프런트 빌드 =====
 FROM node:20-alpine AS web
 
-WORKDIR /web
+# 이미지 안에서도 저장소와 같은 모양으로 둔다 — <루트>/frontend 와 <루트>/design_kits_lets.
+# main.tsx 가 디자인 킷을 ../../design_kits_lets 로 읽기 때문에(킷 문서가 정한 위치),
+# 프런트만 복사하면 컨테이너 안에서 그 경로가 비어 빌드가 이렇게 죽는다:
+#   Could not resolve "../../design_kits_lets/base.css" from "src/main.tsx"
+# 로컬에서는 폴더가 제자리에 있어 아무 증상이 없다 — 배포를 눌러야 아는 부류다(2026-09-22 실측).
+# DockerBuildContextTest 가 이 관계를 지킨다.
+WORKDIR /src/frontend
 
 # 의존성 먼저 (캐싱)
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund
+
+# 디자인 킷은 프런트의 형제 자리에 — 소스보다 먼저 두어 캐시를 덜 깬다
+COPY design_kits_lets/ /src/design_kits_lets/
 
 # 소스 복사 후 빌드
 COPY frontend/ ./
@@ -36,7 +45,7 @@ RUN gradle dependencies --no-daemon || true
 COPY src ./src
 
 # 1)에서 만든 프런트 번들을 정적 리소스로 주입
-COPY --from=web /web/dist ./src/main/resources/static
+COPY --from=web /src/frontend/dist ./src/main/resources/static
 
 # 프런트 태스크는 건너뛰고(JDK 이미지에 npm 없음) JAR 만 만든다
 RUN gradle bootJar --no-daemon -x test -PskipFrontend
