@@ -4,7 +4,7 @@ import type {
   NotifySettings, CalendarResponse, BrowseResponse, CategoryResponse,
   MeResponse, BoardItem, PostListResponse, PostDetail, CommentItem, AdminScheduleRow,
   ManagerLoginResponse, DataMapResponse, OverviewResponse, LifecycleResponse, StatsResponse,
-  CollectHealthResponse, NotificationHealthResponse,
+  CollectHealthResponse, NotificationHealthResponse, TestNotificationResult,
 } from './types';
 
 export const examApi = {
@@ -38,6 +38,10 @@ export const examApi = {
 
   saveNotifySettings: (s: NotifySettings) =>
     api.put<NotifySettings>('/api/me/notify-settings', s),
+
+  /** 확인 메일 한 통 — 내 주소로 진짜 오는지 지금 눌러 본다 */
+  sendTestNotification: () =>
+    api.post<TestNotificationResult>('/api/me/notify-settings/test', {}),
 
   calendar: (year: number, month: number) =>
     api.get<CalendarResponse>(`/api/me/calendar?year=${year}&month=${month}`),

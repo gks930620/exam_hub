@@ -23,6 +23,9 @@ export default function SettingsPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [testing, setTesting] = useState(false);
+  /** 확인 메일 결과 — 보냈다/못 보냈다를 그대로 보여준다(지어내지 않는다) */
+  const [testResult, setTestResult] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -31,6 +34,25 @@ export default function SettingsPage() {
       .catch((e: Error) => { if (alive) setLoadError(e.message); });
     return () => { alive = false; };
   }, []);
+
+  /**
+   * 확인 메일 한 통. 주소에 오타가 하나 있으면 형식 검증은 통과하고 발송도 성공으로 기록되는데
+   * 메일만 조용히 사라진다 — 사용자는 시험 접수를 놓친 뒤에야 안다. 지금 눌러 보면 지금 고친다.
+   *
+   * 서버가 <b>실제로 쓰인 채널</b>을 알려 준다. 로그로 빠졌으면 "보냈습니다"라고 하지 않는다.
+   */
+  async function sendTest() {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const r = await examApi.sendTestNotification();
+      setTestResult({ ok: r.delivered, text: r.message });
+    } catch (e) {
+      setTestResult({ ok: false, text: e instanceof Error ? e.message : '보내지 못했습니다.' });
+    } finally {
+      setTesting(false);
+    }
+  }
 
   async function save(next: NotifySettings) {
     const prev = s;
@@ -97,6 +119,24 @@ export default function SettingsPage() {
                 <span className="switch" aria-hidden="true"><i /></span>
               </button>
             ))}
+          </div>
+
+          {/* 주소가 맞는지는 눌러 봐야 안다 — 접수를 놓친 뒤에 알면 늦다 */}
+          <div className="test-mail">
+            <button type="button" className="k-btn k-btn--secondary k-btn--sm"
+                    onClick={sendTest} disabled={testing || !email}>
+              {testing ? '보내는 중…' : '확인 메일 보내기'}
+            </button>
+            {!email && (
+              <span className="k-help">
+                받을 주소가 없습니다 — <Link to="/me">내 정보</Link>에서 먼저 넣어 주세요.
+              </span>
+            )}
+            {testResult && (
+              <span className={`k-help${testResult.ok ? '' : ' k-help--err'}`} role="status">
+                {testResult.text}
+              </span>
+            )}
           </div>
 
           <p className="fineprint">

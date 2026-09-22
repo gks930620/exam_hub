@@ -4,6 +4,7 @@ import com.test.test.common.exception.BusinessRuleException;
 import com.test.test.exam.auth.CurrentMember;
 import com.test.test.exam.auth.MemberService;
 import com.test.test.exam.domain.Member;
+import com.test.test.exam.notification.TestNotificationService;
 import com.test.test.exam.service.FavoriteService;
 import com.test.test.exam.web.dto.FavoriteDtos;
 import com.test.test.exam.web.dto.MeDtos;
@@ -24,6 +25,7 @@ public class MeController {
 
     private final FavoriteService favoriteService;
     private final MemberService memberService;
+    private final TestNotificationService testNotificationService;
 
     /** 내 정보 */
     @GetMapping
@@ -110,6 +112,21 @@ public class MeController {
                 request.getNotifyReg(), request.getNotifyExam(), request.getNotifyChange());
         return ResponseEntity.ok(new MeDtos.NotifySettings(
                 member.isNotifyReg(), member.isNotifyExam(), member.isNotifyChange()));
+    }
+
+    /**
+     * 확인 메일 한 통 — <b>내 주소로 진짜 오나</b>.
+     *
+     * <p>주소에 오타가 하나 있으면 형식 검증은 통과하고, 발송도 성공으로 기록되고,
+     * 메일만 조용히 사라진다. 사용자는 시험 접수를 놓친 뒤에야 안다. 지금 눌러 보면 지금 고칠 수 있다.
+     *
+     * <p>답은 정직해야 한다 — 발송이 로그 채널로 빠졌으면 "보냈습니다"가 아니라
+     * "보낼 수단이 없습니다"라고 말한다({@code delivered=false}).
+     */
+    @PostMapping("/notify-settings/test")
+    public ResponseEntity<TestNotificationService.Result> sendTestNotification(
+            @CurrentMember Member member) {
+        return ResponseEntity.ok(testNotificationService.send(member));
     }
 
     /**

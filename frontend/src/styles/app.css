@@ -660,3 +660,11 @@
   display: flex; gap: var(--sp-2); flex-wrap: wrap;
   margin: calc(var(--sp-5) * -1) 0 var(--sp-5);
 }
+
+/* ── 확인 메일 줄 (2026-09-22) ──
+   "내 주소로 진짜 오나"를 눌러 보는 자리. 오타 하나면 알림이 조용히 0이 되고,
+   사용자는 접수를 놓친 뒤에야 안다 — 그 전에 알 수 있어야 한다. */
+.test-mail {
+  display: flex; align-items: center; gap: var(--sp-3);
+  flex-wrap: wrap; margin: var(--sp-5) 0 var(--sp-3);
+}

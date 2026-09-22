@@ -387,3 +387,16 @@ export interface StatsResponse {
   /** 상시·예약제 — 일정 없음 안에 포함 */
   rolling: number;
 }
+
+/**
+ * 확인 메일 한 통의 결과 — "내 주소로 진짜 오나".
+ *
+ * 주소에 오타가 하나 있으면 형식 검증은 통과하고 발송도 성공으로 기록되는데 메일만 사라진다.
+ * 그래서 `delivered` 를 따로 둔다 — 로그 채널로 빠졌으면 보낸 것이 아니다.
+ */
+export interface TestNotificationResult {
+  /** 실제로 쓰인 채널. LOG 면 사람에게 안 갔다 */
+  channel: string;
+  delivered: boolean;
+  message: string;
+}
