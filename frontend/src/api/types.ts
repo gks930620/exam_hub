@@ -273,6 +273,8 @@ export interface CollectHealthRow {
   consecutiveFailures: number;
   /** 손봐야 하는가 — 화면이 이 값으로 경고 띠를 띄우고 위로 올린다 */
   needsAttention: boolean;
+  /** 눈으로 확인할 원본 주소. API·시드처럼 열어 볼 화면이 없으면 null */
+  siteUrl: string | null;
 }
 
 export interface CollectHealthResponse {

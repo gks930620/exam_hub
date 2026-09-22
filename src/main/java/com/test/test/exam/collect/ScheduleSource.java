@@ -25,6 +25,19 @@ public interface ScheduleSource {
     /** crawl_log.source 에 기록될 소스 식별자 (예: QNET_API, MOCK). */
     String sourceId();
 
+    /**
+     * 사람이 눈으로 확인할 <b>원본 주소</b>. 없으면 {@code null}.
+     *
+     * <p>수집 상태 화면이 "시행처가 화면을 바꿨을 수 있습니다 — 원본 사이트를 열어 확인해 주세요"
+     * 라고 말하면서 정작 <b>주소를 안 줬다</b>(2026-09-22). 매니저가 그 사이트를 따로 찾아야 하면
+     * 그날 안 본다. 할 일을 말했으면 그 자리에서 할 수 있어야 한다.
+     *
+     * <p>API·시드처럼 열어 볼 화면이 없는 소스는 {@code null} 이 맞다 — 없는 링크를 지어내지 않는다.
+     */
+    default String siteUrl() {
+        return null;
+    }
+
     /** 전체 종목 일정 수집. */
     List<CollectedSchedule> fetchAll();
 

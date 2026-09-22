@@ -58,7 +58,7 @@ public class HealthService {
 
         return sources.stream()
                 .filter(ScheduleSource::usesNetwork)
-                .map(s -> CollectHealth.of(s.sourceId(), bySource.get(s.sourceId()), now))
+                .map(s -> CollectHealth.of(s.sourceId(), bySource.get(s.sourceId()), now, s.siteUrl()))
                 .sorted(Comparator.comparing((CollectHealth h) -> !h.isNeedsAttention())
                         .thenComparing(CollectHealth::getSource))
                 .toList();

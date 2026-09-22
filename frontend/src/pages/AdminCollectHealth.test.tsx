@@ -14,6 +14,7 @@ function row(over: Partial<CollectHealthRow> = {}): CollectHealthRow {
   return {
     source: 'YBM_WEB', state: 'OK', stateLabel: '정상', message: '112건을 가져왔습니다.',
     lastRunAt: '2026-09-21T05:00', fetched: 112, consecutiveFailures: 0, needsAttention: false,
+    siteUrl: 'https://exam.ybmnet.co.kr/toeic/',
     ...over,
   };
 }
@@ -94,5 +95,31 @@ describe('AdminCollectHealth', () => {
 
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.getByText(/권한이 없습니다/)).toBeTruthy();
+  });
+
+  /** '원본 사이트를 열어 확인해 주세요' 라고 해 놓고 주소를 안 주면 그날 안 본다. */
+  it('원본 사이트 링크를 그 자리에 준다', async () => {
+    vi.spyOn(examApi, 'adminCollectHealth').mockResolvedValue({
+      items: [row({ source: 'KCA_WEB', siteUrl: 'https://www.cq.or.kr/qh_quagm03_001.do' })],
+      total: 1, needsAttention: 0,
+    });
+
+    render(<AdminCollectHealth />);
+
+    const link = await screen.findByRole('link', { name: /원본/ });
+    expect(link).toHaveAttribute('href', 'https://www.cq.or.kr/qh_quagm03_001.do');
+  });
+
+  /** 열어 볼 화면이 없는 소스(큐넷 API·시드)에 없는 링크를 지어내지 않는다. */
+  it('원본 주소가 없으면 링크를 만들지 않는다', async () => {
+    vi.spyOn(examApi, 'adminCollectHealth').mockResolvedValue({
+      items: [row({ source: 'QNET_API', siteUrl: null })],
+      total: 1, needsAttention: 0,
+    });
+
+    render(<AdminCollectHealth />);
+
+    await screen.findByText('QNET_API');
+    expect(screen.queryByRole('link', { name: /원본/ })).toBeNull();
   });
 });

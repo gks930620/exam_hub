@@ -82,7 +82,13 @@ function Row({ row }: { row: CollectHealthRow }) {
       <td><span className={`k-badge ${TONE[row.state] ?? ''}`}>{row.stateLabel}</span></td>
       <td className="nowrap">{row.lastRunAt ? fmtAt(row.lastRunAt) : '—'}</td>
       <td className="k-num">{row.lastRunAt ? row.fetched.toLocaleString() : '—'}</td>
-      <td className="cell-sub">{row.message}</td>
+      <td className="cell-sub">
+        {row.message}
+        {/* 할 일을 말했으면 그 자리에서 할 수 있어야 한다 — 사이트를 따로 찾게 하면 그날 안 본다 */}
+        {row.siteUrl && (
+          <> <a href={row.siteUrl} target="_blank" rel="noreferrer noopener">원본 사이트 열기</a></>
+        )}
+      </td>
     </tr>
   );
 }

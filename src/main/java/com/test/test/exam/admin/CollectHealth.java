@@ -62,6 +62,12 @@ public class CollectHealth {
     private int consecutiveFailures;
     /** 손봐야 하는가 — 화면이 이 값으로 경고를 띄운다 */
     private boolean needsAttention;
+    /**
+     * 눈으로 확인할 원본 주소. 없는 소스(API·시드)는 {@code null}.
+     *
+     * <p>"원본 사이트를 열어 확인해 주세요"라고 해 놓고 주소를 안 주면 그날 안 본다.
+     */
+    private String siteUrl;
 
     /**
      * @param logs 그 소스의 최근 실행 기록. 순서는 상관없다 — 시각으로 가장 최근을 고른다.
@@ -70,11 +76,16 @@ public class CollectHealth {
      *             같이 세면 멀쩡한 소스가 "고장"으로 뜬다(거짓 경보는 경보가 없는 것보다 나쁘다).
      */
     public static CollectHealth of(String source, List<CrawlLog> logs, LocalDateTime now) {
+        return of(source, logs, now, null);
+    }
+
+    /** @param siteUrl 사람이 열어 볼 원본 주소(없으면 null) */
+    public static CollectHealth of(String source, List<CrawlLog> logs, LocalDateTime now, String siteUrl) {
         logs = logs == null ? List.of() : logs.stream().filter(l -> !l.isPartial()).toList();
         if (logs.isEmpty()) {
             return new CollectHealth(source, State.NEVER_RAN, State.NEVER_RAN.getLabel(),
-                    "아직 한 번도 돌지 않았습니다. 배치(매일 05:00)를 기다리거나 재수집을 눌러 보세요.",
-                    null, 0, 0, true);
+                    "아직 한 번도 돌지 않았습니다. 매일 05:00 배치를 기다려 보세요 — 내일도 비어 있으면 원본 사이트를 확인해 주세요.",
+                    null, 0, 0, true, siteUrl);
         }
 
         List<CrawlLog> newestFirst = logs.stream()
@@ -97,20 +108,20 @@ public class CollectHealth {
             String why = last.getErrorMessage() == null ? "사유가 기록되지 않았습니다" : last.getErrorMessage();
             return new CollectHealth(source, State.FAILED, State.FAILED.getLabel(),
                     (consecutive >= 2 ? consecutive + "회 연속 실패 — " : "") + why,
-                    at, fetched, consecutive, true);
+                    at, fetched, consecutive, true, siteUrl);
         }
         if (fetched == 0) {
             return new CollectHealth(source, State.EMPTY, State.EMPTY.getLabel(),
                     "오류 없이 0건을 가져왔습니다. 시행처가 화면을 바꿨을 수 있습니다 — 원본 사이트를 열어 확인해 주세요.",
-                    at, 0, 0, true);
+                    at, 0, 0, true, siteUrl);
         }
         if (Duration.between(last.getStartedAt(), now).compareTo(STALE_AFTER) > 0) {
             return new CollectHealth(source, State.STALE, State.STALE.getLabel(),
                     "마지막 수집이 " + Duration.between(last.getStartedAt(), now).toDays()
                             + "일 전입니다. 배치가 멈췄을 수 있습니다.",
-                    at, fetched, 0, true);
+                    at, fetched, 0, true, siteUrl);
         }
         return new CollectHealth(source, State.OK, State.OK.getLabel(),
-                fetched + "건을 가져왔습니다.", at, fetched, 0, false);
+                fetched + "건을 가져왔습니다.", at, fetched, 0, false, siteUrl);
     }
 }

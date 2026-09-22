@@ -54,6 +54,12 @@ public abstract class AbstractHtmlScheduleSource implements ScheduleSource {
     /** 일정이 실린 페이지 주소. */
     protected abstract String pageUrl();
 
+    /** 스크래퍼가 읽는 그 화면이 곧 사람이 열어 볼 화면이다 — 따로 적어 두면 어긋난다. */
+    @Override
+    public String siteUrl() {
+        return pageUrl();
+    }
+
     /** HTML → 일정 목록. 네트워크와 무관한 순수 함수 (픽스처로 테스트한다). */
     public abstract List<CollectedSchedule> parse(String html);
 

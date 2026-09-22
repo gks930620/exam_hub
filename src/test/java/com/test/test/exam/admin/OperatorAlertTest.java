@@ -26,12 +26,12 @@ class OperatorAlertTest {
 
     private static CollectHealth ok(String source) {
         return new CollectHealth(source, CollectHealth.State.OK, "정상",
-                "112건을 가져왔습니다.", "2026-09-22T05:00", 112, 0, false);
+                "112건을 가져왔습니다.", "2026-09-22T05:00", 112, 0, false, null);
     }
 
     private static CollectHealth broken(String source, CollectHealth.State state, String message) {
         return new CollectHealth(source, state, state.getLabel(), message,
-                "2026-09-22T05:00", 0, 2, true);
+                "2026-09-22T05:00", 0, 2, true, null);
     }
 
     private static NotificationHealth healthyNotifications() {
@@ -110,7 +110,7 @@ class OperatorAlertTest {
     void never_ran_is_worth_saying() {
         Optional<OperatorAlert> alert = OperatorAlert.of(
                 List.of(new CollectHealth("HSK_WEB", CollectHealth.State.NEVER_RAN, "기록 없음",
-                        "아직 한 번도 돌지 않았습니다.", null, 0, 0, true)),
+                        "아직 한 번도 돌지 않았습니다.", null, 0, 0, true, null)),
                 healthyNotifications(), "https://exam.example.com");
 
         assertThat(alert).isPresent();
