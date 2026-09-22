@@ -2,6 +2,7 @@ package com.test.test.exam.community;
 
 import com.test.test.common.exception.AccessDeniedException;
 import com.test.test.common.exception.BusinessRuleException;
+import com.test.test.exam.common.LikeQuery;
 import com.test.test.common.exception.EntityNotFoundException;
 import com.test.test.exam.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -62,10 +63,12 @@ public class CommunityService {
         PageRequest pageable = PageRequest.of(page, size);
 
         Board board = (boardCode == null || boardCode.isBlank()) ? null : Board.from(boardCode);
-        String q = query == null ? "" : query.trim();
+        // 사용자가 친 %·_ 는 글자 그대로 찾는다(LikeQuery). 안 막으면 % 하나로 전체가 나온다.
+        String raw = query == null ? "" : query.trim();
+        String q = LikeQuery.escape(raw);
 
         Page<Post> found;
-        if (!q.isEmpty()) {
+        if (!raw.isEmpty()) {
             found = board == null
                     ? postRepository.search(q, pageable)
                     : postRepository.searchInBoard(q, board, pageable);

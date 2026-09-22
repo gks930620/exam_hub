@@ -94,4 +94,41 @@ describe('ExamInfo', () => {
 
     expect(screen.getByText(/2026-09-22 확인/)).toBeTruthy();
   });
+
+  // ───────────────────────────────────────────────────────────────────────
+  // 2026-09-23 QA 가 찾은 것: 기술사 2차는 실기가 아니라 면접이다.
+  // 지금 정보가 채워진 50종이 전부 기술사인데, 화면은 100% "실기 87,100원" 이라고 썼다.
+  // 그중 48종은 바로 아래 칸이 "면접" 이라고 말한다 — 한 화면 안에서 두 말을 했다.
+  // 큐넷이 준 것은 "1차/2차" 일 뿐이고 실기라고 부른 건 우리 추측이었다.
+  // ───────────────────────────────────────────────────────────────────────
+
+  it('2차가 면접인 시험은 면접이라고 쓴다 — 실기라고 부르지 않는다', () => {
+    render(<ExamInfo info={info({
+      feeWritten: 67800, feePractical: 87100,
+      examMethod: '- 필기 : 단답형 및 주관식 논술형(매교시당 100분, 총 400분) '
+        + '- 면접 : 구술형 면접시험(30분 정도)',
+      subjects: '- 건축시공, 공정관리 및 적산에 관한 사항',
+      passStandard: '- 100점 만점에 60점 이상.',
+    })} />);
+
+    expect(screen.getByText(/필기 67,800원 · 면접 87,100원/)).toBeTruthy();
+    expect(screen.queryByText(/실기 87,100원/)).toBeNull();
+  });
+
+  /** 시행처가 쓴 말을 모르면 지어내지 않는다 — 큐넷이 부른 대로 1차·2차라고 쓴다. */
+  it('2차가 무엇인지 모르면 1차·2차라고 쓴다', () => {
+    render(<ExamInfo info={info({
+      feeWritten: 50000, feePractical: 60000,
+      examMethod: null, subjects: '아무 과목', passStandard: null,
+    })} />);
+
+    expect(screen.getByText(/1차 50,000원 · 2차 60,000원/)).toBeTruthy();
+    expect(screen.queryByText(/실기/)).toBeNull();
+  });
+
+  it('검정방법이 실기라고 하면 실기라고 쓴다', () => {
+    render(<ExamInfo info={info()} />);
+
+    expect(screen.getByText(/필기 19,400원 · 실기 22,600원/)).toBeTruthy();
+  });
 });

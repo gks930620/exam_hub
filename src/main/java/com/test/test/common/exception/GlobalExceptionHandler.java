@@ -97,6 +97,23 @@ public class GlobalExceptionHandler {
     /**
      * 파라미터 타입 불일치 (예: Long에 문자열 전달)
      */
+
+    /**
+     * 경로변수가 <b>비어 있어 변환이 null 로 끝난 경우</b> — {@code /api/certificates/%20} 같은 것.
+     *
+     * <p>{@code /abc} 는 타입 불일치로 400 이 되는데 공백·탭만 있는 값은 이 예외가 되어 500 이었다
+     * (2026-09-23 QA 실측). 500 은 운영에서 고장 경보를 울리는 등급이라, 잘못된 주소 하나에
+     * 매니저가 불려 나온다 — 잘못은 보낸 쪽에 있으므로 400 이 맞다.
+     */
+    @ExceptionHandler(org.springframework.web.bind.MissingPathVariableException.class)
+    public ResponseEntity<ErrorResponse> handleMissingPathVariable(
+            org.springframework.web.bind.MissingPathVariableException e) {
+        log.warn("Missing Path Variable: {}", e.getVariableName());
+
+        return ResponseEntity.badRequest().body(ErrorResponse.of(
+                "주소의 " + e.getVariableName() + " 값이 올바르지 않습니다.", "TYPE_MISMATCH"));
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         log.warn("Type Mismatch: {} - {}", e.getName(), e.getValue());

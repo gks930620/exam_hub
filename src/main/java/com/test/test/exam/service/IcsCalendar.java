@@ -2,9 +2,13 @@ package com.test.test.exam.service;
 
 import com.test.test.exam.web.dto.MeDtos;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 내 시험 일정을 <b>내 달력에 넣을 수 있는 파일</b>(.ics)로 만든다.
@@ -25,6 +29,9 @@ public final class IcsCalendar {
     /** 표준이 정한 줄 끝. LF 만 쓰면 거부하는 앱이 있다. */
     private static final String CRLF = "\r\n";
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("yyyyMMdd");
+    /** RFC 5545 의 UTC 시각 표기. DTSTAMP 는 이 모양이어야 한다. */
+    private static final DateTimeFormatter STAMP =
+            DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneOffset.UTC);
 
     /** 우리가 만든 항목임을 UID 로 밝힌다 — 다시 받아도 두 개가 생기지 않게 */
     private static final String UID_DOMAIN = "@exam-hub";
@@ -38,23 +45,38 @@ public final class IcsCalendar {
                 .append("METHOD:PUBLISH").append(CRLF)
                 .append("X-WR-CALNAME:내 시험 일정").append(CRLF);
 
+        // 이 파일을 만든 시각. VEVENT 마다 같은 값을 쓴다 — 한 번에 만든 파일이라 그게 맞다.
+        String stamp = STAMP.format(Instant.now());
+
+        // 같은 UID 가 두 번 들어가면 RFC 위반이고 달력 앱마다 다르게 군다(하나를 버리거나 둘 다 만든다).
+        // 회차를 안 매기는 시험은 시험일마다 회차가 따로인데 발표일을 공유해서 실제로 겹친다
+        // (관심 6종 파일 252건 중 22쌍, 2026-09-23 QA). 사용자에겐 어차피 같은 일정이라 하나만 남긴다.
+        Set<String> seen = new LinkedHashSet<>();
         if (events != null) {
             for (MeDtos.CalendarEvent e : events) {
-                appendEvent(out, e);
+                if (seen.add(uid(e))) {
+                    appendEvent(out, e, stamp);
+                }
             }
         }
         return out.append("END:VCALENDAR").append(CRLF).toString();
     }
 
-    private static void appendEvent(StringBuilder out, MeDtos.CalendarEvent e) {
+    /** 같은 일정은 늘 같은 UID — 다시 받아도 두 개가 안 생기고 겹쳐 쓴다. */
+    private static String uid(MeDtos.CalendarEvent e) {
         LocalDate day = LocalDate.parse(e.getDate().substring(0, 10));
-        String title = (e.getName() + " " + e.getLabel()).trim();
+        return e.getCertificateId() + "-" + e.getType() + "-" + day.format(DATE) + UID_DOMAIN;
+    }
+
+    private static void appendEvent(StringBuilder out, MeDtos.CalendarEvent e, String stamp) {
+        LocalDate day = LocalDate.parse(e.getDate().substring(0, 10));
+        // 회차 라벨이 빈 시험이 있어 그냥 이으면 공백이 두 칸 남는다.
+        String title = (e.getName() + " " + e.getLabel()).replaceAll("\\s+", " ").trim();
 
         out.append("BEGIN:VEVENT").append(CRLF)
-                // 같은 일정은 늘 같은 UID — 다시 받으면 겹쳐 쓰고 두 개가 안 생긴다.
-                // 시각을 섞으면 받을 때마다 새 항목이 되어 달력이 금방 지저분해진다.
-                .append("UID:").append(e.getCertificateId()).append('-')
-                .append(e.getType()).append('-').append(day.format(DATE)).append(UID_DOMAIN).append(CRLF)
+                .append("UID:").append(uid(e)).append(CRLF)
+                // RFC 5545 §3.6.1 이 필수로 정한 값. 없으면 엄격한 파서가 파일을 거부한다.
+                .append("DTSTAMP:").append(stamp).append(CRLF)
                 .append("DTSTART;VALUE=DATE:").append(day.format(DATE)).append(CRLF)
                 // 하루짜리는 끝이 다음 날이어야 한다. 같은 날로 두면 구글 캘린더에서 안 보인다.
                 .append("DTEND;VALUE=DATE:").append(day.plusDays(1).format(DATE)).append(CRLF)

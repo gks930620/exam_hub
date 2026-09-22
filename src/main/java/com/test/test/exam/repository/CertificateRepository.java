@@ -37,7 +37,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
      * 자격증명 부분 일치 검색 (대소문자 무시).
      * <b>폐지·개칭된 시험은 뺀다</b> — 오지 않을 접수를 기다리게 두면 안 된다.
      */
-    @Query("SELECT c FROM Certificate c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED) ORDER BY c.favoriteCount DESC, c.name ASC")
+    @Query("SELECT c FROM Certificate c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\' AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED) ORDER BY c.favoriteCount DESC, c.name ASC")
     List<Certificate> searchByName(@Param("q") String q, Pageable pageable);
 
     /** 인기순 TOP N — 폐지·개칭은 뺀다(검색·둘러보기와 같은 모집단). */
@@ -66,7 +66,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
      */
     @Query("""
             SELECT c FROM Certificate c
-             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')))
+             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\')
                AND (:category = '' OR c.category = :category)
                AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
             """)
@@ -121,7 +121,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
      */
     @Query("""
             SELECT c FROM Certificate c
-             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')))
+             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\')
                AND (:category = '' OR c.category = :category)
                AND c.rollingAdmission = false
                AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
@@ -148,7 +148,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
      */
     @Query("""
             SELECT c FROM Certificate c
-             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')))
+             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\')
                AND (:category = '' OR c.category = :category)
                AND c.rollingAdmission = false
                AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)

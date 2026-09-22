@@ -115,4 +115,61 @@ class IcsCalendarTest {
     private static List<String> uids(String ics) {
         return ics.lines().filter(l -> l.startsWith("UID:")).toList();
     }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // QA 가 실제 파일을 뜯어 찾은 것 (2026-09-23). 단위 테스트는 두 건짜리 표본만 봐서
+    // 놓쳤다 — 관심 6종을 담은 실제 파일은 252건이었고 거기서 드러났다.
+    // ─────────────────────────────────────────────────────────────────────
+
+    /**
+     * RFC 5545 §3.6.1 은 VEVENT 에 {@code DTSTAMP} 를 <b>필수</b>로 규정한다.
+     * 없으면 엄격한 파서가 파일을 거부한다 — 사용자는 왜 안 들어가는지 모른다.
+     */
+    @Test
+    @DisplayName("VEVENT 마다 DTSTAMP 가 있다 — 없으면 엄격한 달력이 파일을 거부한다")
+    void every_event_has_a_dtstamp() {
+        String ics = IcsCalendar.render(TWO);
+
+        assertThat(ics.lines().filter(l -> l.startsWith("DTSTAMP:")).count()).isEqualTo(2);
+        assertThat(ics).containsPattern("DTSTAMP:\\d{8}T\\d{6}Z");
+    }
+
+    /**
+     * <b>한 파일 안에 같은 UID 가 두 번 들어가면 안 된다.</b>
+     *
+     * <p>회차를 안 매기는 시험(토익스피킹 등)은 시험일마다 회차가 따로 있는데 <b>발표일을 공유</b>한다.
+     * UID 키가 (시험, 종류, 날짜)라 두 회차의 발표가 같은 UID 가 된다 — 실제 파일 252건 중
+     * 22쌍이 겹쳤다(2026-09-23 QA). 달력 앱마다 하나를 버리거나 중복 항목을 만든다.
+     */
+    @Test
+    @DisplayName("같은 날 같은 종류가 겹치면 하나만 남긴다 — 회차가 달라도 사용자에겐 같은 일정이다")
+    void duplicate_uids_are_collapsed() {
+        String ics = IcsCalendar.render(List.of(
+                event("2026-09-23", "RESULT", "TOEIC Speaking", "발표"),
+                event("2026-09-23", "RESULT", "TOEIC Speaking", "발표")));
+
+        assertThat(uids(ics)).hasSize(1);
+        assertThat(ics.split("BEGIN:VEVENT", -1)).hasSize(2);   // 앞 조각 + 1건
+    }
+
+    /** 날짜나 종류가 다르면 서로 다른 일정이다 — 합치면 안 된다. */
+    @Test
+    @DisplayName("날짜나 종류가 다르면 그대로 둘 다 남는다")
+    void different_days_or_types_are_kept() {
+        String ics = IcsCalendar.render(List.of(
+                event("2026-09-23", "RESULT", "토익", "발표"),
+                event("2026-09-24", "RESULT", "토익", "발표"),
+                event("2026-09-23", "EXAM", "토익", "시험")));
+
+        assertThat(uids(ics)).hasSize(3).doesNotHaveDuplicates();
+    }
+
+    /** 회차 라벨이 빈 시험은 제목에 공백이 두 칸 남으면 안 된다. */
+    @Test
+    @DisplayName("제목에 공백이 겹치지 않는다")
+    void title_has_no_double_space() {
+        String ics = IcsCalendar.render(List.of(event("2026-10-19", "EXAM", "토익", "발표")));
+
+        assertThat(ics).contains("SUMMARY:토익 발표").doesNotContain("  ");
+    }
 }

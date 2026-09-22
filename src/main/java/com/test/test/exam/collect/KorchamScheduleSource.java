@@ -80,6 +80,19 @@ public class KorchamScheduleSource implements ScheduleSource {
         return "KORCHAM_WEB";
     }
 
+    /**
+     * 매니저가 눈으로 확인할 원본 주소.
+     *
+     * <p>다른 스크래퍼 20곳은 {@code AbstractHtmlScheduleSource} 에서 물려받는데 이 소스만
+     * 여러 번 POST 하는 구조라 인터페이스를 직접 구현한다 — 그래서 기본값 null 로 남아 있었다.
+     * 수집 상태 화면이 "원본 사이트를 열어 확인해 주세요"라고 해 놓고 이 한 곳만 주소를 안 줬다
+     * (2026-09-23 QA).
+     */
+    @Override
+    public String siteUrl() {
+        return BASE;
+    }
+
     @Override
     public java.util.Set<String> coveredAgencies() {
         return java.util.Set.of(AGENCY);

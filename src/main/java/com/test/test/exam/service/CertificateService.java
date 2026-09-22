@@ -2,6 +2,7 @@ package com.test.test.exam.service;
 
 import com.test.test.common.exception.BusinessRuleException;
 import com.test.test.common.exception.EntityNotFoundException;
+import com.test.test.exam.common.LikeQuery;
 import com.test.test.exam.common.TimeUtil;
 import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.domain.ExamSchedule;
@@ -103,7 +104,9 @@ public class CertificateService {
 
         // 조건 없음을 빈 문자열로 표현한다. (":param IS NULL" 관용구는 Hibernate 가
         //  파라미터 타입을 못 잡아 조건 전체가 어긋난다 — 실제로 분류 필터가 빈 결과를 냈다)
-        String q = blankToEmpty(query);
+        // 사용자가 친 %·_ 는 글자 그대로 찾는다. 안 막으면 % 하나가 전체 목록을 부르고,
+        // 사용자는 걸렀다고 믿는데 안 걸러진 목록을 본다(2026-09-23 QA 실측).
+        String q = LikeQuery.escape(blankToEmpty(query));
         String cat = blankToEmpty(category);
         LocalDateTime now = TimeUtil.now();
 

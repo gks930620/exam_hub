@@ -58,10 +58,31 @@ export default function ExamInfo({ info }: { info: ExamInfoData | null }) {
  */
 function feeText(info: ExamInfoData): string | null {
   const won = (n: number) => `${n.toLocaleString()}원`;
+  const [first, second] = roundLabels(info);
   if (info.feeWritten != null && info.feePractical != null) {
-    return `필기 ${won(info.feeWritten)} · 실기 ${won(info.feePractical)}`;
+    return `${first} ${won(info.feeWritten)} · ${second} ${won(info.feePractical)}`;
   }
-  if (info.feeWritten != null) return `필기 ${won(info.feeWritten)}`;
-  if (info.feePractical != null) return `실기 ${won(info.feePractical)}`;
+  if (info.feeWritten != null) return `${first} ${won(info.feeWritten)}`;
+  if (info.feePractical != null) return `${second} ${won(info.feePractical)}`;
   return info.feeRaw || null;
+}
+
+/**
+ * 1차·2차를 <b>시행처가 부른 말</b>로 바꾼다.
+ *
+ * <p>큐넷이 주는 응시료는 "1차 : 67800, 2차 : 87100" 뿐이다. 2차를 "실기"라고 부른 건
+ * 우리 추측이었는데, <b>기술사 2차는 실기가 아니라 면접이다</b> — 정보가 채워진 50종이 전부
+ * 기술사라 화면이 100% "실기"라고 썼고, 그중 48종은 바로 아래 검정방법 칸이 "면접"이라고
+ * 말했다. 한 화면 안에서 두 말을 한 것이다(2026-09-23 QA).
+ *
+ * <p>그래서 검정방법에 <b>시행처가 실제로 쓴 말</b>이 있으면 그걸 쓰고, 없으면 지어내지 않고
+ * 큐넷이 부른 대로 1차·2차라고 쓴다. 모르는 것을 아는 척하지 않는다.
+ */
+function roundLabels(info: ExamInfoData): [string, string] {
+  const m = info.examMethod ?? '';
+  const first = m.includes('필기') ? '필기' : '1차';
+  const second = m.includes('면접') && !m.includes('실기') ? '면접'
+    : m.includes('실기') ? '실기'
+      : '2차';
+  return [first, second];
 }

@@ -40,8 +40,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
             SELECT p FROM Post p
              WHERE p.deleted = false
-               AND (LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%'))
-                    OR LOWER(CAST(p.content AS string)) LIKE LOWER(CONCAT('%', :q, '%')))
+               AND (LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\'
+                    OR LOWER(CAST(p.content AS string)) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\')
              ORDER BY p.createdAt DESC
             """)
     Page<Post> search(@Param("q") String q, Pageable pageable);
@@ -51,8 +51,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
             SELECT p FROM Post p
              WHERE p.deleted = false AND p.board = :board
-               AND (LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%'))
-                    OR LOWER(CAST(p.content AS string)) LIKE LOWER(CONCAT('%', :q, '%')))
+               AND (LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\'
+                    OR LOWER(CAST(p.content AS string)) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\')
              ORDER BY p.createdAt DESC
             """)
     Page<Post> searchInBoard(@Param("q") String q, @Param("board") Board board, Pageable pageable);

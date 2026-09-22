@@ -40,4 +40,27 @@ describe('CalendarPage', () => {
     // 2026-09-06 은 일요일
     expect(document.querySelector('.day-row .date span')?.textContent).toBe('일');
   });
+
+  /**
+   * 2026-09-23 QA 지적: 이 버튼이 들어간 커밋에 프런트 테스트가 하나도 없었다.
+   * 우리 메일이 스팸함에 빠져도 휴대폰 달력 알림은 울린다 — 이 버튼이 그 두 번째 줄이다.
+   */
+  it('내 달력에 넣기를 누르면 파일을 받는다', async () => {
+    const dl = vi.spyOn(examApi, 'downloadCalendar').mockResolvedValue(undefined);
+
+    render(<MemoryRouter><CalendarPage /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole('button', { name: /내 달력에 넣기/ }));
+
+    await waitFor(() => expect(dl).toHaveBeenCalled());
+  });
+
+  /** 못 받았으면 조용히 넘어가지 않는다 — 사용자는 눌렀는데 아무 일도 안 난 줄 안다. */
+  it('못 받으면 이유를 보여준다', async () => {
+    vi.spyOn(examApi, 'downloadCalendar').mockRejectedValue(new Error('권한이 없습니다'));
+
+    render(<MemoryRouter><CalendarPage /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole('button', { name: /내 달력에 넣기/ }));
+
+    expect(await screen.findByText(/권한이 없습니다/)).toBeTruthy();
+  });
 });

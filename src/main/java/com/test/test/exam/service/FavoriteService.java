@@ -176,16 +176,19 @@ public class FavoriteService {
         for (ExamSchedule s : schedules) {
             Long cid = s.getCertificate().getId();
             String name = nameById.getOrDefault(cid, "");
-            String typeLabel = s.roundLabel(Boolean.TRUE.equals(splitByCert.get(cid)));
+            // 회차도 구분도 없는 시험은 붙일 말이 없다. 그냥 이으면 " 접수 마감" 처럼 공백으로
+            // 시작한다 — DdayService 는 이미 고쳤는데 캘린더만 남아 있었다(2026-09-23 QA).
+            String label = s.roundLabel(Boolean.TRUE.equals(splitByCert.get(cid)));
+            String typeLabel = label.isBlank() ? "" : label + " ";
 
             addIfInMonth(events, s.getRegStartAt() == null ? null : s.getRegStartAt().toLocalDate(),
-                    monthStart, monthEnd, "REG_START", cid, name, typeLabel + " 접수 시작");
+                    monthStart, monthEnd, "REG_START", cid, name, typeLabel + "접수 시작");
             addIfInMonth(events, s.getRegEndAt() == null ? null : s.getRegEndAt().toLocalDate(),
-                    monthStart, monthEnd, "REG_END", cid, name, typeLabel + " 접수 마감");
+                    monthStart, monthEnd, "REG_END", cid, name, typeLabel + "접수 마감");
             addIfInMonth(events, s.getExamStartDate(),
-                    monthStart, monthEnd, "EXAM", cid, name, typeLabel + " 시험");
+                    monthStart, monthEnd, "EXAM", cid, name, typeLabel + "시험");
             addIfInMonth(events, s.getResultDate(),
-                    monthStart, monthEnd, "RESULT", cid, name, typeLabel + " 발표");
+                    monthStart, monthEnd, "RESULT", cid, name, typeLabel + "발표");
         }
         events.sort(Comparator.comparing(MeDtos.CalendarEvent::getDate));
         return events;
