@@ -136,7 +136,7 @@ class DeployPortabilityTest {
         /**
          * 운영(Railway)에서 넣을 환경변수만으로 카카오 등록이 완성되는지 — oauth.yml 없이.
          *
-         * <p>여기 적힌 목록이 곧 <b>배포 시 넣어야 할 변수의 정답지</b>다(내가_볼것/00_할일 4순위와 같아야 한다).
+         * <p>여기 적힌 목록이 곧 <b>배포 시 넣어야 할 변수의 정답지</b>다(사용자_문서/00_할일 4순위와 같아야 한다).
          * 카카오는 스프링 내장 provider 가 아니라서 grant-type·redirect-uri 도 기본값이 없다 —
          * 하나라도 빠지면 {@code authorizationGrantType cannot be null} 로 기동이 깨진다.
          * 반면 <b>provider URI 3종은 안 넘긴다</b>. 그건 application.yml 이 이미 갖고 있어야 하니까.

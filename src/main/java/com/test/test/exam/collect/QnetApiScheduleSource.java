@@ -31,7 +31,7 @@ import java.util.Set;
  * 실 큐넷(공공데이터포털 한국산업인력공단) 국가자격 시험일정 API 어댑터.
  * {@code qnet.api.enabled=true}(운영 기본) 일 때만 활성.
  *
- * <p>동작(근거: {@code AI가_볼것/시험데이터/큐넷_API/}):
+ * <p>동작(근거: {@code 작업자_AI_문서/시험데이터/큐넷_API/}):
  * <ol>
  *   <li><b>종목목록</b>(API#2, XML, {@code openapi.q-net.or.kr}, HTTP)로 jmCd·종목명·자격구분·계열 확보</li>
  *   <li>각 jmCd 로 <b>시험일정</b>(API#1, JSON, {@code apis.data.go.kr}, HTTPS)을 조회 → 필기/실기 회차를 {@link CollectedSchedule} 로 정규화</li>
@@ -48,7 +48,7 @@ import java.util.Set;
  *   <li>⚠️ 한 회차에 행이 둘 올 수 있다(일반접수/빈자리접수로 추정). 접수 시작이 이른 쪽을 쓴다.</li>
  * </ul>
  *
- * <p>키 인코딩 함정({@code AI가_볼것/시험데이터/큐넷_API/README.md} §0): URI 를 직접 조립하므로
+ * <p>키 인코딩 함정({@code 작업자_AI_문서/시험데이터/큐넷_API/README.md} §0): URI 를 직접 조립하므로
  * <b>Encoding 키</b>를 {@code QNET_API_KEY} 에 넣는다.
  */
 @Slf4j

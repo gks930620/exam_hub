@@ -1,6 +1,6 @@
 {
   "_comment": "큐넷 종목목록 API(InquiryListNationalQualifcationSVC/getList) 응답을 그대로 옮긴 시험 마스터. 일정은 없다 — sourceCode(jmCd)가 있어 나중에 시험일정 API 와 이름이 아니라 코드로 붙는다.",
-  "_source": "설계/시험데이터/큐넷_API/samples/종목목록_전체_613종.xml (2026-08-10 실호출)",
+  "_source": "작업자_AI_문서/시험데이터/큐넷_API/samples/종목목록_전체_613종.xml (2026-08-10 실호출)",
   "_prod": "CertificateMasterInitializer 가 운영에서도 읽는다 — 실참조 데이터(코드컨벤션 §5-2).",
   "generatedAt": "2026-08-10",
   "count": 613,

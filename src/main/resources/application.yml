@@ -6,7 +6,7 @@ dotenv:
 server:
   # 로컬 기본 포트는 8101 이다(2026-09-10 사용자 지시 — 그전엔 8081, 8080 은 다른 프로젝트가 자주 쓴다).
   # ⚠️ 포트를 바꾸면 카카오·구글 콘솔의 Redirect URI 도 같이 바꿔야 소셜 로그인이 된다
-  #    (콘솔에는 8081~8085 만 등록돼 있다 — 진행사항/02_내가_할일 참고).
+  #    (콘솔에는 8081~8085 만 등록돼 있다 — 사용자_문서/00_할일 참고).
   # 운영(Railway)은 주입된 PORT 를 그대로 따른다.
   port: ${PORT:8101}
   forward-headers-strategy: framework
@@ -146,7 +146,7 @@ collect:
 
 # 시행처 HTML 스크래핑(상의·KCA·Kdata·TOEIC·TEPS·JLPT·TOPIK·국시원). 기본 on — 운영에서도 05:00 전량 배치에서 API 와 같이 돈다.
 # 기동 때는 안 돈다(collect.on-startup 이 false 면 파일 시드만 읽는다). 사이트가 깨져 소음이 나면 false 로 끈다.
-# 사이트별 실측·수리법: 설계/시험데이터/03_스크래퍼_정비.md
+# 사이트별 실측·수리법: 작업자_AI_문서/시험데이터/03_스크래퍼_정비.md
 scrape:
   enabled: ${SCRAPE_ENABLED:true}
 

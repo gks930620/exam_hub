@@ -18,8 +18,6 @@ export default defineConfig(({ mode }) => {
       // 예전 세션의 Vite 가 포트를 물고 있어 새 것이 옆 포트로 떴는데, 낡은 쪽이 다른 백엔드로
       // 프록시하는 바람에 화면이 401 만 뱉었다(2026-09-10). 조용히 어긋나느니 안 뜨는 게 낫다.
       strictPort: true,
-      // 디자인 킷이 프런트 루트 밖(프로젝트 루트)에 있다 — 개발 서버가 거기까지 읽게 허용
-      fs: { allow: ['..'] },
       proxy: {
         '/api': { target, changeOrigin: true },
         // 소셜 로그인 — /oauth2/authorization/{provider} 는 서버(Spring Security)의 주소다.

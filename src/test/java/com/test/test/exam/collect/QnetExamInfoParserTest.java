@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 통째로 들어 있고, 앞에는 <b>CSS 블록이 박혀 있고</b>(BODY {'{'} FONT-SIZE: 10pt ...{'}'}),
  * 항목 구분은 원문자(①~⑤)인데 그마저 <b>이중 이스케이프</b>되어 온다({@code &amp;#9312;}).
  * 여기 있는 문자열은 전부 저장소의 실제 응답 샘플에서 그대로 가져왔다
- * ({@code AI가_볼것/시험데이터/큐넷_API/samples/}).
+ * ({@code 작업자_AI_문서/시험데이터/큐넷_API/samples/}).
  *
  * <p>순수 파서라 컨벤션 §6 의 예외로 둔다 — 네트워크 없이 시험할 수 있어야 한다.
  */
