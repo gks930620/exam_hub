@@ -40,7 +40,7 @@ public class AdminDataMapController {
         // 상시·예약제는 "일정"이 존재하지 않아 채울 대상이 아니다 — 분모에서 빼고 따로 알린다.
         long rolling = certificateRepository.countVisibleRolling();
         long totalExams = certificateRepository.countVisible() - rolling;
-        // 일정 없음을 이유별로 — 사람이 넣어야 하는 건 수기 필수뿐이다(설계/시험데이터/05_일정없음_분류)
+        // 일정 없음을 이유별로 — 사람이 넣어야 하는 건 수기 필수뿐이다(AI가_볼것/시험데이터/05_일정없음_분류)
         java.util.List<com.test.test.exam.domain.Certificate> all = certificateRepository.findAll();
         // "일정 있음" = 살아 있는(ACTIVE) 일정 중 날짜가 하나라도 있는 회차를 가진 시험.
         // 할 일 판정(AdminOverviewController.judge)과 같은 셈법이어야 위(채움률)·아래(할 일) 숫자가 맞는다 —
