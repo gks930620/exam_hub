@@ -174,6 +174,10 @@ export default function SearchPage() {
               value={input}
               onChange={(e) => onInput(e.target.value)}
               aria-label="시험명 검색"
+              // 검색어는 주소(URL)에 실린다. 아주 길면 톰캣이 스프링보다 먼저 거절하면서
+              // 우리 화면이 아니라 톰캣 HTML 오류 페이지를 보여 준다 — 화면에서는 그 길이가 안 되게 막는다.
+              // (주소창에 직접 붙여 넣는 경로는 여전히 남는다 — 그건 서버 쪽 숙제다)
+              maxLength={100}
             />
           </div>
           {/* 분류 조회가 죽어도 목록은 나온다 — 대신 드롭다운이 왜 비었는지는 말해 준다 */}
