@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -62,9 +63,22 @@ public class CertificateMasterInitializer {
     private final CertificateRepository certificateRepository;
     private final ObjectMapper objectMapper;
 
+    /**
+     * 시험 데이터를 <b>SQL 시드</b>({@code seed_exams.sql})가 넣었나. 로컬 기본 true.
+     *
+     * <p>true 면 이 로더는 쉰다 — 같은 데이터를 두 번 넣을 이유가 없고, 이 경로는 레코드마다
+     * 조회·비교를 하느라 느리다(2,400건에 75초, 2026-11-13 실측). 운영과 테스트는 false 라 그대로 돈다.
+     */
+    @Value("${seed.from-sql:false}")
+    private boolean seedFromSql;
+
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void seedMaster() {
+        if (seedFromSql) {
+            log.info("[MasterSeed] 마스터는 seed_exams.sql 이 넣었다 — 건너뛴다");
+            return;
+        }
         // 이미 있는 이름·slug 는 건너뛴다(공백 무시 비교)
         Map<String, Certificate> existing = new HashMap<>();
         Set<String> existingSlugs = new HashSet<>();

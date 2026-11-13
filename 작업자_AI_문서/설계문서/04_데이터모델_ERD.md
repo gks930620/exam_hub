@@ -11,7 +11,7 @@
 > FCM 컬럼은 없고(알림은 이메일), slug 는 pSEO 가 아니라 내부 식별용이다. 현행 스키마는
 > `com.test.test.exam.domain` 엔티티와 `08_계정과_커뮤니티.md` §2 가 기준이다(2026-09-08).
 >
-> **⚠️ 구현 현행화 노트 (2026-07-24)**: 실제 구현은 개발 H2(**MODE=MySQL**, ddl-auto=update, 파일 H2 `data/h2/`) · 운영 **MySQL**(Railway, ddl-auto=update). `exam_schedule.year`는 H2 예약어 회피로 컬럼명 **`exam_year`**로 매핑(엔티티 속성명은 `year` 유지).
+> **⚠️ 구현 현행화 노트 (2026-07-24)**: 실제 구현은 개발 H2(**MODE=MySQL**, ddl-auto=update, 인메모리 H2 + `seed_exams.sql`) · 운영 **MySQL**(Railway, ddl-auto=update). `exam_schedule.year`는 H2 예약어 회피로 컬럼명 **`exam_year`**로 매핑(엔티티 속성명은 `year` 유지).
 
 ---
 

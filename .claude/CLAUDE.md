@@ -45,18 +45,20 @@ Spring Boot 백엔드(REST API) + **React CSR 웹 프런트** 프로젝트입니
 이 프로젝트만의 특이사항:
 
 - **인증**: 소셜 로그인(카카오·구글 OAuth2) → `Member` + JWT(`Authorization: Bearer`). 매니저(운영자)만 `/manager/login` 폼 로그인. 구 `X-Device-Id` 기기식별은 **폐기·전환 완료**. 설계는 `08_계정과_커뮤니티.md`.
-- **DB**: 로컬 = **파일 H2**(`data/h2/`, MODE=MySQL, ddl-auto=update) / 운영 = Railway MySQL (env 미설정 시 fail-fast).
-  - ⚠️ 컨벤션 §5-2 의 "로컬은 매 기동 초기화" 에 대한 **명시적 예외**(2026-09-01 사용자 결정).
-    시험일정 2,452건을 매 기동 다시 넣느라 5~9분씩 걸렸다. 파일로 두니 **재기동 27초**.
-    아직 사용자 데이터가 쌓이지 않는 단계라 잃을 게 없어서 지금 바꿨다.
-  - **초기화하려면 `data/h2/` 폴더를 지우고 다시 켠다**(= 예전 create 와 같은 상태, 첫 기동 9분).
-    스키마를 크게 바꿔 `update` 가 못 따라갈 때도 이렇게 한다.
-  - URL 에 `AUTO_SERVER=TRUE` 가 붙어 있다 — 없으면 devtools 재기동 때 파일 잠금이 겹쳐 기동이 깨진다.
+- **DB**: 로컬 = **인메모리 H2**(`jdbc:h2:mem:examhub`, MODE=MySQL, ddl-auto=create) / 운영 = Railway MySQL (env 미설정 시 fail-fast).
+  - **기동할 때마다 비우고 `seed_exams.sql` 로 다시 채운다** — 컨벤션 §5-2 그대로다. 따로 초기화할 게 없다.
+  - 한동안 파일 H2 였다(2026-09-01 ~ 2026-11-13). 적재가 느려서 피했던 건데, 느린 원인이 INSERT 가
+    아니라 **수집 파이프라인(레코드당 쿼리 14.5개)과 SQL 로깅(91만 줄·25MB)** 이었다. 그걸 고치니
+    **전체 기동 23초**가 되어 원칙으로 돌아왔다(2026-11-13 사용자 결정·실측).
+  - SQL 로그는 기본 꺼져 있다. 볼 때만 `--logging.level.org.hibernate.SQL=debug`.
 - **외부 연동 상태**: `QnetApiScheduleSource`(큐넷 실 API)는 **실호출 검증 완료**(2026-08-28 전량 613콜). 발송은 **이메일 실발송**(`EmailNotificationSender`). 로컬도 `.env` 의 `QNET_API_ENABLED=true` 로 실 API 를 쓰되 **기동 때는 수집하지 않고**(`collect.on-startup` 기본 false) `seed/schedules_snapshot.json` 스냅샷으로 복원한다. 실 수집은 05:00 배치. 스크래퍼 8곳(상의·KCA·Kdata·토익·텝스·JLPT·국시원·TOPIK)은 `SCRAPE_ENABLED` 기본 **on**.
 - **각종 시험 통합**: 비큐넷 시험은 `resources/seed/non_qnet_exams.json` + `SeedFileScheduleSource`로 로컬 DB 적재(52종, 그중 50종은 `approx` 추정치 — 운영엔 안 들어감). `Certificate.category`로 분류.
-- **시드**: 시험 데이터는 자바 로더가 적재한다. `CertificateMasterInitializer`(마스터 870종 = 큐넷 613 + 비큐넷 478, 이름 중복은 큐넷 우선 — **운영에서도 돈다**),
-  `ExamDataInitializer`·`SeedFileScheduleSource`(일정 있는 데모 — `@Profile("!prod")`).
-  `data.sql` 은 **매니저 계정만** 넣는다(H2 일 때만 실행 → 운영 제외).
+- **시드**: **로컬은 SQL**, 운영은 자바 로더다.
+  - 로컬: `seed_exams.sql`(18,607행 — 시험 870·일정 2,948·알림예약 14,739·상세 50) + `data.sql`(매니저 계정).
+    `seed.from-sql=true`(로컬 기본)이면 자바 로더 셋은 쉰다. 다시 만들기: `scripts/make_seed_sql.cjs`.
+    `LocalSeedSqlTest` 가 행 수를 지킨다 — 시드를 바꾸면 그 숫자도 같이 고친다.
+  - 운영: `seed.from-sql=false` → `CertificateMasterInitializer`(마스터 870종 = 큐넷 613 + 비큐넷 478,
+    이름 중복은 큐넷 우선)가 JSON 을 읽어 적재한다. `data.sql` 은 운영에서 안 돈다(mode: never).
 - 시각은 전부 KST — `TimeUtil`(Asia/Seoul) 경유.
 
 ## 팀 구조 (회사 조직)

@@ -54,10 +54,25 @@ public class ExamDataInitializer {
     @Value("${collect.on-startup:false}")
     private boolean collectOnStartup;
 
+    /**
+     * 시험 데이터를 <b>SQL 시드</b>({@code seed_exams.sql})가 넣었나. 로컬 기본 true.
+     *
+     * <p>true 면 이 로더는 쉰다 — 같은 데이터를 두 번 넣을 이유가 없고, 이 경로는 레코드마다
+     * 조회·비교를 하느라 느리다(2,400건에 75초, 2026-11-13 실측). 운영과 테스트는 false 라 그대로 돈다.
+     */
+    @Value("${seed.from-sql:false}")
+    private boolean seedFromSql;
+
     @EventListener(ApplicationReadyEvent.class)
     @Order(0)   // 시험 마스터 시드(CertificateMasterInitializer, @Order(100))보다 먼저 — 이쪽이 일정까지 만든다
     @Transactional
     public void seed() {
+        // SQL 시드가 이미 다 넣었다. 다만 수집을 명시적으로 요청했으면 그건 존중한다.
+        if (seedFromSql && !collectOnStartup) {
+            log.info("[Seed] 시험 데이터는 seed_exams.sql 이 넣었다 — 파일 시드 재적재 생략 "
+                    + "(다시 받으려면 --collect.on-startup=true, 끄려면 --seed.from-sql=false)");
+            return;
+        }
         if (certificateRepository.count() == 0) {
             seedDemo();
         } else {
