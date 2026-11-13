@@ -1,6 +1,5 @@
 package com.test.test.exam.collect;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -48,17 +47,5 @@ class ScheduleSourceNetworkTest {
                 "기본이 '기관을 맡는다'면 매니저 화면이 근거 없이 자동이라 한다");
         assertTrue(unspecified.priority() > ScheduleSource.PRIORITY_FILE
                 && unspecified.priority() < ScheduleSource.PRIORITY_API);
-    }
-
-    @Test
-    @DisplayName("일정 스냅샷은 파일만 읽는다")
-    void snapshot_is_offline() {
-        assertFalse(new SnapshotScheduleSource(new ObjectMapper(), null).usesNetwork());
-    }
-
-    @Test
-    @DisplayName("비큐넷 시험 시드는 파일만 읽는다")
-    void nonqnet_seed_is_offline() {
-        assertFalse(new SeedFileScheduleSource(new ObjectMapper()).usesNetwork());
     }
 }

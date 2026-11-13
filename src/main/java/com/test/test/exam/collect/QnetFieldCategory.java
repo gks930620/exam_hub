@@ -10,7 +10,7 @@ import java.util.Map;
  * <b>613종의 세분류가 통째로 뭉개진다</b>(필터 칩이 한 덩어리가 된다).
  * 그래서 수집기도 시드와 <b>같은 분류 체계</b>를 써야 한다.
  *
- * <p>이 표는 {@code seed/qnet_master.json} 을 만든 것과 같은 매핑이다.
+ * <p>이 표는 {@code seed_exams.sql} 을 만든 것과 같은 매핑이다.
  * 큐넷이 직무분야를 새로 만들면 여기에 추가한다(없으면 "국가기술자격-기타"로 떨어진다).
  */
 final class QnetFieldCategory {

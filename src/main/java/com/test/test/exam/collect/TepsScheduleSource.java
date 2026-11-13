@@ -35,7 +35,7 @@ public class TepsScheduleSource extends AbstractHtmlScheduleSource {
      * <p>전에는 회차를 붙여("TOEIC-" + round) 회차마다 새 종목코드가 됐다. 수집은 이 코드로
      * 기존 시험을 찾으므로, <b>회차 수만큼 같은 이름의 시험이 생겼다</b>(토익이 10개였다).
      * 회차는 (연도, 회차, 구분)으로 이미 구분되니 코드에 넣을 이유가 없다.
-     * 값은 비큐넷 시드(seed/non_qnet_exams.json)와 같아야 그 시험에 일정이 붙는다.
+     * 값은 비큐넷 시드(seed_exams.sql)와 같아야 그 시험에 일정이 붙는다.
      */
     static final String SOURCE_CODE = "TEPS";
 

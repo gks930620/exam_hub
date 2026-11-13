@@ -59,7 +59,7 @@ public class KbiScheduleSource extends AbstractHtmlScheduleSource {
     private static final int REG_OPEN_HOUR = 10;
     private static final int REG_CLOSE_HOUR = 20;
 
-    /** 시행처의 종목명 → (우리 이름, 마스터 코드). 이름·코드는 {@code seed/exam_master.json} 과 같아야 한다. */
+    /** 시행처의 종목명 → (우리 이름, 마스터 코드). 이름·코드는 {@code seed_exams.sql} 과 같아야 한다. */
     private static final Map<String, Exam> EXAMS = new LinkedHashMap<>();
 
     static {

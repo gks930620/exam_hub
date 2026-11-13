@@ -115,6 +115,10 @@ tasks.named('processResources') {
 tasks.named('test') {
 	useJUnitPlatform()
 
+	// 기본 512m 으로는 빠듯하다 — 시드(seed_exams.sql, 18,607행)를 적재하는 테스트가 셋 있고,
+	// 각자 자기 인메모리 DB 를 들고 있어야 한다(아래 'DB 이름을 가르는 이유' 참고).
+	maxHeapSize = '1g'
+
 	// Dockerfile 은 자바 소스가 아니라서 Gradle 이 변경을 모른다 — 그대로 두면 이 파일만 고쳤을 때
 	// DockerBuildContextTest 가 UP-TO-DATE 로 건너뛰어 '성공' 으로 보인다(2026-09-22 실측).
 	// 검사 대상을 입력으로 밝혀 두면 바뀔 때마다 다시 돈다.

@@ -64,7 +64,7 @@ public class ExamDataInitializer {
     private boolean seedFromSql;
 
     @EventListener(ApplicationReadyEvent.class)
-    @Order(0)   // 시험 마스터 시드(CertificateMasterInitializer, @Order(100))보다 먼저 — 이쪽이 일정까지 만든다
+    @Order(0)   // SQL 시드(SqlSeedRunner)는 더 일찍(ContextRefreshedEvent) 돈다 — 여기 오면 이미 데이터가 있다
     @Transactional
     public void seed() {
         // SQL 시드가 이미 다 넣었다. 다만 수집을 명시적으로 요청했으면 그건 존중한다.

@@ -1,15 +1,11 @@
 package com.test.test.exam.collect;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,35 +28,40 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>기본 테스트 설정에는 스크래퍼 빈이 없어(네트워크 차단) 여기서만 켠다. 빈이 뜨는 것과
  * 네트워크를 타는 것은 별개다 — 기동 시 수집은 {@code collect.on-startup} 이 기본 false 라 안 돈다.
  */
-@SpringBootTest(properties = {"scrape.enabled=true"})
+// ⚠️ 시드를 쓰는 테스트는 **자기 DB 이름**을 가져야 한다.
+// 테스트 전체가 같은 인메모리 DB(testdb)를 ddl-auto=create-drop 으로 공유한다. 컨텍스트가
+// 새로 뜰 때마다 표를 지우고 다시 만들기 때문에, 시드를 넣어 둔 컨텍스트의 데이터가
+// 다른 테스트가 뜨는 순간 통째로 날아간다(실행 순서에 따라 되다 안 되다 한다 — 실측).
+@SpringBootTest(properties = {"scrape.enabled=true", "seed.from-sql=true", "spring.datasource.url=jdbc:h2:mem:seeddb_coverage;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"})
 @ActiveProfiles("test")
 class ScheduleSourceCoverageTest {
 
     @Autowired
     private List<ScheduleSource> sources;
 
-    private JsonNode read(String path) throws IOException {
-        return new ObjectMapper().readTree(new ClassPathResource(path).getInputStream());
-    }
+    @Autowired
+    private com.test.test.exam.repository.CertificateRepository certificateRepository;
 
     /**
-     * 시드가 만드는 <b>모든</b> 종목코드. 마스터와 비큐넷 시드를 둘 다 본다 —
-     * 코드는 2026-09-21 에 통일했지만, 새 시드가 어긋난 코드를 들고 오면 여기서 잡힌다.
+     * 시드가 만드는 <b>모든</b> 종목코드 — {@code seed_exams.sql} 이 넣은 그대로 DB 에서 읽는다.
+     *
+     * <p>예전엔 JSON 두 벌(마스터·비큐넷)을 따로 읽었고, 같은 시험에 코드가 서로 달라
+     * "두 코드를 다 밝혀라"는 규칙까지 있었다. 시드가 하나가 되면서 그 문제는 사라졌다.
      */
-    private Set<String> masterCodes() throws IOException {
+    private Set<String> masterCodes() {
         Set<String> codes = new HashSet<>();
-        for (String f : new String[]{"seed/exam_master.json", "seed/non_qnet_exams.json"}) {
-            for (JsonNode e : list(read(f))) {
-                codes.add(e.path("sourceCode").asText());
+        certificateRepository.findAll().forEach(c -> {
+            if (c.getSourceCode() != null && !c.getSourceCode().isBlank()) {
+                codes.add(c.getSourceCode());
             }
-        }
-        assertFalse(codes.isEmpty(), "시드를 못 읽었다 — 이 테스트가 아무것도 검증하지 않는다");
+        });
+        assertFalse(codes.isEmpty(), "시드가 안 들어갔다 — 이 테스트가 아무것도 검증하지 않는다");
         return codes;
     }
 
     @Test
     @DisplayName("밝힌 종목코드는 전부 시드에 있는 코드다 — 한 글자만 틀려도 같은 시험이 하나 더 생긴다")
-    void declared_codes_exist_in_the_master() throws IOException {
+    void declared_codes_exist_in_the_master() {
         Set<String> master = masterCodes();
         for (ScheduleSource s : sources) {
             for (String code : s.coveredExamCodes()) {
@@ -81,53 +82,6 @@ class ScheduleSourceCoverageTest {
                         code + " 를 " + before + " 와 " + s.sourceId() + " 가 같이 맡는다");
             }
         }
-    }
-
-    /**
-     * <b>같은 시험에 시드마다 다른 코드가 붙어 있다.</b> 비큐넷 시드가 마스터보다 먼저 종목을 만들어서,
-     * 로컬에서는 시드 코드가(예: {@code TESAT}) 운영에서는 마스터 코드가({@code M0440}) 붙는다
-     * — 비큐넷 시드는 {@code @Profile("!prod")} 라 운영엔 안 돈다.
-     *
-     * <p>수집 자체는 {@link DiffService} 가 이름으로도 찾아 주므로 어느 쪽이든 붙는다. 그런데
-     * {@link ScheduleSource#coveredExamCodes()} 는 <b>코드로만</b> 맞춰 보기 때문에, 마스터 코드만
-     * 밝히면 로컬에서 그 판정이 조용히 안 먹는다(2026-09-08 TESAT 에서 실측).
-     *
-     * <p>그래서 <b>두 코드를 다 밝히게</b> 한다. 이 테스트가 빠진 쪽을 짚어 준다.
-     */
-    @Test
-    @DisplayName("시드마다 코드가 다른 시험은 두 코드를 다 밝힌다")
-    void sources_declare_both_codes_when_the_seeds_disagree() throws IOException {
-        Map<String, String> seedCodeByMasterCode = seedAliases();
-        for (ScheduleSource s : sources) {
-            Set<String> declared = s.coveredExamCodes();
-            for (String code : declared) {
-                String alias = seedCodeByMasterCode.get(code);
-                assertTrue(alias == null || declared.contains(alias),
-                        s.sourceId() + " 가 " + code + " 만 밝혔다 — 비큐넷 시드는 같은 시험을 "
-                                + alias + " 로 만든다. 둘 다 밝혀야 로컬에서도 판정이 먹는다");
-            }
-        }
-    }
-
-    /** 이름이 같은데 코드가 다른 종목: 마스터 코드 → 비큐넷 시드 코드. */
-    private Map<String, String> seedAliases() throws IOException {
-        Map<String, String> masterByName = new HashMap<>();
-        for (JsonNode e : list(read("seed/exam_master.json"))) {
-            masterByName.put(e.path("name").asText(), e.path("sourceCode").asText());
-        }
-        Map<String, String> aliases = new HashMap<>();
-        for (JsonNode e : list(read("seed/non_qnet_exams.json"))) {
-            String master = masterByName.get(e.path("name").asText());
-            String seed = e.path("sourceCode").asText();
-            if (master != null && !master.equals(seed)) {
-                aliases.put(master, seed);
-            }
-        }
-        return aliases;
-    }
-
-    private JsonNode list(JsonNode root) {
-        return root.isArray() ? root : root.has("exams") ? root.path("exams") : root.path("items");
     }
 
     /** 코드를 밝히는 소스가 하나도 없으면 위 두 테스트가 아무것도 검증하지 않는다. */

@@ -7,7 +7,8 @@ import java.util.Set;
  * 시험 일정 수집 소스 추상화 (DR-01, 리스크 1순위 대응).
  * 공공 API 스펙 변경/소스 추가·교체에 대비해 수집기를 인터페이스로 격리한다.
  * 구현: {@link MockScheduleSource}(키 없음/개발), {@link QnetApiScheduleSource}(실 큐넷 API),
- * 시행처 스크래퍼({@link AbstractHtmlScheduleSource} 계열), 파일 시드({@link SeedFileScheduleSource}·{@link SnapshotScheduleSource}).
+ * 시행처 스크래퍼({@link AbstractHtmlScheduleSource} 계열)와 큐넷 API.
+ * 파일 시드 소스 둘은 2026-11-14 에 걷어냈다 — 그 자리는 SQL 시드({@code seed_exams.sql})가 맡는다.
  *
  * <p><b>같은 키를 여러 소스가 줄 수 있다</b> — (시험, 연도, 회차, 구분)이 같으면 나중에 쓴 쪽이 이긴다.
  * 그래서 {@link #priority()} 로 실행 순서를 못 박는다: 시드·스냅샷(0) → 스크래퍼(50) → 큐넷 API(100).

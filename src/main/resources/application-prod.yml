@@ -76,7 +76,8 @@ management:
 # 운영에는 데모/Mock·시드 소스(@Profile("!prod"))가 없으므로 실 소스를 활성화한다.
 # QnetApiScheduleSource 는 실 API 로 돈다 — QNET_API_KEY(Encoding 키) 주입(실호출 확인 2026-08).
 # 비큐넷은 스크래퍼 8곳(상의·KCA·Kdata·TOEIC·TEPS·JLPT·TOPIK·국시원)이 운영에서도 05:00 배치로 돈다
-# (scrape.enabled 기본 true). 파일 시드(non_qnet_exams.json·스냅샷)만 로컬 전용이다.
+# (scrape.enabled 기본 true). 시드는 로컬·운영이 seed_exams.sql 하나를 같이 쓴다 —
+# SqlSeedRunner 가 '시험 표가 비었을 때만' 돌려서, 첫 배포에 한 번 들어가고 그 뒤로는 안 덮는다.
 qnet:
   api:
     enabled: true

@@ -52,7 +52,7 @@ public class KofiaScheduleSource extends AbstractHtmlScheduleSource {
     private static final String CATEGORY = "금융";
     private static final String FORM = "rcptSttType=ALL&licenseCd=ALL";
 
-    /** 시행처의 종목명 → 우리 마스터 코드. 코드는 {@code seed/exam_master.json} 과 같아야 한다. */
+    /** 시행처의 종목명 → 우리 마스터 코드. 코드는 {@code seed_exams.sql} 과 같아야 한다. */
     private static final Map<String, String> CODES = new LinkedHashMap<>();
 
     static {

@@ -1,20 +1,15 @@
 package com.test.test.exam.config;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.test.exam.collect.DemoDataProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -33,51 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <b>코드 매칭이 통째로 실패해</b> 이름 매칭이라는 약한 고리에만 기대게 된다 — 표기가 한 글자만
  * 달라지면 그날로 일정이 안 붙는다.
  *
- * <p>사람 눈으로는 절대 못 잡는 종류의 오류라 여기서 자동으로 대조한다.
+ * <p>사람 눈으로는 절대 못 잡는 종류의 오류다. <b>시드와의 대조는
+ * {@link LocalSeedSqlTest#demo_codes_match_the_seeded_master()} 로 옮겼다</b> —
+ * 시드가 SQL 하나가 되면서 기준이 JSON 파일이 아니라 적재된 DB 가 됐기 때문이다.
+ * 여기엔 시드 없이도 되는 검사만 남긴다.
  */
 class DemoSeedCodeTest {
-
-    private static final ObjectMapper JSON = new ObjectMapper();
-
-    /** 큐넷 마스터: 이름 → 종목코드 */
-    private Map<String, String> qnetCodeByName() throws IOException {
-        JsonNode root = JSON.readTree(new ClassPathResource("seed/qnet_master.json").getInputStream());
-        Map<String, String> byName = new HashMap<>();
-        for (JsonNode e : root.path("exams")) {
-            String name = e.path("name").asText();
-            String code = e.path("sourceCode").asText();
-            if (!name.isBlank() && !code.isBlank()) {
-                byName.put(name, code);
-            }
-        }
-        assertFalse(byName.isEmpty(), "큐넷 마스터를 못 읽었다 — 이 테스트가 아무것도 검증하지 않는다");
-        return byName;
-    }
-
-    @Test
-    @DisplayName("데모 시드의 큐넷 종목은 큐넷 마스터와 같은 종목코드를 쓴다")
-    void demoQnetCodesMatchMaster() throws IOException {
-        Map<String, String> master = qnetCodeByName();
-        List<String> wrong = new ArrayList<>();
-
-        for (DemoDataProvider.DemoCert cert : new DemoDataProvider().demoCertificates()) {
-            String expected = master.get(cert.name());
-            if (expected == null) {
-                continue;   // 큐넷 종목이 아니다(SQLD·컴활) — 대조할 기준이 없다
-            }
-            if (!expected.equals(cert.sourceCode())) {
-                String owner = master.entrySet().stream()
-                        .filter(en -> en.getValue().equals(cert.sourceCode()))
-                        .map(Map.Entry::getKey).findFirst().orElse("(없는 코드)");
-                wrong.add("%s 에 %s 를 달아 놨다 — 그건 %s 의 코드다(맞는 코드 %s)"
-                        .formatted(cert.name(), cert.sourceCode(), owner, expected));
-            }
-        }
-
-        assertTrue(wrong.isEmpty(),
-                "데모 종목코드가 큐넷 마스터와 어긋난다. 수집이 이 행의 이름을 남의 이름으로 바꾼다:\n  "
-                        + String.join("\n  ", wrong));
-    }
 
     @Test
     @DisplayName("데모 시드 안에서 종목코드가 겹치지 않는다")

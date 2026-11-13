@@ -70,7 +70,7 @@ public class CollectService {
      * 파일 기반 소스만 수집 (기동할 때마다). 기동 전용 스냅샷도 여기서 돈다.
      *
      * <p>파일은 돈이 안 드니 늘 읽는다. 스냅샷은 DB 가 파일보다 새로우면 스스로 건너뛴다
-     * ({@link SnapshotScheduleSource}) — 재기동마다 2,600건을 다시 쓰지 않는다.
+     * (지금은 시드 {@code seed_exams.sql} 이 그 자리를 맡는다) — 재기동마다 2,600건을 다시 쓰지 않는다.
      */
     public void collectWithoutNetwork() {
         List<ScheduleSource> offline = sources.stream()
@@ -228,7 +228,7 @@ public class CollectService {
         Set<String> live = sources.stream()
                 .flatMap(s -> s.coveredAgencies().stream())
                 .collect(Collectors.toSet());
-        // 상시로 표시된 시험엔 회차가 없다. 시드가 매 기동 넣고 RollingAdmissionInitializer 가 지우는
+        // 상시로 표시된 시험엔 회차가 없다. 시드가 상시 표시까지 담아서 들어오므로, 수집이 그 뒤에 넣는
         // 헛일을 막는다(2026-09-04 실측 6건).
         Set<String> rolling = certificateRepository
                 .findBySourceCodeIn(records.stream().map(CollectedSchedule::sourceCode).distinct().toList()).stream()

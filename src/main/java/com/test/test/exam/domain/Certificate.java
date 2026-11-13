@@ -140,7 +140,8 @@ public class Certificate {
 
     /**
      * slug 을 이름에 다시 맞춘다. 수집이 종목코드로 행을 찾아 <b>이름만 고치면</b> slug 이 남의 것으로
-     * 남기 때문에, {@code CertificateMasterInitializer.reconcileSlugs()} 가 기동 때 되돌린다.
+     * 남기 때문에, {@code DiffService} 가 이름을 바꾸는 그 자리에서 같이 맞춘다
+     * (예전엔 기동 때 쓸어 담았다 — {@code CertificateRenameSlugTest} 가 지킨다).
      */
     public void renameSlug(String slug) {
         this.slug = slug;

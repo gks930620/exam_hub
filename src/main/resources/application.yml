@@ -256,14 +256,10 @@ spring:
   sql:
     init:
       mode: ${SPRING_SQL_INIT_MODE:always}
-      # 로컬만 시험 데이터 시드를 같이 읽는다.
-      # data-locations 를 지정하면 기본값(data.sql)이 대체되므로 둘 다 적는다 — 순서가 곧 실행 순서다.
-      # 테스트는 src/test/resources/application.yml 이 이 파일을 통째로 가리므로 여기 영향을 받지 않는다
-      # (테스트는 data.sql 만 읽고, 시험 픽스처는 ExamDataInitializer 가 만든다).
-      data-locations: classpath:data.sql,classpath:seed_exams.sql
 
-# 시험 데이터를 SQL 시드로 넣는다 → 자바 로더(JSON 읽어 수집 파이프라인 태우는 쪽)는 쉰다.
-# false 면 예전처럼 자바 로더가 돈다 — 운영과 테스트가 그 경로다.
+# 시험 데이터는 seed_exams.sql 이 넣는다(SqlSeedRunner). 기동 때 JSON 을 읽는 경로는 없다.
+# 테스트는 src/test/resources/application.yml 이 이 파일을 통째로 가리므로 false 로 남고,
+# 통합테스트 픽스처(ExamDataInitializer 의 데모 10종)를 그대로 쓴다.
 seed:
   from-sql: ${SEED_FROM_SQL:true}
 ---
@@ -274,3 +270,9 @@ spring:
   sql:
     init:
       mode: never
+
+# 운영도 같은 SQL 시드로 뜬다 — 기동 때 JSON 을 읽는 경로는 더 이상 없다.
+# SqlSeedRunner 가 "시험 표가 비었을 때만" 돌리므로, 첫 배포에 한 번 들어가고
+# 그 뒤 배포에서는 그동안 수집한 일정을 덮지 않는다.
+seed:
+  from-sql: ${SEED_FROM_SQL:true}

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.StandardCharsets;
@@ -33,6 +34,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * <p>계약: 목록/검색/상세는 <b>일정 유무와 무관하게</b> 동작한다. 일정이 없으면 {@code hasSchedule=false},
  * 상세의 {@code nextEvent}는 null, {@code schedules}는 빈 배열이다.
  */
+// 마스터 시드가 있어야 하는 테스트 — 지금은 seed_exams.sql 이 넣는다.
+// ⚠️ 시드를 쓰는 테스트는 **자기 DB 이름**을 가져야 한다.
+// 테스트 전체가 같은 인메모리 DB(testdb)를 ddl-auto=create-drop 으로 공유한다. 컨텍스트가
+// 새로 뜰 때마다 표를 지우고 다시 만들기 때문에, 시드를 넣어 둔 컨텍스트의 데이터가
+// 다른 테스트가 뜨는 순간 통째로 날아간다(실행 순서에 따라 되다 안 되다 한다 — 실측).
+// 아래 속성은 CertificateBrowseIntegrationTest 와 **글자까지 같아야** 한다 —
+// 같아야 스프링이 컨텍스트를 하나로 캐시해서 시드를 한 번만 넣고 서로 안 지운다.
+@TestPropertySource(properties = {"seed.from-sql=true", "spring.datasource.url=jdbc:h2:mem:seeddb_api;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"})
 class CertificateBrowseIntegrationTest extends ApiIntegrationTestSupport {
 
     // ===== 첫 화면 지표 =====
@@ -220,16 +229,24 @@ class CertificateBrowseIntegrationTest extends ApiIntegrationTestSupport {
      */
     @Test
     void certificate_without_schedule_is_listed_and_detail_opens() throws Exception {
-        MvcResult res = mockMvc.perform(get("/api/certificates/browse").param("size", "100"))
-                .andExpect(status().isOk())
-                .andReturn();
-        JsonNode items = objectMapper.readTree(res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
-
+        // 일정 있는 시험이 앞쪽에 오므로 첫 페이지만 보면 못 찾는다 — 끝까지 넘겨 본다.
+        // (한 페이지 상한이 100 이고 공개 시험이 841종이라 9쪽이면 전부 본다)
         Long idWithoutSchedule = null;
-        for (JsonNode it : items) {
-            if (!it.path("hasSchedule").asBoolean(true)) {
-                idWithoutSchedule = it.path("id").asLong();
+        for (int page = 0; page < 10 && idWithoutSchedule == null; page++) {
+            MvcResult res = mockMvc.perform(get("/api/certificates/browse")
+                            .param("size", "100").param("page", String.valueOf(page)))
+                    .andExpect(status().isOk())
+                    .andReturn();
+            JsonNode items = objectMapper.readTree(
+                    res.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("items");
+            if (!items.elements().hasNext()) {
                 break;
+            }
+            for (JsonNode it : items) {
+                if (!it.path("hasSchedule").asBoolean(true)) {
+                    idWithoutSchedule = it.path("id").asLong();
+                    break;
+                }
             }
         }
         if (idWithoutSchedule == null) {

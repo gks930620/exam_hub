@@ -58,7 +58,7 @@ public class KspoScheduleSource extends AbstractHtmlScheduleSource {
      * 급수 하나 = 페이지 하나.
      *
      * @param code       시행처의 급수코드({@code QF_GRADE_CD}) — 이 값으로 표가 갈린다
-     * @param sourceCode 우리 마스터 코드. {@code seed/exam_master.json} 과 같아야 한다
+     * @param sourceCode 우리 마스터 코드. {@code seed_exams.sql} 과 같아야 한다
      */
     public record Grade(String code, String sourceCode, String name) {
     }

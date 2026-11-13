@@ -53,12 +53,16 @@ Spring Boot 백엔드(REST API) + **React CSR 웹 프런트** 프로젝트입니
   - SQL 로그는 기본 꺼져 있다. 볼 때만 `--logging.level.org.hibernate.SQL=debug`.
 - **외부 연동 상태**: `QnetApiScheduleSource`(큐넷 실 API)는 **실호출 검증 완료**(2026-08-28 전량 613콜). 발송은 **이메일 실발송**(`EmailNotificationSender`). 로컬도 `.env` 의 `QNET_API_ENABLED=true` 로 실 API 를 쓰되 **기동 때는 수집하지 않고**(`collect.on-startup` 기본 false) `seed/schedules_snapshot.json` 스냅샷으로 복원한다. 실 수집은 05:00 배치. 스크래퍼 8곳(상의·KCA·Kdata·토익·텝스·JLPT·국시원·TOPIK)은 `SCRAPE_ENABLED` 기본 **on**.
 - **각종 시험 통합**: 비큐넷 시험은 `resources/seed/non_qnet_exams.json` + `SeedFileScheduleSource`로 로컬 DB 적재(52종, 그중 50종은 `approx` 추정치 — 운영엔 안 들어감). `Certificate.category`로 분류.
-- **시드**: **로컬은 SQL**, 운영은 자바 로더다.
-  - 로컬: `seed_exams.sql`(18,607행 — 시험 870·일정 2,948·알림예약 14,739·상세 50) + `data.sql`(매니저 계정).
-    `seed.from-sql=true`(로컬 기본)이면 자바 로더 셋은 쉰다. 다시 만들기: `scripts/make_seed_sql.cjs`.
-    `LocalSeedSqlTest` 가 행 수를 지킨다 — 시드를 바꾸면 그 숫자도 같이 고친다.
-  - 운영: `seed.from-sql=false` → `CertificateMasterInitializer`(마스터 870종 = 큐넷 613 + 비큐넷 478,
-    이름 중복은 큐넷 우선)가 JSON 을 읽어 적재한다. `data.sql` 은 운영에서 안 돈다(mode: never).
+- **시드는 SQL 하나다** — `seed_exams.sql`(18,607행: 시험 870·일정 2,948·알림예약 14,739·상세 50).
+  **기동 때 JSON 을 읽는 경로는 없다**(2026-11-14 — 시드 JSON 6개와 로더 4개를 들어냈다).
+  - 넣는 주체는 `SqlSeedRunner` 하나. **시험 표가 비었을 때만** 돈다 →
+    로컬(인메모리)은 매 기동, 운영은 첫 배포 때 한 번. 두 번째 배포부터는 수집한 일정을 안 덮는다.
+    톰캣이 열리기 전(`ContextRefreshedEvent`)에 끝나므로 빈 화면이 노출되지 않는다. **적재 1.8초.**
+  - H2·MySQL 양쪽에서 돌아야 해서 H2 전용 문법을 안 쓴다(한글은 평문, 자동증가 카운터는 러너가 맞춘다).
+  - `data.sql` 은 **매니저 계정만** 넣는다(로컬 always / 운영 never).
+  - 다시 만들기: `scripts/make_seed_sql.cjs`. `LocalSeedSqlTest` 가 행 수를 지킨다 — 바뀌면 같이 고친다.
+  - 테스트는 `seed.from-sql=false`(기본)라 데모 10종 픽스처를 쓴다. 시드가 필요한 테스트 넷만
+    `true` + **자기 DB 이름**을 쓴다(다 같은 `testdb` 를 create-drop 으로 공유해서 서로 지운다).
 - 시각은 전부 KST — `TimeUtil`(Asia/Seoul) 경유.
 
 ## 팀 구조 (회사 조직)

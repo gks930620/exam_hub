@@ -284,7 +284,7 @@ public class QnetApiScheduleSource implements ScheduleSource {
             return out;
         }
         Series series = mapSeries(item);
-        // 시드(seed/qnet_master.json)와 같은 분류 체계를 써야 한다 — 성긴 값을 주면
+        // 시드(seed_exams.sql)와 같은 분류 체계를 써야 한다 — 성긴 값을 주면
         // DiffService 가 마스터를 덮어써서 613종의 세분류가 통째로 뭉개진다.
         String category = QnetFieldCategory.of(item.qualgbnm(), item.obligfldnm());
         for (SchedItem s : res.body().items()) {

@@ -53,7 +53,7 @@ public class YbmScheduleSource extends AbstractHtmlScheduleSource {
 
     static final String AGENCY = "YBM";
 
-    /** 한 페이지가 만들 시험. 코드는 {@code seed/exam_master.json} 과 같아야 한다(다르면 시험이 하나 더 생긴다). */
+    /** 한 페이지가 만들 시험. 코드는 {@code seed_exams.sql} 과 같아야 한다(다르면 시험이 하나 더 생긴다). */
     public record Exam(String sourceCode, String name) {
     }
 

@@ -40,7 +40,7 @@ public class FlexScheduleSource extends AbstractHtmlScheduleSource {
     static final String URL = "https://flex.hufs.ac.kr/flex/index.do";
     static final String AGENCY = "한국외국어대학교";
 
-    /** 언어별 종목 — 코드·이름·분류는 {@code seed/exam_master.json} 과 같아야 한다. */
+    /** 언어별 종목 — 코드·이름·분류는 {@code seed_exams.sql} 과 같아야 한다. */
     private record Language(String sourceCode, String name, String category) {
     }
 

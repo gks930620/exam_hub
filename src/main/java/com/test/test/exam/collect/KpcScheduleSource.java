@@ -47,7 +47,7 @@ public class KpcScheduleSource extends AbstractHtmlScheduleSource {
     /**
      * 표의 시험명(공백 제거) → 우리 마스터의 종목들.
      *
-     * <p>코드는 {@code seed/exam_master.json} 과 <b>똑같아야 한다</b> — 다르면 같은 시험이 하나 더 생긴다.
+     * <p>코드는 {@code seed_exams.sql} 과 <b>똑같아야 한다</b> — 다르면 같은 시험이 하나 더 생긴다.
      * 표기가 흔들리므로("GTQ/GTQi 정기시험") 공백을 지우고 <b>포함</b>으로 맞춘다.
      */
     private static final Map<String, List<Exam>> EXAMS = new LinkedHashMap<>();

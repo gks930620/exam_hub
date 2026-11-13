@@ -165,11 +165,19 @@ public class DiffService {
                     // 마스터 메타가 바뀌었으면 반영. 단 계열 '기타'는 "모른다"는 뜻이라 기존 계열을 지우지 않는다 —
                     // 스냅샷·시드는 계열을 안 담아 ETC 로 오는데, 그걸 그대로 쓰면 673종이 기타가 된다(실측).
                     Series series = rec.series() == null || rec.series() == Series.ETC ? c.getSeries() : rec.series();
-                    if (!c.getName().equals(rec.certificateName())
+                    boolean renamed = !c.getName().equals(rec.certificateName());
+                    if (renamed
                             || c.getSeries() != series
                             || !c.getAgency().equals(rec.agency())
                             || !Objects.equals(c.getCategory(), rec.category())) {
                         c.updateMeta(rec.certificateName(), series, rec.agency(), rec.category());
+                        if (renamed) {
+                            // 이름만 고치면 slug 이 옛 이름으로 남아 주소가 남의 것을 가리킨다.
+                            // 예전엔 기동 때 CertificateMasterInitializer.reconcileSlugs() 가 쓸어 담았는데,
+                            // 그 로더를 걷어냈으므로 이름이 바뀌는 바로 이 자리에서 맞춘다.
+                            // (다음 기동까지 어긋난 채로 두지 않으니 이쪽이 원래 더 맞다)
+                            c.renameSlug(uniqueSlug(rec.certificateName()));
+                        }
                         certificateRepository.save(c);
                     }
                     return c;

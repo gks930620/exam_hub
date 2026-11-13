@@ -91,9 +91,26 @@ function statements(s) {
   return out;
 }
 
+/**
+ * H2 는 아스키가 아닌 글자를 `U&'\d55c\ad6d'` 꼴로 뱉는다. **MySQL 은 이 문법을 모른다.**
+ * 운영(MySQL)에서도 같은 파일이 돌아야 하므로 평문 UTF-8 문자열로 되돌린다.
+ * 덤으로 한 글자가 6바이트에서 3바이트로 줄어 파일이 절반 아래로 작아진다.
+ */
+function decodeUnicodeLiterals(sql) {
+  const ESC_SUPPLEMENTARY = /\\\+([0-9a-fA-F]{6})/g;   // \+01F600
+  const ESC_BMP = /\\([0-9a-fA-F]{4})/g;               // \d55c
+  // 리터럴은 "따옴표가 하나 더 따라오지 않는 따옴표"에서 끝난다(안쪽 따옴표는 '' 로 겹쳐 쓴다).
+  // 탐욕적으로 쓰면 파일 끝까지 한 덩어리로 잡아먹는다.
+  return sql.replace(/U&'((?:[^']|'')*?)'(?!')/g, (_, body) =>
+    "'" + body
+      .replace(ESC_SUPPLEMENTARY, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+      .replace(ESC_BMP, (_, h) => String.fromCharCode(parseInt(h, 16)))
+      + "'");
+}
+
 const RE = /^INSERT INTO "PUBLIC"\."([A-Z_]+)"\(([^)]*)\) VALUES\s*([\s\S]+)$/;
 const byTable = new Map();
-for (const st of statements(fs.readFileSync(dump, "utf8"))) {
+for (const st of statements(decodeUnicodeLiterals(fs.readFileSync(dump, "utf8")))) {
   if (!st.startsWith("INSERT INTO")) continue;   // CREATE/ALTER 는 버린다 — 스키마는 엔티티가 만든다
   const m = st.match(RE);
   if (!m) fail("파싱 실패: " + st.slice(0, 120));
@@ -116,6 +133,9 @@ const parts = [`-- ────────────────────�
 --
 -- 회원·게시글은 없다 — 개인 계정과 QA 가 만든 글이 섞이기 때문이다.
 -- 매니저 계정은 data.sql 이 넣는다.
+--
+-- H2(로컬)와 MySQL(운영) **둘 다에서** 돌아야 한다. 그래서 H2 전용 문법을 쓰지 않는다 —
+-- 한글은 U&'...' 이스케이프가 아니라 평문으로 넣고, 자동증가 카운터는 SqlSeedRunner 가 맞춘다.
 -- ─────────────────────────────────────────────────────────────`];
 
 let total = 0;
@@ -130,12 +150,8 @@ for (const table of TABLES) {
 }
 if (total === 0) fail("넣을 행이 하나도 없다 — DB 가 비어 있는 것 같다");
 
-parts.push("\n-- 자동증가 카운터를 시드 뒤로 민다 — 없으면 새 글/새 일정이 PK 충돌로 깨진다");
-for (const table of TABLES) {
-  const t = byTable.get(table);
-  if (!t || t.rows.length === 0) continue;
-  parts.push(`ALTER TABLE ${table.toLowerCase()} ALTER COLUMN id RESTART WITH ${t.rows.length + 1000};`);
-}
+// 자동증가 카운터를 미는 구문은 여기 넣지 않는다 — H2 와 MySQL 의 문법이 달라서
+// (ALTER COLUMN ... RESTART WITH  vs  AUTO_INCREMENT =) SqlSeedRunner 가 붙은 DB 를 보고 처리한다.
 
 fs.writeFileSync(OUT, parts.join("\n") + "\n", "utf8");
 fs.unlinkSync(dump);

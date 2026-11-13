@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.StandardCharsets;
@@ -57,6 +58,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *   <li><b>일반 회원은 운영 API 에 닿을 수 없다</b> — 로그인했다는 것만으로는 부족하다</li>
  * </ul>
  */
+// 마스터 시드가 있어야 하는 테스트 — 지금은 seed_exams.sql 이 넣는다.
+// ⚠️ 시드를 쓰는 테스트는 **자기 DB 이름**을 가져야 한다.
+// 테스트 전체가 같은 인메모리 DB(testdb)를 ddl-auto=create-drop 으로 공유한다. 컨텍스트가
+// 새로 뜰 때마다 표를 지우고 다시 만들기 때문에, 시드를 넣어 둔 컨텍스트의 데이터가
+// 다른 테스트가 뜨는 순간 통째로 날아간다(실행 순서에 따라 되다 안 되다 한다 — 실측).
+// 아래 속성은 CertificateBrowseIntegrationTest 와 **글자까지 같아야** 한다 —
+// 같아야 스프링이 컨텍스트를 하나로 캐시해서 시드를 한 번만 넣고 서로 안 지운다.
+@TestPropertySource(properties = {"seed.from-sql=true", "spring.datasource.url=jdbc:h2:mem:seeddb_api;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"})
 class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
 
     private static final String USERNAME = "test-manager";
@@ -544,34 +553,6 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
                 .andExpect(jsonPath("$[0].certificateName").isNotEmpty());
     }
 
-
-    /**
-     * 큐넷 일정 스냅샷 내보내기 — 로컬 인메모리 DB 의 수집 결과를 시드로 떠 둔다.
-     *
-     * <p>서버를 끄면 1,500여 건이 사라지는데, 다시 받으려면 613콜이라 하루 한도(1,000)를 넘긴다.
-     * 한 번 받은 걸 파일로 두고 다음부터 공짜로 얹기 위한 것이다.
-     */
-    @Test
-    @DisplayName("일정을 시드 형식으로 내보낸다 — 어느 소스 것이든")
-    void exports_schedules_as_seed() throws Exception {
-        mockMvc.perform(get("/api/admin/export/schedules")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newAdmin())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.collectedAt").isNotEmpty())
-                .andExpect(jsonPath("$.exams").isArray())
-                // 출처를 함께 뜬다 — 스크래핑을 API 로 되살리면 '시행처 확인 필요' 배지가 사라진다
-                .andExpect(jsonPath("$.exams[0].schedules[0].provenance").isNotEmpty())
-                .andExpect(jsonPath("$._howToRegenerate").isNotEmpty());
-    }
-
-    /** 내보내기는 DB 를 통째로 뜨는 것이라 매니저만 할 수 있어야 한다. */
-    @Test
-    @DisplayName("일반 회원은 내보내기를 못 한다 → 403")
-    void export_denies_normal_member() throws Exception {
-        mockMvc.perform(get("/api/admin/export/schedules")
-                        .header(HttpHeaders.AUTHORIZATION, bearer(newMember())))
-                .andExpect(status().isForbidden());
-    }
 
     // ===== 시험 변천사 =====
 
