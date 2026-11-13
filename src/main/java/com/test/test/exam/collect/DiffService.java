@@ -1,5 +1,6 @@
 package com.test.test.exam.collect;
 
+import com.test.test.exam.common.Slugs;
 import com.test.test.exam.common.TimeUtil;
 import com.test.test.exam.domain.Certificate;
 import com.test.test.exam.domain.ExamSchedule;
@@ -219,7 +220,8 @@ public class DiffService {
     }
 
     private String uniqueSlug(String name) {
-        String base = name.trim();
+        // 이름을 그대로 쓰면 '/' 가 든 시험의 주소가 톰캣에서 400 이 된다 — Slugs 가 그걸 막는다.
+        String base = Slugs.of(name);
         if (!certificateRepository.existsBySlug(base)) {
             return base;
         }

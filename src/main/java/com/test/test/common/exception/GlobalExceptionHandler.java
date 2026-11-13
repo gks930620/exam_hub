@@ -2,6 +2,9 @@ package com.test.test.common.exception;
 
 import com.test.test.common.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -187,6 +190,45 @@ public class GlobalExceptionHandler {
                 "METHOD_NOT_ALLOWED"
         );
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
+    }
+
+    /**
+     * JSON 아닌 Content-Type 으로 보냈다 → 415 (500 아님).
+     *
+     * <p>클라이언트 잘못을 서버 잘못으로 말하면 두 가지가 나빠진다 — 보낸 쪽이 무엇을 고쳐야
+     * 하는지 모르고, 모니터링에 500 이 쌓여 <b>진짜 고장이 묻힌다.</b>
+     */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException e) {
+        log.warn("Media type not supported: {}", e.getMessage());
+
+        ErrorResponse response = ErrorResponse.of(
+                "지원하지 않는 형식입니다. JSON(application/json) 으로 보내 주세요.",
+                "UNSUPPORTED_MEDIA_TYPE"
+        );
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(response);
+    }
+
+    /**
+     * 같은 것을 동시에 두 번 만들거나 고쳤다 → 409 (500 아님).
+     *
+     * <p>버튼을 두 번 빠르게 누르면 생긴다. 별 아이콘 더블클릭이 실제로 그랬다 —
+     * <b>등록은 성공했는데 화면에는 "서버 내부 오류"가 떴다.</b> 사용자는 실패한 줄 알고
+     * 다시 누르고, 그때마다 또 빨간 줄을 본다.
+     *
+     * <p>유니크 제약(이미 있다)과 낙관적 락(이미 지워졌다) 둘 다 "경쟁에서 졌다"는 뜻이고,
+     * 그건 서버 고장이 아니라 <b>이미 처리된 요청</b>이다.
+     */
+    @ExceptionHandler({DataIntegrityViolationException.class, OptimisticLockingFailureException.class})
+    public ResponseEntity<ErrorResponse> handleConcurrentConflict(Exception e) {
+        // 메시지에 테이블·제약 이름이 들어 있어 사용자에게 그대로 보여 주지 않는다. 로그에만 남긴다.
+        log.warn("Concurrent conflict: {}", e.getMessage());
+
+        ErrorResponse response = ErrorResponse.of(
+                "방금 처리된 요청입니다. 화면을 새로 고쳐 확인해 주세요.",
+                "CONFLICT"
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     /**

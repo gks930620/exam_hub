@@ -71,8 +71,10 @@ public class CertificateService {
         if (query == null || query.trim().length() < 2) {
             throw new BusinessRuleException("검색어는 2자 이상 입력하세요.");
         }
+        // 와일드카드를 글자로 막는다. browse 는 2026-09-23 에 고쳤는데 이쪽만 남아 있었다 —
+        // query=%% 가 30건, '정_처리' 가 정보처리기사를 돌려줬다(2026-11-14 실측).
         List<Certificate> results = certificateRepository.searchByName(
-                query.trim(), PageRequest.of(0, SEARCH_LIMIT));
+                LikeQuery.escape(query.trim()), PageRequest.of(0, SEARCH_LIMIT));
         return new CertificateDtos.SearchResponse(toItems(results, memberId));
     }
 
@@ -210,10 +212,13 @@ public class CertificateService {
                 .map(CertificateDtos.ScheduleDto::of)
                 .collect(Collectors.toList());
 
+        // 폐지·개칭으로 숨긴 시험도 옛 북마크·공유 링크로는 들어온다. 그 사실을 같이 내려줘야
+        // 화면이 "일정이 확인되면 알려 드립니다" 같은 거짓 약속을 하지 않는다.
+        String hiddenReason = cert.hiddenReason();
         return new CertificateDtos.DetailResponse(
                 cert.getId(), cert.getName(), cert.getCategory(), cert.getAgency(), sourceUrl, collectedAt,
                 favorited, cert.isRollingAdmission(), CertificateDtos.EventDto.of(next),
-                splitsByExamType, examInfo, scheduleDtos);
+                splitsByExamType, examInfo, hiddenReason, cert.getSupersededBy(), scheduleDtos);
     }
 
     private List<CertificateDtos.Item> toItems(List<Certificate> certs, Long memberId) {

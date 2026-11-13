@@ -16,7 +16,8 @@ function detail(over: Partial<DetailResponse> = {}): DetailResponse {
   return {
     id: 2, name: '전기기사', category: '국가기술자격-전기전자', agency: '한국산업인력공단',
     sourceUrl: null, collectedAt: null, favorited: false, rolling: false,
-    nextEvent: null, splitsByExamType: true, examInfo: null, schedules: [],
+    nextEvent: null, splitsByExamType: true, examInfo: null,
+    hiddenReason: null, supersededBy: null, schedules: [],
     ...over,
   };
 }
@@ -136,7 +137,7 @@ describe('DetailPage — 문구와 회차 표', () => {
 
   it('일정이 있으면 접수 알림을 약속한다', async () => {
     vi.spyOn(examApi, 'detail').mockResolvedValue(detail({
-      schedules: [sched()], nextEvent: { type: 'REG_OPEN', label: '1회 필기 접수 시작', dday: 3, at: '2026-01-10T10:00' },
+      schedules: [sched()], nextEvent: { type: 'REG_OPEN', badge: 'REG_OPEN', label: '1회 필기 접수 시작', dday: 3, at: '2026-01-10T10:00' },
     }));
     renderDetail();
 
@@ -207,5 +208,67 @@ describe('DetailPage — 문구와 회차 표', () => {
 
     const cell = await screen.findByText(/2026년/);
     expect(cell.textContent).toContain('필기');
+  });
+/**
+   * 폐지·개칭된 시험은 검색에 안 나오지만 <b>옛 북마크·공유 링크로는 들어온다.</b>
+   * 그 화면이 "일정이 확인되면 알려 드립니다"라고 하면 올 일이 없는 것을 약속하는 셈이다.
+   * 내 시험 화면은 이미 사유를 보여주고 있었는데 상세 계약에만 빠져 있었다(2026-11-14 실측).
+   */
+  it("폐지된 시험은 사유를 말하고 일정을 약속하지 않는다", async () => {
+    vi.spyOn(examApi, "detail").mockResolvedValue(detail({
+      name: "도자기공예기능사",
+      hiddenReason: "폐지된 시험입니다. 더 이상 일정이 없습니다.",
+      schedules: [],
+    }));
+    mockAuth(null);
+    renderDetail();
+
+    await screen.findByText("도자기공예기능사");
+    expect(screen.getByText(/폐지된 시험입니다/)).toBeTruthy();
+    expect(screen.queryByText(/일정이 확인되면 알려 드립니다/)).toBeNull();
+    expect(screen.queryByText(/시행처 공고가 나오면 채워집니다/)).toBeNull();
+  });
+
+  it("개칭된 시험은 새 이름으로 가는 길을 준다", async () => {
+    vi.spyOn(examApi, "detail").mockResolvedValue(detail({
+      name: "SQL개발자(SQLD)",
+      hiddenReason: "'SQLD SQL 개발자'(으)로 이름이 바뀌었습니다. 새 이름으로 다시 등록해 주세요.",
+      supersededBy: "SQLD SQL 개발자",
+    }));
+    mockAuth(null);
+    renderDetail();
+
+    await screen.findByText("SQL개발자(SQLD)");
+    expect(screen.getByText("새 이름으로 찾기").getAttribute("href"))
+      .toContain(encodeURIComponent("SQLD SQL 개발자"));
+  });
+
+  /**
+   * 히어로가 카드와 다른 말을 했다 — 시험 진행 중인데 `2026-11-28 00:00` 이라 적혀
+   * "그날 시험"으로 읽혔다(실제 기간 11/14~11/28). 규약은 `eventAtLabel` 한 곳에 있다.
+   * 2026-11-14 실측으로 EXAM_ONGOING 174종 + RESULT_PENDING 177종 = 351종이 걸려 있었다.
+   */
+  it("시험 진행 중이면 히어로가 '~ 종료일' 로 쓴다 — 뜻 없는 00:00 을 찍지 않는다", async () => {
+    vi.spyOn(examApi, "detail").mockResolvedValue(detail({
+      nextEvent: { type: "EXAM", badge: "EXAM_ONGOING", label: "시험 진행 중", dday: 0, at: "2026-11-28T00:00:00" },
+    }));
+    mockAuth(null);
+    renderDetail();
+
+    await screen.findByText("시험 진행 중");
+    expect(screen.getByText("~ 2026-11-28")).toBeTruthy();
+    expect(screen.queryByText(/00:00/)).toBeNull();
+  });
+
+  it("합격 발표 예정이면 날짜만 쓴다 — 시행처가 시각을 안 준다", async () => {
+    vi.spyOn(examApi, "detail").mockResolvedValue(detail({
+      nextEvent: { type: "RESULT", badge: "RESULT_PENDING", label: "합격자 발표", dday: 27, at: "2026-12-11T00:00:00" },
+    }));
+    mockAuth(null);
+    renderDetail();
+
+    await screen.findByText("합격자 발표");
+    expect(screen.getByText("2026-12-11")).toBeTruthy();
+    expect(screen.queryByText(/00:00/)).toBeNull();
   });
 });

@@ -76,16 +76,31 @@ public class CollectHealth {
      *             같이 세면 멀쩡한 소스가 "고장"으로 뜬다(거짓 경보는 경보가 없는 것보다 나쁘다).
      */
     public static CollectHealth of(String source, List<CrawlLog> logs, LocalDateTime now) {
-        return of(source, logs, now, null);
+        return of(source, logs, now, null, true);
     }
 
     /** @param siteUrl 사람이 열어 볼 원본 주소(없으면 null) */
     public static CollectHealth of(String source, List<CrawlLog> logs, LocalDateTime now, String siteUrl) {
+        return of(source, logs, now, siteUrl, true);
+    }
+
+    /**
+     * @param siteUrl 사람이 열어 볼 원본 주소(없으면 null)
+     * @param anyRunRecorded 이 DB 에 <b>어느 소스든</b> 수집 기록이 하나라도 있는가.
+     *        <p>없으면 배치가 아직 한 번도 안 돈 것이고, 그건 소스의 문제가 아니라 <b>시간 문제</b>다.
+     *        그때 "손봐야 합니다"라고 하면 매니저가 22곳 사이트를 헛되이 열어 본다.
+     *        로컬은 인메모리라 기동마다 이 상태로 시작하고, 운영도 첫 배포 날 그렇다(2026-11-14 실측).
+     */
+    public static CollectHealth of(String source, List<CrawlLog> logs, LocalDateTime now,
+                                   String siteUrl, boolean anyRunRecorded) {
         logs = logs == null ? List.of() : logs.stream().filter(l -> !l.isPartial()).toList();
         if (logs.isEmpty()) {
+            // 다른 소스는 돌았는데 이 소스만 기록이 없으면 그건 의심할 일이다.
+            String message = anyRunRecorded
+                    ? "다른 소스는 돌았는데 이 소스만 기록이 없습니다. 원본 사이트를 확인해 주세요."
+                    : "아직 배치가 한 번도 돌지 않았습니다. 매일 05:00 에 돕니다 — 그 뒤에도 비어 있으면 여기에 표시됩니다.";
             return new CollectHealth(source, State.NEVER_RAN, State.NEVER_RAN.getLabel(),
-                    "아직 한 번도 돌지 않았습니다. 매일 05:00 배치를 기다려 보세요 — 내일도 비어 있으면 원본 사이트를 확인해 주세요.",
-                    null, 0, 0, true, siteUrl);
+                    message, null, 0, 0, anyRunRecorded, siteUrl);
         }
 
         List<CrawlLog> newestFirst = logs.stream()

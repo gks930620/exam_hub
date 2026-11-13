@@ -122,13 +122,20 @@ public class ExamSchedule {
     // ===== 비즈니스 메서드 =====
 
     /**
-     * 이 회차에서 알려진 가장 늦은 날짜 — 시험 종료·시작, 없으면 접수 마감·시작. 아무 날짜도 없으면 null.
+     * 이 회차에서 알려진 가장 늦은 날짜 — <b>합격 발표</b>, 없으면 시험 종료·시작, 없으면 접수 마감·시작.
+     * 아무 날짜도 없으면 null.
      *
      * <p>연도·회차만 있고 날짜가 하나도 없는 행은 사용자에게 아무것도 알려 주지 못한다.
      * 그래서 현황 판정(매니저 할 일·사용자 카드)은 이런 행을 "일정 없음"으로 친다 —
      * 회차만 넣어 두고 잊은 것이 "일정 있음"으로 둔갑하지 않게.
+     *
+     * <p><b>발표일을 빼 놓았다가 두 화면이 갈렸다</b>(2026-11-14 실측). 사용자 카드는 합격 발표를
+     * 다음 이벤트로 세는데 매니저는 시험일만 봐서, 시험은 지났고 발표가 남은 회차를
+     * 매니저만 "끝난 회차"로 쳤다 — 국제무역사 1급이 카드에는 "발표 D-6 추정"인데
+     * 매니저 할 일에는 없었다. 이름이 "가장 늦게 알려진 날짜"면 발표일이 들어가야 맞다.
      */
     public LocalDate latestKnownDate() {
+        if (resultDate != null) return resultDate;
         if (examEndDate != null) return examEndDate;
         if (examStartDate != null) return examStartDate;
         if (regEndAt != null) return regEndAt.toLocalDate();

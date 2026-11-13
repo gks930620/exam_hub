@@ -73,7 +73,14 @@ export interface ScheduleDto {
 }
 
 export interface EventDto {
+  /** 상세용 어휘 — `REG_OPEN / REG_CLOSING / EXAM / RESULT` */
   type: string;
+  /**
+   * 카드와 **같은 코드**(`CardBadge`) — 시각 표기 규약(`eventAtLabel`)은 이 어휘로 쓰여 있다.
+   *
+   * `type` 을 넘기면 규약이 조용히 안 먹어서 히어로가 뜻 없는 `00:00` 을 찍는다(2026-11-14 실측).
+   */
+  badge: string;
   label: string;
   dday: number;
   at: string;
@@ -97,6 +104,15 @@ export interface DetailResponse {
   splitsByExamType: boolean;
   /** 날짜가 아닌 정보 — 아직 안 받은 시험은 null 이고 그게 정상이다 */
   examInfo: ExamInfo | null;
+  /**
+   * 폐지·개칭·제외로 목록에서 뺀 시험의 사유. 살아 있는 시험이면 null.
+   *
+   * 검색에는 안 나오지만 **옛 북마크와 공유 링크로는 들어온다** — 그 화면이
+   * "일정이 확인되면 알려 드립니다"라고 하면 올 일이 없는 것을 약속하는 셈이다.
+   */
+  hiddenReason: string | null;
+  /** 개칭이면 새 이름. 그 외에는 null */
+  supersededBy: string | null;
   schedules: ScheduleDto[];
 }
 

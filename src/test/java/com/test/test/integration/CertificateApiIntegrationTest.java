@@ -53,6 +53,24 @@ class CertificateApiIntegrationTest extends ApiIntegrationTestSupport {
                 .andExpect(jsonPath("$.items[0].favorited").value(false));
     }
 
+    /**
+     * 사람은 "정보 처리"라고 띄어 쓴다. 시험 이름은 "정보처리기사"라 공백을 그대로 비교하면 0건이 나오고,
+     * 그건 <b>있는 시험을 없다고 말하는 것</b>이다(2026-11-14 실측).
+     *
+     * <p>검색과 둘러보기가 <b>같은 답</b>을 줘야 한다 — 화면끼리 갈리면 사용자는 어느 쪽을 믿을지 모른다.
+     */
+    @Test
+    @DisplayName("띄어 쓴 검색어도 찾는다 — 검색과 둘러보기가 같은 답을 준다")
+    void search_ignores_spaces() throws Exception {
+        mockMvc.perform(get("/api/certificates").param("query", "정보 처리"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].name").value("정보처리기사"));
+
+        mockMvc.perform(get("/api/certificates/browse").param("query", "정보 처리"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].name").value("정보처리기사"));
+    }
+
     @Test
     void search_with_too_short_query_returns_400() throws Exception {
         mockMvc.perform(get("/api/certificates").param("query", "정"))

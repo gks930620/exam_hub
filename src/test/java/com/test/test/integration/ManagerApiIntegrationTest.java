@@ -412,6 +412,50 @@ class ManagerApiIntegrationTest extends ApiIntegrationTestSupport {
     }
 
     /**
+     * <b>사용자 카드가 "추정"이라 한 시험은 매니저 할 일에 반드시 있어야 한다.</b>
+     *
+     * <p>한쪽은 '다음 이벤트가 추정인가', 다른쪽은 '확인할 추정 회차가 있나'를 본다. 매니저가 더 많이
+     * 아는 건 정상이다(뒤 회차가 추정인 경우). 반대는 안 된다 — <b>사용자에게는 "추정"이라 말해 두고
+     * 매니저에게는 할 일이 없으면 그 값은 영원히 확인되지 않는다.</b>
+     *
+     * <p>실제로 그랬다(2026-11-14). {@code latestKnownDate()} 가 <b>발표일을 빼고</b> 봐서,
+     * 시험은 지났고 발표만 남은 추정 회차를 매니저만 "끝난 회차"로 쳤다 —
+     * 국제무역사 1급이 카드에는 "발표 D-6 추정"인데 매니저 할 일에는 없었다.
+     */
+    @Test
+    @DisplayName("카드가 추정이라 한 시험은 매니저 할 일에도 있다 — 시험은 지났고 발표만 남은 회차까지")
+    void card_estimate_always_appears_in_manager_todo() throws Exception {
+        Certificate cert = certificateRepository.save(Certificate.builder()
+                .name("발표만남은추정시험").slug("approx-result-" + System.nanoTime())
+                .series(Series.ETC).agency("테스트기관").build());
+        LocalDate today = TimeUtil.today();
+        // 시험은 지났고(어제) 발표는 남았다(다음 주). 출처는 추정치.
+        examScheduleRepository.save(ExamSchedule.builder()
+                .certificate(cert).year(today.getYear()).round(1).examType(ExamType.WRITTEN)
+                .examStartDate(today.minusDays(2)).examEndDate(today.minusDays(1))
+                .resultDate(today.plusDays(7))
+                .status(ScheduleStatus.ACTIVE).provenance(ScheduleProvenance.APPROX)
+                .build());
+
+        String token = bearer(newAdmin());
+        JsonNode card = objectMapper.readTree(mockMvc.perform(get("/api/certificates/{id}", cert.getId()))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8));
+        JsonNode ov = objectMapper.readTree(mockMvc.perform(get("/api/admin/overview")
+                        .param("query", "발표만남은추정시험").param("size", "10")
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8));
+
+        // 사용자에게는 발표가 다음 이벤트로 보인다
+        // 카드와 같은 어휘(badge)로 본다 — type 은 상세용 다른 어휘다(RESULT)
+        assertEquals("RESULT_PENDING", card.path("nextEvent").path("badge").asText(),
+                "시험이 지났고 발표가 남았으면 다음 이벤트 배지는 합격 발표 예정이다");
+        // 매니저에게는 "시행처 확인" 할 일로 보여야 한다
+        JsonNode row = ov.path("items").get(0);
+        assertEquals("VERIFY", row.path("action").asText(),
+                "카드가 추정이라 한 시험이 매니저 할 일에 없다 — 그 값은 영원히 확인되지 않는다");
+    }
+
+    /**
      * 화면 위(채움률)와 아래(할 일)는 같은 API 가 아니다 — 셈법이 다르면 "일정 없음 142 인데 첫 일정 입력 63" 같은
      * 어긋남이 생긴다(실측 2026-09-02). 수기로 채워야 할 수 = 첫 일정 입력 수, 있음+없음 = 전체 — 이게 깨지면 실패.
      */

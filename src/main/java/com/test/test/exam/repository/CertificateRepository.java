@@ -34,10 +34,15 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
     boolean existsBySlug(String slug);
 
     /**
-     * 자격증명 부분 일치 검색 (대소문자 무시).
+     * 자격증명 부분 일치 검색 (대소문자·<b>공백</b> 무시).
      * <b>폐지·개칭된 시험은 뺀다</b> — 오지 않을 접수를 기다리게 두면 안 된다.
+     *
+     * <p>공백을 무시하는 이유: 사람은 "정보 처리"라고 띄어 쓰는데 시험 이름은 "정보처리기사"라
+     * 0건이 나왔다 — <b>있는 시험을 없다고 말하는 셈</b>이다(2026-11-14 실측).
+     * 아래 둘러보기·분류 질의도 같은 규칙을 쓴다(화면끼리 답이 갈리면 그게 더 혼란스럽다).
+     * 870행이라 인덱스를 못 타도 상관없다.
      */
-    @Query("SELECT c FROM Certificate c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\' AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED) ORDER BY c.favoriteCount DESC, c.name ASC")
+    @Query("SELECT c FROM Certificate c WHERE REPLACE(LOWER(c.name), ' ', '') LIKE REPLACE(LOWER(CONCAT('%', :q, '%')), ' ', '') ESCAPE '\\' AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED) ORDER BY c.favoriteCount DESC, c.name ASC")
     List<Certificate> searchByName(@Param("q") String q, Pageable pageable);
 
     /** 인기순 TOP N — 폐지·개칭은 뺀다(검색·둘러보기와 같은 모집단). */
@@ -66,7 +71,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
      */
     @Query("""
             SELECT c FROM Certificate c
-             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\')
+             WHERE (:q = '' OR REPLACE(LOWER(c.name), ' ', '') LIKE REPLACE(LOWER(CONCAT('%', :q, '%')), ' ', '') ESCAPE '\\')
                AND (:category = '' OR c.category = :category)
                AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
             """)
@@ -121,7 +126,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
      */
     @Query("""
             SELECT c FROM Certificate c
-             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\')
+             WHERE (:q = '' OR REPLACE(LOWER(c.name), ' ', '') LIKE REPLACE(LOWER(CONCAT('%', :q, '%')), ' ', '') ESCAPE '\\')
                AND (:category = '' OR c.category = :category)
                AND c.rollingAdmission = false
                AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)
@@ -148,7 +153,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
      */
     @Query("""
             SELECT c FROM Certificate c
-             WHERE (:q = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) ESCAPE '\\')
+             WHERE (:q = '' OR REPLACE(LOWER(c.name), ' ', '') LIKE REPLACE(LOWER(CONCAT('%', :q, '%')), ' ', '') ESCAPE '\\')
                AND (:category = '' OR c.category = :category)
                AND c.rollingAdmission = false
                AND c.lifecycle IN (com.test.test.exam.domain.CertificateLifecycle.ACTIVE, com.test.test.exam.domain.CertificateLifecycle.UNVERIFIED)

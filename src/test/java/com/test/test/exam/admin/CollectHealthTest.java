@@ -42,12 +42,27 @@ class CollectHealthTest {
     }
 
     @Test
-    @DisplayName("한 번도 안 돈 소스는 '기록 없음'으로 나온다 — 조용히 빠지지 않는다")
-    void never_ran_is_reported() {
-        CollectHealth h = CollectHealth.of("HSK_WEB", List.of(), TimeUtil.now());
+    @DisplayName("다른 소스는 돌았는데 이 소스만 기록이 없으면 '손봐야 함'이다")
+    void never_ran_while_others_ran_needs_attention() {
+        CollectHealth h = CollectHealth.of("HSK_WEB", List.of(), TimeUtil.now(), null, true);
 
         assertEquals(CollectHealth.State.NEVER_RAN, h.getState());
-        assertTrue(h.isNeedsAttention(), "한 번도 안 돈 소스를 정상으로 보면 안 된다");
+        assertTrue(h.isNeedsAttention(), "혼자만 안 돈 소스를 정상으로 보면 안 된다");
+    }
+
+    /**
+     * 기동 직후에는 어느 소스도 안 돌았다. 그때 22곳 전부 "손봐야 합니다"라고 하면
+     * 매니저가 사이트를 헛되이 열어 본다 — 할 수 있는 게 05:00 을 기다리는 것뿐이다.
+     * 로컬이 인메모리가 된 뒤 매 기동 이 상태로 시작한다(2026-11-14 실측).
+     */
+    @Test
+    @DisplayName("배치가 아직 한 번도 안 돌았으면 '기록 없음'이지만 손볼 일은 아니다")
+    void never_ran_before_any_batch_is_not_actionable() {
+        CollectHealth h = CollectHealth.of("HSK_WEB", List.of(), TimeUtil.now(), null, false);
+
+        assertEquals(CollectHealth.State.NEVER_RAN, h.getState());
+        assertFalse(h.isNeedsAttention(), "기다리는 것 말고 할 게 없는데 손보라고 하면 헛일을 시킨다");
+        assertTrue(h.getMessage().contains("05:00"), "언제 도는지를 알려 줘야 기다릴 수 있다");
     }
 
     @Test

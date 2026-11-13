@@ -165,6 +165,16 @@ public final class CertificateDtos {
          * 비어 있는 것이 정상이다 — 화면이 빈 칸을 만들지 않도록 통째로 null 을 준다.
          */
         private ExamInfoDto examInfo;
+        /**
+         * 폐지·개칭·제외로 <b>목록에서 뺀 시험의 사유</b>. 살아 있는 시험이면 null.
+         *
+         * <p>검색에는 안 나오지만 <b>옛 북마크와 공유 링크로는 들어온다.</b> 그 화면이
+         * "일정이 확인되면 알려 드립니다"라고 하면 거짓 약속이다 — 올 일정이 없다.
+         * 내 시험 화면은 이미 같은 값을 쓰고 있었는데(`FavoriteService`) 상세 계약에만 빠져 있었다.
+         */
+        private String hiddenReason;
+        /** 개칭이면 새 이름. 화면이 "새 이름으로 가기"를 걸 수 있다. 그 외에는 null */
+        private String supersededBy;
         private List<ScheduleDto> schedules;
     }
 
@@ -173,6 +183,14 @@ public final class CertificateDtos {
     @AllArgsConstructor
     public static class EventDto {
         private String type;
+        /**
+         * 카드와 <b>같은 코드</b>({@code CardBadge}) — 화면이 시각 표기 규약을 공유하려면 이게 필요하다.
+         *
+         * <p>{@code type} 은 상세용 다른 어휘다({@code REG_OPEN/EXAM/RESULT}). 프런트의
+         * {@code eventAtLabel} 은 badge 어휘로 쓰여 있어서, type 을 넘기면 규약이 조용히 안 먹는다 —
+         * 상세 히어로가 "2026-11-28 00:00" 을 그대로 찍고 있었다(2026-11-14 실측, 351종).
+         */
+        private String badge;
         private String label;
         private long dday;
         private String at;
@@ -181,7 +199,7 @@ public final class CertificateDtos {
             if (e == null || !e.isPresent()) {
                 return null;
             }
-            return new EventDto(e.type(), e.label(), e.dday(), TimeUtil.format(e.at()));
+            return new EventDto(e.type(), e.badge().name(), e.label(), e.dday(), TimeUtil.format(e.at()));
         }
     }
 

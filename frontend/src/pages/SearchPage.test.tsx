@@ -341,4 +341,41 @@ describe('SearchPage', () => {
     expect(await screen.findByRole('heading', { name: /지금 접수 중/ })).toBeInTheDocument();
     expect(screen.getByText('232개')).toBeInTheDocument();
   });
+/**
+   * 0건 문구가 <b>거짓 원인</b>을 말했다. '접수 중 ∩ 금융' 이 0건일 때
+   * "분류 '금융' 에는 아직 없습니다"라고 했는데 금융 분류에는 22종이 있었다 —
+   * 사용자는 분류를 풀어도 안 나올 거라 믿고 떠난다(2026-11-14 실측).
+   */
+  it("조건이 둘 이상이면 어느 하나를 범인으로 지목하지 않는다", async () => {
+    vi.spyOn(examApi, "browse").mockResolvedValue(page([], { totalElements: 0 }));
+    renderAt("/?state=OPEN&cat=금융");
+
+    await screen.findByText("조건에 맞는 시험이 없어요");
+    expect(screen.getByText(/모두 만족하는 시험이 없습니다/)).toBeTruthy();
+    expect(screen.queryByText(/분류 ‘금융’ 에는 아직 없습니다/)).toBeNull();
+    // 조건을 풀 수단을 둘 다 준다
+    expect(screen.getByText("분류 초기화")).toBeTruthy();
+    expect(screen.getByText("전체 보기")).toBeTruthy();
+  });
+
+  /** 상태 칩만 걸려 0건이면 "잠시 뒤 다시 열어 보세요"가 아니다 — 기다려도 안 바뀐다. */
+  it("상태 칩만 걸려 0건이면 그 조건 때문이라고 말하고 전체 보기를 준다", async () => {
+    vi.spyOn(examApi, "browse").mockResolvedValue(page([], { totalElements: 0 }));
+    renderAt("/?state=SOON");
+
+    await screen.findByText("조건에 맞는 시험이 없어요");
+    expect(screen.getByText(/‘곧 접수 시작’ 인 시험이 없습니다/)).toBeTruthy();
+    expect(screen.queryByText(/잠시 뒤 다시 열어 보세요/)).toBeNull();
+    expect(screen.getByText("전체 보기")).toBeTruthy();
+  });
+
+  /** 범위 밖 쪽은 "전체 841개"라고 써 놓고 카드가 0장이었다 — 기다리라고 하면 안 된다. */
+  it("범위 밖 쪽이면 그 쪽이 비었다고 말하고 첫 쪽으로 보낸다", async () => {
+    vi.spyOn(examApi, "browse").mockResolvedValue(page([], { page: 98, totalElements: 841, totalPages: 18 }));
+    renderAt("/?page=99");
+
+    await screen.findByText("99쪽에는 시험이 없어요");
+    expect(screen.getByText("첫 쪽으로")).toBeTruthy();
+    expect(screen.queryByText(/잠시 뒤 다시 열어 보세요/)).toBeNull();
+  });
 });

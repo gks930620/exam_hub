@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { examApi } from '../api/exams';
 import { fmtAt as fmt } from '../lib/format';
-import { roundLabel } from '../lib/status';
+import { eventAtLabel, roundLabel } from '../lib/status';
 import ExamInfo from '../components/ExamInfo';
 import { useAuth, useRequireLogin } from '../auth';
 import type { DetailResponse, ScheduleStatus } from '../api/types';
@@ -45,7 +45,19 @@ export default function DetailPage() {
     }
   }
 
-  if (err && !d) return <div className="k-alert k-alert--err" role="alert">{err}</div>;
+  // 주소가 틀렸을 때 서버 용어("파라미터 타입이 올바르지 않습니다: id")를 그대로 보여 주면
+  // 사용자는 자기가 뭘 할 수 있는지 모른다. 돌아갈 길을 준다.
+  if (err && !d) {
+    return (
+      <div className="k-empty state">
+        <span className="big">그 시험을 찾을 수 없어요</span>
+        주소가 잘못됐거나 목록에서 빠진 시험입니다.
+        <div className="empty-actions">
+          <Link className="k-btn k-btn--secondary k-btn--sm" to="/">시험 찾기로</Link>
+        </div>
+      </div>
+    );
+  }
   // 첫 로딩은 스켈레톤 — 제목·히어로·표 자리를 먼저 잡아 내용이 뜰 때 화면이 튀지 않게 한다(설계 05 §8)
   if (!d) {
     return (
@@ -80,8 +92,19 @@ export default function DetailPage() {
 
       {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
 
+      {/* 폐지·개칭·제외된 시험 — 검색엔 없지만 옛 북마크·공유 링크로 들어온다.
+          여기서 "일정이 확인되면 알려 드립니다"라고 하면 올 일이 없는 것을 약속하는 셈이다. */}
+      {d.hiddenReason && (
+        <div className="k-alert k-alert--warn" role="status">
+          <b>{d.hiddenReason}</b>
+          {d.supersededBy && (
+            <> <Link to={`/?q=${encodeURIComponent(d.supersededBy)}`}>새 이름으로 찾기</Link></>
+          )}
+        </div>
+      )}
+
       {/* 지키지 못할 약속을 하지 않는다 — 상시시험엔 알릴 마감이 없고, 일정 없는 시험은 확인돼야 알릴 수 있다 */}
-      {!d.favorited && (
+      {!d.hiddenReason && !d.favorited && (
         <p className="fineprint detail-note">
           {d.rolling
             ? <>등록해 두면 <b>내 시험</b>에 모아 볼 수 있습니다.</>
@@ -110,7 +133,9 @@ export default function DetailPage() {
             </span>
             <span className="what">
               <strong>{d.nextEvent.label}</strong>
-              <span>{fmt(d.nextEvent.at)}</span>
+              {/* 카드와 같은 규약을 쓴다 — 시험 진행 중은 '~ 종료일', 합격 발표는 날짜만.
+                  fmt 를 그대로 쓰면 뜻 없는 00:00 이 찍히고 '그날 시험'으로 읽힌다(351종에 걸렸다) */}
+              <span>{eventAtLabel(d.nextEvent.badge, d.nextEvent.at)}</span>
             </span>
           </div>
         </section>
@@ -130,9 +155,12 @@ export default function DetailPage() {
           </div>
         ) : (
           <div className="k-empty state">
-            <span className="big">아직 일정이 확인되지 않았습니다</span>
-            {/* "등록해 두면 알려 드립니다"는 위 안내문이 이미 말했다 — 같은 약속을 두 번 하지 않는다(§19-6) */}
-            시행처 공고가 나오면 채워집니다.
+            <span className="big">
+              {d.hiddenReason ? '앞으로 일정이 없습니다' : '아직 일정이 확인되지 않았습니다'}
+            </span>
+            {/* "등록해 두면 알려 드립니다"는 위 안내문이 이미 말했다 — 같은 약속을 두 번 하지 않는다(§19-6)
+                숨긴 시험에는 "공고가 나오면 채워진다"고 하지 않는다 — 나올 공고가 없다 */}
+            {d.hiddenReason ? '이 시험은 목록에서 빠졌습니다. 사유는 위에 있습니다.' : '시행처 공고가 나오면 채워집니다.'}
           </div>
         )
       ) : (

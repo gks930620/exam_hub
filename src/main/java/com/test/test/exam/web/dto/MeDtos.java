@@ -66,7 +66,14 @@ public final class MeDtos {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UpdateEmailRequest {
+        /**
+         * {@code @Email} 만으로는 {@code a@b} 가 통과한다(기본 규칙이 TLD 를 요구하지 않는다).
+         * 알림이 <b>유일한 전달 수단</b>인 서비스에서 못 받는 주소를 저장하면,
+         * 사용자는 등록해 두고 안 오는 이유를 끝까지 모른다 — 도메인에 점이 있는 것까지 본다.
+         */
         @Email(message = "이메일 형식이 올바르지 않습니다.")
+        @Pattern(regexp = "^$|^[^@\\s]+@[^@\\s.]+(\\.[^@\\s.]+)+$",
+                message = "이메일 형식이 올바르지 않습니다. 예) name@example.com")
         @Size(max = 255, message = "이메일이 너무 깁니다.")
         private String email;
     }

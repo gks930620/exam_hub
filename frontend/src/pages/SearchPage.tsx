@@ -52,6 +52,8 @@ export default function SearchPage() {
   const [grandTotal, setGrandTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  /** 지금 서버에 보내 둔 관심 토글 — 같은 시험에 두 번 보내지 않는다 */
+  const [pending, setPending] = useState<Set<number>>(new Set());
   const seq = useRef(0);
   const debounce = useRef<number>();
   const listTop = useRef<HTMLDivElement>(null);
@@ -109,11 +111,17 @@ export default function SearchPage() {
     listTop.current?.scrollIntoView?.({ block: 'start' });
   }
 
+  // 별을 두 번 빠르게 누르면 같은 요청이 두 번 날아간다. 서버는 둘째를 409 로 막지만(이미 처리됨),
+  // 화면에 굳이 빨간 줄을 띄울 일이 아니다 — 보낸 동안은 아예 안 보낸다.
   async function toggle(c: CertItem) {
     if (!me) {
       requireLogin();
       return;
     }
+    if (pending.has(c.id)) {
+      return;
+    }
+    setPending((prev) => new Set(prev).add(c.id));
     try {
       if (c.favorited) await examApi.removeFavorite(c.id);
       else await examApi.addFavorite(c.id);
@@ -123,6 +131,12 @@ export default function SearchPage() {
       setErr(null);
     } catch (e) {
       setErr(e instanceof Error ? e.message : '관심 등록에 실패했습니다.');
+    } finally {
+      setPending((prev) => {
+        const next = new Set(prev);
+        next.delete(c.id);
+        return next;
+      });
     }
   }
 
@@ -195,7 +209,8 @@ export default function SearchPage() {
         </div>
       )}
 
-      {!loading && data && data.items.length === 0 && <EmptyResult q={q} cat={cat} onReset={update} />}
+      {!loading && data && data.items.length === 0
+        && <EmptyResult q={q} cat={cat} state={state} total={total} page={page} onReset={update} />}
 
       {data && data.items.length > 0 && (
         // 다시 불러오는 동안 목록은 남고 흐려진다 — 자리가 흔들리면 어디를 보고 있었는지 잃는다
@@ -211,6 +226,7 @@ export default function SearchPage() {
                   className="star"
                   data-on={c.favorited}
                   onClick={() => toggle(c)}
+                  disabled={pending.has(c.id)}
                   aria-label={c.favorited ? '관심 해제' : '관심 등록'}
                   aria-pressed={c.favorited}
                 >
@@ -243,12 +259,32 @@ export default function SearchPage() {
  * <p>검색어가 있으면 오타를 스스로 발견하도록 작은따옴표로 되읽어 주고, 분류만 걸렸으면 그 분류를 말한다.
  * 조건이 하나도 없는데 0건인 것은 <b>사용자가 고칠 수 있는 게 없는 상태</b>라 "초기화"를 권하면 거짓 안내가 된다.
  */
-function EmptyResult({ q, cat, onReset }: {
+function EmptyResult({ q, cat, state, total, page, onReset }: {
   q: string;
   cat: string;
+  state: string;
+  total: number;
+  page: number;
   onReset: (patch: Patch) => void;
 }) {
-  if (!q && !cat) {
+  const stateLabel = STATE_CHIPS.find((c) => c.value === state && c.value)?.label ?? null;
+
+  // 조건은 없는데 총계는 있다 = 그 쪽에 카드가 없는 것이다(북마크·필터 지운 뒤 남은 page).
+  // "잠시 뒤 다시 열어 보세요"라고 하면 기다리게 되는데, 기다려도 안 바뀐다.
+  if (!q && !cat && !state && total > 0 && page > 0) {
+    return (
+      <div className="k-empty state">
+        <span className="big">{page + 1}쪽에는 시험이 없어요</span>
+        전체 {total.toLocaleString()}개 중 그 쪽은 비어 있습니다.
+        <div className="empty-actions">
+          <button className="k-btn k-btn--secondary k-btn--sm"
+                  onClick={() => onReset({ page: null })}>첫 쪽으로</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!q && !cat && !state) {
     return (
       <div className="k-empty state">
         <span className="big">아직 준비 중이에요</span>
@@ -256,10 +292,24 @@ function EmptyResult({ q, cat, onReset }: {
       </div>
     );
   }
+
+  // 왜 0건인지를 <b>걸린 조건 전부</b>로 말한다. 하나만 집어 말하면 거짓이 된다 —
+  // '접수 중 ∩ 금융' 이 0건일 때 "분류 '금융' 에는 아직 없습니다"라고 했는데 금융은 22종 있었다.
+  const why: string[] = [];
+  if (q) why.push(`‘${q}’`);
+  if (cat) why.push(`분류 ‘${cat}’`);
+  if (stateLabel) why.push(`‘${stateLabel}’`);
+
   return (
     <div className="k-empty state">
       <span className="big">{q ? `‘${q}’ 검색 결과가 없어요` : '조건에 맞는 시험이 없어요'}</span>
-      {q && cat ? `분류 ‘${cat}’ 안에서 찾았습니다.` : cat ? `분류 ‘${cat}’ 에는 아직 없습니다.` : '다른 이름으로 찾아보세요.'}
+      {why.length > 1
+        ? `${why.join(' + ')} 를 모두 만족하는 시험이 없습니다. 조건을 하나 풀어 보세요.`
+        : stateLabel
+          ? `지금 ‘${stateLabel}’ 인 시험이 없습니다. 시행처 공고가 나오면 생깁니다.`
+          : cat
+            ? `분류 ‘${cat}’ 에는 아직 없습니다.`
+            : '다른 이름으로 찾아보세요.'}
       <div className="empty-actions">
         {q && (
           <button className="k-btn k-btn--secondary k-btn--sm"
@@ -268,6 +318,10 @@ function EmptyResult({ q, cat, onReset }: {
         {cat && (
           <button className="k-btn k-btn--secondary k-btn--sm"
                   onClick={() => onReset({ cat: null, page: null })}>분류 초기화</button>
+        )}
+        {state && (
+          <button className="k-btn k-btn--secondary k-btn--sm"
+                  onClick={() => onReset({ state: null, page: null })}>전체 보기</button>
         )}
       </div>
     </div>

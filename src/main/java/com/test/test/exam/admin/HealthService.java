@@ -56,9 +56,13 @@ public class HealthService {
                 .findByStartedAtAfterOrderByStartedAtDesc(now.minusDays(COLLECT_LOOKBACK_DAYS))
                 .stream().collect(Collectors.groupingBy(CrawlLog::getSource));
 
+        // 아무 소스도 안 돌았으면 "배치가 아직 안 돈 것"이고 매니저가 할 일이 없다.
+        // 하나라도 돌았는데 빠진 소스가 있으면 그건 의심할 일이다 — 그 구분을 넘겨 준다.
+        boolean anyRunRecorded = !bySource.isEmpty();
+
         return sources.stream()
                 .filter(ScheduleSource::usesNetwork)
-                .map(s -> CollectHealth.of(s.sourceId(), bySource.get(s.sourceId()), now, s.siteUrl()))
+                .map(s -> CollectHealth.of(s.sourceId(), bySource.get(s.sourceId()), now, s.siteUrl(), anyRunRecorded))
                 .sorted(Comparator.comparing((CollectHealth h) -> !h.isNeedsAttention())
                         .thenComparing(CollectHealth::getSource))
                 .toList();
