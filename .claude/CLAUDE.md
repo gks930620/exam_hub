@@ -30,7 +30,7 @@ Spring Boot 백엔드(REST API) + **React CSR 웹 프런트** 프로젝트입니
 - **⚠️ 범위: 웹 전용 + CSR(React).** 모바일 앱(Flutter) 안 함(`flutter_common/` **삭제됨**). 인터랙티브 기능(시험 검색·내 시험 등록·알림설정)이 전부 **React CSR 웹**에서 동작한다.
 - **사용자는 누구인가**: 취준생·자격증 준비생·자격 수당이 필요한 직장인 — "접수 기간을 놓치면 다음 회차까지 반년 대기"가 페인 포인트.
 - **알림 채널**: **이메일 실발송 중**(2026-08-10 확정, `EmailNotificationSender`, `MAIL_ENABLED=true`). 알림톡은 사업자등록 전이라 `ALIMTALK_ENABLED=false` 로 꺼 둠. 웹 푸시는 미구현. `LogNotificationSender` 는 발송 체인의 마지막 폴백일 뿐이다.
-- **방향 전환(v1.1)**: 큐넷 국가기술자격 → **각종 시험 통합**(완료 — 시험 마스터 872종·공개 841, 일정 없어도 노출). 유료화 제거 방향, 계정·커뮤니티 도입 확정. `작업자_AI_문서/시험데이터/02_전수목록.md`·`08_계정과_커뮤니티.md` 참고.
+- **방향 전환(v1.1)**: 큐넷 국가기술자격 → **각종 시험 통합**(완료 — 시험 마스터 870종·공개 841, 일정 없어도 노출). 유료화 제거 방향, 계정·커뮤니티 도입 확정. `작업자_AI_문서/시험데이터/02_전수목록.md`·`08_계정과_커뮤니티.md` 참고.
 
 ## 스택 / 저장소 구조
 
@@ -51,8 +51,8 @@ Spring Boot 백엔드(REST API) + **React CSR 웹 프런트** 프로젝트입니
     아니라 **수집 파이프라인(레코드당 쿼리 14.5개)과 SQL 로깅(91만 줄·25MB)** 이었다. 그걸 고치니
     **전체 기동 23초**가 되어 원칙으로 돌아왔다(2026-11-13 사용자 결정·실측).
   - SQL 로그는 기본 꺼져 있다. 볼 때만 `--logging.level.org.hibernate.SQL=debug`.
-- **외부 연동 상태**: `QnetApiScheduleSource`(큐넷 실 API)는 **실호출 검증 완료**(2026-08-28 전량 613콜). 발송은 **이메일 실발송**(`EmailNotificationSender`). 로컬도 `.env` 의 `QNET_API_ENABLED=true` 로 실 API 를 쓰되 **기동 때는 수집하지 않고**(`collect.on-startup` 기본 false) `seed/schedules_snapshot.json` 스냅샷으로 복원한다. 실 수집은 05:00 배치. 스크래퍼 8곳(상의·KCA·Kdata·토익·텝스·JLPT·국시원·TOPIK)은 `SCRAPE_ENABLED` 기본 **on**.
-- **각종 시험 통합**: 비큐넷 시험은 `resources/seed/non_qnet_exams.json` + `SeedFileScheduleSource`로 로컬 DB 적재(52종, 그중 50종은 `approx` 추정치 — 운영엔 안 들어감). `Certificate.category`로 분류.
+- **외부 연동 상태**: `QnetApiScheduleSource`(큐넷 실 API)는 **실호출 검증 완료**(2026-08-28 전량 613콜). 발송은 **이메일 실발송**(`EmailNotificationSender`). 로컬도 `.env` 의 `QNET_API_ENABLED=true` 로 실 API 를 쓰되 **기동 때는 수집하지 않고**(`collect.on-startup` 기본 false) `seed_exams.sql` 시드로 복원한다. 실 수집은 05:00 배치. 스크래퍼 8곳(상의·KCA·Kdata·토익·텝스·JLPT·국시원·TOPIK)은 `SCRAPE_ENABLED` 기본 **on**.
+- **각종 시험 통합**: 비큐넷 시험도 `seed_exams.sql` 에 같이 들어 있다(그중 50종은 `provenance=approx` 추정치 — 화면에 "시행처 확인 필요"로 표시된다). `Certificate.category`로 분류.
 - **시드는 SQL 하나다** — `seed_exams.sql`(18,607행: 시험 870·일정 2,948·알림예약 14,739·상세 50).
   **기동 때 JSON 을 읽는 경로는 없다**(2026-11-14 — 시드 JSON 6개와 로더 4개를 들어냈다).
   - 넣는 주체는 `SqlSeedRunner` 하나. **시험 표가 비었을 때만** 돈다 →
