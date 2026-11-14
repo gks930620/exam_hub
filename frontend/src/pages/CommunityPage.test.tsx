@@ -100,4 +100,37 @@ describe('CommunityPage', () => {
     expect(await screen.findByDisplayValue('수제비')).toBeTruthy();
     expect(await screen.findByRole('heading', { name: /검색 결과/ })).toBeTruthy();
   });
+/**
+   * <b>내가 쓴 글 모아보기.</b> 글이 쌓이면 자기 글을 다시 찾을 길이 목록을 훑는 것뿐이었다 —
+   * 검색은 말을 기억해야 쓰는 것이고, 자기가 쓴 글은 "내가 썼다"는 사실만 기억한다.
+   * 2026-11-14 추가.
+   */
+  it("로그인했으면 '내 글' 칩이 있고, 누르면 내 글 API 를 부른다", async () => {
+    vi.spyOn(auth, "useAuth").mockReturnValue({
+      me: { id: 1, nickname: "홍길동", role: "USER" } as never,
+      loading: false, login: vi.fn(), loginWithToken: vi.fn(), logout: vi.fn(), refresh: vi.fn(),
+    });
+    vi.spyOn(examApi, "posts").mockResolvedValue(list([post()]));
+    // 제목을 화면 제목("내가 쓴 글")과 다르게 둔다 — 같으면 둘이 잡혀 무엇을 본 건지 알 수 없다
+    const mine = vi.spyOn(examApi, "myPosts").mockResolvedValue(list([post({ title: "작년에 쓴 후기" })]));
+    renderAt();
+
+    fireEvent.click(await screen.findByRole("button", { name: "내 글" }));
+
+    await waitFor(() => expect(mine).toHaveBeenCalled());
+    expect(await screen.findByText("작년에 쓴 후기")).toBeTruthy();
+    // 제목이 "내가 쓴 글" 로 바뀐다 — 지금 무엇을 보고 있는지가 한 줄로 드러나야 한다
+    expect(screen.getByRole("heading", { name: "내가 쓴 글" })).toBeTruthy();
+    // 주소에 남아야 한다 — 글을 보고 돌아와도 같은 화면이어야 한다
+    expect(paramsOf().get("mine")).toBe("1");
+  });
+
+  /** 비로그인에게 그리면 눌러도 401 이고, 그 401 은 빨간 줄로만 남는다. */
+  it("비로그인에게는 '내 글' 칩을 그리지 않는다", async () => {
+    vi.spyOn(examApi, "posts").mockResolvedValue(list([post()]));
+    renderAt();
+
+    await screen.findByText("첫 글");
+    expect(screen.queryByRole("button", { name: "내 글" })).toBeNull();
+  });
 });

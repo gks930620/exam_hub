@@ -77,6 +77,10 @@ public class SecurityConfig {
                 .requestMatchers(PUBLIC_INFRA).permitAll()
                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
 
+                // 내가 쓴 글은 공개가 아니다 — 누구 글인지는 토큰이 정한다.
+                // ⚠️ 아래 "/api/community/posts/**" permitAll 보다 **먼저** 와야 한다(먼저 맞은 매처가 이긴다).
+                .requestMatchers(HttpMethod.GET, "/api/community/posts/mine").authenticated()
+
                 // 공개 API — 비로그인도 본다
                 .requestMatchers(HttpMethod.GET,
                         "/api/info",

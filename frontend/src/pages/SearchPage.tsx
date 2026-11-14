@@ -222,7 +222,10 @@ export default function SearchPage() {
           {data.items.map((c) => (
             <div className="k-card k-card--hover exam-card" key={c.id}>
               <div className="top">
-                <Link to={`/cert/${c.id}`} className="grow">
+                {/* 이름으로 연다 — 주소창에 `/cert/by-slug/정보처리기사` 가 남아서
+                    복사해 보내면 받는 사람이 무슨 시험인지 안다. 숫자 주소(`/cert/1`)도 계속 열린다.
+                    내 시험·캘린더는 공유하는 화면이 아니라 숫자 그대로 둔다(그쪽 DTO 에 slug 가 없다). */}
+                <Link to={`/cert/by-slug/${encodeURIComponent(c.slug)}`} className="grow">
                   <h3>{c.name}</h3>
                   <p className="sub">{[c.category, c.agency].filter(Boolean).join(' · ')}</p>
                 </Link>

@@ -3,6 +3,7 @@ package com.test.test.exam.community;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
+import com.test.test.exam.domain.Member;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,6 +23,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = "member")
     Optional<Post> findByIdAndDeletedFalse(Long id);
+
+    /**
+     * 내가 쓴 글 — 최신순. 게시판은 가리지 않는다(어느 게시판에 썼는지 기억 못 하는 게 보통이다).
+     *
+     * <p>글이 쌓이면 자기 글을 다시 찾을 길이 목록을 훑는 것뿐이었다. 검색은 말을 기억해야 쓰고,
+     * 자기가 쓴 글은 <b>"내가 썼다"는 사실만 기억한다.</b>
+     */
+    @EntityGraph(attributePaths = "member")
+    Page<Post> findByMemberAndDeletedFalseOrderByCreatedAtDesc(Member member, Pageable pageable);
 
     /**
      * 제목·본문에서 찾는다(게시판 전체).

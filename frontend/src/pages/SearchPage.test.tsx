@@ -378,4 +378,15 @@ describe('SearchPage', () => {
     expect(screen.getByText("첫 쪽으로")).toBeTruthy();
     expect(screen.queryByText(/잠시 뒤 다시 열어 보세요/)).toBeNull();
   });
+/**
+   * 공유한 링크가 읽히게 — `/cert/338` 은 받은 사람이 무슨 시험인지 모른다.
+   * 숫자 주소도 계속 열린다(라우트 둘 다 있다). 2026-11-14 추가.
+   */
+  it("카드는 이름 주소로 연다 — 복사해 보내면 읽힌다", async () => {
+    vi.spyOn(examApi, "browse").mockResolvedValue(page([item({ id: 7, name: "정보처리기사", slug: "정보처리기사" })]));
+    renderAt();
+
+    const link = await screen.findByRole("link", { name: /정보처리기사/ });
+    expect(link.getAttribute("href")).toBe("/cert/by-slug/" + encodeURIComponent("정보처리기사"));
+  });
 });

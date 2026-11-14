@@ -230,4 +230,53 @@ class CommunityApiIntegrationTest extends ApiIntegrationTestSupport {
             }
         }
     }
+/**
+     * <b>내가 쓴 글 모아보기.</b> 글이 쌓이면 자기 글을 다시 찾을 길이 목록을 훑는 것뿐이었다 —
+     * 검색은 말을 기억해야 쓰는 것이고, 자기가 쓴 글은 "내가 썼다"는 사실만 기억한다.
+     *
+     * <p>게시판으로 거르지 않는다(어느 게시판에 썼는지는 보통 기억하지 못한다).
+     */
+    @Test
+    @DisplayName("내 글만 모아 준다 — 남의 글은 섞이지 않는다")
+    void mine_returns_only_my_posts() throws Exception {
+        Member me = newMember();
+        Member other = newMember();
+        createPost(me, "내가 쓴 글 A");
+        createPost(other, "남이 쓴 글");
+        createPost(me, "내가 쓴 글 B");
+
+        mockMvc.perform(get("/api/community/posts/mine")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(me)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(2))
+                // 최신순 — 나중에 쓴 글이 위다
+                .andExpect(jsonPath("$.items[0].title").value("내가 쓴 글 B"))
+                .andExpect(jsonPath("$.items[1].title").value("내가 쓴 글 A"));
+    }
+
+    /** 누구 글인지는 토큰이 정한다 — 비로그인에게 "내 글"은 뜻이 없다. */
+    @Test
+    @DisplayName("비로그인은 내 글을 못 본다 → 401")
+    void mine_requires_login() throws Exception {
+        mockMvc.perform(get("/api/community/posts/mine"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    /** 지운 글은 내 목록에도 안 보인다 — 지웠는데 남아 있으면 지운 게 아니다. */
+    @Test
+    @DisplayName("지운 글은 내 목록에서도 빠진다")
+    void mine_excludes_deleted() throws Exception {
+        Member me = newMember();
+        long id = createPost(me, "지울 글");
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .delete("/api/community/posts/{id}", id)
+                        .header(HttpHeaders.AUTHORIZATION, bearer(me)))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/community/posts/mine")
+                        .header(HttpHeaders.AUTHORIZATION, bearer(me)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(0));
+    }
 }

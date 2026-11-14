@@ -70,8 +70,8 @@ class LocalSeedSqlTest {
     @DisplayName("시드가 네 표를 모두 채운다")
     void seed_fills_every_table() {
         assertEquals(870, certificateRepository.count(), "시험 마스터");
-        assertEquals(2948, examScheduleRepository.count(), "회차 일정");
-        assertEquals(14739, notificationScheduleRepository.count(), "알림 예약");
+        assertEquals(3120, examScheduleRepository.count(), "회차 일정");
+        assertEquals(15799, notificationScheduleRepository.count(), "알림 예약");
         assertEquals(50, certificateDetailRepository.count(), "응시료·시험과목 등 상세");
     }
 

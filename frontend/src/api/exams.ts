@@ -25,6 +25,12 @@ export const examApi = {
   stats: () => api.get<StatsResponse>('/api/certificates/stats'),
 
   detail: (id: number) => api.get<DetailResponse>(`/api/certificates/${id}`),
+  /**
+   * 이름으로 상세 보기 — 공유한 링크가 사람이 읽히게 하려고 둔다.
+   * `/cert/338` 은 받은 사람이 무슨 시험인지 모른다.
+   */
+  detailBySlug: (slug: string) =>
+    api.get<DetailResponse>(`/api/certificates/by-slug/${encodeURIComponent(slug)}`),
 
   favorites: () => api.get<FavoriteListResponse>('/api/me/favorites'),
 
@@ -112,6 +118,18 @@ export const examApi = {
     q.set('page', String(params.page ?? 0));
     q.set('size', String(params.size ?? 20));
     return api.get<PostListResponse>(`/api/community/posts?${q.toString()}`);
+  },
+
+  /**
+   * 내가 쓴 글 — 로그인 필수. 게시판은 가리지 않는다.
+   *
+   * 검색은 **말을 기억해야** 쓰는 것이고, 자기가 쓴 글은 "내가 썼다"는 사실만 기억한다.
+   */
+  myPosts: (params: { page?: number; size?: number } = {}) => {
+    const q = new URLSearchParams();
+    q.set('page', String(params.page ?? 0));
+    q.set('size', String(params.size ?? 20));
+    return api.get<PostListResponse>(`/api/community/posts/mine?${q.toString()}`);
   },
 
   post: (id: number) => api.get<PostDetail>(`/api/community/posts/${id}`),

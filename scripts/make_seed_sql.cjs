@@ -7,10 +7,14 @@
  * ── 쓰는 법 ───────────────────────────────────────────────────────────────
  *   1) 실제 수집으로 채운 파일 DB 를 하나 만든다
  *        ./gradlew bootRun --no-daemon --args="\
- *            --seed.from-sql=false --collect.on-startup=true \
+ *            --seed.from-sql=true --collect.on-startup=true \
  *            --spring.datasource.url=jdbc:h2:file:./build/seedgen/exam;MODE=MySQL \
  *            --spring.jpa.hibernate.ddl-auto=create"
  *      ⚠️ 큐넷 API 613콜 + 시행처 사이트 실호출이 나간다. 하루 한 번까지. 서버는 다 받은 뒤 내린다.
+ *      ⚠️ `seed.from-sql=true` 다 — **false 로 돌리면 마스터 870종이 비어 버린다.** JSON 로더를
+ *         걷어낸 뒤로는(2026-11-14) 마스터를 넣는 것이 이 시드뿐이고, 수집은 그 위에 일정을 붙인다.
+ *         false 면 수집이 만난 시험만 생겨서 "일정 없는 시험"이 통째로 사라진다.
+ *         순서는 SqlSeedRunner(ContextRefreshedEvent) → 수집(ApplicationReadyEvent) 이라 맞는다.
  *
  *   2) 덤프 → 시드로 변환
  *        node scripts/make_seed_sql.cjs ./build/seedgen/exam

@@ -15,6 +15,8 @@ export default function CommunityPage() {
   const [params, setParams] = useSearchParams();
   const board = params.get('board') ?? '';
   const query = (params.get('q') ?? '').trim();
+  /** 내 글만 보기 — 주소(mine=1)에 둔다. 글을 보고 돌아와도 같은 화면이어야 한다 */
+  const mineOnly = params.get('mine') === '1';
   const navigate = useNavigate();
   const { me } = useAuth();
   const requireLogin = useRequireLogin();
@@ -40,7 +42,11 @@ export default function CommunityPage() {
 
   useEffect(() => {
     setLoading(true);
-    examApi.posts({ board: board || undefined, query: query || undefined, page: 0, size: 20 })
+    // 내 글은 게시판·검색어로 거르지 않는다 — 어느 게시판에 썼는지 기억 못 하는 게 보통이다
+    const first = mineOnly
+      ? examApi.myPosts({ page: 0, size: 20 })
+      : examApi.posts({ board: board || undefined, query: query || undefined, page: 0, size: 20 });
+    first
       .then((r) => {
         setItems(r.items);
         setTotal(r.totalElements);
@@ -50,14 +56,16 @@ export default function CommunityPage() {
       })
       .catch((e: Error) => setErr(e.message))
       .finally(() => setLoading(false));
-  }, [board, query]);
+  }, [board, query, mineOnly]);
 
   async function more() {
     setLoadingMore(true);
     try {
-      const r = await examApi.posts({
-        board: board || undefined, query: query || undefined, page: page + 1, size: 20,
-      });
+      const r = mineOnly
+        ? await examApi.myPosts({ page: page + 1, size: 20 })
+        : await examApi.posts({
+          board: board || undefined, query: query || undefined, page: page + 1, size: 20,
+        });
       setItems((prev) => [...prev, ...r.items]);
       setPage(r.page);
       setErr(null);
@@ -117,6 +125,13 @@ export default function CommunityPage() {
             {b.name}
           </button>
         ))}
+        {/* 비로그인에게는 그리지 않는다 — 눌러도 401 이고, 그 401 은 빨간 줄로만 남는다 */}
+        {me && (
+          <button className="k-chip" aria-pressed={mineOnly}
+                  onClick={() => setParams(mineOnly ? {} : { mine: '1' })}>
+            내 글
+          </button>
+        )}
       </div>
 
       <div className="searchbar community-search">
@@ -133,7 +148,9 @@ export default function CommunityPage() {
       {err && <div className="k-alert k-alert--err" role="alert">{err}</div>}
 
       <div className="section-head">
-        <h2>{query ? `‘${query}’ 검색 결과` : (boards.find((b) => b.code === board)?.name ?? '전체 글')}</h2>
+        <h2>{mineOnly ? '내가 쓴 글'
+          : query ? `‘${query}’ 검색 결과`
+            : (boards.find((b) => b.code === board)?.name ?? '전체 글')}</h2>
         <span className="more">{total.toLocaleString()}개</span>
       </div>
 

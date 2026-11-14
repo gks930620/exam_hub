@@ -37,6 +37,17 @@ public class CommunityController {
         return ResponseEntity.ok(communityService.list(board, query, page, size));
     }
 
+    /**
+     * 내가 쓴 글 — 로그인 필수. {@code /posts/{id}} 보다 <b>먼저</b> 둔다(안 그러면 "mine" 을 id 로 읽는다).
+     */
+    @GetMapping("/posts/mine")
+    public ResponseEntity<CommunityDtos.PostListResponse> mine(
+            @CurrentMember Member member,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(communityService.mine(member, page, size));
+    }
+
     @GetMapping("/posts/{id}")
     public ResponseEntity<CommunityDtos.PostDetail> detail(
             @PathVariable Long id,

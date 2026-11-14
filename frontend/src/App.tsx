@@ -114,6 +114,8 @@ export default function App() {
             {/* 예전 주소 — 눌러 둔 링크·북마크가 죽지 않게 홈으로 보낸다 */}
             <Route path="/search" element={<Navigate to="/" replace />} />
             <Route path="/cert/:id" element={<DetailPage />} />
+            {/* 이름으로도 열린다 — 공유 링크가 읽히게. `by-slug` 를 먼저 둬야 :id 가 먹지 않는다 */}
+            <Route path="/cert/by-slug/:slug" element={<DetailPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
             <Route path="/community" element={<CommunityPage />} />

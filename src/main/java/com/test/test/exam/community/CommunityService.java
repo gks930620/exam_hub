@@ -83,6 +83,27 @@ public class CommunityService {
                 found.getNumber(), found.getSize(), found.getTotalElements(), found.getTotalPages());
     }
 
+    /**
+     * 내가 쓴 글 — 게시판을 가리지 않고 최신순.
+     *
+     * <p>글이 쌓이면 자기 글을 다시 찾을 길이 목록을 훑는 것뿐이었다. 검색은 <b>말을 기억해야</b>
+     * 쓰는 것이고, 자기가 쓴 글은 "내가 썼다"는 사실만 기억한다. 게시판으로 안 거르는 이유도
+     * 같다 — 어느 게시판에 썼는지는 보통 기억하지 못한다.
+     */
+    public CommunityDtos.PostListResponse mine(Member member, int page, int size) {
+        if (page < 0) {
+            throw new BusinessRuleException("page 는 0 이상이어야 합니다.");
+        }
+        if (size < 1 || size > MAX_PAGE_SIZE) {
+            throw new BusinessRuleException("size 는 1~" + MAX_PAGE_SIZE + " 사이여야 합니다.");
+        }
+        Page<Post> found = postRepository.findByMemberAndDeletedFalseOrderByCreatedAtDesc(
+                member, PageRequest.of(page, size));
+        return new CommunityDtos.PostListResponse(
+                found.getContent().stream().map(CommunityDtos.PostSummary::of).collect(Collectors.toList()),
+                found.getNumber(), found.getSize(), found.getTotalElements(), found.getTotalPages());
+    }
+
     /** 상세 — 조회수를 1 올린다(본인 글이어도 올린다, 단순함이 낫다). */
     @Transactional
     public CommunityDtos.PostDetail detail(Long postId, Member viewer) {

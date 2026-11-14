@@ -18,15 +18,18 @@ const STATUS_BADGE: Partial<Record<ScheduleStatus, { label: string; tone: string
 
 // 시험 상세: 다음 이벤트를 히어로로(페이지당 하나) + 연간 회차 표 + 관심 토글.
 export default function DetailPage() {
-  const { id } = useParams();
+  // 두 주소로 들어온다 — `/cert/338` 과 `/cert/by-slug/용접기술사`.
+  // 뒤쪽은 공유용이다. 받은 사람이 링크만 보고 무슨 시험인지 알 수 있다.
+  const { id, slug } = useParams();
   const { me } = useAuth();
   const requireLogin = useRequireLogin();
   const [d, setD] = useState<DetailResponse | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    examApi.detail(Number(id)).then(setD).catch((e: Error) => setErr(e.message));
-  }, [id]);
+    const load = slug ? examApi.detailBySlug(slug) : examApi.detail(Number(id));
+    load.then(setD).catch((e: Error) => setErr(e.message));
+  }, [id, slug]);
 
   async function toggle() {
     if (!d) return;
